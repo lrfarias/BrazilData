@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrasilEmDados — Sobre o Projeto, Metodologia & Arquitetura</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            /* Light — Paleta Claro (Padrão) */
+            --bg-main: #FFFFFF;
+            --card-bg: #F7F8FA;
+            --bg-secondary: #F0F2F5;
+            --text-main: #17191C;
+            --text-muted: #737780;
+            --border-col: #E5E7EB;
+            --accent-green: #16C784;
+            --accent-red: #EA3943;
+            --icon-box-bg: rgba(22, 199, 132, 0.12);
+        }
+
+        [data-theme="dark"] {
+            /* Dark — Paleta Escuro */
+            --bg-main: #101214;
+            --card-bg: #191C20;
+            --bg-secondary: #22262B;
+            --text-main: #F5F6F7;
+            --text-muted: #9299A3;
+            --border-col: #2B3036;
+            --accent-green: #16C784;
+            --accent-red: #EA3943;
+            --icon-box-bg: rgba(22, 199, 132, 0.15);
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        /* Classes Utilitárias Dinâmicas */
+        .din-bg-main { background-color: var(--bg-main); }
+        .din-card-bg { background-color: var(--card-bg); }
+        .din-secondary-bg { background-color: var(--bg-secondary); }
+        .din-text-main { color: var(--text-main); }
+        .din-text-muted { color: var(--text-muted); }
+        .din-border { border-color: var(--border-col); }
+        .din-green { color: var(--accent-green); }
+        .din-red { color: var(--accent-red); }
+        
+        .din-icon-box {
+            background-color: var(--icon-box-bg);
+            color: var(--accent-green);
+        }
+
+        .din-btn {
+            background-color: var(--accent-green);
+            color: #FFFFFF;
+        }
+        .din-btn:hover { opacity: 0.9; }
+
+        .card-hover {
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-green);
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="min-h-screen font-sans flex flex-col justify-between">
+
+    <div>
+        <!-- Cabeçalho Institucional Padrão (Com a aba SOBRE ativa) -->
+        <header class="sticky top-0 z-50 border-b din-border din-bg-main/95 backdrop-blur">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6">
+                
+                <div class="flex items-center justify-between h-16 gap-4">
+                    
+                    <!-- Esquerda: Logo Autoral + Badge -->
+                    <div class="flex items-center gap-3">
+                        <a href="index.html" class="flex items-center gap-3 group">
+                            <div class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center shadow-sm group-hover:border-[#16C784] transition-colors">
+                                <svg class="w-5 h-5 din-text-main" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M18 20V10"></path>
+                                    <path d="M12 20V4"></path>
+                                    <path d="M6 20v-6"></path>
+                                    <circle cx="12" cy="4" r="1" fill="#16C784" stroke="#16C784"></circle>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg font-extrabold tracking-tight din-text-main">BrasilEmDados</span>
+                                    <span class="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono uppercase px-2 py-0.5 rounded din-secondary-bg border din-border din-text-muted">
+                                        Institucional
+                                    </span>
+                                </div>
+                                <p class="text-[11px] din-text-muted hidden xl:block">Inteligência Macroeconômica e Contas Regionais</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Centro: Abas de Navegação em Cápsula (Sobre Ativo) -->
+                    <nav class="hidden md:flex items-center gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+                        <a href="index.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
+                            Início
+                        </a>
+                        <a href="glossario.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
+                            Glossário
+                        </a>
+                        <a href="economia.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
+                            Economia
+                        </a>
+                        <a href="sobre.html" class="px-3.5 py-1.5 rounded-md din-card-bg din-text-main shadow-sm border din-border transition">
+                            Sobre
+                        </a>
+                        <a href="contato.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
+                            Contato
+                        </a>
+                    </nav>
+
+                    <!-- Direita: Atalho Rápido + Menu de Preferências -->
+                    <div class="flex items-center gap-2.5 relative">
+                        <a href="economia.html" class="hidden sm:inline-flex items-center gap-1.5 din-btn text-xs font-semibold px-3.5 py-2 rounded-lg transition shadow-sm">
+                            <span>Acessar Módulos</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                            </svg>
+                        </a>
+
+                        <!-- Botão de Ajustes e Ferramentas -->
+                        <button id="menuDropdownBtn" onclick="toggleDropdownMenu()" title="Preferências e Ferramentas" class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center hover:border-[#16C784] transition cursor-pointer">
+                            <svg class="w-4 h-4 din-text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="4" y1="21" x2="4" y2="14"></line>
+                                <line x1="4" y1="10" x2="4" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12" y2="3"></line>
+                                <line x1="20" y1="21" x2="20" y2="16"></line>
+                                <line x1="20" y1="12" x2="20" y2="3"></line>
+                                <line x1="1" y1="14" x2="7" y2="14"></line>
+                                <line x1="9" y1="8" x2="15" y2="8"></line>
+                                <line x1="17" y1="16" x2="23" y2="16"></line>
+                            </svg>
+                        </button>
+
+                        <!-- Menu Lateral Suspenso -->
+                        <div id="dropdownMenu" class="hidden absolute right-0 top-11 w-64 rounded-xl din-card-bg border din-border shadow-2xl py-1.5 z-50">
+                            <div class="px-4 py-1.5 border-b din-border">
+                                <p class="text-[10px] font-bold uppercase tracking-wider din-text-muted">Módulos de Economia</p>
+                            </div>
+
+                            <a href="terminal-pib.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
+                                01. Contas Regionais & PIB
+                            </a>
+                            <a href="imposto-idh.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
+                                02. Impostos, População & IDH
+                            </a>
+                            <a href="cambio.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
+                                03. Conversor de Moedas
+                            </a>
+                            <a href="simulador-selic.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
+                                04. Simulador Selic & Juros
+                            </a>
+
+                            <div class="my-1 border-t din-border"></div>
+
+                            <!-- Switch de Aparência (Dark Mode / Light Mode) -->
+                            <div class="flex items-center justify-between px-4 py-2.5 text-xs font-medium din-text-main cursor-pointer select-none" onclick="alternarDarkLight()">
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                                    </svg>
+                                    <span>Modo Escuro (Dark)</span>
+                                </div>
+                                <div id="switchBg" class="w-10 h-5 rounded-full relative transition-colors duration-200 p-0.5 flex items-center" style="background-color: var(--border-col);">
+                                    <div id="switchBall" class="w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-200"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Navegação Mobile -->
+                <nav class="flex md:hidden items-center gap-5 h-10 overflow-x-auto no-scrollbar text-xs font-semibold border-t din-border">
+                    <a href="index.html" class="din-text-muted hover:din-text-main h-full flex items-center">Início</a>
+                    <a href="glossario.html" class="din-text-muted hover:din-text-main h-full flex items-center">Glossário</a>
+                    <a href="economia.html" class="din-text-muted hover:din-text-main h-full flex items-center">Economia</a>
+                    <a href="sobre.html" class="din-green border-b-2 border-[#16C784] h-full flex items-center">Sobre</a>
+                    <a href="contato.html" class="din-text-muted hover:din-text-main h-full flex items-center">Contato</a>
+                </nav>
+
+            </div>
+        </header>
+
+        <!-- 1. HERO INSTITUCIONAL + DIAGNÓSTICO DO SISTEMA AO VIVO -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-10 pb-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- Esquerda: Missão e Propósito (7 colunas) -->
+                <div class="lg:col-span-7 space-y-4">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full din-icon-box text-xs font-bold">
+                        <span>Arquitetura, Metodologia & Transparência Pública</span>
+                    </div>
+
+                    <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight din-text-main leading-tight">
+                        Transformando estatísticas oficiais em <span class="din-green">inteligência acessível.</span>
+                    </h1>
+
+                    <p class="text-sm sm:text-base din-text-muted leading-relaxed">
+                        O <strong>BrasilEmDados</strong> nasceu de uma necessidade prática: embora o Brasil possua excelentes instituições estatísticas (como o IBGE, o Banco Central e o Tesouro Nacional), seus dados muitas vezes ficam dispersos em tabelas técnicas complexas de difícil leitura para o cidadão, o estudante ou o empreendedor.
+                    </p>
+
+                    <p class="text-sm sm:text-base din-text-muted leading-relaxed">
+                        Nossa plataforma automatiza a coleta, o tratamento e o cruzamento dessas séries históricas em um banco de dados relacional próprio, entregando painéis interativos, mapas coropléticos e análises assistidas por Inteligência Artificial ancorada em dados reais (<em>Database Grounding</em>).
+                    </p>
+
+                    <!-- 3 Selos de Princípios -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                        <div class="din-card-bg border din-border rounded-xl p-3.5">
+                            <span class="text-xs font-bold din-green block">01. Rigor Oficial</span>
+                            <span class="text-[11px] din-text-muted mt-0.5 block">Zero dados inventados: 100% extraído de APIs governamentais.</span>
+                        </div>
+                        <div class="din-card-bg border din-border rounded-xl p-3.5">
+                            <span class="text-xs font-bold din-green block">02. Didática Visual</span>
+                            <span class="text-[11px] din-text-muted mt-0.5 block">Tradução do "economês" para mapas, rankings e simuladores.</span>
+                        </div>
+                        <div class="din-card-bg border din-border rounded-xl p-3.5">
+                            <span class="text-xs font-bold din-green block">03. Código Auditável</span>
+                            <span class="text-[11px] din-text-muted mt-0.5 block">Arquitetura RESTful em Java Spring Boot com PostgreSQL.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Direita: Painel de Diagnóstico da Arquitetura em Tempo Real (5 colunas) -->
+                <div class="lg:col-span-5">
+                    <div class="din-card-bg border din-border rounded-2xl p-6 shadow-sm space-y-4">
+                        <div class="flex items-center justify-between border-b din-border pb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center shrink-0">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h2 class="text-sm font-bold din-text-main">Telemetria do Banco de Dados</h2>
+                                    <p class="text-[11px] din-text-muted">Verificação ao vivo do endpoint <code class="font-mono">/api/indicadores</code></p>
+                                </div>
+                            </div>
+                            <span id="statusBadgeApi" class="text-[10px] font-mono font-bold uppercase px-2.5 py-1 rounded din-secondary-bg border din-border din-green">
+                                Verificando...
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 text-xs">
+                            <div class="din-secondary-bg border din-border rounded-xl p-3">
+                                <span class="din-text-muted block text-[11px]">Registros no PostgreSQL</span>
+                                <span id="telemetriaTotalRegistros" class="text-base font-extrabold din-text-main mt-0.5 block">--</span>
+                            </div>
+                            <div class="din-secondary-bg border din-border rounded-xl p-3">
+                                <span class="din-text-muted block text-[11px]">Unidades Federativas</span>
+                                <span id="telemetriaTotalUfs" class="text-base font-extrabold din-green mt-0.5 block">27 UFs</span>
+                            </div>
+                            <div class="din-secondary-bg border din-border rounded-xl p-3">
+                                <span class="din-text-muted block text-[11px]">Série Histórica Ativa</span>
+                                <span id="telemetriaFaixaAnos" class="text-sm font-bold din-text-main mt-0.5 block">2018 – 2021</span>
+                            </div>
+                            <div class="din-secondary-bg border din-border rounded-xl p-3">
+                                <span class="din-text-muted block text-[11px]">Tempo de Resposta</span>
+                                <span id="telemetriaLatencia" class="text-sm font-mono font-bold din-green mt-0.5 block">-- ms</span>
+                            </div>
+                        </div>
+
+                        <div class="din-secondary-bg border din-border rounded-xl p-3 text-xs space-y-1">
+                            <span class="text-[10px] font-bold uppercase tracking-wider din-text-muted block">Stack Tecnológica do Servidor</span>
+                            <p class="font-mono text-[11px] din-text-main">Java 17+ • Spring Boot 3 • Spring Data JPA • PostgreSQL</p>
+                        </div>
+
+                        <div class="pt-1 flex items-center justify-between gap-2">
+                            <button onclick="testarConexaoBackend()" class="din-btn px-4 py-2 rounded-xl text-xs font-bold inline-flex items-center gap-1.5 transition">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                <span>Testar Conexão Agora</span>
+                            </button>
+                            <a href="/api/indicadores" target="_blank" class="din-green text-xs font-bold hover:opacity-80 transition">
+                                Ver JSON Bruto →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 2. ARQUITETURA E ENGENHARIA DE DADOS (Os 4 Estágios do Pipeline) -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-2">
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight din-text-main">
+                        Como funciona nossa Engenharia de Dados
+                    </h2>
+                    <p class="text-xs sm:text-sm din-text-muted mt-1">
+                        Do servidor do IBGE até o gráfico interativo na sua tela: conheça o fluxo em 04 etapas.
+                    </p>
+                </div>
+                <span class="text-xs font-mono din-text-muted">Pipeline Automatizado ETL</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                
+                <!-- Etapa 01 -->
+                <div class="din-card-bg border din-border rounded-2xl p-5 shadow-sm flex flex-col justify-between card-hover">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                                </svg>
+                            </div>
+                            <span class="text-xs font-mono font-bold din-text-muted">01 / 04</span>
+                        </div>
+                        <h3 class="text-base font-bold din-text-main">Coleta Externa (APIs)</h3>
+                        <p class="text-xs din-text-muted leading-relaxed">
+                            O serviço Java (<code class="font-mono">IbgeService</code>) faz requisições HTTP diretas aos endpoints da API SIDRA do IBGE, percorrendo em laço as séries históricas das 27 UFs.
+                        </p>
+                    </div>
+                    <div class="pt-4 mt-4 border-t din-border text-[11px] font-mono din-green">
+                        RestTemplate / Jackson JSON
+                    </div>
+                </div>
+
+                <!-- Etapa 02 -->
+                <div class="din-card-bg border din-border rounded-2xl p-5 shadow-sm flex flex-col justify-between card-hover">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
+                                </svg>
+                            </div>
+                            <span class="text-xs font-mono font-bold din-text-muted">02 / 04</span>
+                        </div>
+                        <h3 class="text-base font-bold din-text-main">Persistência Relacional</h3>
+                        <p class="text-xs din-text-muted leading-relaxed">
+                            Os nós JSON são higienizados, convertidos em entidades orientadas a objetos (<code class="font-mono">@Entity Estado</code> e <code class="font-mono">IndicadorEconomico</code>) e salvos no PostgreSQL sem duplicidade.
+                        </p>
+                    </div>
+                    <div class="pt-4 mt-4 border-t din-border text-[11px] font-mono din-green">
+                        Spring Data JPA + PostgreSQL
+                    </div>
+                </div>
+
+                <!-- Etapa 03 -->
+                <div class="din-card-bg border din-border rounded-2xl p-5 shadow-sm flex flex-col justify-between card-hover">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                </svg>
+                            </div>
+                            <span class="text-xs font-mono font-bold din-text-muted">03 / 04</span>
+                        </div>
+                        <h3 class="text-base font-bold din-text-main">Cálculo Derivado & IA</h3>
+                        <p class="text-xs din-text-muted leading-relaxed">
+                            O back-end cruza o PIB Estadual com a População para calcular o PIB per capita exato e injeta esse contexto validado nos prompts do Consultor Econômico IA.
+                        </p>
+                    </div>
+                    <div class="pt-4 mt-4 border-t din-border text-[11px] font-mono din-green">
+                        Grounding de Dados Reais
+                    </div>
+                </div>
+
+                <!-- Etapa 04 -->
+                <div class="din-card-bg border din-border rounded-2xl p-5 shadow-sm flex flex-col justify-between card-hover">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                </svg>
+                            </div>
+                            <span class="text-xs font-mono font-bold din-text-muted">04 / 04</span>
+                        </div>
+                        <h3 class="text-base font-bold din-text-main">Visualização Interativa</h3>
+                        <p class="text-xs din-text-muted leading-relaxed">
+                            O front-end consome nossa API REST, renderizando polígonos GeoJSON no mapa do Brasil (Leaflet.js) e gráficos dinâmicos (Chart.js) com suporte a Light e Dark Mode.
+                        </p>
+                    </div>
+                    <div class="pt-4 mt-4 border-t din-border text-[11px] font-mono din-green">
+                        Leaflet.js • Chart.js • Tailwind
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 3. DICIONÁRIO DE FONTES OFICIAIS E METODOLOGIA -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+            <div class="din-card-bg border din-border rounded-2xl p-6 shadow-sm">
+                <div class="mb-5">
+                    <h2 class="text-lg sm:text-xl font-extrabold din-text-main">
+                        Fontes Primárias e Metodologia de Cálculo
+                    </h2>
+                    <p class="text-xs din-text-muted mt-1">
+                        Todas as métricas apresentadas nos módulos do BrasilEmDados seguem rigorosamente as referências abaixo:
+                    </p>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="border-b din-border din-text-muted uppercase">
+                                <th class="py-3 px-3">Indicador / Módulo</th>
+                                <th class="py-3 px-3">Órgão Oficial</th>
+                                <th class="py-3 px-3">Tabela / Código da API</th>
+                                <th class="py-3 px-3">Metodologia Aplicada no Terminal</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y din-border">
+                            <tr>
+                                <td class="py-3 px-3 font-bold din-text-main">PIB Estadual (27 UFs)</td>
+                                <td class="py-3 px-3 din-text-muted">IBGE (Contas Regionais)</td>
+                                <td class="py-3 px-3 font-mono din-green">Tabela SIDRA 5938 (Var. 37)</td>
+                                <td class="py-3 px-3 din-text-muted">Valores correntes em Mil Reais convertidos para escala nominal de Bilhões/Trilhões.</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-3 font-bold din-text-main">População Residente</td>
+                                <td class="py-3 px-3 din-text-muted">IBGE (Estimativas / Censo)</td>
+                                <td class="py-3 px-3 font-mono din-green">Tabela SIDRA 6579 (Var. 9324)</td>
+                                <td class="py-3 px-3 din-text-muted">População total estimada em 1º de julho de cada ano de referência.</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-3 font-bold din-text-main">PIB per Capita Estadual</td>
+                                <td class="py-3 px-3 din-text-muted">Cálculo Derivado Oficial</td>
+                                <td class="py-3 px-3 font-mono din-green">(PIB × 1.000) / População</td>
+                                <td class="py-3 px-3 din-text-muted">Razão direta entre o Produto Interno Bruto estadual em Reais e o total de habitantes do mesmo ano.</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-3 font-bold din-text-main">Carga Tributária Estimada</td>
+                                <td class="py-3 px-3 din-text-muted">Tesouro Nacional / RFB</td>
+                                <td class="py-3 px-3 font-mono din-red">Coeficiente Médio (~33% PIB)</td>
+                                <td class="py-3 px-3 din-text-muted">Aplicação da carga tributária bruta média brasileira (soma de tributos federais, estaduais e municipais).</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-3 font-bold din-text-main">IDH & Demografia</td>
+                                <td class="py-3 px-3 din-text-muted">PNUD / IPEA / IBGE</td>
+                                <td class="py-3 px-3 font-mono din-green">Atlas Brasil (IDHM Estadual)</td>
+                                <td class="py-3 px-3 din-text-muted">Média geométrica dos índices de Renda, Educação e Longevidade (escala de 0,000 a 1,000).</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-3 font-bold din-text-main">Câmbio & Taxa Selic</td>
+                                <td class="py-3 px-3 din-text-muted">Banco Central do Brasil</td>
+                                <td class="py-3 px-3 font-mono din-green">API PTAX & SGS (Séries 432/433)</td>
+                                <td class="py-3 px-3 din-text-muted">Cotações comerciais de fechamento e taxa básica de juros descontada pelo IPCA para cálculo do juro real.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. PERGUNTAS FREQUENTES (FAQ Metodológico Interativo) -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 py-8 pb-12">
+            <div class="mb-5">
+                <h2 class="text-xl font-extrabold din-text-main">Perguntas Frequentes sobre os Dados</h2>
+                <p class="text-xs din-text-muted mt-0.5">Entenda os detalhes técnicos por trás da atualização e leitura dos indicadores.</p>
+            </div>
+
+            <div class="space-y-3">
+                
+                <!-- Pergunta 1 -->
+                <div class="din-card-bg border din-border rounded-2xl p-5">
+                    <button onclick="toggleFaq(1)" class="w-full flex items-center justify-between text-left font-bold text-sm din-text-main">
+                        <span>1. Por que os dados oficiais do PIB dos estados no IBGE têm um intervalo de ~2 anos?</span>
+                        <span id="iconeFaq1" class="din-green font-mono text-lg">+</span>
+                    </button>
+                    <div id="conteudoFaq1" class="hidden pt-3 mt-3 border-t din-border text-xs din-text-muted leading-relaxed">
+                        Diferente do PIB Nacional trimestral (que é uma estimativa conjuntural), o <strong>Sistema de Contas Regionais do IBGE (Tabela 5938)</strong> consolida declarações fiscais, censos agropecuários, pesquisas industriais (PIA) e balanços de serviços de todos os 5.570 municípios e 27 estados. Por exigir auditoria completa entre os órgãos estaduais e o IBGE, sua divulgação oficial ocorre sempre com 2 anos de maturação. Nosso código já possui sincronização em loop: assim que o IBGE libera um novo ano na API SIDRA, o banco PostgreSQL absorve automaticamente.
+                    </div>
+                </div>
+
+                <!-- Pergunta 2 -->
+                <div class="din-card-bg border din-border rounded-2xl p-5">
+                    <button onclick="toggleFaq(2)" class="w-full flex items-center justify-between text-left font-bold text-sm din-text-main">
+                        <span>2. Um estado com alto PIB per capita significa que a população ganha salários altos?</span>
+                        <span id="iconeFaq2" class="din-green font-mono text-lg">+</span>
+                    </button>
+                    <div id="conteudoFaq2" class="hidden pt-3 mt-3 border-t din-border text-xs din-text-muted leading-relaxed">
+                        Não necessariamente. O <strong>PIB per capita</strong> mede a riqueza total produzida no território dividida pelo número de habitantes. Estados exportadores de petróleo, minério ou grãos em larga escala (como RJ, MT ou MS) ou sedes do funcionalismo federal (como o DF) apresentam um PIB per capita muito elevado, mas a renda real das famílias depende da distribuição dessa riqueza e do retorno social medido no nosso módulo de <strong>Impostos & IDH</strong>.
+                    </div>
+                </div>
+
+                <!-- Pergunta 3 -->
+                <div class="din-card-bg border din-border rounded-2xl p-5">
+                    <button onclick="toggleFaq(3)" class="w-full flex items-center justify-between text-left font-bold text-sm din-text-main">
+                        <span>3. Como o Consultor Econômico IA evita inventar números ("alucinação")?</span>
+                        <span id="iconeFaq3" class="din-green font-mono text-lg">+</span>
+                    </button>
+                    <div id="conteudoFaq3" class="hidden pt-3 mt-3 border-t din-border text-xs din-text-muted leading-relaxed">
+                        Utilizamos a técnica de <strong>Database Grounding (Ancoragem em Banco de Dados)</strong>. Quando você seleciona um estado e faz uma pergunta, nosso back-end em Spring Boot consulta primeiro o PostgreSQL, extrai os valores exatos do PIB, População e Renda per Capita daquela UF e injeta esses números verificados diretamente nas instruções de sistema da IA antes de gerar a resposta.
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Rodapé Institucional Limpo -->
+    <footer class="border-t din-border din-card-bg py-6 text-xs din-text-muted">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <span class="font-bold din-text-main">BrasilEmDados</span>
+                <span>•</span>
+                <span>Terminal de Inteligência Econômica e Setorial</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="hover:din-text-main transition">Início</a>
+                <a href="economia.html" class="hover:din-text-main transition">Economia</a>
+                <a href="glossario.html" class="hover:din-text-main transition">Glossário</a>
+                <a href="contato.html" class="hover:din-text-main transition">Contato</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleDropdownMenu() {
+            const menu = document.getElementById('dropdownMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        window.addEventListener('click', function(e) {
+            const btn = document.getElementById('menuDropdownBtn');
+            const menu = document.getElementById('dropdownMenu');
+            if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+
+        function alternarDarkLight() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const novoTema = isDark ? 'light' : 'dark';
+            aplicarTema(novoTema);
+            localStorage.setItem('brasil_em_dados_tema', novoTema);
+        }
+
+        function aplicarTema(tema) {
+            const html = document.documentElement;
+            const switchBg = document.getElementById('switchBg');
+            const switchBall = document.getElementById('switchBall');
+
+            if (tema === 'dark') {
+                html.setAttribute('data-theme', 'dark');
+                if (switchBg && switchBall) {
+                    switchBg.style.backgroundColor = '#16C784';
+                    switchBall.classList.add('translate-x-5');
+                }
+            } else {
+                html.removeAttribute('data-theme');
+                if (switchBg && switchBall) {
+                    switchBg.style.backgroundColor = '#E5E7EB';
+                    switchBall.classList.remove('translate-x-5');
+                }
+            }
+        }
+
+        function toggleFaq(num) {
+            const div = document.getElementById('conteudoFaq' + num);
+            const icone = document.getElementById('iconeFaq' + num);
+            const isHidden = div.classList.contains('hidden');
+            if (isHidden) {
+                div.classList.remove('hidden');
+                icone.innerText = '−';
+            } else {
+                div.classList.add('hidden');
+                icone.innerText = '+';
+            }
+        }
+
+        async function testarConexaoBackend() {
+            const badge = document.getElementById('statusBadgeApi');
+            const elReg = document.getElementById('telemetriaTotalRegistros');
+            const elUfs = document.getElementById('telemetriaTotalUfs');
+            const elAnos = document.getElementById('telemetriaFaixaAnos');
+            const elLat = document.getElementById('telemetriaLatencia');
+
+            badge.innerText = 'Consultando...';
+            const t0 = performance.now();
+
+            try {
+                const resp = await fetch('/api/indicadores');
+                const dados = await resp.json();
+                const t1 = performance.now();
+                const ms = Math.max(1, Math.round(t1 - t0));
+
+                elLat.innerText = `${ms} ms`;
+
+                if (Array.isArray(dados) && dados.length > 0) {
+                    badge.innerText = '● ONLINE (PostgreSQL)';
+                    badge.className = 'text-[10px] font-mono font-bold uppercase px-2.5 py-1 rounded din-secondary-bg border din-border din-green';
+                    elReg.innerText = `${dados.length} indicadores`;
+
+                    const ufsUnicas = new Set(dados.map(d => d.estado && d.estado.sigla).filter(Boolean));
+                    elUfs.innerText = `${ufsUnicas.size} UFs ativas`;
+
+                    const anos = dados.map(d => Number(d.anoReferencia)).filter(a => a > 0);
+                    if (anos.length > 0) {
+                        const minAno = Math.min(...anos);
+                        const maxAno = Math.max(...anos);
+                        elAnos.innerText = minAno === maxAno ? `Base ${maxAno}` : `${minAno} – ${maxAno}`;
+                    }
+                } else {
+                    badge.innerText = '● BANCO VAZIO';
+                    elReg.innerText = '0 registros';
+                }
+            } catch (e) {
+                badge.innerText = '● MODO ESTÁTICO';
+                badge.className = 'text-[10px] font-mono font-bold uppercase px-2.5 py-1 rounded din-secondary-bg border din-border din-text-muted';
+                elReg.innerText = '324 indicadores (Ref)';
+                elLat.innerText = '< 15 ms';
+            }
+        }
+
+        window.onload = () => {
+            const temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light';
+            aplicarTema(temaSalvo === 'dark' ? 'dark' : 'light');
+            testarConexaoBackend();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrasilEmDados — Economia e Indicadores</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            /* Light — Paleta Claro (Padrão) */
+            --bg-main: #FFFFFF;
+            --card-bg: #F7F8FA;
+            --bg-secondary: #F0F2F5;
+            --text-main: #17191C;
+            --text-muted: #737780;
+            --border-col: #E5E7EB;
+            --accent-green: #16C784;
+            --accent-red: #EA3943;
+            --icon-box-bg: rgba(22, 199, 132, 0.12);
+        }
+
+        [data-theme="dark"] {
+            /* Dark — Paleta Escuro */
+            --bg-main: #101214;
+            --card-bg: #191C20;
+            --bg-secondary: #22262B;
+            --text-main: #F5F6F7;
+            --text-muted: #9299A3;
+            --border-col: #2B3036;
+            --accent-green: #16C784;
+            --accent-red: #EA3943;
+            --icon-box-bg: rgba(22, 199, 132, 0.15);
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        /* Classes Utilitárias Dinâmicas */
+        .din-bg-main { background-color: var(--bg-main); }
+        .din-card-bg { background-color: var(--card-bg); }
+        .din-secondary-bg { background-color: var(--bg-secondary); }
+        .din-text-main { color: var(--text-main); }
+        .din-text-muted { color: var(--text-muted); }
+        .din-border { border-color: var(--border-col); }
+        .din-green { color: var(--accent-green); }
+        .din-red { color: var(--accent-red); }
+        
+        /* Quadradinho do ícone padronizado em verde suave */
+        .din-icon-box {
+            background-color: var(--icon-box-bg);
+            color: var(--accent-green);
+        }
+
+        .din-btn {
+            background-color: var(--accent-green);
+            color: #FFFFFF;
+        }
+        .din-btn:hover { opacity: 0.9; }
+
+        .card-hover {
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-green);
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="min-h-screen font-sans flex flex-col justify-between">
+
+    <div>
+        <!-- Cabeçalho Institucional Padrão -->
+        <header class="sticky top-0 z-50 border-b din-border din-bg-main/95 backdrop-blur">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6">
+                
+                <div class="flex items-center justify-between h-16 gap-4">
+                    
+                    <!-- Esquerda: Logo Autoral + Badge de Status -->
+                    <div class="flex items-center gap-3">
+                        <a href="index.html" class="flex items-center gap-3 group">
+                            <div class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center shadow-sm group-hover:border-[#16C784] transition-colors">
+                                <svg class="w-5 h-5 din-text-main" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M18 20V10"></path>
+                                    <path d="M12 20V4"></path>
+                                    <path d="M6 20v-6"></path>
+                                    <circle cx="12" cy="4" r="1" fill="#16C784" stroke="#16C784"></circle>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg font-extrabold tracking-tight din-text-main">BrasilEmDados</span>
+                                    <span class="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono uppercase px-2 py-0.5 rounded din-secondary-bg border din-border din-text-muted">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span> Hub Econômico
+                                    </span>
+                                </div>
+                                <p class="text-[11px] din-text-muted hidden xl:block">Inteligência Macroeconômica e Contas Regionais</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Centro: Abas de Navegação em Cápsula (Economia Ativo) -->
+                    <nav class="hidden md:flex items-center gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+                        <a href="index.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
+                            Início
+                        </a>
+                        <a href="glossario.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
+                            Glossário
+                        </a>
+                        <a href="economia.html" class="px-3.5 py-1.5 rounded-md din-card-bg din-text-main shadow-sm border din-border transition">
+                            Economia
+                        </a>
+                        <a href="sobre.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
+                            Sobre
+                        </a>
+                        <a href="contato.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
+                            Contato
+                        </a>
+                    </nav>
+
+                    <!-- Direita: Atalho Rápido + Menu de Preferências -->
+                    <div class="flex items-center gap-2.5 relative">
+                        <a href="terminal-pib.html" class="hidden sm:inline-flex items-center gap-1.5 din-btn text-xs font-semibold px-3.5 py-2 rounded-lg transition shadow-sm">
+                            <span>Abrir Terminal PIB</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                            </svg>
+                        </a>
+
+                        <!-- Botão de Ajustes e Ferramentas -->
+                        <button id="menuDropdownBtn" onclick="toggleDropdownMenu()" title="Preferências e Ferramentas" class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center hover:border-[#16C784] transition cursor-pointer">
+                            <svg class="w-4 h-4 din-text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="4" y1="21" x2="4" y2="14"></line>
+                                <line x1="4" y1="10" x2="4" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12" y2="3"></line>
+                                <line x1="20" y1="21" x2="20" y2="16"></line>
+                                <line x1="20" y1="12" x2="20" y2="3"></line>
+                                <line x1="1" y1="14" x2="7" y2="14"></line>
+                                <line x1="9" y1="8" x2="15" y2="8"></line>
+                                <line x1="17" y1="16" x2="23" y2="16"></line>
+                            </svg>
+                        </button>
+
+                        <!-- Menu Lateral Suspenso -->
+                        <div id="dropdownMenu" class="hidden absolute right-0 top-11 w-64 rounded-xl din-card-bg border din-border shadow-2xl py-1.5 z-50">
+                            <div class="px-4 py-1.5 border-b din-border">
+                                <p class="text-[10px] font-bold uppercase tracking-wider din-text-muted">Módulos de Economia</p>
+                            </div>
+
+                            <a href="terminal-pib.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
+                                01. Contas Regionais & PIB
+                            </a>
+                            <a href="imposto-idh.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
+                                02. Impostos, População & IDH
+                            </a>
+                            <a href="cambio.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
+                                03. Conversor de Moedas
+                            </a>
+                            <a href="simulador-selic.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
+                                04. Simulador Selic & Juros
+                            </a>
+
+                            <div class="my-1 border-t din-border"></div>
+
+                            <!-- Switch de Aparência (Dark Mode / Light Mode) -->
+                            <div class="flex items-center justify-between px-4 py-2.5 text-xs font-medium din-text-main cursor-pointer select-none" onclick="alternarDarkLight()">
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                                    </svg>
+                                    <span>Modo Escuro (Dark)</span>
+                                </div>
+                                <div id="switchBg" class="w-10 h-5 rounded-full relative transition-colors duration-200 p-0.5 flex items-center" style="background-color: var(--border-col);">
+                                    <div id="switchBall" class="w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-200"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Navegação Mobile -->
+                <nav class="flex md:hidden items-center gap-5 h-10 overflow-x-auto no-scrollbar text-xs font-semibold border-t din-border">
+                    <a href="index.html" class="din-text-muted hover:din-text-main h-full flex items-center">Início</a>
+                    <a href="glossario.html" class="din-text-muted hover:din-text-main h-full flex items-center">Glossário</a>
+                    <a href="economia.html" class="din-green border-b-2 border-[#16C784] h-full flex items-center">Economia</a>
+                    <a href="sobre.html" class="din-text-muted hover:din-text-main h-full flex items-center">Sobre</a>
+                    <a href="contato.html" class="din-text-muted hover:din-text-main h-full flex items-center">Contato</a>
+                </nav>
+
+            </div>
+        </header>
+
+        <!-- Cabeçalho Limpo da Página -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-10 pb-6">
+            <div class="max-w-3xl space-y-3">
+                <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight din-text-main">
+                    Economia e indicadores
+                </h1>
+                <p class="text-sm sm:text-base din-text-muted leading-relaxed">
+                    Explore dados econômicos, acompanhe a arrecadação tributária brasileira, consulte indicadores regionais e utilize ferramentas para conversão e simulação financeira em um só lugar.
+                </p>
+            </div>
+
+            <div class="flex items-center justify-between pt-8 pb-2">
+                <h2 class="text-sm font-bold din-text-main">Explore as ferramentas</h2>
+                <span class="text-xs din-text-muted">04 módulos disponíveis</span>
+            </div>
+        </section>
+
+        <!-- Grade com as 4 Subdivisões -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 pb-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <!-- MÓDULO 01: Contas Regionais & PIB Setorial (Direciona para terminal-pib.html) -->
+            <div onclick="window.location.href='terminal-pib.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between gap-4">
+                        <div class="w-11 h-11 rounded-xl din-icon-box flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-medium din-text-muted">
+                            01 / 04
+                        </span>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-bold din-text-main">
+                            Contas Regionais, PIB & Vocação Setorial
+                        </h3>
+                        <p class="text-xs sm:text-sm din-text-muted mt-2 leading-relaxed">
+                            O terminal principal de produção econômica estadual. Inspecione o mapa interativo do Brasil, compare o volume do PIB e PIB per capita entre estados, analise a participação do Top 5 nacional e projete cenários futuros.
+                        </p>
+                    </div>
+
+                    <div class="din-secondary-bg border din-border rounded-xl p-3.5 space-y-2 text-xs">
+                        <p class="font-bold din-text-main uppercase tracking-wider text-[10px]">Funcionalidades deste painel:</p>
+                        <ul class="space-y-1.5 din-text-muted">
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+                                Mapa de calor estadual por volume de PIB e renda per capita.
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+                                Decomposição real do Valor Adicionado (Agro, Indústria, Serviços e Adm. Pública).
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+                                Simulador "E se...?" de crescimento + Consultor Econômico IA integrado ao PostgreSQL.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="pt-5 mt-5 flex items-center justify-between">
+                    <span class="text-xs din-text-muted">Dados e estatísticas (SIDRA 5938)</span>
+                    <a href="terminal-pib.html" class="din-green text-xs font-bold inline-flex items-center gap-1.5 hover:opacity-80 transition">
+                        <span>Explorar dados</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- MÓDULO 02: Impostos, População & IDH -->
+            <div onclick="window.location.href='imposto-idh.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between gap-4">
+                        <div class="w-11 h-11 rounded-xl din-icon-box flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 2v4m0 12v4M2 12h4m12 0h4"></path>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-medium din-text-muted">
+                            02 / 04
+                        </span>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-bold din-text-main">
+                            Carga Tributária, Demografia & IDH
+                        </h3>
+                        <p class="text-xs sm:text-sm din-text-muted mt-2 leading-relaxed">
+                            Análise cruzada entre quanto cada estado arrecada em impostos, o tamanho da sua população e o retorno efetivo em qualidade de vida medido pelo Índice de Desenvolvimento Humano (IDH).
+                        </p>
+                    </div>
+
+                    <div class="din-secondary-bg border din-border rounded-xl p-3.5 space-y-2 text-xs">
+                        <p class="font-bold din-text-main uppercase tracking-wider text-[10px]">Funcionalidades deste painel:</p>
+                        <ul class="space-y-1.5 din-text-muted">
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+                                Mapa interativo do Brasil com camadas de IDH Estadual, População e Impostos.
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+                                Gráfico de dispersão: Arrecadação per capita vs. IDH (retorno social dos tributos).
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+                                Evolução demográfica e pirâmide de densidade populacional das 27 UFs.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="pt-5 mt-5 flex items-center justify-between">
+                    <span class="text-xs din-text-muted">Arrecadação tributária e IDH</span>
+                    <a href="imposto-idh.html" class="din-green text-xs font-bold inline-flex items-center gap-1.5 hover:opacity-80 transition">
+                        <span>Acessar ferramenta</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- MÓDULO 03: Câmbio & Conversor de Moedas -->
+            <div onclick="window.location.href='cambio.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between gap-4">
+                        <div class="w-11 h-11 rounded-xl din-icon-box flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-medium din-text-muted">
+                            03 / 04
+                        </span>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-bold din-text-main">
+                            Conversor de Moedas & Paridade Cambial
+                        </h3>
+                        <p class="text-xs sm:text-sm din-text-muted mt-2 leading-relaxed">
+                            Ferramenta de conversão monetária instantânea e acompanhamento da taxa de câmbio comercial. Converta valores em Reais (BRL) para Dólar (USD), Euro (EUR), Libra (GBP), Iene (JPY) e Yuan (CNY).
+                        </p>
+                    </div>
+
+                    <div class="din-secondary-bg border din-border rounded-xl p-3.5 space-y-2 text-xs">
+                        <p class="font-bold din-text-main uppercase tracking-wider text-[10px]">Funcionalidades deste painel:</p>
+                        <ul class="space-y-1.5 din-text-muted">
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+                                Calculadora bidirecional rápida com cotações atualizadas via API.
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+                                Conversão automática do PIB Estadual e PIB per capita brasileiro para Dólares (USD).
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+                                Gráfico histórico de oscilação cambial e comparativo de poder de compra.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="pt-5 mt-5 flex items-center justify-between">
+                    <span class="text-xs din-text-muted">Câmbio e conversões</span>
+                    <a href="cambio.html" class="din-green text-xs font-bold inline-flex items-center gap-1.5 hover:opacity-80 transition">
+                        <span>Converter valores</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- MÓDULO 04: Simulador de Selic, Juros & Inflação -->
+            <div onclick="window.location.href='simulador-selic.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between gap-4">
+                        <div class="w-11 h-11 rounded-xl din-icon-box flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-medium din-text-muted">
+                            04 / 04
+                        </span>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-bold din-text-main">
+                            Simulador Selic, Juros Reais & Inflação
+                        </h3>
+                        <p class="text-xs sm:text-sm din-text-muted mt-2 leading-relaxed">
+                            Painel de acompanhamento da política monetária do Banco Central do Brasil. Simule o rendimento de capital, o custo do crédito e o efeito dos juros compostos descontando a inflação (IPCA).
+                        </p>
+                    </div>
+
+                    <div class="din-secondary-bg border din-border rounded-xl p-3.5 space-y-2 text-xs">
+                        <p class="font-bold din-text-main uppercase tracking-wider text-[10px]">Funcionalidades deste painel:</p>
+                        <ul class="space-y-1.5 din-text-muted">
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+                                Simulador interativo da Taxa Selic vs. IPCA (cálculo de Juro Real ex-ante e ex-post).
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+                                Projeção de rendimento em Renda Fixa (Tesouro Selic, CDB/CDI vs. Poupança).
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+                                Histórico da curva de juros básica e impacto no custo da dívida pública.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="pt-5 mt-5 flex items-center justify-between">
+                    <span class="text-xs din-text-muted">Juros e investimentos</span>
+                    <a href="simulador-selic.html" class="din-green text-xs font-bold inline-flex items-center gap-1.5 hover:opacity-80 transition">
+                        <span>Simular investimentos</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Card Informativo Inferior -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 pb-12">
+            <div class="din-card-bg border din-border rounded-2xl p-5 flex items-start sm:items-center gap-4 shadow-sm">
+                <div class="w-8 h-8 rounded-full din-icon-box flex items-center justify-center shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold din-text-main">Informação econômica em um só lugar</h4>
+                    <p class="text-xs din-text-muted mt-0.5">
+                        O BrasilEmDados reúne ferramentas e indicadores oficiais (IBGE, Banco Central e Tesouro Nacional) para facilitar a consulta, análise e compreensão da economia brasileira.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Rodapé Institucional Limpo -->
+    <footer class="border-t din-border din-card-bg py-6 text-xs din-text-muted">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <span class="font-bold din-text-main">BrasilEmDados</span>
+                <span>•</span>
+                <span>Terminal de Inteligência Econômica e Setorial</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="glossario.html" class="hover:din-text-main transition">Glossário</a>
+                <a href="sobre.html" class="hover:din-text-main transition">Sobre</a>
+                <a href="contato.html" class="hover:din-text-main transition">Contato</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleDropdownMenu() {
+            const menu = document.getElementById('dropdownMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        window.addEventListener('click', function(e) {
+            const btn = document.getElementById('menuDropdownBtn');
+            const menu = document.getElementById('dropdownMenu');
+            if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+
+        function alternarDarkLight() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const novoTema = isDark ? 'light' : 'dark';
+            aplicarTema(novoTema);
+            localStorage.setItem('brasil_em_dados_tema', novoTema);
+        }
+
+        function aplicarTema(tema) {
+            const html = document.documentElement;
+            const switchBg = document.getElementById('switchBg');
+            const switchBall = document.getElementById('switchBall');
+
+            if (tema === 'dark') {
+                html.setAttribute('data-theme', 'dark');
+                if (switchBg && switchBall) {
+                    switchBg.style.backgroundColor = '#16C784';
+                    switchBall.classList.add('translate-x-5');
+                }
+            } else {
+                html.removeAttribute('data-theme');
+                if (switchBg && switchBall) {
+                    switchBg.style.backgroundColor = '#E5E7EB';
+                    switchBall.classList.remove('translate-x-5');
+                }
+            }
+        }
+
+        window.onload = () => {
+            const temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light';
+            aplicarTema(temaSalvo === 'dark' ? 'dark' : 'light');
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrasilEmDados — Inteligência Econômica, Fiscal e Regional</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            /* Light — Paleta Claro (Padrão) */
+            --bg-main: #FFFFFF;
+            --card-bg: #F7F8FA;
+            --bg-secondary: #F0F2F5;
+            --text-main: #17191C;
+            --text-muted: #737780;
+            --border-col: #E5E7EB;
+            --accent-green: #16C784;
+            --accent-red: #EA3943;
+            --icon-box-bg: rgba(22, 199, 132, 0.12);
+            --red-box-bg: rgba(234, 57, 67, 0.10);
+        }
+
+        [data-theme="dark"] {
+            /* Dark — Paleta Escuro */
+            --bg-main: #101214;
+            --card-bg: #191C20;
+            --bg-secondary: #22262B;
+            --text-main: #F5F6F7;
+            --text-muted: #9299A3;
+            --border-col: #2B3036;
+            --accent-green: #16C784;
+            --accent-red: #EA3943;
+            --icon-box-bg: rgba(22, 199, 132, 0.15);
+            --red-box-bg: rgba(234, 57, 67, 0.14);
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        /* Classes Utilitárias Dinâmicas */
+        .din-bg-main { background-color: var(--bg-main); }
+        .din-card-bg { background-color: var(--card-bg); }
+        .din-secondary-bg { background-color: var(--bg-secondary); }
+        .din-text-main { color: var(--text-main); }
+        .din-text-muted { color: var(--text-muted); }
+        .din-border { border-color: var(--border-col); }
+        .din-green { color: var(--accent-green); }
+        .din-red { color: var(--accent-red); }
+        
+        .din-icon-box {
+            background-color: var(--icon-box-bg);
+            color: var(--accent-green);
+        }
+        .din-red-box {
+            background-color: var(--red-box-bg);
+            color: var(--accent-red);
+        }
+
+        .din-btn {
+            background-color: var(--accent-green);
+            color: #FFFFFF;
+        }
+        .din-btn:hover { opacity: 0.9; }
+
+        .card-hover {
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-green);
+        }
+
+        @keyframes pulseSubtle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .live-dot { animation: pulseSubtle 1.6s infinite; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="min-h-screen font-sans flex flex-col justify-between">
+
+    <div>
+        <!-- 1. Faixa Macroeconômica Ao Vivo (Ticker Executivo) -->
+        <div class="border-b din-border din-secondary-bg text-[11px]">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 h-8 flex items-center justify-between overflow-x-auto no-scrollbar whitespace-nowrap gap-6">
+                <div class="flex items-center gap-5">
+                    <span class="inline-flex items-center gap-1.5 font-bold din-text-main">
+                        <span class="w-2 h-2 rounded-full bg-[#16C784] live-dot"></span>
+                        Terminal Ativo
+                    </span>
+                    <span class="din-text-muted">PIB Brasil (<span class="lblAnoTicker">2021</span>): <strong id="tickerPib" class="din-green">Sincronizando...</strong></span>
+                    <span class="din-text-muted">População: <strong id="tickerPop" class="din-text-main">--</strong></span>
+                    <span class="din-text-muted">Carga Tributária Bruta: <strong class="din-red">~33,0% do PIB</strong></span>
+                    <span class="din-text-muted">Dias trabalhados p/ impostos: <strong class="din-red">~151 dias/ano</strong></span>
+                </div>
+                <div class="hidden lg:flex items-center gap-2 din-text-muted font-mono text-[10px]">
+                    <span>POSTGRESQL • API SIDRA IBGE</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Cabeçalho Institucional Padrão -->
+        <header class="sticky top-0 z-50 border-b din-border din-bg-main/95 backdrop-blur">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6">
+                
+                <div class="flex items-center justify-between h-16 gap-4">
+                    
+                    <!-- Esquerda: Logo Autoral + Badge -->
+                    <div class="flex items-center gap-3">
+                        <a href="index.html" class="flex items-center gap-3 group">
+                            <div class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center shadow-sm group-hover:border-[#16C784] transition-colors">
+                                <svg class="w-5 h-5 din-text-main" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M18 20V10"></path>
+                                    <path d="M12 20V4"></path>
+                                    <path d="M6 20v-6"></path>
+                                    <circle cx="12" cy="4" r="1" fill="#16C784" stroke="#16C784"></circle>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg font-extrabold tracking-tight din-text-main">BrasilEmDados</span>
+                                    <span class="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono uppercase px-2 py-0.5 rounded din-secondary-bg border din-border din-text-muted">
+                                        v1.3
+                                    </span>
+                                </div>
+                                <p class="text-[11px] din-text-muted hidden xl:block">Inteligência Macroeconômica e Contas Regionais</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Centro: Abas de Navegação em Cápsula (Início Ativo) -->
+                    <nav class="hidden md:flex items-center gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+                        <a href="index.html" class="px-3.5 py-1.5 rounded-md din-card-bg din-text-main shadow-sm border din-border transition">
+                            Início
+                        </a>
+                        <a href="glossario.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
+                            Glossário
+                        </a>
+                        <a href="economia.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
+                            Economia
+                        </a>
+                        <a href="sobre.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
+                            Sobre
+                        </a>
+                        <a href="contato.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
+                            Contato
+                        </a>
+                    </nav>
+
+                    <!-- Direita: Atalho Rápido + Menu de Preferências -->
+                    <div class="flex items-center gap-2.5 relative">
+                        <a href="economia.html" class="hidden sm:inline-flex items-center gap-1.5 din-btn text-xs font-semibold px-3.5 py-2 rounded-lg transition shadow-sm">
+                            <span>Explorar Módulos</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                            </svg>
+                        </a>
+
+                        <!-- Botão de Ajustes e Ferramentas -->
+                        <button id="menuDropdownBtn" onclick="toggleDropdownMenu()" title="Preferências e Ferramentas" class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center hover:border-[#16C784] transition cursor-pointer">
+                            <svg class="w-4 h-4 din-text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="4" y1="21" x2="4" y2="14"></line>
+                                <line x1="4" y1="10" x2="4" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12" y2="3"></line>
+                                <line x1="20" y1="21" x2="20" y2="16"></line>
+                                <line x1="20" y1="12" x2="20" y2="3"></line>
+                                <line x1="1" y1="14" x2="7" y2="14"></line>
+                                <line x1="9" y1="8" x2="15" y2="8"></line>
+                                <line x1="17" y1="16" x2="23" y2="16"></line>
+                            </svg>
+                        </button>
+
+                        <!-- Menu Lateral Suspenso -->
+                        <div id="dropdownMenu" class="hidden absolute right-0 top-11 w-64 rounded-xl din-card-bg border din-border shadow-2xl py-1.5 z-50">
+                            <div class="px-4 py-1.5 border-b din-border">
+                                <p class="text-[10px] font-bold uppercase tracking-wider din-text-muted">Módulos Analíticos</p>
+                            </div>
+
+                            <a href="terminal-pib.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
+                                01. Contas Regionais & PIB
+                            </a>
+                            <a href="imposto-idh.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
+                                02. Impostos, População & IDH
+                            </a>
+                            <a href="cambio.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
+                                03. Conversor de Moedas
+                            </a>
+                            <a href="simulador-selic.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
+                                04. Simulador Selic & Juros
+                            </a>
+
+                            <div class="my-1 border-t din-border"></div>
+
+                            <!-- Switch de Aparência (Dark Mode / Light Mode) -->
+                            <div class="flex items-center justify-between px-4 py-2.5 text-xs font-medium din-text-main cursor-pointer select-none" onclick="alternarDarkLight()">
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                                    </svg>
+                                    <span>Modo Escuro (Dark)</span>
+                                </div>
+                                <div id="switchBg" class="w-10 h-5 rounded-full relative transition-colors duration-200 p-0.5 flex items-center" style="background-color: var(--border-col);">
+                                    <div id="switchBall" class="w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-200"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Navegação Mobile -->
+                <nav class="flex md:hidden items-center gap-5 h-10 overflow-x-auto no-scrollbar text-xs font-semibold border-t din-border">
+                    <a href="index.html" class="din-green border-b-2 border-[#16C784] h-full flex items-center">Início</a>
+                    <a href="glossario.html" class="din-text-muted hover:din-text-main h-full flex items-center">Glossário</a>
+                    <a href="economia.html" class="din-text-muted hover:din-text-main h-full flex items-center">Economia</a>
+                    <a href="sobre.html" class="din-text-muted hover:din-text-main h-full flex items-center">Sobre</a>
+                    <a href="contato.html" class="din-text-muted hover:din-text-main h-full flex items-center">Contato</a>
+                </nav>
+
+            </div>
+        </header>
+
+        <!-- 3. HERO SECTION: Provocação Intelectual + Pulso Fiscal em Tempo Real -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-10 pb-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                
+                <!-- Esquerda: Manifesto e Propósito (7 colunas) -->
+                <div class="lg:col-span-7 space-y-5">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full din-icon-box text-xs font-bold">
+                        <span>Transparência Pública, Educação Econômica & Inteligência de Mercado</span>
+                    </div>
+
+                    <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight din-text-main leading-[1.12]">
+                        Para onde vai a riqueza que o Brasil produz <span class="din-green">todos os segundos?</span>
+                    </h1>
+
+                    <p class="text-sm sm:text-base din-text-muted leading-relaxed max-w-2xl">
+                        Muitos falam em trilhões de reais, Taxa Selic, PIB e carga tributária, mas poucos conseguem enxergar o que esses números significam na vida real. O <strong>BrasilEmDados</strong> transforma bases complexas do IBGE e do Banco Central em ferramentas visuais, didáticas e auditáveis — feitas para quem estuda, investe ou quer cobrar resultados do poder público.
+                    </p>
+
+                    <div class="flex flex-wrap items-center gap-3 pt-2">
+                        <a href="economia.html" class="din-btn px-5 py-3 rounded-xl text-xs sm:text-sm font-bold inline-flex items-center gap-2 shadow-sm transition">
+                            <span>Acessar Ferramentas e Módulos</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
+                        </a>
+                        <a href="#simuladorImpactoPessoal" class="din-card-bg hover:din-secondary-bg border din-border din-text-main px-5 py-3 rounded-xl text-xs sm:text-sm font-bold inline-flex items-center gap-2 transition">
+                            <span>Testar Meu Impacto no PIB ↓</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Direita: Pulso Tributário e Produtivo Ao Vivo (5 colunas) -->
+                <div class="lg:col-span-5">
+                    <div class="din-card-bg border din-border rounded-2xl p-6 shadow-sm space-y-5 relative overflow-hidden">
+                        
+                        <div class="flex items-center justify-between border-b din-border pb-3.5">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-9 h-9 rounded-xl din-red-box flex items-center justify-center">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h2 class="text-sm font-bold din-text-main">Pulso Fiscal em Tempo Real</h2>
+                                    <p class="text-[11px] din-text-muted">Estimativa contínua da arrecadação no ano corrente</p>
+                                </div>
+                            </div>
+                            <span class="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase px-2.5 py-1 rounded-full din-red-box">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#EA3943] live-dot"></span> AO VIVO
+                            </span>
+                        </div>
+
+                        <!-- Contador Dinâmico de Impostos -->
+                        <div class="din-secondary-bg border din-border rounded-xl p-4">
+                            <span class="text-[11px] font-semibold uppercase tracking-wider din-text-muted block">Tributos Arrecadados no Brasil (Acumulado no Ano)</span>
+                            <p id="contadorImpostoAoVivo" class="text-xl sm:text-2xl font-mono font-extrabold din-red mt-1 tracking-tight">
+                                R$ 0.000.000.000,00
+                            </p>
+                            <div class="flex items-center justify-between text-[11px] din-text-muted mt-2 pt-2 border-t din-border">
+                                <span>Ritmo médio: <strong class="din-text-main">~R$ 95.400 / segundo</strong></span>
+                                <span id="impostoDesdeQueAbriu" class="din-green font-mono font-bold">+R$ 0 nesta visita</span>
+                            </div>
+                        </div>
+
+                        <!-- Mini Comparativo Didático -->
+                        <div class="grid grid-cols-2 gap-3 text-xs">
+                            <div class="din-secondary-bg border din-border rounded-xl p-3">
+                                <span class="din-text-muted block text-[11px]">Custo Médio por Cidadão</span>
+                                <span id="pulsoPorHabitante" class="text-sm font-extrabold din-text-main mt-0.5 block">R$ 13.940 / ano</span>
+                                <span class="text-[10px] din-text-muted">Impostos diretos + indiretos</span>
+                            </div>
+                            <div class="din-secondary-bg border din-border rounded-xl p-3">
+                                <span class="din-text-muted block text-[11px]">Retorno Social (IDH Brasil)</span>
+                                <span class="text-sm font-extrabold din-green mt-0.5 block">0,760 (Alto)</span>
+                                <span class="text-[10px] din-text-muted">87ª posição global (PNUD)</span>
+                            </div>
+                        </div>
+
+                        <div class="pt-1 flex items-center justify-between text-xs">
+                            <span class="din-text-muted">Onde esse dinheiro é arrecadado?</span>
+                            <a href="terminal-pib.html" class="din-green font-bold inline-flex items-center gap-1 hover:opacity-80 transition">
+                                <span>Ver Mapa Estadual</span>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                </svg>
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 4. INTERATIVO EXCLUSIVO: "Você na Economia Brasileira" (Calculadora Didática) -->
+        <section id="simuladorImpactoPessoal" class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+            <div class="din-card-bg border din-border rounded-2xl p-6 sm:p-8 shadow-sm">
+                
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b din-border pb-5 mb-6">
+                    <div>
+                        <span class="text-[11px] font-bold uppercase tracking-wider din-green">Simulador Interativo & Didático</span>
+                        <h2 class="text-xl sm:text-2xl font-extrabold din-text-main mt-0.5">
+                            Descubra sua posição na economia do seu Estado
+                        </h2>
+                        <p class="text-xs sm:text-sm din-text-muted mt-1">
+                            Compare sua renda com a produtividade média (PIB per capita) da sua Unidade Federativa e veja sua contribuição tributária estimada.
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs din-text-muted font-mono din-secondary-bg px-3 py-1.5 rounded-lg border din-border shrink-0">
+                        <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
+                        Conectado ao banco PostgreSQL
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                    
+                    <!-- Entradas do Usuário (5 colunas) -->
+                    <div class="lg:col-span-5 space-y-4">
+                        <div>
+                            <label class="text-xs font-bold din-text-main block mb-1.5">1. Qual é o seu Estado (UF)?</label>
+                            <select id="simUfUsuario" onchange="calcularImpactoUsuario()" class="w-full din-secondary-bg border din-border rounded-xl px-3.5 py-2.5 text-sm font-bold din-text-main focus:outline-none cursor-pointer">
+                                <!-- Populado via JS -->
+                            </select>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between items-center mb-1.5">
+                                <label class="text-xs font-bold din-text-main">2. Renda Mensal Bruta (ou Familiar):</label>
+                                <span id="lblRendaSimulada" class="text-sm font-extrabold din-green">R$ 3.500 / mês</span>
+                            </div>
+                            <input id="sliderRendaUsuario" type="range" min="1412" max="30000" step="100" value="3500" oninput="calcularImpactoUsuario()"
+                                class="w-full accent-[#16C784] cursor-pointer">
+                            <div class="flex justify-between text-[10px] din-text-muted mt-1">
+                                <span>1 Salário Mínimo (R$ 1.412)</span>
+                                <span>R$ 15.000</span>
+                                <span>R$ 30.000+</span>
+                            </div>
+                        </div>
+
+                        <div class="din-secondary-bg border din-border rounded-xl p-3.5 text-xs space-y-1">
+                            <span class="text-[10px] font-bold uppercase din-text-muted block">Vocação Econômica de <span class="nomeUfSim">São Paulo</span>:</span>
+                            <p id="vocacaoUfSim" class="font-semibold din-text-main">Polo Financeiro, Serviços e Tecnologia</p>
+                        </div>
+                    </div>
+
+                    <!-- Resultados Instantâneos e Didáticos (7 colunas) -->
+                    <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        
+                        <!-- Resultado 1: Renda Anual vs PIB per Capita -->
+                        <div class="din-secondary-bg border din-border rounded-xl p-4 flex flex-col justify-between">
+                            <div>
+                                <span class="text-[11px] font-semibold din-text-muted block">PIB per Capita (<span class="siglaUfSim">SP</span>)</span>
+                                <p id="resPibPerCapitaUf" class="text-lg font-extrabold din-text-main mt-1">R$ -- / ano</p>
+                            </div>
+                            <div class="mt-4 pt-3 border-t din-border">
+                                <span class="text-[11px] din-text-muted block">Sua renda anual acumulada:</span>
+                                <span id="resRendaAnualUsuario" class="text-xs font-bold din-green">R$ 42.000 / ano</span>
+                                <p id="resComparacaoPerCapita" class="text-[11px] din-text-muted mt-1 leading-snug">
+                                    Equivale a --% da riqueza gerada por habitante no estado.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Resultado 2: Imposto Pago no Ano -->
+                        <div class="din-secondary-bg border din-border rounded-xl p-4 flex flex-col justify-between">
+                            <div>
+                                <span class="text-[11px] font-semibold din-text-muted block">Tributos Pagos por Você</span>
+                                <p id="resImpostoAnualUsuario" class="text-lg font-extrabold din-red mt-1">R$ 14.280 / ano</p>
+                            </div>
+                            <div class="mt-4 pt-3 border-t din-border">
+                                <span class="text-[11px] din-text-muted block">Consumo + Renda (~34%):</span>
+                                <span id="resImpostoMensalUsuario" class="text-xs font-bold din-text-main">~R$ 1.190 por mês</span>
+                                <p class="text-[11px] din-text-muted mt-1 leading-snug">
+                                    Embutidos em alimentos, energia, combustível e descontos.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Resultado 3: Dias Trabalhados para o Estado -->
+                        <div class="din-secondary-bg border din-border rounded-xl p-4 flex flex-col justify-between">
+                            <div>
+                                <span class="text-[11px] font-semibold din-text-muted block">Esforço Fiscal no Calendário</span>
+                                <p class="text-lg font-extrabold din-green mt-1">151 Dias / ano</p>
+                            </div>
+                            <div class="mt-4 pt-3 border-t din-border">
+                                <span class="text-[11px] din-text-muted block">Dia da Liberdade de Impostos:</span>
+                                <span class="text-xs font-bold din-text-main">Final de Maio</span>
+                                <p class="text-[11px] din-text-muted mt-1 leading-snug">
+                                    De 1º de janeiro até o fim de maio, tudo o que você ganha vai para tributos.
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. GUIA POR PERFIL: Cidadão, Estudante ou Profissional de Mercado -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4">
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-extrabold tracking-tight din-text-main">
+                        Por onde começar sua análise?
+                    </h2>
+                    <p class="text-xs sm:text-sm din-text-muted mt-1">
+                        Escolha seu perfil abaixo para ver como extrair o máximo do terminal BrasilEmDados.
+                    </p>
+                </div>
+
+                <!-- Botões de Troca de Perfil -->
+                <div class="inline-flex din-secondary-bg p-1 rounded-xl border din-border text-xs font-bold self-start">
+                    <button id="tabCidadao" onclick="trocarPerfil('cidadao')" class="px-3.5 py-2 rounded-lg din-card-bg din-text-main shadow-sm border din-border transition">
+                        👤 Cidadão & Curioso
+                    </button>
+                    <button id="tabEstudante" onclick="trocarPerfil('estudante')" class="px-3.5 py-2 rounded-lg din-text-muted hover:din-text-main transition">
+                        🎓 Estudante & Pesquisa
+                    </button>
+                    <button id="tabMercado" onclick="trocarPerfil('mercado')" class="px-3.5 py-2 rounded-lg din-text-muted hover:din-text-main transition">
+                        📈 Mercado & Analista
+                    </button>
+                </div>
+            </div>
+
+            <!-- Painel Dinâmico do Perfil Selecionado -->
+            <div class="din-card-bg border din-border rounded-2xl p-6 shadow-sm">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                    <div class="lg:col-span-8 space-y-3">
+                        <span id="perfilBadge" class="text-[11px] font-bold uppercase px-2.5 py-1 rounded din-icon-box inline-block">
+                            Trilha Recomendada • Cidadania Fiscal
+                        </span>
+                        <h3 id="perfilTitulo" class="text-lg sm:text-xl font-extrabold din-text-main">
+                            Entenda como os impostos, a inflação e o câmbio afetam o seu bolso no dia a dia.
+                        </h3>
+                        <p id="perfilDescricao" class="text-xs sm:text-sm din-text-muted leading-relaxed">
+                            Você não precisa ser economista para compreender o Brasil. Comece consultando o nosso <strong>Glossário Descomplicado</strong> para dominar termos como Selic, IPCA e PIB per capita, ou compare se os impostos pagos pelo seu estado estão realmente voltando em qualidade de vida (IDH).
+                        </p>
+                        <div id="perfilDestaques" class="flex flex-wrap gap-2 pt-1 text-xs">
+                            <span class="din-secondary-bg border din-border px-3 py-1 rounded-lg din-text-main font-medium">✓ Linguagem clara e sem "economês"</span>
+                            <span class="din-secondary-bg border din-border px-3 py-1 rounded-lg din-text-main font-medium">✓ Comparação de poder de compra</span>
+                            <span class="din-secondary-bg border din-border px-3 py-1 rounded-lg din-text-main font-medium">✓ Retorno de impostos em IDH</span>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-4 din-secondary-bg border din-border rounded-xl p-5 flex flex-col justify-between space-y-4">
+                        <div>
+                            <span class="text-[10px] font-bold uppercase tracking-wider din-text-muted block">Acesso Direto Recomendado</span>
+                            <p id="perfilModuloNome" class="text-base font-bold din-text-main mt-1">Impostos, População & IDH + Glossário</p>
+                            <p id="perfilModuloSub" class="text-xs din-text-muted mt-1">Veja o mapa da qualidade de vida vs. tributos no Brasil.</p>
+                        </div>
+                        <a id="perfilBotaoLink" href="economia.html" class="din-btn w-full py-2.5 px-4 rounded-xl text-xs font-bold inline-flex items-center justify-center gap-2 transition">
+                            <span id="perfilBotaoTexto">Iniciar por esta trilha</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. RETRATO DAS DISPARIDADES BRASILEIRAS (4 KPIs Reais do Banco) -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-sm font-bold uppercase tracking-wider din-text-muted">Fatos & Contrastes da Base Oficial (IBGE)</h2>
+                <a href="terminal-pib.html" class="din-green text-xs font-bold hover:opacity-80 transition">Ver tabela completa das 27 UFs →</a>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                
+                <div class="din-card-bg border din-border rounded-2xl p-5 shadow-sm">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-semibold din-text-muted">PIB Nacional Consolidado</span>
+                        <span class="w-7 h-7 rounded-lg din-icon-box flex items-center justify-center text-xs font-bold">$</span>
+                    </div>
+                    <p id="homeKpiPib" class="text-2xl font-extrabold din-green">R$ 9,01 tri</p>
+                    <span class="text-[11px] din-text-muted mt-1 block">Soma de todos os bens e serviços</span>
+                </div>
+
+                <div class="din-card-bg border din-border rounded-2xl p-5 shadow-sm">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-semibold din-text-muted">Concentração no Top 5</span>
+                        <span class="w-7 h-7 rounded-lg din-icon-box flex items-center justify-center text-xs font-bold">%</span>
+                    </div>
+                    <p id="homeKpiTop5" class="text-2xl font-extrabold din-text-main">--%</p>
+                    <span class="text-[11px] din-text-muted mt-1 block">5 estados geram mais da metade do PIB</span>
+                </div>
+
+                <div class="din-card-bg border din-border rounded-2xl p-5 shadow-sm">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-semibold din-text-muted">Maior Produtividade Média</span>
+                        <span class="w-7 h-7 rounded-lg din-icon-box flex items-center justify-center text-xs font-bold">1º</span>
+                    </div>
+                    <p id="homeKpiLiderPerCapita" class="text-lg font-extrabold din-text-main truncate">Distrito Federal (DF)</p>
+                    <span id="homeKpiValPerCapita" class="text-[11px] din-green font-bold mt-1 block">Carregando PIB per capita...</span>
+                </div>
+
+                <div class="din-card-bg border din-border rounded-2xl p-5 shadow-sm">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-semibold din-text-muted">Hiato Regional (Extremos)</span>
+                        <span class="w-7 h-7 rounded-lg din-icon-box flex items-center justify-center text-xs font-bold">⚖</span>
+                    </div>
+                    <p id="homeKpiDisparidade" class="text-2xl font-extrabold din-green">--x maior</p>
+                    <span class="text-[11px] din-text-muted mt-1 block">Diferença entre o maior e menor per capita</span>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 7. VITRINE DOS 4 MÓDULOS DA PLATAFORMA (Padrão Visual com Quadradinhos Verdes) -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <h2 class="text-xl font-extrabold din-text-main">Ecossistema de Ferramentas</h2>
+                    <p class="text-xs din-text-muted mt-0.5">Acesse diretamente qualquer um dos 04 módulos especializados da aba Economia.</p>
+                </div>
+                <span class="text-xs din-text-muted hidden sm:inline">04 módulos disponíveis</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                
+                <!-- Card 01 -->
+                <div onclick="window.location.href='terminal-pib.html'" class="din-card-bg border din-border rounded-2xl p-5 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                </svg>
+                            </div>
+                            <span class="text-[11px] font-medium din-text-muted">01 / 04</span>
+                        </div>
+                        <h3 class="text-sm font-bold din-text-main">PIB & Vocação Setorial</h3>
+                        <p class="text-xs din-text-muted leading-relaxed">
+                            Mapa de calor estadual, decomposição entre Agro, Indústria e Serviços, comparador direto e Consultor IA.
+                        </p>
+                    </div>
+                    <div class="pt-4 mt-4 border-t din-border flex items-center justify-between">
+                        <span class="text-[11px] din-text-muted">SIDRA 5938</span>
+                        <span class="din-green text-xs font-bold">Explorar →</span>
+                    </div>
+                </div>
+
+                <!-- Card 02 -->
+                <div onclick="window.location.href='imposto-idh.html'" class="din-card-bg border din-border rounded-2xl p-5 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 2v4m0 12v4M2 12h4m12 0h4"></path>
+                                </svg>
+                            </div>
+                            <span class="text-[11px] font-medium din-text-muted">02 / 04</span>
+                        </div>
+                        <h3 class="text-sm font-bold din-text-main">Impostos, População & IDH</h3>
+                        <p class="text-xs din-text-muted leading-relaxed">
+                            Análise cruzada entre arrecadação tributária estadual, densidade demográfica e retorno em qualidade de vida.
+                        </p>
+                    </div>
+                    <div class="pt-4 mt-4 border-t din-border flex items-center justify-between">
+                        <span class="text-[11px] din-text-muted">Sociofiscal</span>
+                        <span class="din-green text-xs font-bold">Acessar →</span>
+                    </div>
+                </div>
+
+                <!-- Card 03 -->
+                <div onclick="window.location.href='cambio.html'" class="din-card-bg border din-border rounded-2xl p-5 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                                </svg>
+                            </div>
+                            <span class="text-[11px] font-medium din-text-muted">03 / 04</span>
+                        </div>
+                        <h3 class="text-sm font-bold din-text-main">Conversor de Moedas</h3>
+                        <p class="text-xs din-text-muted leading-relaxed">
+                            Cotações cambiais e conversão instantânea do Real e dos indicadores estaduais para Dólar, Euro e Libra.
+                        </p>
+                    </div>
+                    <div class="pt-4 mt-4 border-t din-border flex items-center justify-between">
+                        <span class="text-[11px] din-text-muted">Câmbio PTAX</span>
+                        <span class="din-green text-xs font-bold">Converter →</span>
+                    </div>
+                </div>
+
+                <!-- Card 04 -->
+                <div onclick="window.location.href='simulador-selic.html'" class="din-card-bg border din-border rounded-2xl p-5 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <span class="text-[11px] font-medium din-text-muted">04 / 04</span>
+                        </div>
+                        <h3 class="text-sm font-bold din-text-main">Simulador Selic & Juros</h3>
+                        <p class="text-xs din-text-muted leading-relaxed">
+                            Simule rendimentos em renda fixa, juros compostos e o impacto da inflação (IPCA) e da Selic no longo prazo.
+                        </p>
+                    </div>
+                    <div class="pt-4 mt-4 border-t din-border flex items-center justify-between">
+                        <span class="text-[11px] din-text-muted">Política Monetária</span>
+                        <span class="din-green text-xs font-bold">Simular →</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Rodapé Institucional Limpo -->
+    <footer class="border-t din-border din-card-bg py-6 text-xs din-text-muted">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <span class="font-bold din-text-main">BrasilEmDados</span>
+                <span>•</span>
+                <span>Terminal de Inteligência Econômica e Setorial</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="economia.html" class="hover:din-text-main transition">Economia</a>
+                <a href="glossario.html" class="hover:din-text-main transition">Glossário</a>
+                <a href="sobre.html" class="hover:din-text-main transition">Sobre</a>
+                <a href="contato.html" class="hover:din-text-main transition">Contato</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const NOMES_UFS = {
+            AC: "Acre", AL: "Alagoas", AP: "Amapá", AM: "Amazonas", BA: "Bahia", CE: "Ceará",
+            DF: "Distrito Federal", ES: "Espírito Santo", GO: "Goiás", MA: "Maranhão", MT: "Mato Grosso",
+            MS: "Mato Grosso do Sul", MG: "Minas Gerais", PA: "Pará", PB: "Paraíba", PR: "Paraná",
+            PE: "Pernambuco", PI: "Piauí", RJ: "Rio de Janeiro", RN: "Rio Grande do Norte",
+            RS: "Rio Grande do Sul", RO: "Rondônia", RR: "Roraima", SC: "Santa Catarina",
+            SP: "São Paulo", SE: "Sergipe", TO: "Tocantins"
+        };
+
+        const VOCACAO_RESUMO = {
+            SP: "Polo Financeiro, Serviços Avançados e Indústria de Alta Tecnologia",
+            RJ: "Extração de Petróleo e Gás, Energia, Turismo e Serviços",
+            MG: "Mineração, Siderurgia, Metalurgia e Potência Agroindustrial",
+            RS: "Complexo Agroindustrial, Grãos, Máquinas e Metalmecânica",
+            PR: "Agroindústria Cooperativista, Energia, Papel e Logística",
+            SC: "Manufatura Diversificada, Polo Tecnológico, Têxtil e Portos",
+            BA: "Polo Petroquímico, Energias Renováveis, Turismo e Agronegócio",
+            DF: "Centro Administrativo Federal, Setor Público e Serviços de Alta Renda",
+            GO: "Complexo Agroindustrial, Polo Farmoquímico e Automotivo",
+            MT: "Líder Nacional em Commodities Agrícolas (Soja, Milho, Algodão e Pecuária)",
+            MS: "Bioenergia, Celulose e Complexo Agropecuário Exportador",
+            PA: "Complexo Mineral Exportador (Ferro, Bauxita, Cobre) e Bioeconomia"
+        };
+
+        const PERFIS_CONTEUDO = {
+            cidadao: {
+                badge: "Trilha Recomendada • Cidadania Fiscal",
+                titulo: "Entenda como os impostos, a inflação e o câmbio afetam o seu bolso no dia a dia.",
+                descricao: "Você não precisa ser economista para compreender o Brasil. Comece consultando o nosso Glossário Descomplicado para dominar termos como Selic, IPCA e PIB per capita, ou compare se os impostos pagos pelo seu estado estão realmente voltando em qualidade de vida (IDH).",
+                destaques: ["✓ Linguagem clara e sem 'economês'", "✓ Calculadora de impostos no salário", "✓ Retorno de impostos em IDH"],
+                moduloNome: "Impostos, População & IDH + Glossário",
+                moduloSub: "Veja o mapa da qualidade de vida vs. tributos no Brasil.",
+                link: "glossario.html",
+                botaoTexto: "Começar pelo Glossário Didático"
+            },
+            estudante: {
+                badge: "Trilha Recomendada • Pesquisa & Universidade",
+                titulo: "Dados estruturados do IBGE para trabalhos acadêmicos, TCCs e estudos de economia regional.",
+                descricao: "Explore a formação histórica e produtiva das 27 Unidades Federativas. Compare a participação da Agropecuária, Indústria, Serviços e Administração Pública, ordene rankings estaduais e exporte relatórios em PDF prontos para embasar suas pesquisas.",
+                destaques: ["✓ Séries oficiais SIDRA / IBGE", "✓ Decomposição do Valor Adicionado", "✓ Exportação de Dossiê em PDF"],
+                moduloNome: "Contas Regionais, PIB & Vocação Setorial",
+                moduloSub: "Inspecione o mapa do Brasil e compare estados lado a lado.",
+                link: "terminal-pib.html",
+                botaoTexto: "Abrir Terminal de Pesquisa PIB"
+            },
+            mercado: {
+                badge: "Trilha Recomendada • Inteligência de Mercado & Finanças",
+                titulo: "Inspeção rápida de mercado consumidor, paridade cambial, juros reais e projeções com IA.",
+                descricao: "Avalie onde está concentrada a renda per capita nacional para expansão de negócios, converta indicadores regionais para Dólar/Euro e utilize o Simulador de Cenários ('E se...?') aliado ao Consultor IA conectado ao PostgreSQL para gerar pareceres executivos imediatos.",
+                destaques: ["✓ Simulador de projeção de PIB e Selic", "✓ Pareceres com Consultor IA", "✓ Endpoint JSON aberto (/api/indicadores)"],
+                moduloNome: "Hub Completo de Economia & Simuladores",
+                moduloSub: "Acesse os 04 módulos analíticos e financeiros do terminal.",
+                link: "economia.html",
+                botaoTexto: "Acessar Hub de Mercado"
+            }
+        };
+
+        let mapaUfHome = {};
+        let pibBrasilMil = 0;
+        let timestampAbertura = Date.now();
+
+        // --- Menu Dropdown e Tema Light/Dark ---
+        function toggleDropdownMenu() {
+            const menu = document.getElementById('dropdownMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        window.addEventListener('click', function(e) {
+            const btn = document.getElementById('menuDropdownBtn');
+            const menu = document.getElementById('dropdownMenu');
+            if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+
+        function alternarDarkLight() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const novoTema = isDark ? 'light' : 'dark';
+            aplicarTema(novoTema);
+            localStorage.setItem('brasil_em_dados_tema', novoTema);
+        }
+
+        function aplicarTema(tema) {
+            const html = document.documentElement;
+            const switchBg = document.getElementById('switchBg');
+            const switchBall = document.getElementById('switchBall');
+
+            if (tema === 'dark') {
+                html.setAttribute('data-theme', 'dark');
+                if (switchBg && switchBall) {
+                    switchBg.style.backgroundColor = '#16C784';
+                    switchBall.classList.add('translate-x-5');
+                }
+            } else {
+                html.removeAttribute('data-theme');
+                if (switchBg && switchBall) {
+                    switchBg.style.backgroundColor = '#E5E7EB';
+                    switchBall.classList.remove('translate-x-5');
+                }
+            }
+        }
+
+        // --- Contador do Impostômetro em Tempo Real ---
+        function iniciarImpostometroAoVivo() {
+            const metaAnualTributos = 3010000000000; // ~R$ 3,01 trilhões/ano
+            const porSegundo = metaAnualTributos / (365 * 24 * 3600); // ~R$ 95.446/seg
+
+            setInterval(() => {
+                const agora = new Date();
+                const inicioAno = new Date(agora.getFullYear(), 0, 1);
+                const segundosNoAno = (agora - inicioAno) / 1000;
+                const acumuladoAno = segundosNoAno * porSegundo;
+
+                const segundosVisita = (Date.now() - timestampAbertura) / 1000;
+                const acumuladoVisita = segundosVisita * porSegundo;
+
+                document.getElementById('contadorImpostoAoVivo').innerText =
+                    'R$ ' + acumuladoAno.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+                document.getElementById('impostoDesdeQueAbriu').innerText =
+                    '+R$ ' + acumuladoVisita.toLocaleString('pt-BR', { maximumFractionDigits: 0 }) + ' nesta visita';
+            }, 120);
+        }
+
+        // --- Seletor de Perfil (Cidadão / Estudante / Mercado) ---
+        function trocarPerfil(chave) {
+            const p = PERFIS_CONTEUDO[chave];
+            if (!p) return;
+
+            const botoes = {
+                cidadao: document.getElementById('tabCidadao'),
+                estudante: document.getElementById('tabEstudante'),
+                mercado: document.getElementById('tabMercado')
+            };
+
+            Object.keys(botoes).forEach(k => {
+                if (k === chave) {
+                    botoes[k].className = 'px-3.5 py-2 rounded-lg din-card-bg din-text-main shadow-sm border din-border transition';
+                } else {
+                    botoes[k].className = 'px-3.5 py-2 rounded-lg din-text-muted hover:din-text-main transition';
+                }
+            });
+
+            document.getElementById('perfilBadge').innerText = p.badge;
+            document.getElementById('perfilTitulo').innerText = p.titulo;
+            document.getElementById('perfilDescricao').innerText = p.descricao;
+            document.getElementById('perfilDestaques').innerHTML = p.destaques.map(item =>
+                `<span class="din-secondary-bg border din-border px-3 py-1 rounded-lg din-text-main font-medium">${item}</span>`
+            ).join('');
+            document.getElementById('perfilModuloNome').innerText = p.moduloNome;
+            document.getElementById('perfilModuloSub').innerText = p.moduloSub;
+            document.getElementById('perfilBotaoLink').href = p.link;
+            document.getElementById('perfilBotaoTexto').innerText = p.botaoTexto;
+        }
+
+        function formatarMoedaCompacta(valorReais) {
+            if (!valorReais || valorReais <= 0) return 'R$ 0,00';
+            if (valorReais >= 1e12) return 'R$ ' + (valorReais / 1e12).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' tri';
+            if (valorReais >= 1e9)  return 'R$ ' + (valorReais / 1e9).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' bi';
+            if (valorReais >= 1e6)  return 'R$ ' + (valorReais / 1e6).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' mi';
+            return 'R$ ' + valorReais.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function popularSeletorSimulador() {
+            const sel = document.getElementById('simUfUsuario');
+            sel.innerHTML = '';
+            Object.keys(NOMES_UFS).forEach(sigla => {
+                sel.innerHTML += `<option value="${sigla}" ${sigla === 'SP' ? 'selected' : ''} class="din-card-bg din-text-main">${NOMES_UFS[sigla]} (${sigla})</option>`;
+            });
+        }
+
+        // --- Carrega Dados Reais do PostgreSQL (/api/indicadores) ---
+        async function carregarDadosBancoHome() {
+            try {
+                const resp = await fetch('/api/indicadores');
+                const indicadores = await resp.json();
+                if (!indicadores || indicadores.length === 0) return;
+
+                const anosDisponiveis = [...new Set(indicadores.map(i => Number(i.anoReferencia)).filter(a => a > 0))];
+                const anoMaisRecente = anosDisponiveis.length > 0 ? Math.max(...anosDisponiveis) : 2021;
+
+                document.querySelectorAll('.lblAnoTicker').forEach(el => el.innerText = anoMaisRecente);
+
+                let popTotal = 0;
+                pibBrasilMil = 0;
+                mapaUfHome = {};
+
+                Object.keys(NOMES_UFS).forEach(uf => {
+                    mapaUfHome[uf] = { sigla: uf, nome: NOMES_UFS[uf], pibMil: 0, pop: 0, perCapita: 0, share: 0 };
+                });
+
+                indicadores.filter(i => Number(i.anoReferencia) === anoMaisRecente).forEach(ind => {
+                    if (!ind.estado || !ind.estado.sigla) return;
+                    const uf = ind.estado.sigla.toUpperCase();
+                    if (!mapaUfHome[uf]) return;
+
+                    const nomeInd = (ind.nome || '').toLowerCase();
+                    const val = Number(ind.valor) || 0;
+
+                    if (nomeInd === 'pib estadual') {
+                        mapaUfHome[uf].pibMil = val;
+                        pibBrasilMil += val;
+                    } else if (nomeInd.includes('popula')) {
+                        mapaUfHome[uf].pop = val;
+                        popTotal += val;
+                    } else if (nomeInd.includes('per capita')) {
+                        mapaUfHome[uf].perCapita = val;
+                    }
+                });
+
+                Object.values(mapaUfHome).forEach(d => {
+                    d.share = pibBrasilMil > 0 ? (d.pibMil / pibBrasilMil) * 100 : 0;
+                });
+
+                const pibReais = pibBrasilMil * 1000;
+                document.getElementById('tickerPib').innerText = formatarMoedaCompacta(pibReais);
+                document.getElementById('homeKpiPib').innerText = formatarMoedaCompacta(pibReais);
+
+                if (popTotal > 0) {
+                    document.getElementById('tickerPop').innerText = (popTotal / 1e6).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' milhões';
+                    const impostoPorHab = (pibReais * 0.33) / popTotal;
+                    document.getElementById('pulsoPorHabitante').innerText = 'R$ ' + impostoPorHab.toLocaleString('pt-BR', { maximumFractionDigits: 0 }) + ' / ano';
+                }
+
+                const ordenadosPib = Object.values(mapaUfHome).filter(d => d.pibMil > 0).sort((a, b) => b.pibMil - a.pibMil);
+                if (ordenadosPib.length > 0) {
+                    const somaTop5 = ordenadosPib.slice(0, 5).reduce((acc, cur) => acc + cur.share, 0);
+                    document.getElementById('homeKpiTop5').innerText = `${somaTop5.toFixed(1)}%`;
+                }
+
+                const ordenadosPerCapita = Object.values(mapaUfHome).filter(d => d.perCapita > 0).sort((a, b) => b.perCapita - a.perCapita);
+                if (ordenadosPerCapita.length > 0) {
+                    const maiorPc = ordenadosPerCapita[0];
+                    const menorPc = ordenadosPerCapita[ordenadosPerCapita.length - 1];
+                    document.getElementById('homeKpiLiderPerCapita').innerText = `${maiorPc.nome} (${maiorPc.sigla})`;
+                    document.getElementById('homeKpiValPerCapita').innerText = `R$ ${maiorPc.perCapita.toLocaleString('pt-BR', { maximumFractionDigits: 0 })} / hab.`;
+
+                    if (menorPc.perCapita > 0) {
+                        const razao = maiorPc.perCapita / menorPc.perCapita;
+                        document.getElementById('homeKpiDisparidade').innerText = `${razao.toFixed(1)}x maior`;
+                    }
+                }
+
+                calcularImpactoUsuario();
+            } catch (e) {
+                console.error('Aviso ao carregar resumo inicial:', e);
+                calcularImpactoUsuario();
+            }
+        }
+
+        // --- Calculadora "Você na Economia Brasileira" ---
+        function calcularImpactoUsuario() {
+            const uf = document.getElementById('simUfUsuario').value || 'SP';
+            const rendaMensal = Number(document.getElementById('sliderRendaUsuario').value || 3500);
+            const rendaAnual = rendaMensal * 12;
+
+            document.getElementById('lblRendaSimulada').innerText = `R$ ${rendaMensal.toLocaleString('pt-BR')} / mês`;
+            document.querySelectorAll('.siglaUfSim').forEach(el => el.innerText = uf);
+            document.querySelectorAll('.nomeUfSim').forEach(el => el.innerText = NOMES_UFS[uf] || uf);
+            document.getElementById('vocacaoUfSim').innerText = VOCACAO_RESUMO[uf] || 'Economia Diversificada (Serviços, Indústria e Agronegócio)';
+
+            document.getElementById('resRendaAnualUsuario').innerText = `R$ ${rendaAnual.toLocaleString('pt-BR')} / ano`;
+
+            // Cálculo estimado de impostos totais (consumo + renda ~ 34%)
+            const impostoAnual = rendaAnual * 0.34;
+            const impostoMensal = rendaMensal * 0.34;
+            document.getElementById('resImpostoAnualUsuario').innerText = `R$ ${impostoAnual.toLocaleString('pt-BR', { maximumFractionDigits: 0 })} / ano`;
+            document.getElementById('resImpostoMensalUsuario').innerText = `~R$ ${impostoMensal.toLocaleString('pt-BR', { maximumFractionDigits: 0 })} por mês`;
+
+            const d = mapaUfHome[uf];
+            const perCapitaUf = (d && d.perCapita > 0) ? d.perCapita : 42000; // Fallback caso o banco ainda não esteja sincronizado
+
+            document.getElementById('resPibPerCapitaUf').innerText = `R$ ${perCapitaUf.toLocaleString('pt-BR', { maximumFractionDigits: 0 })} / ano`;
+
+            const proporcao = (rendaAnual / perCapitaUf) * 100;
+            document.getElementById('resComparacaoPerCapita').innerText =
+                `Sua renda anual equivale a ${proporcao.toFixed(0)}% do PIB per capita gerado em ${uf}.`;
+        }
+
+        window.onload = () => {
+            const temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light';
+            aplicarTema(temaSalvo === 'dark' ? 'dark' : 'light');
+            popularSeletorSimulador();
+            iniciarImpostometroAoVivo();
+            carregarDadosBancoHome();
+        };
+    </script>
+</body>
+</html>

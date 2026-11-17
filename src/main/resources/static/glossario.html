@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrasilEmDados — Glossário Econômico & Metodológico</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            /* Light — Paleta Claro (Padrão) */
+            --bg-main: #FFFFFF;
+            --card-bg: #F7F8FA;
+            --bg-secondary: #F0F2F5;
+            --text-main: #17191C;
+            --text-muted: #737780;
+            --border-col: #E5E7EB;
+            --accent-green: #16C784;
+            --accent-red: #EA3943;
+            --icon-box-bg: rgba(22, 199, 132, 0.12);
+        }
+
+        [data-theme="dark"] {
+            /* Dark — Paleta Escuro */
+            --bg-main: #101214;
+            --card-bg: #191C20;
+            --bg-secondary: #22262B;
+            --text-main: #F5F6F7;
+            --text-muted: #9299A3;
+            --border-col: #2B3036;
+            --accent-green: #16C784;
+            --accent-red: #EA3943;
+            --icon-box-bg: rgba(22, 199, 132, 0.15);
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        /* Classes Utilitárias Dinâmicas */
+        .din-bg-main { background-color: var(--bg-main); }
+        .din-card-bg { background-color: var(--card-bg); }
+        .din-secondary-bg { background-color: var(--bg-secondary); }
+        .din-text-main { color: var(--text-main); }
+        .din-text-muted { color: var(--text-muted); }
+        .din-border { border-color: var(--border-col); }
+        .din-green { color: var(--accent-green); }
+        .din-red { color: var(--accent-red); }
+        
+        .din-icon-box {
+            background-color: var(--icon-box-bg);
+            color: var(--accent-green);
+        }
+
+        .din-btn {
+            background-color: var(--accent-green);
+            color: #FFFFFF;
+        }
+        .din-btn:hover { opacity: 0.9; }
+
+        .card-hover {
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-green);
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="min-h-screen font-sans flex flex-col justify-between">
+
+    <div>
+        <!-- Cabeçalho Institucional Padrão (Com a aba GLOSSÁRIO ativa) -->
+        <header class="sticky top-0 z-50 border-b din-border din-bg-main/95 backdrop-blur">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6">
+                
+                <div class="flex items-center justify-between h-16 gap-4">
+                    
+                    <!-- Esquerda: Logo Autoral + Badge -->
+                    <div class="flex items-center gap-3">
+                        <a href="index.html" class="flex items-center gap-3 group">
+                            <div class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center shadow-sm group-hover:border-[#16C784] transition-colors">
+                                <svg class="w-5 h-5 din-text-main" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M18 20V10"></path>
+                                    <path d="M12 20V4"></path>
+                                    <path d="M6 20v-6"></path>
+                                    <circle cx="12" cy="4" r="1" fill="#16C784" stroke="#16C784"></circle>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg font-extrabold tracking-tight din-text-main">BrasilEmDados</span>
+                                    <span class="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono uppercase px-2 py-0.5 rounded din-secondary-bg border din-border din-text-muted">
+                                        Dicionário Técnico
+                                    </span>
+                                </div>
+                                <p class="text-[11px] din-text-muted hidden xl:block">Inteligência Macroeconômica e Contas Regionais</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Centro: Abas de Navegação em Cápsula (Glossário Ativo) -->
+                    <nav class="hidden md:flex items-center gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+                        <a href="index.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
+                            Início
+                        </a>
+                        <a href="glossario.html" class="px-3.5 py-1.5 rounded-md din-card-bg din-text-main shadow-sm border din-border transition">
+                            Glossário
+                        </a>
+                        <a href="economia.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
+                            Economia
+                        </a>
+                        <a href="sobre.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
+                            Sobre
+                        </a>
+                        <a href="contato.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
+                            Contato
+                        </a>
+                    </nav>
+
+                    <!-- Direita: Atalho Rápido + Menu de Preferências -->
+                    <div class="flex items-center gap-2.5 relative">
+                        <a href="economia.html" class="hidden sm:inline-flex items-center gap-1.5 din-btn text-xs font-semibold px-3.5 py-2 rounded-lg transition shadow-sm">
+                            <span>Acessar Módulos</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                            </svg>
+                        </a>
+
+                        <!-- Botão de Ajustes e Ferramentas -->
+                        <button id="menuDropdownBtn" onclick="toggleDropdownMenu()" title="Preferências e Ferramentas" class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center hover:border-[#16C784] transition cursor-pointer">
+                            <svg class="w-4 h-4 din-text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="4" y1="21" x2="4" y2="14"></line>
+                                <line x1="4" y1="10" x2="4" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12" y2="3"></line>
+                                <line x1="20" y1="21" x2="20" y2="16"></line>
+                                <line x1="20" y1="12" x2="20" y2="3"></line>
+                                <line x1="1" y1="14" x2="7" y2="14"></line>
+                                <line x1="9" y1="8" x2="15" y2="8"></line>
+                                <line x1="17" y1="16" x2="23" y2="16"></line>
+                            </svg>
+                        </button>
+
+                        <!-- Menu Lateral Suspenso -->
+                        <div id="dropdownMenu" class="hidden absolute right-0 top-11 w-64 rounded-xl din-card-bg border din-border shadow-2xl py-1.5 z-50">
+                            <div class="px-4 py-1.5 border-b din-border">
+                                <p class="text-[10px] font-bold uppercase tracking-wider din-text-muted">Módulos de Economia</p>
+                            </div>
+
+                            <a href="terminal-pib.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
+                                01. Contas Regionais & PIB
+                            </a>
+                            <a href="imposto-idh.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
+                                02. Impostos, População & IDH
+                            </a>
+                            <a href="cambio.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
+                                03. Conversor de Moedas
+                            </a>
+                            <a href="simulador-selic.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
+                                04. Simulador Selic & Juros
+                            </a>
+
+                            <div class="my-1 border-t din-border"></div>
+
+                            <!-- Switch de Aparência (Dark Mode / Light Mode) -->
+                            <div class="flex items-center justify-between px-4 py-2.5 text-xs font-medium din-text-main cursor-pointer select-none" onclick="alternarDarkLight()">
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                                    </svg>
+                                    <span>Modo Escuro (Dark)</span>
+                                </div>
+                                <div id="switchBg" class="w-10 h-5 rounded-full relative transition-colors duration-200 p-0.5 flex items-center" style="background-color: var(--border-col);">
+                                    <div id="switchBall" class="w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-200"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Navegação Mobile -->
+                <nav class="flex md:hidden items-center gap-5 h-10 overflow-x-auto no-scrollbar text-xs font-semibold border-t din-border">
+                    <a href="index.html" class="din-text-muted hover:din-text-main h-full flex items-center">Início</a>
+                    <a href="glossario.html" class="din-green border-b-2 border-[#16C784] h-full flex items-center">Glossário</a>
+                    <a href="economia.html" class="din-text-muted hover:din-text-main h-full flex items-center">Economia</a>
+                    <a href="sobre.html" class="din-text-muted hover:din-text-main h-full flex items-center">Sobre</a>
+                    <a href="contato.html" class="din-text-muted hover:din-text-main h-full flex items-center">Contato</a>
+                </nav>
+
+            </div>
+        </header>
+
+        <!-- 1. Cabeçalho do Glossário + Barra de Pesquisa e Filtros -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-10 pb-6">
+            <div class="max-w-3xl space-y-3">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full din-icon-box text-xs font-bold">
+                    <span>Educação Econômica & Transparência Metodológica</span>
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight din-text-main">
+                    Glossário de Indicadores
+                </h1>
+                <p class="text-sm sm:text-base din-text-muted leading-relaxed">
+                    Consulte o significado técnico, a fórmula oficial de cálculo e o impacto prático de cada indicador utilizado nos painéis do <strong>BrasilEmDados</strong>.
+                </p>
+            </div>
+
+            <!-- Barra de Busca + Botões de Categoria -->
+            <div class="mt-8 din-card-bg border din-border rounded-2xl p-4 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+                
+                <!-- Campo de Busca -->
+                <div class="relative flex-1">
+                    <svg class="w-4 h-4 din-text-muted absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input id="inputBuscaGlossario" type="text" oninput="filtrarGlossario()"
+                        placeholder="Pesquisar termo, sigla ou conceito (ex: PIB, Selic, VAB, IDH, PTAX)..."
+                        class="w-full din-secondary-bg border din-border rounded-xl pl-10 pr-4 py-2 text-xs sm:text-sm din-text-main placeholder-gray-400 focus:outline-none focus:border-[#16C784] transition" />
+                </div>
+
+                <!-- Filtros por Eixo -->
+                <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs font-bold">
+                    <button onclick="selecionarCategoria('todos')" id="cat_todos" class="px-3.5 py-2 rounded-xl din-btn transition shrink-0">
+                        Todos (12)
+                    </button>
+                    <button onclick="selecionarCategoria('pib')" id="cat_pib" class="px-3.5 py-2 rounded-xl din-secondary-bg border din-border din-text-muted hover:din-text-main transition shrink-0">
+                        PIB & Setores
+                    </button>
+                    <button onclick="selecionarCategoria('fiscal')" id="cat_fiscal" class="px-3.5 py-2 rounded-xl din-secondary-bg border din-border din-text-muted hover:din-text-main transition shrink-0">
+                        Tributos & IDH
+                    </button>
+                    <button onclick="selecionarCategoria('monetario')" id="cat_monetario" class="px-3.5 py-2 rounded-xl din-secondary-bg border din-border din-text-muted hover:din-text-main transition shrink-0">
+                        Juros & Inflação
+                    </button>
+                    <button onclick="selecionarCategoria('cambio')" id="cat_cambio" class="px-3.5 py-2 rounded-xl din-secondary-bg border din-border din-text-muted hover:din-text-main transition shrink-0">
+                        Câmbio & Moeda
+                    </button>
+                </div>
+
+            </div>
+
+            <div class="flex items-center justify-between pt-6 pb-2">
+                <span id="contadorTermos" class="text-xs font-bold din-text-main">Exibindo 12 conceitos fundamentais</span>
+                <span class="text-xs din-text-muted">Fontes: IBGE • Banco Central • PNUD • Tesouro Nacional</span>
+            </div>
+        </section>
+
+        <!-- 2. Grade de Cards do Glossário (Renderizada via JS) -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 pb-10">
+            <div id="gridGlossario" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Preenchido dinamicamente pelo script -->
+            </div>
+        </main>
+
+        <!-- 3. Seção Didática: Fórmulas Essenciais do Terminal -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 pb-12">
+            <div class="din-card-bg border din-border rounded-2xl p-6 shadow-sm space-y-5">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b din-border pb-4">
+                    <div>
+                        <span class="text-[11px] font-bold uppercase tracking-wider din-green">Transparência Matemática</span>
+                        <h2 class="text-lg font-extrabold din-text-main mt-0.5">Como calculamos os indicadores derivados nos painéis</h2>
+                    </div>
+                    <span class="text-xs font-mono din-text-muted">Regras de Negócio Back-end & Front-end</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                    <div class="din-secondary-bg border din-border rounded-xl p-4 space-y-2">
+                        <span class="font-bold din-text-main block">1. PIB sob a Ótica da Oferta (IBGE)</span>
+                        <code class="block font-mono text-[11px] din-green bg-black/5 dark:bg-white/5 p-2 rounded">
+                            PIB = VAB (Agro + Ind + Serv) + Impostos Líquidos
+                        </code>
+                        <p class="din-text-muted leading-relaxed">
+                            Soma o Valor Adicionado Bruto de todos os setores econômicos do estado mais os impostos sobre produtos descontados os subsídios.
+                        </p>
+                    </div>
+
+                    <div class="din-secondary-bg border din-border rounded-xl p-4 space-y-2">
+                        <span class="font-bold din-text-main block">2. PIB per Capita Estadual</span>
+                        <code class="block font-mono text-[11px] din-green bg-black/5 dark:bg-white/5 p-2 rounded">
+                            Per Capita = (PIB_Mil × 1.000) ÷ População_UF
+                        </code>
+                        <p class="din-text-muted leading-relaxed">
+                            Como a Tabela 5938 do SIDRA fornece o PIB em unidades de Mil Reais, multiplicamos por 1.000 antes de dividir pela população da Tabela 6579.
+                        </p>
+                    </div>
+
+                    <div class="din-secondary-bg border din-border rounded-xl p-4 space-y-2">
+                        <span class="font-bold din-text-main block">3. Taxa de Juro Real (Equação de Fisher)</span>
+                        <code class="block font-mono text-[11px] din-green bg-black/5 dark:bg-white/5 p-2 rounded">
+                            Juro Real = [(1 + Selic) ÷ (1 + IPCA)] − 1
+                        </code>
+                        <p class="din-text-muted leading-relaxed">
+                            Não basta subtrair a inflação da Selic. Descontamos o efeito composto da inflação para descobrir o ganho real de poder de compra.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Rodapé Institucional Limpo -->
+    <footer class="border-t din-border din-card-bg py-6 text-xs din-text-muted">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <span class="font-bold din-text-main">BrasilEmDados</span>
+                <span>•</span>
+                <span>Terminal de Inteligência Econômica e Setorial</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="hover:din-text-main transition">Início</a>
+                <a href="economia.html" class="hover:din-text-main transition">Economia</a>
+                <a href="sobre.html" class="hover:din-text-main transition">Sobre</a>
+                <a href="contato.html" class="hover:din-text-main transition">Contato</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let categoriaAtual = 'todos';
+
+        const TERMOS_GLOSSARIO = [
+            {
+                id: "01",
+                categoria: "pib",
+                categoriaNome: "PIB & Setores",
+                titulo: "PIB (Produto Interno Bruto)",
+                sigla: "SIDRA 5938",
+                definicao: "Soma monetária de todos os bens e serviços finais produzidos dentro de um território (país, estado ou município) durante um período determinado.",
+                naPratica: "É o principal termômetro do tamanho de uma economia. Para evitar dupla contagem, o PIB considera apenas o bem final (o pão vendido na padaria, e não a farinha e o trigo separadamente).",
+                formula: "PIB = Consumo + Investimento + Gastos do Governo + (Exportações − Importações)",
+                linkModulo: "terminal-pib.html",
+                textoLink: "Ver no Terminal PIB"
+            },
+            {
+                id: "02",
+                categoria: "pib",
+                categoriaNome: "PIB & Setores",
+                titulo: "PIB per Capita (Renda Produtiva Média)",
+                sigla: "Cálculo Derivado",
+                definicao: "Indicador que divide toda a riqueza gerada em um estado pelo número total de habitantes residentes naquele mesmo ano.",
+                naPratica: "Mede a produtividade média por habitante. Um PIB per capita elevado (como no DF ou em estados exportadores de petróleo e grãos) mostra alta geração de valor por pessoa, embora não meça a desigualdade de renda.",
+                formula: "PIB per Capita = PIB Nominal em Reais ÷ População Residente",
+                linkModulo: "terminal-pib.html",
+                textoLink: "Comparar Estados"
+            },
+            {
+                id: "03",
+                categoria: "pib",
+                categoriaNome: "PIB & Setores",
+                titulo: "VAB (Valor Adicionado Bruto)",
+                sigla: "Contas Regionais",
+                definicao: "Valor que cada setor da economia (Agropecuária, Indústria, Serviços e Administração Pública) agrega aos insumos durante o processo produtivo, antes da cobrança de impostos.",
+                naPratica: "Permite descobrir a 'Vocação Econômica' real de cada estado — mostrando, por exemplo, a força do Agronegócio no Mato Grosso, da Indústria no Amazonas e dos Serviços em São Paulo.",
+                formula: "VAB = Valor Bruto da Produção − Consumo Intermediário (Insumos)",
+                linkModulo: "terminal-pib.html",
+                textoLink: "Ver Vocação Setorial"
+            },
+            {
+                id: "04",
+                categoria: "pib",
+                categoriaNome: "PIB & Setores",
+                titulo: "Administração Pública no PIB",
+                sigla: "Setor Público",
+                definicao: "Parcela do Valor Adicionado estadual composta pelos serviços públicos não mercantis (educação pública, saúde pública, segurança, defesa e folha do funcionalismo).",
+                naPratica: "Estados com economia privada ainda pequena costumam ter alta participação da Administração Pública no PIB (acima de 35%), indicando forte dependência de repasses e salários estatais.",
+                formula: "Peso Estatal (%) = (VAB Administração Pública ÷ VAB Total da UF) × 100",
+                linkModulo: "terminal-pib.html",
+                textoLink: "Inspecionar Estados"
+            },
+            {
+                id: "05",
+                categoria: "fiscal",
+                categoriaNome: "Tributos & IDH",
+                titulo: "Carga Tributária Bruta (~33% do PIB)",
+                sigla: "Tesouro / RFB",
+                definicao: "Proporção de toda a riqueza produzida no país que é recolhida pelo Estado brasileiro sob a forma de impostos, taxas e contribuições nas esferas federal, estadual e municipal.",
+                naPratica: "No Brasil, cerca de um terço de tudo o que é produzido vai para os cofres públicos. O brasileiro trabalha em média 151 dias por ano apenas para quitar tributos sobre consumo, renda e patrimônio.",
+                formula: "Carga Tributária (%) = (Arrecadação Total ÷ PIB Nacional) × 100",
+                linkModulo: "imposto-idh.html",
+                textoLink: "Ver Painel Sociofiscal"
+            },
+            {
+                id: "06",
+                categoria: "fiscal",
+                categoriaNome: "Tributos & IDH",
+                titulo: "IDH / IDHM (Índice de Desenvolvimento Humano)",
+                sigla: "PNUD / Atlas",
+                definicao: "Métrica internacional (de 0,000 a 1,000) que avalia o progresso social além do dinheiro, combinando três pilares: Longevidade (saúde), Educação (escolaridade) e Renda.",
+                naPratica: "Quanto mais próximo de 1,000, maior a qualidade de vida. Cruzar a arrecadação de impostos com o IDH permite auditar se os tributos pagos pela população estão voltando em bem-estar real.",
+                formula: "IDH = ∛(Índice de Longevidade × Índice de Educação × Índice de Renda)",
+                linkModulo: "imposto-idh.html",
+                textoLink: "Cruzar Impostos vs. IDH"
+            },
+            {
+                id: "07",
+                categoria: "fiscal",
+                categoriaNome: "Tributos & IDH",
+                titulo: "Tributos Diretos vs. Indiretos",
+                sigla: "Sistema Tributário",
+                definicao: "Tributos diretos incidem sobre a renda e a propriedade (IRPF, IPVA, IPTU). Tributos indiretos estão embutidos no preço de mercadorias e serviços (ICMS, IPI, PIS/Cofins, IBS/CBS).",
+                naPratica: "Como a arrecadação brasileira é fortemente apoiada no consumo (tributos indiretos), quem ganha menos acaba comprometendo uma fatia maior da própria renda com impostos embutidos nos alimentos e contas.",
+                formula: "Tributo Total = Impostos s/ Consumo + Impostos s/ Renda + Patrimônio",
+                linkModulo: "index.html#simuladorImpactoPessoal",
+                textoLink: "Simular Meu Imposto"
+            },
+            {
+                id: "08",
+                categoria: "monetario",
+                categoriaNome: "Juros & Inflação",
+                titulo: "Taxa Selic (Sistema Especial de Liquidação e Custódia)",
+                sigla: "COPOM / Bacen",
+                definicao: "Taxa básica de juros da economia brasileira, definida a cada 45 dias pelo Comitê de Política Monetária (Copom) do Banco Central.",
+                naPratica: "É o freio e o acelerador da economia. Quando a Selic sobe, o crédito fica mais caro (desestimulando o consumo para conter a inflação) e os investimentos de Renda Fixa passam a render mais.",
+                formula: "Meta Selic (% ao ano) → Referência para Títulos Públicos Federais",
+                linkModulo: "simulador-selic.html",
+                textoLink: "Abrir Simulador Selic"
+            },
+            {
+                id: "09",
+                categoria: "monetario",
+                categoriaNome: "Juros & Inflação",
+                titulo: "IPCA (Índice Nacional de Preços ao Consumidor Amplo)",
+                sigla: "IBGE Inflação",
+                definicao: "Índice oficial de inflação do Brasil, medido mensalmente pelo IBGE a partir da variação de preços de uma cesta de produtos e serviços consumidos por famílias com renda de 1 a 40 salários mínimos.",
+                naPratica: "Mede a perda do poder de compra do Real. Se o seu salário ou investimento subiu 8% no ano e o IPCA foi de 5%, seu ganho real de riqueza foi de apenas ~2,85%.",
+                formula: "Variação ponderada de Alimentação, Habitação, Transporte, Saúde e Educação",
+                linkModulo: "simulador-selic.html",
+                textoLink: "Simular Poder de Compra"
+            },
+            {
+                id: "10",
+                categoria: "monetario",
+                categoriaNome: "Juros & Inflação",
+                titulo: "CDI e Taxa de Juro Real",
+                sigla: "Renda Fixa",
+                definicao: "O CDI (Certificado de Depósito Interbancário) acompanha de perto a Selic e serve de referência para CDBs e fundos. O Juro Real é a rentabilidade que sobra após descontar a inflação (IPCA).",
+                naPratica: "O Brasil historicamente figura entre os líderes mundiais em Juro Real. Isso atrai capital estrangeiro para a renda fixa, mas encarece o investimento produtivo das empresas e o custo da dívida pública.",
+                formula: "Juro Real (%) = [(1 + Taxa Nominal) ÷ (1 + Inflação IPCA)] − 1",
+                linkModulo: "simulador-selic.html",
+                textoLink: "Calcular Juros Reais"
+            },
+            {
+                id: "11",
+                categoria: "cambio",
+                categoriaNome: "Câmbio & Moeda",
+                titulo: "Taxa PTAX & Câmbio Comercial",
+                sigla: "Banco Central",
+                definicao: "Média aritmética das taxas de compra e venda de Dólar consultadas pelo Banco Central junto às instituições financeiras (dealers) em quatro janelas ao longo do dia útil.",
+                naPratica: "É a cotação oficial que serve de referência para contratos de exportação, importação, fechamento de faturas internacionais e conversão do PIB brasileiro para Dólares.",
+                formula: "Média das 4 janelas diárias de negociação no mercado interbancário",
+                linkModulo: "cambio.html",
+                textoLink: "Abrir Conversor Cambial"
+            },
+            {
+                id: "12",
+                categoria: "cambio",
+                categoriaNome: "Câmbio & Moeda",
+                titulo: "Paridade de Poder de Compra & Câmbio Nominal",
+                sigla: "Comércio Exterior",
+                definicao: "Relação de valor entre a moeda nacional (Real - BRL) e divisas internacionais fortes (Dólar - USD, Euro - EUR, Libra - GBP, Iene - JPY e Yuan - CNY).",
+                naPratica: "Quando o Real se desvaloriza frente ao Dólar, estados fortemente exportadores de commodities (como MT, PA e GO) faturam mais em Reais, mas produtos importados e insumos industriais ficam mais caros.",
+                formula: "Valor em Moeda Estrangeira = Valor em BRL ÷ Cotação Comercial Vigente",
+                linkModulo: "cambio.html",
+                textoLink: "Converter Indicadores"
+            }
+        ];
+
+        function toggleDropdownMenu() {
+            const menu = document.getElementById('dropdownMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        window.addEventListener('click', function(e) {
+            const btn = document.getElementById('menuDropdownBtn');
+            const menu = document.getElementById('dropdownMenu');
+            if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+
+        function alternarDarkLight() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const novoTema = isDark ? 'light' : 'dark';
+            aplicarTema(novoTema);
+            localStorage.setItem('brasil_em_dados_tema', novoTema);
+        }
+
+        function aplicarTema(tema) {
+            const html = document.documentElement;
+            const switchBg = document.getElementById('switchBg');
+            const switchBall = document.getElementById('switchBall');
+
+            if (tema === 'dark') {
+                html.setAttribute('data-theme', 'dark');
+                if (switchBg && switchBall) {
+                    switchBg.style.backgroundColor = '#16C784';
+                    switchBall.classList.add('translate-x-5');
+                }
+            } else {
+                html.removeAttribute('data-theme');
+                if (switchBg && switchBall) {
+                    switchBg.style.backgroundColor = '#E5E7EB';
+                    switchBall.classList.remove('translate-x-5');
+                }
+            }
+        }
+
+        function selecionarCategoria(cat) {
+            categoriaAtual = cat;
+            const categorias = ['todos', 'pib', 'fiscal', 'monetario', 'cambio'];
+            categorias.forEach(c => {
+                const btn = document.getElementById('cat_' + c);
+                if (c === cat) {
+                    btn.className = 'px-3.5 py-2 rounded-xl din-btn transition shrink-0';
+                } else {
+                    btn.className = 'px-3.5 py-2 rounded-xl din-secondary-bg border din-border din-text-muted hover:din-text-main transition shrink-0';
+                }
+            });
+            filtrarGlossario();
+        }
+
+        function filtrarGlossario() {
+            const termo = (document.getElementById('inputBuscaGlossario').value || '').trim().toLowerCase();
+            const grid = document.getElementById('gridGlossario');
+            const contador = document.getElementById('contadorTermos');
+
+            const filtrados = TERMOS_GLOSSARIO.filter(item => {
+                const bateCategoria = categoriaAtual === 'todos' || item.categoria === categoriaAtual;
+                const bateTexto = !termo ||
+                    item.titulo.toLowerCase().includes(termo) ||
+                    item.definicao.toLowerCase().includes(termo) ||
+                    item.naPratica.toLowerCase().includes(termo) ||
+                    item.sigla.toLowerCase().includes(termo);
+                return bateCategoria && bateTexto;
+            });
+
+            contador.innerText = `Exibindo ${filtrados.length} ${filtrados.length === 1 ? 'conceito encontrado' : 'conceitos fundamentais'}`;
+
+            if (filtrados.length === 0) {
+                grid.innerHTML = `
+                    <div class="md:col-span-2 din-card-bg border din-border rounded-2xl p-8 text-center space-y-2">
+                        <p class="text-sm font-bold din-text-main">Nenhum termo encontrado para "${termo}"</p>
+                        <p class="text-xs din-text-muted">Tente buscar por palavras-chave como PIB, Selic, Imposto, IDH, Câmbio ou VAB.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filtrados.map(item => `
+                <div class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover">
+                    <div class="space-y-4">
+                        
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center font-mono text-xs font-extrabold shrink-0">
+                                    ${item.id}
+                                </div>
+                                <div>
+                                    <span class="text-[10px] font-bold uppercase tracking-wider din-green block">${item.categoriaNome}</span>
+                                    <h3 class="text-base sm:text-lg font-bold din-text-main leading-snug">${item.titulo}</h3>
+                                </div>
+                            </div>
+                            <span class="text-[11px] font-mono px-2.5 py-1 rounded din-secondary-bg border din-border din-text-muted shrink-0">
+                                ${item.sigla}
+                            </span>
+                        </div>
+
+                        <p class="text-xs sm:text-sm din-text-muted leading-relaxed">
+                            ${item.definicao}
+                        </p>
+
+                        <div class="din-secondary-bg border din-border rounded-xl p-3.5 space-y-2 text-xs">
+                            <div>
+                                <span class="font-bold din-text-main uppercase tracking-wider text-[10px] block">Como ler na prática:</span>
+                                <p class="din-text-muted mt-0.5 leading-relaxed">${item.naPratica}</p>
+                            </div>
+                            <div class="pt-2 border-t din-border">
+                                <span class="font-bold din-text-main uppercase tracking-wider text-[10px] block">Base / Fórmula:</span>
+                                <code class="font-mono text-[11px] din-green block mt-0.5">${item.formula}</code>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="pt-4 mt-5 border-t din-border flex items-center justify-between">
+                        <span class="text-xs din-text-muted">Aplicação no terminal</span>
+                        <a href="${item.linkModulo}" class="din-green text-xs font-bold inline-flex items-center gap-1.5 hover:opacity-80 transition">
+                            <span>${item.textoLink}</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.onload = () => {
+            const temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light';
+            aplicarTema(temaSalvo === 'dark' ? 'dark' : 'light');
+            filtrarGlossario();
+        };
+    </script>
+</body>
+</html>
