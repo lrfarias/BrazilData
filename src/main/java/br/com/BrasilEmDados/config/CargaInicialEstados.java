@@ -3,6 +3,7 @@ package br.com.BrasilEmDados.config;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 
 import br.com.BrasilEmDados.model.Estado;
 import br.com.BrasilEmDados.repository.EstadoRepository;
@@ -11,6 +12,7 @@ import br.com.BrasilEmDados.repository.EstadoRepository;
 public class CargaInicialEstados {
 
     @Bean
+    @Order(1)
     CommandLineRunner carregarEstados(EstadoRepository repository) {
         return args -> {
 
