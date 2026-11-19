@@ -846,8 +846,13 @@
                 const indicadores = await resp.json();
                 if (!indicadores || indicadores.length === 0) return;
 
-                const anosDisponiveis = [...new Set(indicadores.map(i => Number(i.anoReferencia)).filter(a => a > 0))];
-                const anoMaisRecente = anosDisponiveis.length > 0 ? Math.max(...anosDisponiveis) : 2021;
+                const anosCompletos = [...new Set(
+    indicadores
+        .filter(i => (i.nome || '').toLowerCase().includes('per capita'))
+        .map(i => Number(i.anoReferencia))
+        .filter(a => a > 0)
+)];
+const anoMaisRecente = anosCompletos.length > 0 ? Math.max(...anosCompletos) : 2021;
 
                 document.querySelectorAll('.lblAnoTicker').forEach(el => el.innerText = anoMaisRecente);
 
