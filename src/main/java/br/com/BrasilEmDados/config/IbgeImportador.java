@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -25,6 +26,9 @@ import java.util.*;
 public class IbgeImportador implements CommandLineRunner {
 
     private static final String BASE = "https://servicodados.ibge.gov.br/api/v3/agregados/";
+    private static final String NOME_PIB = "PIB Estadual";
+    private static final String NOME_POP = "População";
+    private static final String NOME_PER_CAPITA = "PIB per capita";
 
     private static final Map<String, String> UF = Map.ofEntries(
             Map.entry("11", "RO"), Map.entry("12", "AC"), Map.entry("13", "AM"), Map.entry("14", "RR"),
@@ -37,8 +41,8 @@ public class IbgeImportador implements CommandLineRunner {
 
     // { nome salvo no banco, tabela do IBGE, variável do IBGE }
     private static final List<String[]> INDICADORES = List.of(
-            new String[] { "PIB", "5938", "37" },
-            new String[] { "População", "6579", "9324" });
+            new String[] { NOME_PIB, "5938", "37" },
+            new String[] { NOME_POP, "6579", "9324" });
 
     private final EstadoRepository estadoRepo;
     private final IndicadorEconomicoRepository indicadorRepo;
@@ -55,7 +59,7 @@ public class IbgeImportador implements CommandLineRunner {
         atualizar();
     }
 
-    // roda todo dia 1 de cada mês, às 3h
+    // todo dia 1 de cada mês, às 3h
     @Scheduled(cron = "0 0 3 1 * *")
     public void atualizarMensal() {
         atualizar();
@@ -81,7 +85,10 @@ public class IbgeImportador implements CommandLineRunner {
                 System.err.println("[IBGE] Falha em " + ind[0] + ": " + ex.getMessage());
             }
         }
-        System.out.println("[IBGE] Concluído: " + novos + " novos, " + atualizados + " atualizados.");
+
+        int perCapita = calcularPerCapita(existentes);
+        System.out.println("[IBGE] Concluído: " + novos + " novos, " + atualizados
+                + " atualizados, " + perCapita + " per capita calculados.");
     }
 
     private int[] importar(String nome, String agregado, String variavel,
@@ -133,6 +140,38 @@ public class IbgeImportador implements CommandLineRunner {
             }
         }
         return new int[] { novos, atualizados };
+    }
+
+    // PIB per capita (R$) = PIB (mil reais) x 1000 / população
+    private int calcularPerCapita(Map<String, IndicadorEconomico> existentes) {
+        int n = 0;
+        for (IndicadorEconomico pib : new ArrayList<>(existentes.values())) {
+            if (!NOME_PIB.equals(pib.getNome()))
+                continue;
+
+            String sigla = pib.getEstado().getSigla();
+            Integer ano = pib.getAnoReferencia();
+            IndicadorEconomico pop = existentes.get(chave(NOME_POP, sigla, ano));
+            if (pop == null || pop.getValor().signum() == 0)
+                continue;
+
+            BigDecimal pc = pib.getValor().multiply(BigDecimal.valueOf(1000))
+                    .divide(pop.getValor(), 2, RoundingMode.HALF_UP);
+
+            String k = chave(NOME_PER_CAPITA, sigla, ano);
+            IndicadorEconomico atual = existentes.get(k);
+            if (atual == null) {
+                IndicadorEconomico novo = new IndicadorEconomico(
+                        NOME_PER_CAPITA, pc, ano, "R$", "IBGE", pib.getEstado());
+                existentes.put(k, indicadorRepo.save(novo));
+                n++;
+            } else if (atual.getValor().compareTo(pc) != 0) {
+                atual.setValor(pc);
+                indicadorRepo.save(atual);
+                n++;
+            }
+        }
+        return n;
     }
 
     private String chave(String nome, String sigla, Integer ano) {
