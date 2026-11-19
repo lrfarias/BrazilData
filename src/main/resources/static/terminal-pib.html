@@ -86,7 +86,13 @@
     </style>
 </head>
 <body class="min-h-screen font-sans flex flex-col justify-between">
-
+<script src="config.js"></script>
+<script>
+  fetch(`${API}/sua-rota`)
+    .then(r => r.json())
+    .then(dados => console.log(dados))
+    .catch(err => console.error(err));
+</script>
     <div>
         <!-- Cabeçalho Institucional (Aba ECONOMIA Selecionada) -->
         <header class="sticky top-0 z-50 border-b din-border din-bg-main/95 backdrop-blur">

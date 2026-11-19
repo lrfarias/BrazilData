@@ -87,7 +87,13 @@
     </style>
 </head>
 <body class="min-h-screen font-sans flex flex-col justify-between">
-
+<script src="config.js"></script>
+<script>
+  fetch(`${API}/sua-rota`)
+    .then(r => r.json())
+    .then(dados => console.log(dados))
+    .catch(err => console.error(err));
+</script>
     <div>
         <!-- 1. Faixa Macroeconômica Ao Vivo (Ticker Executivo) -->
         <div class="border-b din-border din-secondary-bg text-[11px]">
