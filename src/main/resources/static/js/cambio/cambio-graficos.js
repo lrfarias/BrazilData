@@ -1,15 +1,56 @@
 let abaGraf = 'evol', periodo = 90, modo = 'par';
+let dataInicioCustom = null, dataFimCustom = null;
 let ultimoHist = null, dadosSazonalidade = null;
 let chart = null, chartMacro = null, chartSazonal = null;
 
+function labelPeriodo() {
+  if (periodo === 'custom' && dataInicioCustom && dataFimCustom) {
+    const fmt = d => d.split('-').reverse().join('/');
+    return `${fmt(dataInicioCustom)} a ${fmt(dataFimCustom)}`;
+  }
+  if (periodo === 'tudo') return 'todo o período';
+  if (periodo === 365) return '1 ano';
+  if (periodo === 270) return '9 meses';
+  if (periodo === 180) return '6 meses';
+  if (periodo === 90) return '3 meses';
+  return `${periodo} dias`;
+}
+
 function setPeriodo(d) {
   periodo = d;
+  dataInicioCustom = null;
+  dataFimCustom = null;
+
   const on = 'py-1.5 rounded-md din-card-bg din-text-main border din-border transition';
   const off = 'py-1.5 rounded-md din-text-muted transition';
-  $('p30').className = d === 30 ? on : off;
-  $('p90').className = d === 90 ? on : off;
-  $('p365').className = d === 365 ? on : off;
-  $('macroDias').textContent = d;
+  ['p3', 'p15', 'p30', 'p90', 'p180', 'p270', 'p365', 'ptudo'].forEach(id => {
+    const btn = $(id);
+    if (btn) btn.className = id === `p${d}` ? on : off;
+  });
+
+  if ($('macroDias')) $('macroDias').textContent = labelPeriodo();
+  if (typeof atualizarPainelOhlcDia === 'function') atualizarPainelOhlcDia();
+  carregarGrafico();
+}
+
+function aplicarPeriodoCustom() {
+  const ini = $('dtInicio')?.value;
+  const fim = $('dtFim')?.value;
+  if (!ini || !fim || ini >= fim) {
+    alert('Selecione uma data inicial anterior à data final.');
+    return;
+  }
+  dataInicioCustom = ini;
+  dataFimCustom = fim;
+  periodo = 'custom';
+
+  const off = 'py-1.5 rounded-md din-text-muted transition';
+  ['p3', 'p15', 'p30', 'p90', 'p180', 'p270', 'p365', 'ptudo'].forEach(id => {
+    const btn = $(id);
+    if (btn) btn.className = off;
+  });
+
+  if ($('macroDias')) $('macroDias').textContent = labelPeriodo();
   carregarGrafico();
 }
 
@@ -54,14 +95,34 @@ function renderizarTudoGraficos() {
 
 async function carregarGrafico() {
   const a = $('gMoedaA').value, b = $('gMoedaB').value;
-  const ini = dataISO(periodo), fim = dataISO(0);
+  let ini, fim = dataISO(0);
+
+  if (periodo === 'custom' && dataInicioCustom && dataFimCustom) {
+    ini = dataInicioCustom;
+    fim = dataFimCustom;
+  } else if (periodo === 'tudo') {
+    ini = '1999-01-04';
+  } else {
+    const diasBusca = periodo === 3 ? 7 : Number(periodo);
+    ini = dataISO(diasBusca);
+  }
+
   const todosSyms = [...new Set([a, b, ...MACRO_PARES.map(m => m.c)])].filter(x => x !== 'USD');
 
   try {
     const r = await fetch(`https://api.frankfurter.dev/v1/${ini}..${fim}?base=USD&symbols=${todosSyms.join(',')}`);
     if (!r.ok) throw new Error('Frankfurter');
     const j = await r.json();
-    ultimoHist = { a, b, rates: j.rates };
+
+    let rates = j.rates || {};
+    if (periodo === 3) {
+      const ultimas3 = Object.keys(rates).sort().slice(-3);
+      const filtrado = {};
+      ultimas3.forEach(dt => { filtrado[dt] = rates[dt]; });
+      rates = filtrado;
+    }
+
+    ultimoHist = { a, b, rates };
     desenharGrafico();
     desenharMacro();
     atualizarResumoIndicadores();
@@ -110,10 +171,9 @@ function atualizarRadar(atual, min, max) {
   }
 }
 
-// Velocímetro SVG limpo (score de -100 a +100)
 function svgVelocimetro(score) {
   const clamp = Math.max(-100, Math.min(100, score));
-  const ang = (clamp / 100) * 78; // graus de inclinação do ponteiro
+  const ang = (clamp / 100) * 78;
   return `<svg viewBox="0 0 180 96" class="w-40 h-24 mx-auto overflow-visible">
     <path d="M 20 82 A 70 70 0 0 1 56 22" fill="none" stroke="#EA3943" stroke-width="8" stroke-linecap="round"/>
     <path d="M 65 18 A 70 70 0 0 1 115 18" fill="none" stroke="#9299A3" stroke-width="8" stroke-linecap="round"/>
@@ -137,19 +197,17 @@ function atualizarResumoIndicadores() {
   if (!ultimoHist) return;
   const { a, b, rates } = ultimoHist;
   const datas = Object.keys(rates).sort();
-  if (datas.length < 5) return;
+  if (datas.length < 3) return;
   const getUSD = (dt, cod) => cod === 'USD' ? 1 : rates[dt][cod];
   const serie = datas.map(dt => getUSD(dt, b) / getUSD(dt, a));
   const ultimo = serie[serie.length - 1];
 
-  // Osciladores (posição no range + retorno recente)
   const min = Math.min(...serie), max = Math.max(...serie);
   const posRange = max > min ? ((ultimo - min) / (max - min)) * 200 - 100 : 0;
   const prev5 = serie[Math.max(0, serie.length - 6)];
   const mom5 = prev5 > 0 ? ((ultimo - prev5) / prev5) * 1000 : 0;
   const scoreOsc = (posRange * 0.6) + (mom5 * 0.4);
 
-  // Médias Móveis (preço vs MM20 e tendência de curto prazo)
   const mm20Arr = calcMM(serie, Math.min(20, serie.length)).filter(x => x != null);
   const mm20 = mm20Arr[mm20Arr.length - 1] || ultimo;
   const difMm = mm20 > 0 ? ((ultimo - mm20) / mm20) * 1500 : 0;
@@ -181,10 +239,13 @@ function atualizarResumoIndicadores() {
 function desenharGrafico() {
   const { a, b, rates } = ultimoHist;
   const datas = Object.keys(rates).sort();
+  if (!datas.length) return;
   const getUSD = (dt, cod) => cod === 'USD' ? 1 : rates[dt][cod];
-  const labels = datas.map(d => d.slice(8, 10) + '/' + d.slice(5, 7));
+  const mostraAno = periodo === 'tudo' || periodo === 'custom' || Number(periodo) >= 365;
+  const labels = datas.map(d => mostraAno ? `${d.slice(8, 10)}/${d.slice(5, 7)}/${d.slice(2, 4)}` : `${d.slice(8, 10)}/${d.slice(5, 7)}`);
   const c = BD.cor();
   const showMM20 = $('chkMM20').checked, showMedia = $('chkMedia').checked;
+  const lblPer = labelPeriodo();
 
   if (chart) chart.destroy();
 
@@ -196,7 +257,7 @@ function desenharGrafico() {
     const media = serie.reduce((s, x) => s + x, 0) / serie.length;
     const vol = calcVolatilidade(serie);
 
-    $('titGraf').textContent = `Par direto: ${a}/${b} (${periodo} dias)`;
+    $('titGraf').textContent = `Par direto: ${a}/${b} (${lblPer})`;
     $('subGraf').textContent = `Quanto 1 ${a} comprou em ${b} ao longo do período`;
     $('mVar').innerHTML = `<span class="${variacao >= 0 ? 'din-green' : 'din-red'}">${variacao >= 0 ? '+' : ''}${BD.num(variacao, 2)}%</span>`;
     $('mVol').textContent = `${BD.num(vol, 2)}%`;
@@ -205,7 +266,7 @@ function desenharGrafico() {
     atualizarRadar(fim, min, max);
 
     const dir = variacao >= 0 ? `se valorizou` : `se desvalorizou`;
-    $('leituraGraf').innerHTML = `Nos últimos <strong>${periodo} dias</strong>, o <strong>${a}</strong> ${dir} <strong>${BD.num(Math.abs(variacao), 2)}%</strong> frente ao <strong>${b}</strong> (média de ${BD.num(media, 4)} e volatilidade diária de <strong>${BD.num(vol, 2)}%</strong>).`;
+    $('leituraGraf').innerHTML = `No período (<strong>${lblPer}</strong>), o <strong>${a}</strong> ${dir} <strong>${BD.num(Math.abs(variacao), 2)}%</strong> frente ao <strong>${b}</strong> (média de ${BD.num(media, 4)} e volatilidade diária de <strong>${BD.num(vol, 2)}%</strong>).`;
 
     const datasets = [{
       label: `${a}/${b}`,
@@ -214,7 +275,7 @@ function desenharGrafico() {
       backgroundColor: 'rgba(22,199,132,0.10)',
       fill: true,
       borderWidth: 2,
-      pointRadius: 0,
+      pointRadius: datas.length <= 15 ? 3 : 0,
       tension: .15
     }];
     if (showMM20) datasets.push({ label: 'MM20', data: calcMM(serie, 20), borderColor: '#F59E0B', borderWidth: 1.7, pointRadius: 0, tension: .2 });
@@ -243,7 +304,7 @@ function desenharGrafico() {
     $('mMin').textContent = BD.num(Math.min(...baseA, ...baseB), 1);
 
     const venc = varA >= varB ? a : b;
-    $('leituraGraf').innerHTML = `Em <strong>${periodo} dias</strong> frente ao Dólar, <strong>${venc}</strong> teve melhor performance: <strong>${a}</strong> variou <strong>${varA >= 0 ? '+' : ''}${BD.num(varA, 2)}%</strong> e <strong>${b}</strong> variou <strong>${varB >= 0 ? '+' : ''}${BD.num(varB, 2)}%</strong>.`;
+    $('leituraGraf').innerHTML = `Em <strong>${lblPer}</strong> frente ao Dólar, <strong>${venc}</strong> teve melhor performance: <strong>${a}</strong> variou <strong>${varA >= 0 ? '+' : ''}${BD.num(varA, 2)}%</strong> e <strong>${b}</strong> variou <strong>${varB >= 0 ? '+' : ''}${BD.num(varB, 2)}%</strong>.`;
 
     const datasets = [
       { label: `${a} (Base 100)`, data: baseA, borderColor: '#16C784', borderWidth: 2, pointRadius: 0, tension: .15 },
@@ -315,7 +376,6 @@ function desenharMacro() {
   });
 }
 
-// SAZONALIDADE (Gráfico por Ano + Matriz Mensal Colorida)
 const MESES_LBL = ['jan.', 'fev.', 'mar.', 'abr.', 'mai.', 'jun.', 'jul.', 'ago.', 'set.', 'out.', 'nov.', 'dez.'];
 const CORES_ANOS = ['#16C784', '#2563EB', '#F59E0B', '#8B5CF6', '#EA3943', '#06B6D4'];
 
@@ -370,7 +430,6 @@ function desenharSazonalidade() {
   const { a, b, anos, matriz } = dadosSazonalidade;
   const c = BD.cor();
 
-  // Gráfico de linhas anual acumulado por mês
   const datasets = anos.map((ano, idx) => {
     let acum = 0;
     const serieAcum = matriz[ano].map(v => {
@@ -407,7 +466,6 @@ function desenharSazonalidade() {
     }
   });
 
-  // Matriz mensal colorida (estilo tabela de sazonalidade)
   const anosDesc = [...anos].reverse();
   let html = `<thead><tr class="border-b din-border din-text-muted">
     <th class="py-2 px-2 text-left">Ano (${a}/${b})</th>
@@ -432,7 +490,6 @@ function desenharSazonalidade() {
     html += `<td class="py-2 px-2 text-right ${corAno}">${somaAno >= 0 ? '+' : ''}${BD.num(somaAno, 2)}%</td></tr>`;
   });
 
-  // Linha de contagem de altas e baixas por mês
   html += `<tr class="font-bold"><td class="py-2 px-2 din-text-main">Altos e baixos</td>`;
   for (let m = 0; m < 12; m++) {
     let altas = 0, baixas = 0;
@@ -465,7 +522,7 @@ function exportarCSV() {
   const blob = new Blob(['\uFEFF' + linhas.join('\n')], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
-  link.download = `brasilemdados_${a}_${b}_${periodo}d.csv`;
+  link.download = `brasilemdados_${a}_${b}_${periodo}.csv`;
   link.click();
 }
 

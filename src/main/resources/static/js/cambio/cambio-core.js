@@ -352,4 +352,85 @@ async function carregarTaxasAoVivo(inicial = false) {
   } catch {
     $('statusLive').textContent = 'Erro ao atualizar cotações';
   }
+  let cacheAwesome = {};
+
+async function atualizarTempoRealAwesome() {
+  const pares = 'USD-BRL,EUR-BRL,GBP-BRL,JPY-BRL,CHF-BRL,CAD-BRL,AUD-BRL,CNY-BRL,BTC-BRL';
+  try {
+    const res = await fetch(`https://economia.awesomeapi.com.br/json/last/${pares}`);
+    if (!res.ok) return;
+    cacheAwesome = await res.json();
+
+    renderTickerLive();
+    atualizarPainelOhlcDia();
+
+    const agora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const elStatus = $('statusLive');
+    if (elStatus) elStatus.textContent = `Tempo real • atualizado às ${agora}`;
+  } catch (e) {
+    console.warn('AwesomeAPI indisponível no momento:', e);
+  }
+}
+
+function renderTickerLive() {
+  const el = $('tickerLive');
+  if (!el) return;
+  const chaves = ['USDBRL', 'EURBRL', 'GBPBRL', 'CNYBRL', 'BTCBRL'];
+
+  el.innerHTML = chaves.map(k => {
+    const d = cacheAwesome[k];
+    if (!d) return '';
+    const bid = parseFloat(d.bid);
+    const pct = parseFloat(d.pctChange);
+    const cor = pct >= 0 ? 'din-green' : 'din-red';
+    const sinal = pct >= 0 ? '+' : '';
+    const casas = k === 'BTCBRL' ? 0 : 4;
+    return `
+      <span class="inline-flex items-center gap-1.5">
+        <strong class="din-text-main">${d.code}/${d.codein}</strong>
+        <span class="font-mono din-text-main">${bid.toLocaleString('pt-BR', { minimumFractionDigits: casas, maximumFractionDigits: casas })}</span>
+        <span class="font-semibold ${cor}">${sinal}${pct.toFixed(2)}%</span>
+      </span>
+    `;
+  }).join('<span class="opacity-30">|</span>');
+}
+
+function atualizarPainelOhlcDia() {
+  const a = $('gMoedaA')?.value || 'USD';
+  const b = $('gMoedaB')?.value || 'BRL';
+  const elPar = $('ohlcPar');
+  if (elPar) elPar.textContent = `${a}/${b}`;
+
+  const chaveDireta = `${a}${b}`;
+  const chaveInversa = `${b}${a}`;
+  const d = cacheAwesome[chaveDireta] || cacheAwesome[chaveInversa];
+
+  if (!d) {
+    $('ohlcAbertura').textContent = 'Fechamento BCE';
+    $('ohlcAtual').textContent = '—';
+    $('ohlcMaxDia').textContent = '—';
+    $('ohlcMinDia').textContent = '—';
+    $('ohlcHora').textContent = 'Sem intradiário';
+    return;
+  }
+
+  const invertido = !cacheAwesome[chaveDireta];
+  const bid = parseFloat(d.bid);
+  const varBid = parseFloat(d.varBid);
+  const aberturaRaw = bid - varBid;
+  const highRaw = parseFloat(d.high);
+  const lowRaw = parseFloat(d.low);
+
+  const atual = invertido ? (1 / bid) : bid;
+  const abertura = invertido ? (1 / aberturaRaw) : aberturaRaw;
+  const maxDia = invertido ? (1 / lowRaw) : highRaw;
+  const minDia = invertido ? (1 / highRaw) : lowRaw;
+
+  const fmt = v => v.toLocaleString('pt-BR', { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+  $('ohlcAbertura').textContent = fmt(abertura);
+  $('ohlcAtual').textContent = fmt(atual);
+  $('ohlcMaxDia').textContent = fmt(maxDia);
+  $('ohlcMinDia').textContent = fmt(minDia);
+  $('ohlcHora').textContent = (d.create_date || '').split(' ')[1] || 'Hoje';
+}
 }
