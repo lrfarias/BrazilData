@@ -6,8 +6,7 @@
     <title>BrasilEmDados — Economia e Indicadores</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-<link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
-
+    <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
     <link rel="stylesheet" href="css/theme.css">
 </head>
 <body class="min-h-screen font-sans flex flex-col justify-between">
@@ -24,8 +23,8 @@
                     <div class="flex items-center gap-3">
                         <a href="index.html" class="flex items-center gap-3 group">
                             <div class="w-10 h-10 rounded-lg din-secondary-bg border din-border flex items-center justify-center shadow-sm overflow-hidden group-hover:border-[#16C784] transition-colors duration-200">
-  <img src="download.png" alt="BrasilEmDados" class="w-8 h-8 object-contain transition-transform duration-200 group-hover:scale-110">
-</div>
+                                <img src="download.png" alt="BrasilEmDados" class="w-8 h-8 object-contain transition-transform duration-200 group-hover:scale-110">
+                            </div>
                             <div>
                                 <div class="flex items-center gap-2">
                                     <span class="text-lg font-extrabold tracking-tight din-text-main">BrasilEmDados</span>
@@ -103,6 +102,10 @@
                                 <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
                                 04. Simulador Selic & Juros
                             </a>
+                            <a href="mundo.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
+                                05. Mapa-Múndi & Global
+                            </a>
 
                             <div class="my-1 border-t din-border"></div>
 
@@ -148,14 +151,14 @@
 
             <div class="flex items-center justify-between pt-8 pb-2">
                 <h2 class="text-sm font-bold din-text-main">Explore as ferramentas</h2>
-                <span class="text-xs din-text-muted">05 módulos disponíveis</span>
+                <span class="text-xs din-text-muted">07 módulos</span>
             </div>
         </section>
 
-        <!-- Grade com as 4 Subdivisões -->
+        <!-- Grade Padronizada em Quadradinhos (Cards) -->
         <main class="max-w-7xl mx-auto px-4 sm:px-6 pb-8 grid grid-cols-1 md:grid-cols-2 gap-6">
 
-            <!-- MÓDULO 01: Contas Regionais & PIB Setorial (Direciona para terminal-pib.html) -->
+            <!-- MÓDULO 01 -->
             <div onclick="window.location.href='terminal-pib.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
                 <div class="space-y-4">
                     <div class="flex items-center justify-between gap-4">
@@ -164,9 +167,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                             </svg>
                         </div>
-                        <span class="text-xs font-medium din-text-muted">
-                            01 / 05
-                        </span>
+                        <span class="text-xs font-medium din-text-muted">01 / 07</span>
                     </div>
 
                     <div>
@@ -182,22 +183,22 @@
                         <p class="font-bold din-text-main uppercase tracking-wider text-[10px]">Funcionalidades deste painel:</p>
                         <ul class="space-y-1.5 din-text-muted">
                             <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
                                 Mapa de calor estadual por volume de PIB e renda per capita.
                             </li>
                             <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
                                 Decomposição real do Valor Adicionado (Agro, Indústria, Serviços e Adm. Pública).
                             </li>
                             <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
                                 Simulador "E se...?" de crescimento + Consultor Econômico IA integrado ao PostgreSQL.
                             </li>
                         </ul>
                     </div>
                 </div>
 
-                <div class="pt-5 mt-5 flex items-center justify-between">
+                <div class="pt-5 mt-5 border-t din-border flex items-center justify-between">
                     <span class="text-xs din-text-muted">Dados e estatísticas (SIDRA 5938)</span>
                     <a href="terminal-pib.html" class="din-green text-xs font-bold inline-flex items-center gap-1.5 hover:opacity-80 transition">
                         <span>Explorar dados</span>
@@ -208,7 +209,7 @@
                 </div>
             </div>
 
-            <!-- MÓDULO 02: Impostos, População & IDH -->
+            <!-- MÓDULO 02 -->
             <div onclick="window.location.href='imposto-idh.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
                 <div class="space-y-4">
                     <div class="flex items-center justify-between gap-4">
@@ -218,9 +219,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 2v4m0 12v4M2 12h4m12 0h4"></path>
                             </svg>
                         </div>
-                        <span class="text-xs font-medium din-text-muted">
-                            02 / 05
-                        </span>
+                        <span class="text-xs font-medium din-text-muted">02 / 07</span>
                     </div>
 
                     <div>
@@ -236,22 +235,22 @@
                         <p class="font-bold din-text-main uppercase tracking-wider text-[10px]">Funcionalidades deste painel:</p>
                         <ul class="space-y-1.5 din-text-muted">
                             <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
                                 Mapa interativo do Brasil com camadas de IDH Estadual, População e Impostos.
                             </li>
                             <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
                                 Gráfico de dispersão: Arrecadação per capita vs. IDH (retorno social dos tributos).
                             </li>
                             <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
                                 Evolução demográfica e pirâmide de densidade populacional das 27 UFs.
                             </li>
                         </ul>
                     </div>
                 </div>
 
-                <div class="pt-5 mt-5 flex items-center justify-between">
+                <div class="pt-5 mt-5 border-t din-border flex items-center justify-between">
                     <span class="text-xs din-text-muted">Arrecadação tributária e IDH</span>
                     <a href="imposto-idh.html" class="din-green text-xs font-bold inline-flex items-center gap-1.5 hover:opacity-80 transition">
                         <span>Acessar ferramenta</span>
@@ -262,7 +261,7 @@
                 </div>
             </div>
 
-            <!-- MÓDULO 03: Câmbio & Conversor de Moedas -->
+            <!-- MÓDULO 03 -->
             <div onclick="window.location.href='cambio.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
                 <div class="space-y-4">
                     <div class="flex items-center justify-between gap-4">
@@ -271,9 +270,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
                             </svg>
                         </div>
-                        <span class="text-xs font-medium din-text-muted">
-                            03 / 05
-                        </span>
+                        <span class="text-xs font-medium din-text-muted">03 / 07</span>
                     </div>
 
                     <div>
@@ -289,22 +286,22 @@
                         <p class="font-bold din-text-main uppercase tracking-wider text-[10px]">Funcionalidades deste painel:</p>
                         <ul class="space-y-1.5 din-text-muted">
                             <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
                                 Calculadora bidirecional rápida com cotações atualizadas via API.
                             </li>
                             <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
                                 Conversão automática do PIB Estadual e PIB per capita brasileiro para Dólares (USD).
                             </li>
                             <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
                                 Gráfico histórico de oscilação cambial e comparativo de poder de compra.
                             </li>
                         </ul>
                     </div>
                 </div>
 
-                <div class="pt-5 mt-5 flex items-center justify-between">
+                <div class="pt-5 mt-5 border-t din-border flex items-center justify-between">
                     <span class="text-xs din-text-muted">Câmbio e conversões</span>
                     <a href="cambio.html" class="din-green text-xs font-bold inline-flex items-center gap-1.5 hover:opacity-80 transition">
                         <span>Converter valores</span>
@@ -315,7 +312,7 @@
                 </div>
             </div>
 
-            <!-- MÓDULO 04: Simulador de Selic, Juros & Inflação -->
+            <!-- MÓDULO 04 -->
             <div onclick="window.location.href='simulador-selic.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
                 <div class="space-y-4">
                     <div class="flex items-center justify-between gap-4">
@@ -324,9 +321,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
-                        <span class="text-xs font-medium din-text-muted">
-                            04 / 05
-                        </span>
+                        <span class="text-xs font-medium din-text-muted">04 / 07</span>
                     </div>
 
                     <div>
@@ -342,22 +337,22 @@
                         <p class="font-bold din-text-main uppercase tracking-wider text-[10px]">Funcionalidades deste painel:</p>
                         <ul class="space-y-1.5 din-text-muted">
                             <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
                                 Simulador interativo da Taxa Selic vs. IPCA (cálculo de Juro Real ex-ante e ex-post).
                             </li>
                             <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
                                 Projeção de rendimento em Renda Fixa (Tesouro Selic, CDB/CDI vs. Poupança).
                             </li>
                             <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
                                 Histórico da curva de juros básica e impacto no custo da dívida pública.
                             </li>
                         </ul>
                     </div>
                 </div>
 
-                <div class="pt-5 mt-5 flex items-center justify-between">
+                <div class="pt-5 mt-5 border-t din-border flex items-center justify-between">
                     <span class="text-xs din-text-muted">Juros e investimentos</span>
                     <a href="simulador-selic.html" class="din-green text-xs font-bold inline-flex items-center gap-1.5 hover:opacity-80 transition">
                         <span>Simular investimentos</span>
@@ -367,142 +362,150 @@
                     </a>
                 </div>
             </div>
-<!-- Módulo 05 / 05: Mapa-Múndi & Indicadores Globais -->
-<a href="mundo.html" class="group din-card-bg border din-border hover:border-[#16C784] rounded-xl p-6 shadow-sm transition-all flex flex-col justify-between space-y-5 lg:col-span-2">
-  <div class="space-y-4">
-    <div class="flex items-center justify-between">
-      <div class="w-10 h-10 rounded-lg bg-[#16C784]/15 din-green flex items-center justify-center">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="2" y1="12" x2="22" y2="12"></line>
-          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-        </svg>
-      </div>
-      <span class="text-xs font-mono din-text-muted">05 / 05</span>
-    </div>
 
-    <div>
-      <h3 class="text-lg font-extrabold din-text-main group-hover:din-green transition-colors">
-        Panorama Global, PIB Mundial & Blocos Econômicos
-      </h3>
-      <p class="text-xs din-text-muted mt-1.5 leading-relaxed">
-        Mapa-múndi interativo com indicadores econômicos, demográficos e tributários. Filtre por continentes e blocos (G7, G20, Mercosul, União Europeia e BRICS+), acompanhe séries históricas e compare até 3 países lado a lado.
-      </p>
-    </div>
+            <!-- MÓDULO 05: Mapa-Múndi & Indicadores Globais -->
+            <div id="mapa-mundi" onclick="window.location.href='mundo.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between gap-4">
+                        <div class="w-11 h-11 rounded-xl din-icon-box flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="2" y1="12" x2="22" y2="12"></line>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-medium din-text-muted">05 / 07</span>
+                    </div>
 
-    <div class="din-secondary-bg border din-border rounded-lg p-3.5 space-y-2">
-      <span class="text-[10px] font-bold uppercase tracking-wider din-text-main block">
-        FUNCIONALIDADES DESTE PAINEL:
-      </span>
-      <ul class="space-y-1.5 text-xs din-text-muted">
-        <li class="flex items-center gap-2">
-          <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
-          Mapa-múndi com zoom, busca por país, camadas de PIB, IDH, impostos e filtros por bloco.
-        </li>
-        <li class="flex items-center gap-2">
-          <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
-          Raio-X completo por país com histórico de moeda, PIB e população (5d a 2 anos).
-        </li>
-        <li class="flex items-center gap-2">
-          <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
-          Rankings globais (Top 5, 10 e 20) e comparador multi-país (ex: Brasil × EUA × China).
-        </li>
-      </ul>
-    </div>
-  </div>
+                    <div>
+                        <h3 class="text-lg font-bold din-text-main">
+                            Panorama Global, PIB Mundial & Blocos Econômicos
+                        </h3>
+                        <p class="text-xs sm:text-sm din-text-muted mt-2 leading-relaxed">
+                            Mapa-múndi interativo com indicadores econômicos, demográficos e tributários. Filtre por continentes e blocos (G7, G20, Mercosul, União Europeia e BRICS+), acompanhe séries históricas e compare até 3 países lado a lado.
+                        </p>
+                    </div>
 
-  <div class="pt-3 border-t din-border flex items-center justify-between text-xs">
-    <span class="din-text-muted">Economia global e blocos</span>
-    <span class="font-bold din-green inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-      Explorar mapa global →
-    </span>
-  </div>
-  <!-- Quadro 06: Inflação & Poder de Compra -->
-<div id="modulo-inflacao" class="din-card-bg border din-border rounded-2xl p-5 shadow-sm flex flex-col justify-between card-hover">
-    <div class="space-y-3">
-        <div class="flex items-center justify-between gap-2">
-            <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M7 14l4-4 4 3 5-6"></path>
-                </svg>
+                    <div class="din-secondary-bg border din-border rounded-xl p-3.5 space-y-2 text-xs">
+                        <p class="font-bold din-text-main uppercase tracking-wider text-[10px]">Funcionalidades deste painel:</p>
+                        <ul class="space-y-1.5 din-text-muted">
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
+                                Mapa-múndi com zoom, busca por país, camadas de PIB, IDH, impostos e filtros por bloco.
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
+                                Raio-X completo por país com histórico de moeda, PIB e população (5d a 2 anos).
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
+                                Rankings globais (Top 5, 10 e 20) e comparador multi-país (ex: Brasil × EUA × China).
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="pt-5 mt-5 border-t din-border flex items-center justify-between">
+                    <span class="text-xs din-text-muted">Economia global e blocos</span>
+                    <a href="mundo.html" class="din-green text-xs font-bold inline-flex items-center gap-1.5 hover:opacity-80 transition">
+                        <span>Explorar mapa global</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </a>
+                </div>
             </div>
-            <span class="text-[11px] font-medium din-text-muted">06 / 07</span>
-        </div>
 
-        <div class="flex items-center justify-between gap-2">
-            <h3 class="text-sm font-bold din-text-main">Inflação & Poder de Compra</h3>
-            <span id="badgeIpca12m" class="text-[11px] font-mono font-bold din-green">IPCA 12m: —</span>
-        </div>
+            <!-- MÓDULO 06: Inflação & Poder de Compra -->
+            <div id="modulo-inflacao" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between gap-4">
+                        <div class="w-11 h-11 rounded-xl din-icon-box flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M7 14l4-4 4 3 5-6"></path>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-medium din-text-muted">06 / 07</span>
+                    </div>
 
-        <p class="text-xs din-text-muted leading-relaxed">
-            Acompanhe a variação acumulada do IPCA e do INPC e simule a perda ou ganho real do poder de compra no tempo.
-        </p>
+                    <div class="flex items-center justify-between gap-2">
+                        <h3 class="text-lg font-bold din-text-main">
+                            Inflação & Poder de Compra
+                        </h3>
+                        <span id="badgeIpca12m" class="text-xs font-mono font-bold din-green">IPCA ref.: 4,50%</span>
+                    </div>
 
-        <div class="grid grid-cols-2 gap-2 pt-1 text-xs">
-            <div class="din-secondary-bg border din-border rounded-lg p-2.5">
-                <span class="text-[10px] din-text-muted block">Valor Inicial (R$)</span>
-                <input id="infValorInicial" type="number" value="1000" min="0" step="50"
-                    oninput="calcularPoderCompra()"
-                    class="w-full bg-transparent font-bold din-text-main text-xs focus:outline-none mt-0.5">
+                    <p class="text-xs sm:text-sm din-text-muted leading-relaxed">
+                        Acompanhe a variação acumulada do IPCA e do INPC e simule a perda ou ganho real do poder de compra ao longo do tempo.
+                    </p>
+
+                    <div class="grid grid-cols-2 gap-3 pt-1 text-xs">
+                        <div class="din-secondary-bg border din-border rounded-xl p-3">
+                            <span class="text-[10px] uppercase tracking-wider font-bold din-text-muted block">Valor Inicial (R$)</span>
+                            <input id="infValorInicial" type="number" value="1000" min="0" step="50"
+                                oninput="calcularPoderCompra()"
+                                class="w-full bg-transparent font-bold din-text-main text-sm focus:outline-none mt-1">
+                        </div>
+                        <div class="din-secondary-bg border din-border rounded-xl p-3">
+                            <span class="text-[10px] uppercase tracking-wider font-bold din-text-muted block">Inflação Acum. (%)</span>
+                            <input id="infTaxaAcum" type="number" value="4.50" step="0.10"
+                                oninput="calcularPoderCompra()"
+                                class="w-full bg-transparent font-bold din-text-main text-sm focus:outline-none mt-1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-5 mt-5 border-t din-border flex items-center justify-between text-xs">
+                    <span class="din-text-muted">Poder de compra equivalente</span>
+                    <strong id="infResultadoEquiv" class="din-green font-bold text-sm">R$ 956,94</strong>
+                </div>
             </div>
-            <div class="din-secondary-bg border din-border rounded-lg p-2.5">
-                <span class="text-[10px] din-text-muted block">Inflação Acum. (%)</span>
-                <input id="infTaxaAcum" type="number" value="4.50" step="0.10"
-                    oninput="calcularPoderCompra()"
-                    class="w-full bg-transparent font-bold din-text-main text-xs focus:outline-none mt-0.5">
+
+            <!-- MÓDULO 07: Contas Públicas & Dívida -->
+            <div id="modulo-contas-publicas" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between gap-4">
+                        <div class="w-11 h-11 rounded-xl din-icon-box flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-medium din-text-muted">07 / 07</span>
+                    </div>
+
+                    <div class="flex items-center justify-between gap-2">
+                        <h3 class="text-lg font-bold din-text-main">
+                            Contas Públicas & Dívida
+                        </h3>
+                        <span id="badgeDividaPib" class="text-xs font-mono font-bold din-text-main">Dívida/PIB: 77,5%</span>
+                    </div>
+
+                    <p class="text-xs sm:text-sm din-text-muted leading-relaxed">
+                        Avalie o peso da dívida pública frente ao PIB e o efeito da taxa de juros média sobre a dinâmica fiscal.
+                    </p>
+
+                    <div class="grid grid-cols-2 gap-3 pt-1 text-xs">
+                        <div class="din-secondary-bg border din-border rounded-xl p-3">
+                            <span class="text-[10px] uppercase tracking-wider font-bold din-text-muted block">Dívida / PIB (%)</span>
+                            <input id="fiscDividaPib" type="number" value="77.5" step="0.5"
+                                oninput="simularDinamicaFiscal()"
+                                class="w-full bg-transparent font-bold din-text-main text-sm focus:outline-none mt-1">
+                        </div>
+                        <div class="din-secondary-bg border din-border rounded-xl p-3">
+                            <span class="text-[10px] uppercase tracking-wider font-bold din-text-muted block">Juros Real - Cresc. (p.p.)</span>
+                            <input id="fiscSpreadReal" type="number" value="4.0" step="0.25"
+                                oninput="simularDinamicaFiscal()"
+                                class="w-full bg-transparent font-bold din-text-main text-sm focus:outline-none mt-1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-5 mt-5 border-t din-border flex items-center justify-between text-xs">
+                    <span class="din-text-muted">Estabilização primária</span>
+                    <strong id="fiscResultadoPrimario" class="din-red font-bold text-sm">+3,10% do PIB</strong>
+                </div>
             </div>
-        </div>
-    </div>
 
-    <div class="pt-4 mt-4 border-t din-border flex items-center justify-between text-xs">
-        <span class="din-text-muted">Poder de compra equivalente:</span>
-        <strong id="infResultadoEquiv" class="din-green font-bold">R$ 956,94</strong>
-    </div>
-</div>
-
-<!-- Quadro 07: Contas Públicas & Dívida -->
-<div id="modulo-contas-publicas" class="din-card-bg border din-border rounded-2xl p-5 shadow-sm flex flex-col justify-between card-hover">
-    <div class="space-y-3">
-        <div class="flex items-center justify-between gap-2">
-            <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-            </div>
-            <span class="text-[11px] font-medium din-text-muted">07 / 07</span>
-        </div>
-
-        <div class="flex items-center justify-between gap-2">
-            <h3 class="text-sm font-bold din-text-main">Contas Públicas & Dívida</h3>
-            <span id="badgeDividaPib" class="text-[11px] font-mono font-bold din-text-main">DBGG / PIB: —</span>
-        </div>
-
-        <p class="text-xs din-text-muted leading-relaxed">
-            Avalie o peso da dívida pública frente ao PIB e o efeito da taxa de juros média sobre a dinâmica fiscal.
-        </p>
-
-        <div class="grid grid-cols-2 gap-2 pt-1 text-xs">
-            <div class="din-secondary-bg border din-border rounded-lg p-2.5">
-                <span class="text-[10px] din-text-muted block">Dívida / PIB (%)</span>
-                <input id="fiscDividaPib" type="number" value="77.5" step="0.5"
-                    oninput="simularDinamicaFiscal()"
-                    class="w-full bg-transparent font-bold din-text-main text-xs focus:outline-none mt-0.5">
-            </div>
-            <div class="din-secondary-bg border din-border rounded-lg p-2.5">
-                <span class="text-[10px] din-text-muted block">Juros Real - Cresc. (p.p.)</span>
-                <input id="fiscSpreadReal" type="number" value="4.0" step="0.25"
-                    oninput="simularDinamicaFiscal()"
-                    class="w-full bg-transparent font-bold din-text-main text-xs focus:outline-none mt-0.5">
-            </div>
-        </div>
-    </div>
-
-    <div class="pt-4 mt-4 border-t din-border flex items-center justify-between text-xs">
-        <span class="din-text-muted">Estabilização primária:</span>
-        <strong id="fiscResultadoPrimario" class="din-green font-bold">+3,10% do PIB</strong>
-    </div>
-</div>
-</a>
         </main>
 
         <!-- Card Informativo Inferior -->
@@ -582,9 +585,58 @@
             }
         }
 
+        function fmtBrl(v) {
+            return Number(v || 0).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        function fmtNum(v, d = 2) {
+            return Number(v || 0).toLocaleString('pt-BR', {
+                minimumFractionDigits: d,
+                maximumFractionDigits: d
+            });
+        }
+
+        function calcularPoderCompra() {
+            const inicial = parseFloat(document.getElementById('infValorInicial')?.value) || 0;
+            const inflacaoPct = parseFloat(document.getElementById('infTaxaAcum')?.value) || 0;
+            const elRes = document.getElementById('infResultadoEquiv');
+            const elBadge = document.getElementById('badgeIpca12m');
+
+            if (elBadge) elBadge.textContent = `IPCA ref.: ${fmtNum(inflacaoPct, 2)}%`;
+
+            const fator = 1 + (inflacaoPct / 100);
+            const equivalente = fator > 0 ? inicial / fator : inicial;
+            if (elRes) elRes.textContent = fmtBrl(equivalente);
+        }
+
+        function simularDinamicaFiscal() {
+            const dividaPib = parseFloat(document.getElementById('fiscDividaPib')?.value) || 0;
+            const rMenosG = parseFloat(document.getElementById('fiscSpreadReal')?.value) || 0;
+            const elRes = document.getElementById('fiscResultadoPrimario');
+            const elBadge = document.getElementById('badgeDividaPib');
+
+            if (elBadge) elBadge.textContent = `Dívida/PIB: ${fmtNum(dividaPib, 1)}%`;
+
+            const primarioNecessario = (rMenosG / 100) * dividaPib;
+            if (elRes) {
+                const sinal = primarioNecessario >= 0 ? '+' : '';
+                elRes.textContent = `${sinal}${fmtNum(primarioNecessario, 2)}% do PIB`;
+                elRes.className = primarioNecessario > 3
+                    ? 'din-red font-bold text-sm'
+                    : 'din-green font-bold text-sm';
+            }
+        }
+
         window.onload = () => {
             const temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light';
             aplicarTema(temaSalvo === 'dark' ? 'dark' : 'light');
+            calcularPoderCompra();
+            simularDinamicaFiscal();
         };
     </script>
 </body>
