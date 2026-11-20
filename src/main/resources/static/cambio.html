@@ -150,7 +150,6 @@
 
     <!-- 2. CONVERSOR UNIVERSAL + ABAS SECUNDÁRIAS (Custo Real & Detector de Spread) -->
     <section class="din-card-bg border din-border rounded-lg p-5 shadow-sm space-y-5">
-      <!-- Principal: Conversor -->
       <div class="space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <h2 class="text-base font-semibold din-text-main">Conversor universal</h2>
@@ -188,7 +187,6 @@
         </div>
       </div>
 
-      <!-- Secundário: Abas Práticas (Custo Real vs Auditar Banco) -->
       <div class="pt-4 border-t din-border space-y-3">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <div class="inline-flex din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
@@ -198,12 +196,10 @@
           <span id="custoHint" class="text-[11px] din-text-muted">Simulação de IOF + spread médio por canal</span>
         </div>
 
-        <!-- Aba A: Custo Real por Canal -->
         <div id="viewCusto" class="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <!-- Preenchido via JS -->
         </div>
 
-        <!-- Aba B: Detector de Spread Oculto -->
         <div id="viewSpread" class="hidden din-secondary-bg border din-border rounded-lg p-4">
           <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
             <div class="md:col-span-5">
@@ -243,20 +239,20 @@
       </div>
     </section>
 
-    <!-- 3. ANÁLISE HISTÓRICA, RADAR E TERMÔMETRO MACRO -->
+    <!-- 3. ANÁLISE HISTÓRICA, RADAR, TERMÔMETRO MACRO, VIÉS E SAZONALIDADE -->
     <section id="secaoComparador" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-      <!-- Coluna Esquerda (Controles, Radar "Caro ou Barato?" e Métricas) -->
+      <!-- Coluna Esquerda -->
       <div class="lg:col-span-4 space-y-4">
         <div class="din-card-bg border din-border rounded-lg p-5 shadow-sm space-y-4">
           <h2 class="text-base font-semibold din-text-main">Comparador histórico</h2>
 
           <div class="grid grid-cols-2 gap-2">
             <label class="text-xs font-semibold din-text-main">Moeda A
-              <select id="gMoedaA" class="inp mt-1" onchange="carregarGrafico()"></select>
+              <select id="gMoedaA" class="inp mt-1" onchange="carregarGrafico(); carregarSazonalidade();"></select>
             </label>
             <label class="text-xs font-semibold din-text-main">Moeda B
-              <select id="gMoedaB" class="inp mt-1" onchange="carregarGrafico()"></select>
+              <select id="gMoedaB" class="inp mt-1" onchange="carregarGrafico(); carregarSazonalidade();"></select>
             </label>
           </div>
 
@@ -277,7 +273,7 @@
             </div>
           </div>
 
-          <!-- Radar de Posição: Está caro ou barato? -->
+          <!-- Radar de Posição -->
           <div id="boxRadar" class="pt-3 border-t din-border space-y-2">
             <div class="flex items-center justify-between text-xs">
               <span class="font-semibold din-text-main">Posição no período</span>
@@ -322,15 +318,16 @@
         </div>
       </div>
 
-      <!-- Coluna Direita: Painel de Gráficos com 2 Abas (Evolução vs Termômetro Macro) -->
+      <!-- Coluna Direita: Painel de Gráficos com 4 Guias -->
       <div class="lg:col-span-8 din-card-bg border din-border rounded-lg p-5 shadow-sm flex flex-col space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-3">
-          <div class="inline-flex din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+          <div class="inline-flex din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold flex-wrap gap-0.5">
             <button id="tabGrafEvol" type="button" onclick="setAbaGraf('evol')" class="px-3 py-1.5 rounded-md din-card-bg din-text-main border din-border transition">Evolução do Par</button>
             <button id="tabGrafMacro" type="button" onclick="setAbaGraf('macro')" class="px-3 py-1.5 rounded-md din-text-muted transition">Termômetro: Dólar ou Real?</button>
+            <button id="tabGrafSinal" type="button" onclick="setAbaGraf('sinal')" class="px-3 py-1.5 rounded-md din-text-muted transition">Resumo / Viés</button>
+            <button id="tabGrafSaz" type="button" onclick="setAbaGraf('saz')" class="px-3 py-1.5 rounded-md din-text-muted transition">Sazonalidade</button>
           </div>
 
-          <!-- Camada Técnica + CSV (aparece na aba Evolução) -->
           <div id="ctrlTecnico" class="flex flex-wrap items-center gap-3 text-xs">
             <label class="inline-flex items-center gap-1.5 din-text-muted cursor-pointer select-none">
               <input id="chkMM20" type="checkbox" class="accent-[#F59E0B] cursor-pointer" onchange="desenharGrafico()">
@@ -353,7 +350,7 @@
           <div class="flex-1 min-h-[340px]"><canvas id="grafMoedas"></canvas></div>
         </div>
 
-        <!-- ABA 2: TERMÔMETRO MACRO (O Dólar subiu ou o Real caiu?) -->
+        <!-- ABA 2: TERMÔMETRO MACRO -->
         <div id="viewGrafMacro" class="hidden flex-1 flex flex-col space-y-3">
           <div>
             <h2 class="text-base font-semibold din-text-main">O Dólar subiu no mundo ou o Real caiu sozinho?</h2>
@@ -361,6 +358,30 @@
           </div>
           <div class="flex-1 min-h-[300px]"><canvas id="grafMacro"></canvas></div>
           <p id="macroVeredito" class="text-xs din-secondary-bg border din-border rounded-lg p-3 din-text-main leading-relaxed">—</p>
+        </div>
+
+        <!-- ABA 3: RESUMO DOS INDICADORES / VIÉS -->
+        <div id="viewGrafSinal" class="hidden flex-1 flex flex-col justify-between space-y-4">
+          <div>
+            <h2 class="text-base font-semibold din-text-main">Resumo dos indicadores</h2>
+            <p class="text-xs din-text-muted">Visão técnica calculada a partir da série histórica do par selecionado (posição, momentum e médias móveis).</p>
+          </div>
+          <div id="gridVies" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Preenchido via JS -->
+          </div>
+          <p class="text-[11px] din-text-muted">Referência estatística baseada em médias móveis e osciladores da série histórica — não constitui recomendação de investimento.</p>
+        </div>
+
+        <!-- ABA 4: DESEMPENHO SAZONAL HISTÓRICO -->
+        <div id="viewGrafSaz" class="hidden flex-1 flex flex-col space-y-4">
+          <div>
+            <h2 class="text-base font-semibold din-text-main">Desempenho sazonal histórico (<span id="sazParLbl" class="din-green">USD/BRL</span>)</h2>
+            <p class="text-xs din-text-muted">Comparação mês a mês entre 2021 e o ano atual para identificar padrões sazonais.</p>
+          </div>
+          <div class="h-[220px]"><canvas id="grafSazonal"></canvas></div>
+          <div class="overflow-x-auto border din-border rounded-lg">
+            <table id="matrizSazonal" class="w-full text-xs border-collapse"></table>
+          </div>
         </div>
       </div>
     </section>
@@ -401,6 +422,26 @@
   </div>
 </footer>
 
-<script src="js/cambio/cambio-app.js"></script>
+<script src="js/cambio/cambio-core.js"></script>
+<script src="js/cambio/cambio-graficos.js"></script>
+<script>
+(() => {
+  let temaSalvo = 'light';
+  try { temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light'; } catch {}
+  aplicarTema(temaSalvo);
+
+  const optsHist = HIST_MOEDAS.map(c => `<option value="${c}">${labelMoeda(c)}</option>`).join('');
+  $('gMoedaA').innerHTML = optsHist;
+  $('gMoedaB').innerHTML = optsHist;
+  $('gMoedaA').value = 'USD';
+  $('gMoedaB').value = 'BRL';
+
+  carregarTaxasAoVivo(true);
+  carregarVariacoesDia();
+  carregarGrafico();
+  carregarRetrospectivo();
+  setInterval(() => carregarTaxasAoVivo(false), 60000);
+})();
+</script>
 </body>
 </html>
