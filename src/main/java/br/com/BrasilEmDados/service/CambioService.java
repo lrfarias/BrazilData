@@ -1,6 +1,6 @@
-package br.com.BrasilEmDados.service; // <-- ajuste para o package da sua pasta service
+package br.com.BrasilEmDados.service;
 
-import br.com.BrasilEmDados.dto.CotacaoCambioResponse; // <-- ajuste para o package da sua pasta dto
+import br.com.BrasilEmDados.dto.CotacaoCambioResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -21,8 +21,8 @@ public class CambioService {
 
     private volatile CotacaoCambioResponse cacheAtual;
 
-    public CambioService(RestClient.Builder builder) {
-        this.restClient = builder.build();
+    public CambioService() {
+        this.restClient = RestClient.create();
     }
 
     public CotacaoCambioResponse obterCotacoesUsd() {
