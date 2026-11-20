@@ -63,7 +63,6 @@
   <header class="sticky top-0 z-50 border-b din-border din-bg-main/95 backdrop-blur">
     <div class="max-w-7xl mx-auto px-4 sm:px-6">
       <div class="flex items-center justify-between h-16 gap-4">
-        <!-- Esquerda: Logo Autoral + Badge de Status -->
         <div class="flex items-center gap-3">
           <a href="index.html" class="flex items-center gap-3 group">
             <div class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center shadow-sm group-hover:border-[#16C784] transition-colors">
@@ -78,15 +77,14 @@
               <div class="flex items-center gap-2">
                 <span class="text-lg font-extrabold tracking-tight din-text-main">BrasilEmDados</span>
                 <span class="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono uppercase px-2 py-0.5 rounded din-secondary-bg border din-border din-text-muted">
-                  <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span> IBGE SIDRA
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span> IBGE · PNUD
                 </span>
               </div>
-              <p class="text-[11px] din-text-muted hidden xl:block">Inteligência Macroeconômica e Contas Regionais</p>
+              <p class="text-[11px] din-text-muted hidden xl:block">Inteligência Macroeconômica, Tributária & IDH</p>
             </div>
           </a>
         </div>
 
-        <!-- Centro: Abas de Navegação -->
         <nav class="hidden md:flex items-center gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
           <a href="index.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Início</a>
           <a href="glossario.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Glossário</a>
@@ -95,7 +93,6 @@
           <a href="contato.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Contato</a>
         </nav>
 
-        <!-- Direita: Base + Tela Cheia + Ferramentas -->
         <div class="flex items-center gap-2.5 relative">
           <div class="flex items-center gap-1.5 din-secondary-bg border din-border rounded-lg px-3 py-1.5">
             <span class="text-xs din-text-muted font-medium">Base:</span>
@@ -124,7 +121,6 @@
             </svg>
           </button>
 
-          <!-- Menu Suspenso -->
           <div id="dropdownMenu" class="hidden absolute right-0 top-11 w-64 rounded-xl din-card-bg border din-border shadow-2xl py-1.5 z-50">
             <div class="px-4 py-1.5 border-b din-border">
               <p class="text-[10px] font-bold uppercase tracking-wider din-text-muted">Ferramentas do Terminal</p>
@@ -136,6 +132,10 @@
             <a href="#secaoRanking" onclick="toggleDropdownMenu()" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition">
               <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
               Classificação Estadual
+            </a>
+            <a href="#secaoAnalise" onclick="toggleDropdownMenu()" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+              <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M7 14l4-4 4 4 5-5"></path></svg>
+              Dispersão Tributo × IDH
             </a>
             <button onclick="window.print(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left">
               <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
@@ -155,7 +155,6 @@
         </div>
       </div>
 
-      <!-- Navegação Mobile -->
       <nav class="flex md:hidden items-center gap-5 h-10 overflow-x-auto no-scrollbar text-xs font-semibold border-t din-border">
         <a href="index.html" class="din-text-muted hover:din-text-main h-full flex items-center">Início</a>
         <a href="glossario.html" class="din-text-muted hover:din-text-main h-full flex items-center">Glossário</a>
@@ -166,7 +165,7 @@
     </div>
   </header>
 
-  <!-- Barra de Trilha (Breadcrumb) -->
+  <!-- Barra de Trilha -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex items-center justify-between text-xs ocultar-em-presentation">
     <div class="flex items-center gap-2 din-text-muted">
       <a href="economia.html" class="hover:din-green font-semibold inline-flex items-center gap-1 transition">
@@ -174,7 +173,7 @@
         Economia e indicadores
       </a>
       <span>/</span>
-      <span class="din-text-main font-bold">Impostos, População & Vocação Setorial</span>
+      <span class="din-text-main font-bold">Impostos, População & IDH</span>
     </div>
   </div>
 
@@ -224,8 +223,8 @@
         <p id="k3" class="text-xl font-bold din-text-main mt-1">—</p>
       </div>
       <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-        <span class="text-xs din-text-muted uppercase font-semibold">Menor tributo / hab.</span>
-        <p id="k4" class="text-xl font-bold din-text-main mt-1">—</p>
+        <span class="text-xs din-text-muted uppercase font-semibold">IDH médio (filtro)</span>
+        <p id="k4" class="text-xl font-bold din-green mt-1">—</p>
       </div>
     </section>
 
@@ -239,6 +238,7 @@
           </div>
           <select id="mapMetrica" class="inp !w-auto text-xs font-semibold" onchange="pintarMapa()">
             <option value="hab">Tributo por habitante</option>
+            <option value="idh">IDH (Desenvolvimento Humano)</option>
             <option value="arrec">Arrecadação estimada</option>
             <option value="pib">PIB estadual</option>
             <option value="pop">População total</option>
@@ -309,8 +309,9 @@
               <strong id="stProd" class="din-text-main">—</strong>
             </div>
             <div>
-              <span id="lblIdh" class="block text-[10px] din-text-muted">Arrec. / dia</span>
-              <strong id="stExtra" class="din-text-main">—</strong>
+              <span id="lblIdh" class="block text-[10px] din-text-muted">IDH (#—)</span>
+              <strong id="stIdh" class="din-green">—</strong>
+              <span id="stIdhFaixa" class="block text-[9px] din-text-muted">—</span>
             </div>
           </div>
 
@@ -371,15 +372,31 @@
       </div>
     </section>
 
-    <!-- Gráfico Comparativo PIB vs População -->
-    <section class="din-card-bg border din-border rounded-lg p-5 shadow-sm">
-      <h2 class="text-base font-semibold din-text-main">Peso na economia e na população</h2>
-      <p class="text-xs din-text-muted mb-3">Barra verde maior que a azul: o estado produz mais riqueza do que o tamanho da sua população sugere.</p>
-      <div class="h-[320px]"><canvas id="graf"></canvas></div>
+    <!-- Painel Analítico Inferior com 2 Abas (Dispersão Tributo × IDH | PIB vs População) -->
+    <section id="secaoAnalise" class="din-card-bg border din-border rounded-lg p-5 shadow-sm space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 id="titGrafInf" class="text-base font-semibold din-text-main">Capacidade tributária × Desenvolvimento Humano (IDH)</h2>
+          <p id="subGrafInf" class="text-xs din-text-muted">Cada ponto é um estado. Linhas tracejadas marcam as médias do Brasil; o ponto azul destaca o estado selecionado.</p>
+        </div>
+        <div class="inline-flex din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+          <button id="tInfScatter" type="button" onclick="setAbaInf('scatter')" class="px-3 py-1.5 rounded-md din-card-bg din-text-main border din-border transition">Tributo/hab. × IDH</button>
+          <button id="tInfBar" type="button" onclick="setAbaInf('bar')" class="px-3 py-1.5 rounded-md din-text-muted transition">PIB vs. População</button>
+        </div>
+      </div>
+
+      <div id="viewInfScatter" class="space-y-3">
+        <div class="h-[340px]"><canvas id="grafScatter"></canvas></div>
+        <p id="leituraScatter" class="text-xs din-secondary-bg border din-border rounded-lg p-3 din-text-muted leading-relaxed"></p>
+      </div>
+
+      <div id="viewInfBar" class="hidden">
+        <div class="h-[340px]"><canvas id="graf"></canvas></div>
+      </div>
     </section>
 
     <p class="text-xs din-text-muted max-w-4xl leading-relaxed ocultar-em-presentation">
-      <strong class="din-text-main">Metodologia.</strong> PIB e população vêm do IBGE (SIDRA). A arrecadação é estimada pela carga tributária selecionada no simulador (padrão 33% do PIB, média bruta do Brasil) e soma tributos federais, estaduais e municipais. A <em>Vocação Produtiva</em> reflete a composição setorial do Valor Adicionado Bruto conforme as Contas Regionais do IBGE.
+      <strong class="din-text-main">Metodologia e pacto federativo.</strong> PIB e população vêm do IBGE (SIDRA). Os valores de IDH utilizam o Radar IDHM 2021 (PNUD/Ipea/FJP) como referência estadual quando não houver série própria no banco. A arrecadação é estimada pela carga tributária selecionada no simulador (padrão 33% do PIB, média bruta nacional) e soma tributos federais, estaduais e municipais. Por conta do pacto federativo brasileiro (redistribuição via FPE/FPM), o tributo gerado em um estado não equivale ao orçamento disponível para gasto local; o IDH deve ser lido como contexto socioeconômico comparado à capacidade produtiva e tributária.
     </p>
   </main>
 </div>
@@ -416,9 +433,9 @@ const BD = {
 };
 
 let TAXA = 0.33, anoAtual = null;
-let TODOS = [], D_ALL = [], D = [], col = 'arrec', dir = -1, idh = false;
-let mediaHabBR = 0, ufSel = 'SP', ufComp = 'RJ', regiaoSel = 'Todas', abaRx = 'resumo', geoPronto = false;
-let chartBar = null, chartPie = null, chartHist = null;
+let TODOS = [], D_ALL = [], D = [], col = 'arrec', dir = -1;
+let mediaHabBR = 0, mediaIdhBR = 0, ufSel = 'SP', ufComp = 'RJ', regiaoSel = 'Todas', abaRx = 'resumo', abaInf = 'scatter', geoPronto = false;
+let chartBar = null, chartPie = null, chartHist = null, chartScatter = null;
 
 const IBGE_UF = {
   '11':'RO','12':'AC','13':'AM','14':'RR','15':'PA','16':'AP','17':'TO',
@@ -434,6 +451,16 @@ const REGIAO = {
   MS:'Centro-Oeste',MT:'Centro-Oeste',GO:'Centro-Oeste',DF:'Centro-Oeste'
 };
 const REGIOES = ['Todas', 'Norte', 'Nordeste', 'Centro-Oeste', 'Sudeste', 'Sul'];
+
+// Radar IDHM 2021 (PNUD / Ipea / FJP) — fallback automático caso o banco não tenha série própria de IDH
+const IDHM_UF = {
+  DF: 0.814, SP: 0.806, SC: 0.792, MG: 0.774, ES: 0.771, RS: 0.771, PR: 0.769, RJ: 0.762,
+  MS: 0.742, GO: 0.737, MT: 0.736, CE: 0.734, TO: 0.731, RN: 0.728, PE: 0.719, AC: 0.710,
+  SE: 0.702, AM: 0.700, RO: 0.700, RR: 0.699, PB: 0.698, BA: 0.691, PA: 0.690, PI: 0.690,
+  AP: 0.688, AL: 0.684, MA: 0.676
+};
+
+const faixaIDH = v => v >= 0.800 ? 'Muito Alto' : v >= 0.700 ? 'Alto' : v >= 0.600 ? 'Médio' : 'Baixo';
 
 const COMPOSICAO_SETORIAL_UF = {
   SP: { agro: 2,  ind: 22, serv: 67, adm: 9,  vocacao: 'Polo Financeiro e Serviços' },
@@ -465,7 +492,7 @@ const COMPOSICAO_SETORIAL_UF = {
   RR: { agro: 9,  ind: 9,  serv: 36, adm: 46, vocacao: 'Comércio e Setor Público' }
 };
 
-// Controles do Cabeçalho (Menu, Tema e Tela Cheia)
+// Controles do Cabeçalho
 function toggleDropdownMenu() { $('dropdownMenu').classList.toggle('hidden'); }
 window.addEventListener('click', e => {
   const btn = $('menuDropdownBtn'), menu = $('dropdownMenu');
@@ -488,10 +515,11 @@ function aplicarTema(tema) {
     if (bg && ball) { bg.style.backgroundColor = '#E5E7EB'; ball.classList.remove('translate-x-5'); }
   }
   if (D.length) {
-    graficoBar();
     pintarMapa();
     if (abaRx === 'resumo') renderPizzaVocacao(ufSel);
     if (abaRx === 'evolucao') renderEvolucao(ufSel);
+    if (abaInf === 'scatter') graficoScatter();
+    else graficoBar();
   }
 }
 
@@ -507,6 +535,7 @@ function alternarModoApresentacao() {
 function fmtMetrica(d, k) {
   if (!d) return '—';
   if (k === 'hab') return BD.brl(d.hab, 0) + ' / hab';
+  if (k === 'idh') return BD.num(d.idh, 3) + ' (' + faixaIDH(d.idh) + ')';
   if (k === 'arrec') return BD.compact(d.arrec);
   if (k === 'pib') return BD.compact(d.pib * 1000);
   if (k === 'pop') return BD.num(d.pop, 0) + ' hab.';
@@ -551,11 +580,14 @@ function montar(ano) {
     d.hab = d.arrec / d.pop;
     d.pibPc = (d.pib * 1000) / d.pop;
     d.prod = d.sp / d.sh;
+    if (!d.idh) d.idh = IDHM_UF[d.sigla] || 0;
   });
+
+  mediaIdhBR = D_ALL.reduce((a, d) => a + d.idh, 0) / (D_ALL.length || 1);
 
   [...D_ALL].sort((a, b) => b.arrec - a.arrec).forEach((d, i) => d.rkArrec = i + 1);
   [...D_ALL].sort((a, b) => b.hab - a.hab).forEach((d, i) => d.rkHab = i + 1);
-  idh = D_ALL.some(d => d.idh > 0);
+  [...D_ALL].sort((a, b) => b.idh - a.idh).forEach((d, i) => d.rkIdh = i + 1);
 
   const opts = [...D_ALL].sort((a, b) => a.nome.localeCompare(b.nome))
     .map(d => `<option value="${d.sigla}">${d.nome} (${d.sigla})</option>`).join('');
@@ -571,18 +603,18 @@ function aplicarFiltros() {
 
   const pReg = D.reduce((a, d) => a + d.pib, 0), hReg = D.reduce((a, d) => a + d.pop, 0);
   const arrecReg = pReg * 1000 * TAXA;
-  const hs = [...D].sort((a, b) => b.hab - a.hab), mx = hs[0], mn = hs[hs.length - 1];
+  const hs = [...D].sort((a, b) => b.hab - a.hab), mx = hs[0];
+  const idhMed = D.reduce((a, d) => a + d.idh, 0) / D.length;
 
   $('k1Lbl').textContent = regiaoSel === 'Todas' ? `Arrecadação est. (${anoAtual})` : `Arrecadação est. (${regiaoSel})`;
   $('k1').textContent = BD.compact(arrecReg);
   $('k2').textContent = BD.brl(arrecReg / hReg, 0) + ' / ano';
   $('k3').textContent = `${mx.sigla} · ${BD.brl(mx.hab, 0)}`;
-  $('k4').textContent = `${mn.sigla} · ${BD.brl(mn.hab, 0)}`;
+  $('k4').textContent = `${BD.num(idhMed, 3)} · ${faixaIDH(idhMed)}`;
   $('titTabela').textContent = regiaoSel === 'Todas' ? `Ranking dos ${D.length} estados (${anoAtual})` : `Estados da região ${regiaoSel} (${D.length})`;
 
   if (!D.some(d => d.sigla === ufSel)) ufSel = D[0].sigla;
   tabela();
-  graficoBar();
   if (geoPronto) pintarMapa();
   selecionarEstado(ufSel);
 }
@@ -609,6 +641,27 @@ function setAba(a) {
   if (geoPronto) pintarMapa();
 }
 
+function setAbaInf(a) {
+  abaInf = a;
+  const on = 'px-3 py-1.5 rounded-md din-card-bg din-text-main border din-border transition';
+  const off = 'px-3 py-1.5 rounded-md din-text-muted transition';
+  $('tInfScatter').className = a === 'scatter' ? on : off;
+  $('tInfBar').className = a === 'bar' ? on : off;
+
+  $('viewInfScatter').classList.toggle('hidden', a !== 'scatter');
+  $('viewInfBar').classList.toggle('hidden', a !== 'bar');
+
+  if (a === 'scatter') {
+    $('titGrafInf').textContent = 'Capacidade tributária × Desenvolvimento Humano (IDH)';
+    $('subGrafInf').textContent = 'Cada ponto é um estado. Linhas tracejadas marcam as médias do Brasil; o ponto azul destaca o estado selecionado.';
+    graficoScatter();
+  } else {
+    $('titGrafInf').textContent = 'Peso na economia e na população';
+    $('subGrafInf').textContent = 'Barra verde maior que a azul: o estado produz mais riqueza do que o tamanho da sua população sugere.';
+    graficoBar();
+  }
+}
+
 function selecionarEstado(sigla) {
   const d = D_ALL.find(x => x.sigla === sigla);
   if (!d) return;
@@ -632,13 +685,9 @@ function selecionarEstado(sigla) {
   $('stPibPc').textContent = BD.brl(d.pibPc, 0);
   $('stProd').innerHTML = `<span class="${d.prod >= 1 ? 'din-green' : 'din-red'}">${BD.num(d.prod, 2)}x</span>`;
 
-  if (idh && d.idh) {
-    $('lblIdh').textContent = 'IDH';
-    $('stExtra').innerHTML = `<span class="din-green">${BD.num(d.idh, 3)}</span>`;
-  } else {
-    $('lblIdh').textContent = 'Arrec. / dia';
-    $('stExtra').textContent = BD.compact(d.arrec / 365);
-  }
+  $('lblIdh').textContent = `IDH (#${d.rkIdh}º)`;
+  $('stIdh').textContent = BD.num(d.idh, 3);
+  $('stIdhFaixa').textContent = faixaIDH(d.idh);
 
   $('selCompA').value = ufSel;
   $('selCompB').value = ufComp;
@@ -646,6 +695,8 @@ function selecionarEstado(sigla) {
   if (abaRx === 'resumo') renderPizzaVocacao(ufSel);
   if (abaRx === 'evolucao') renderEvolucao(ufSel);
   if (abaRx === 'comparar') renderComparar();
+  if (abaInf === 'scatter') graficoScatter();
+  else graficoBar();
   if (geoPronto) pintarMapa();
   tabela();
 }
@@ -731,9 +782,9 @@ function renderComparar() {
     ['População', a.pop, b.pop, v => BD.num(v, 0)],
     ['Arrecadação est.', a.arrec, b.arrec, v => BD.compact(v)],
     ['Tributo / hab.', a.hab, b.hab, v => BD.brl(v, 0)],
-    ['Produtividade', a.prod, b.prod, v => BD.num(v, 2) + 'x']
+    ['Produtividade', a.prod, b.prod, v => BD.num(v, 2) + 'x'],
+    ['IDH (PNUD)', a.idh, b.idh, v => BD.num(v, 3)]
   ];
-  if (idh) linhas.push(['IDH', a.idh, b.idh, v => v ? BD.num(v, 3) : '—']);
 
   $('compBody').innerHTML = linhas.map(([lbl, va, vb, fmt]) => `
     <div class="py-2 grid grid-cols-12 items-center gap-1">
@@ -824,8 +875,7 @@ function pintarMapa() {
 }
 
 function tabela() {
-  const cols = [['nome', 'Estado'], ['pib', 'PIB'], ['sp', '% PIB'], ['sh', '% Pop.'], ['arrec', 'Arrecadação est.'], ['hab', 'Por hab.']];
-  if (idh) cols.push(['idh', 'IDH']);
+  const cols = [['nome', 'Estado'], ['pib', 'PIB'], ['sp', '% PIB'], ['sh', '% Pop.'], ['arrec', 'Arrecadação est.'], ['hab', 'Por hab.'], ['idh', 'IDH']];
   $('thead').innerHTML = '<th class="py-2 px-2">#</th>' + cols.map(([k, t]) => `<th class="s py-2 px-2" onclick="ord('${k}')">${t} ↕</th>`).join('');
   const L = [...D].sort((a, b) => col === 'nome' ? dir * -1 * a.nome.localeCompare(b.nome) : dir * (a[col] - b[col]));
   $('tbody').innerHTML = L.map((d, i) => `<tr onclick="selecionarEstado('${d.sigla}')" class="cursor-pointer hover:opacity-85 ${d.sigla === ufSel ? 'din-secondary-bg' : ''}">
@@ -836,9 +886,109 @@ function tabela() {
     <td class="py-2 px-2 din-text-main">${BD.num(d.sh, 1)}%</td>
     <td class="py-2 px-2 din-red">${BD.compact(d.arrec)}</td>
     <td class="py-2 px-2 din-text-main">${BD.brl(d.hab, 0)}</td>
-    ${idh ? `<td class="py-2 px-2 din-green">${d.idh ? BD.num(d.idh, 3) : '—'}</td>` : ''}</tr>`).join('');
+    <td class="py-2 px-2 font-semibold din-green">${BD.num(d.idh, 3)}</td></tr>`).join('');
 }
 function ord(k) { if (col === k) dir *= -1; else { col = k; dir = -1; } tabela(); }
+
+// Plugin simples para desenhar linhas de média BR (quadrantes) no gráfico de dispersão
+const refLinesPlugin = {
+  id: 'refLines',
+  afterDatasetsDraw(chart) {
+    const { ctx, chartArea: { left, right, top, bottom }, scales: { x, y } } = chart;
+    const xPos = x.getPixelForValue(mediaHabBR);
+    const yPos = y.getPixelForValue(mediaIdhBR);
+    ctx.save();
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = '#9299A3';
+    ctx.lineWidth = 1;
+    if (xPos >= left && xPos <= right) {
+      ctx.beginPath(); ctx.moveTo(xPos, top); ctx.lineTo(xPos, bottom); ctx.stroke();
+    }
+    if (yPos >= top && yPos <= bottom) {
+      ctx.beginPath(); ctx.moveTo(left, yPos); ctx.lineTo(right, yPos); ctx.stroke();
+    }
+    ctx.restore();
+  }
+};
+
+function graficoScatter() {
+  if (!D.length) return;
+  const c = BD.cor();
+  const outros = D.filter(d => d.sigla !== ufSel).map(d => ({ x: Math.round(d.hab), y: d.idh, uf: d.sigla, nome: d.nome }));
+  const selObj = D.find(d => d.sigla === ufSel);
+  const selecionado = selObj ? [{ x: Math.round(selObj.hab), y: selObj.idh, uf: selObj.sigla, nome: selObj.nome }] : [];
+
+  if (chartScatter) chartScatter.destroy();
+  chartScatter = new Chart($('grafScatter'), {
+    type: 'scatter',
+    plugins: [refLinesPlugin],
+    data: {
+      datasets: [
+        {
+          label: 'Demais estados',
+          data: outros,
+          backgroundColor: 'rgba(22,199,132,0.75)',
+          borderColor: '#16C784',
+          pointRadius: 6,
+          pointHoverRadius: 8
+        },
+        {
+          label: selObj ? `${selObj.nome} (${selObj.sigla})` : 'Selecionado',
+          data: selecionado,
+          backgroundColor: '#2563EB',
+          borderColor: '#FFFFFF',
+          borderWidth: 2,
+          pointRadius: 9,
+          pointHoverRadius: 11
+        }
+      ]
+    },
+    options: {
+      maintainAspectRatio: false,
+      onClick: (_, els) => {
+        if (!els.length) return;
+        const pt = chartScatter.data.datasets[els[0].datasetIndex].data[els[0].index];
+        if (pt && pt.uf) selecionarEstado(pt.uf);
+      },
+      plugins: {
+        legend: { labels: { color: c.tx, boxWidth: 10, font: { size: 11 } } },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const p = ctx.raw;
+              return ` ${p.nome} (${p.uf}) — Tributo/hab: ${BD.brl(p.x, 0)} · IDH: ${BD.num(p.y, 3)}`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: 'Tributo estimado por habitante (R$ / ano)', color: c.mu, font: { size: 11 } },
+          ticks: { color: c.mu, callback: v => BD.compact(v) },
+          grid: { color: c.grid }
+        },
+        y: {
+          title: { display: true, text: 'IDH (PNUD)', color: c.mu, font: { size: 11 } },
+          ticks: { color: c.mu, callback: v => BD.num(v, 2) },
+          grid: { color: c.grid }
+        }
+      }
+    }
+  });
+
+  if (selObj) {
+    const acimaHab = selObj.hab >= mediaHabBR;
+    const acimaIdh = selObj.idh >= mediaIdhBR;
+    const quad = acimaHab && acimaIdh
+      ? 'está no quadrante superior direito (alta capacidade tributária por habitante e IDH acima da média nacional)'
+      : !acimaHab && acimaIdh
+        ? 'entrega IDH acima da média nacional mesmo com geração tributária por habitante inferior à média'
+        : acimaHab && !acimaIdh
+          ? 'gera tributo por habitante acima da média nacional, mas ainda apresenta IDH abaixo da média'
+          : 'está abaixo da média nacional tanto em tributo por habitante quanto em IDH';
+    $('leituraScatter').innerHTML = `<strong class="din-text-main">${selObj.nome} (${selObj.sigla})</strong> ${quad} — IDH <strong class="din-green">${BD.num(selObj.idh, 3)}</strong> (média BR: ${BD.num(mediaIdhBR, 3)}) e tributo/hab. de <strong class="din-text-main">${BD.brl(selObj.hab, 0)}</strong> (média BR: ${BD.brl(mediaHabBR, 0)}).`;
+  }
+}
 
 function graficoBar() {
   const t = [...D].sort((a, b) => b.pib - a.pib).slice(0, 10), c = BD.cor();
@@ -855,13 +1005,10 @@ function graficoBar() {
 
 function exportarCSV() {
   if (!D.length) return;
-  const cab = ['Estado','Sigla','Regiao','Ano','Carga_Simulada_%','PIB_R$','Part_PIB_%','Populacao','Part_Pop_%','Arrecadacao_Est_R$','Tributo_Por_Hab_R$','PIB_Per_Capita_R$','Produtividade_x','Servicos_%','Industria_%','Agro_%','Adm_Publica_%'];
-  if (idh) cab.push('IDH');
+  const cab = ['Estado','Sigla','Regiao','Ano','Carga_Simulada_%','PIB_R$','Part_PIB_%','Populacao','Part_Pop_%','Arrecadacao_Est_R$','Tributo_Por_Hab_R$','PIB_Per_Capita_R$','Produtividade_x','IDH','Faixa_IDH','Servicos_%','Industria_%','Agro_%','Adm_Publica_%'];
   const linhas = D.map(d => {
     const c = COMPOSICAO_SETORIAL_UF[d.sigla] || { serv:0, ind:0, agro:0, adm:0 };
-    const row = [d.nome, d.sigla, d.regiao, anoAtual, (TAXA*100).toFixed(1), Math.round(d.pib*1000), d.sp.toFixed(2), Math.round(d.pop), d.sh.toFixed(2), Math.round(d.arrec), Math.round(d.hab), Math.round(d.pibPc), d.prod.toFixed(2), c.serv, c.ind, c.agro, c.adm];
-    if (idh) row.push(d.idh ? d.idh.toFixed(3) : '');
-    return row.join(';');
+    return [d.nome, d.sigla, d.regiao, anoAtual, (TAXA*100).toFixed(1), Math.round(d.pib*1000), d.sp.toFixed(2), Math.round(d.pop), d.sh.toFixed(2), Math.round(d.arrec), Math.round(d.hab), Math.round(d.pibPc), d.prod.toFixed(2), d.idh.toFixed(3), faixaIDH(d.idh), c.serv, c.ind, c.agro, c.adm].join(';');
   });
   const blob = new Blob(['\uFEFF' + [cab.join(';'), ...linhas].join('\n')], { type: 'text/csv;charset=utf-8;' });
   const a = document.createElement('a');
