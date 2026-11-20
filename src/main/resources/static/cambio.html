@@ -3,171 +3,374 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Moedas & Câmbio Global — BrasilEmDados</title>
+<title>Conversor de Moedas & Paridade Cambial — BrasilEmDados</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
+<style>
+  :root {
+    --bg-main: #FFFFFF;
+    --card-bg: #F7F8FA;
+    --bg-secondary: #F0F2F5;
+    --text-main: #17191C;
+    --text-muted: #737780;
+    --border-col: #E5E7EB;
+    --accent-green: #16C784;
+    --accent-red: #EA3943;
+  }
+  [data-theme="dark"] {
+    --bg-main: #101214;
+    --card-bg: #191C20;
+    --bg-secondary: #22262B;
+    --text-main: #F5F6F7;
+    --text-muted: #9299A3;
+    --border-col: #2B3036;
+    --accent-green: #16C784;
+    --accent-red: #EA3943;
+  }
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .din-bg-main { background-color: var(--bg-main); }
+  .din-card-bg { background-color: var(--card-bg); }
+  .din-secondary-bg { background-color: var(--bg-secondary); }
+  .din-text-main { color: var(--text-main); }
+  .din-text-muted { color: var(--text-muted); }
+  .din-border { border-color: var(--border-col); }
+  .din-green { color: var(--accent-green); }
+  .din-red { color: var(--accent-red); }
+  .din-btn { background-color: var(--accent-green); color: #FFFFFF; }
+  .din-btn:hover { opacity: 0.9; }
+  .inp { background-color: var(--bg-secondary); border: 1px solid var(--border-col); color: var(--text-main); border-radius: 0.5rem; padding: 0.5rem 0.75rem; width: 100%; font-size: 0.875rem; }
+  .inp:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--accent-green); outline-offset: 2px; }
+  select option { background-color: var(--card-bg); color: var(--text-main); }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  body.modo-apresentacao header,
+  body.modo-apresentacao .ocultar-em-presentation { display: none !important; }
+  body.modo-apresentacao main { max-width: 100% !important; padding: 16px !important; }
+</style>
 </head>
-<body class="min-h-screen font-sans flex flex-col">
-<div id="bd-header"></div>
+<body class="min-h-screen font-sans flex flex-col justify-between">
+<div>
+  <!-- Cabeçalho Institucional -->
+  <header class="sticky top-0 z-50 border-b din-border din-bg-main/95 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="flex items-center justify-between h-16 gap-4">
+        <!-- Esquerda: Logo Autoral + Badge de Status -->
+        <div class="flex items-center gap-3">
+          <a href="index.html" class="flex items-center gap-3 group">
+            <div class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center shadow-sm group-hover:border-[#16C784] transition-colors">
+              <svg class="w-5 h-5 din-text-main" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 20V10"></path>
+                <path d="M12 20V4"></path>
+                <path d="M6 20v-6"></path>
+                <circle cx="12" cy="4" r="1" fill="#16C784" stroke="#16C784"></circle>
+              </svg>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-lg font-extrabold tracking-tight din-text-main">BrasilEmDados</span>
+                <span class="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono uppercase px-2 py-0.5 rounded din-secondary-bg border din-border din-text-muted">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span> CÂMBIO GLOBAL
+                </span>
+              </div>
+              <p class="text-[11px] din-text-muted hidden xl:block">Conversor de Moedas & Paridade Cambial</p>
+            </div>
+          </a>
+        </div>
 
-<main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-  <!-- Cabeçalho -->
-  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-    <div>
-      <a href="/economia.html" class="text-xs font-semibold din-text-muted hover:underline">← Economia e indicadores</a>
-      <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight din-text-main mt-2">Moedas e câmbio global</h1>
-      <p class="text-sm din-text-muted mt-1 max-w-2xl">Converta mais de 160 moedas do mundo com taxa cruzada em tempo real e compare o desempenho histórico entre pares globais.</p>
+        <!-- Centro: Abas de Navegação -->
+        <nav class="hidden md:flex items-center gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+          <a href="index.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Início</a>
+          <a href="glossario.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Glossário</a>
+          <a href="economia.html" class="px-3.5 py-1.5 rounded-md din-card-bg din-text-main shadow-sm border din-border transition">Economia</a>
+          <a href="sobre.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Sobre</a>
+          <a href="contato.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Contato</a>
+        </nav>
+
+        <!-- Direita: Modo Tela Cheia + Menu de Ferramentas -->
+        <div class="flex items-center gap-2.5 relative">
+          <button onclick="alternarModoApresentacao()" id="btnModoApresentacao" class="hidden lg:inline-flex items-center gap-1.5 din-secondary-bg hover:opacity-80 border din-border din-text-main text-xs font-semibold px-3 py-1.5 rounded-lg transition">
+            <svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line>
+              <line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line>
+            </svg>
+            <span>Modo Tela Cheia</span>
+          </button>
+
+          <button id="menuDropdownBtn" onclick="toggleDropdownMenu()" title="Preferências e Ferramentas" class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center hover:border-[#16C784] transition cursor-pointer">
+            <svg class="w-4 h-4 din-text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line>
+              <line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line>
+              <line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line>
+              <line x1="17" y1="16" x2="23" y2="16"></line>
+            </svg>
+          </button>
+
+          <!-- Menu Suspenso -->
+          <div id="dropdownMenu" class="hidden absolute right-0 top-11 w-64 rounded-xl din-card-bg border din-border shadow-2xl py-1.5 z-50">
+            <div class="px-4 py-1.5 border-b din-border">
+              <p class="text-[10px] font-bold uppercase tracking-wider din-text-muted">Ferramentas do Terminal</p>
+            </div>
+            <a href="economia.html" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+              <svg class="w-4 h-4 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+              Voltar ao Hub Economia
+            </a>
+            <a href="#secaoComparador" onclick="toggleDropdownMenu()" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+              <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M7 14l4-4 4 4 5-5"></path></svg>
+              Comparador Histórico
+            </a>
+            <button onclick="window.print(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left">
+              <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              Exportar Relatório (PDF)
+            </button>
+            <div class="my-1 border-t din-border"></div>
+            <div class="flex items-center justify-between px-4 py-2.5 text-xs font-medium din-text-main cursor-pointer select-none" onclick="alternarDarkLight()">
+              <div class="flex items-center gap-3">
+                <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                <span>Modo Escuro (Dark)</span>
+              </div>
+              <div id="switchBg" class="w-10 h-5 rounded-full relative transition-colors duration-200 p-0.5 flex items-center" style="background-color: var(--border-col);">
+                <div id="switchBall" class="w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-200"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navegação Mobile -->
+      <nav class="flex md:hidden items-center gap-5 h-10 overflow-x-auto no-scrollbar text-xs font-semibold border-t din-border">
+        <a href="index.html" class="din-text-muted hover:din-text-main h-full flex items-center">Início</a>
+        <a href="glossario.html" class="din-text-muted hover:din-text-main h-full flex items-center">Glossário</a>
+        <a href="economia.html" class="din-green border-b-2 border-[#16C784] h-full flex items-center">Economia</a>
+        <a href="sobre.html" class="din-text-muted hover:din-text-main h-full flex items-center">Sobre</a>
+        <a href="contato.html" class="din-text-muted hover:din-text-main h-full flex items-center">Contato</a>
+      </nav>
     </div>
-    <div class="flex items-center gap-2 text-xs din-text-muted">
+  </header>
+
+  <!-- Barra de Trilha (Breadcrumb) -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex flex-wrap items-center justify-between gap-2 text-xs ocultar-em-presentation">
+    <div class="flex items-center gap-2 din-text-muted">
+      <a href="economia.html" class="hover:din-green font-semibold inline-flex items-center gap-1 transition">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        Economia e indicadores
+      </a>
+      <span>/</span>
+      <span class="din-text-main font-bold">Conversor de Moedas & Paridade Cambial</span>
+    </div>
+    <div class="flex items-center gap-2 din-text-muted">
       <span class="w-2 h-2 rounded-full bg-[#16C784] animate-pulse"></span>
       <span id="statusLive">Carregando cotações...</span>
     </div>
   </div>
 
-  <!-- Ranking Top 5 Moedas Globais (FMI/BIS - Liquidez e Reserva) -->
-  <section class="space-y-2">
-    <div class="flex flex-wrap items-center justify-between gap-2">
-      <h2 class="text-xs font-semibold uppercase tracking-wider din-text-muted">Top 5 Moedas Globais (Reserva e Liquidez · em BRL)</h2>
-      <span class="text-[11px] din-text-muted">Ordem de relevância internacional (FMI/BIS)</span>
-    </div>
-    <div id="top5" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-      <!-- Preenchido via JS -->
-    </div>
-  </section>
-
-  <!-- Conversor Universal (~160 moedas) -->
-  <section class="din-card-bg border din-border rounded-lg p-5 space-y-4">
-    <div class="flex flex-wrap items-center justify-between gap-2">
-      <h2 class="text-base font-semibold din-text-main">Conversor universal</h2>
-      <span id="qtdMoedas" class="text-xs din-text-muted">—</span>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-11 gap-3 items-end">
-      <div class="md:col-span-3">
-        <label class="block text-xs font-semibold din-text-main">Valor
-          <input id="convVal" class="inp mt-1 font-semibold" inputmode="decimal" value="100" oninput="converter()">
-        </label>
+  <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-5 space-y-6">
+    <!-- Ranking Top 5 Moedas Globais (FMI/BIS - Liquidez e Reserva) -->
+    <section class="space-y-2 ocultar-em-presentation">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <h2 class="text-xs font-semibold uppercase tracking-wider din-text-muted">Top 5 Moedas Globais (Reserva e Liquidez · em BRL)</h2>
+        <span class="text-[11px] din-text-muted">Ordem de relevância internacional (FMI/BIS)</span>
       </div>
-      <div class="md:col-span-3">
-        <label class="block text-xs font-semibold din-text-main">De
-          <select id="convDe" class="inp mt-1" onchange="converter()"></select>
-        </label>
+      <div id="top5" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <!-- Preenchido via JS -->
       </div>
-      <div class="md:col-span-1 flex justify-center">
-        <button type="button" onclick="inverterConv()" title="Inverter moedas"
-          class="w-full md:w-10 h-10 rounded-lg din-secondary-bg border din-border din-text-main font-bold hover:border-[#16C784] transition">⇄</button>
-      </div>
-      <div class="md:col-span-4">
-        <label class="block text-xs font-semibold din-text-main">Para
-          <select id="convPara" class="inp mt-1" onchange="converter()"></select>
-        </label>
-      </div>
-    </div>
+    </section>
 
-    <div class="pt-3 border-t din-border flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
-      <div>
-        <p id="convRes" class="text-2xl sm:text-3xl font-extrabold din-green">—</p>
-        <p id="convTaxa" class="text-xs din-text-muted mt-1">—</p>
+    <!-- Conversor Universal (~160 moedas) -->
+    <section class="din-card-bg border din-border rounded-lg p-5 shadow-sm space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <h2 class="text-base font-semibold din-text-main">Conversor universal</h2>
+        <span id="qtdMoedas" class="text-xs din-text-muted">—</span>
       </div>
-      <p id="convInverso" class="text-xs din-text-muted">—</p>
-    </div>
-  </section>
 
-  <!-- Gráfico Comparativo Interativo -->
-  <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-    <!-- Controles e Métricas -->
-    <div class="lg:col-span-4 space-y-4">
-      <div class="din-card-bg border din-border rounded-lg p-5 space-y-4">
-        <h2 class="text-base font-semibold din-text-main">Comparador histórico</h2>
-
-        <div class="grid grid-cols-2 gap-2">
-          <label class="text-xs font-semibold din-text-main">Moeda A
-            <select id="gMoedaA" class="inp mt-1" onchange="carregarGrafico()"></select>
-          </label>
-          <label class="text-xs font-semibold din-text-main">Moeda B
-            <select id="gMoedaB" class="inp mt-1" onchange="carregarGrafico()"></select>
+      <div class="grid grid-cols-1 md:grid-cols-11 gap-3 items-end">
+        <div class="md:col-span-3">
+          <label class="block text-xs font-semibold din-text-main">Valor
+            <input id="convVal" class="inp mt-1 font-semibold" inputmode="decimal" value="100" oninput="converter()">
           </label>
         </div>
-
-        <div>
-          <span class="block text-xs font-semibold din-text-main mb-1.5">Período</span>
-          <div class="grid grid-cols-3 gap-1.5 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
-            <button id="p30" type="button" onclick="setPeriodo(30)" class="py-1.5 rounded-md din-text-muted transition">30d</button>
-            <button id="p90" type="button" onclick="setPeriodo(90)" class="py-1.5 rounded-md din-card-bg din-text-main border din-border transition">90d</button>
-            <button id="p365" type="button" onclick="setPeriodo(365)" class="py-1.5 rounded-md din-text-muted transition">1 ano</button>
-          </div>
+        <div class="md:col-span-3">
+          <label class="block text-xs font-semibold din-text-main">De
+            <select id="convDe" class="inp mt-1" onchange="converter()"></select>
+          </label>
         </div>
-
-        <div>
-          <span class="block text-xs font-semibold din-text-main mb-1.5">Modo de visualização</span>
-          <div class="grid grid-cols-2 gap-1.5 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
-            <button id="mPar" type="button" onclick="setModo('par')" class="py-1.5 rounded-md din-card-bg din-text-main border din-border transition">Par Direto (A/B)</button>
-            <button id="mBase" type="button" onclick="setModo('base100')" class="py-1.5 rounded-md din-text-muted transition">Base 100 (vs USD)</button>
-          </div>
+        <div class="md:col-span-1 flex justify-center">
+          <button type="button" onclick="inverterConv()" title="Inverter moedas"
+            class="w-full md:w-10 h-10 rounded-lg din-secondary-bg border din-border din-text-main font-bold hover:border-[#16C784] transition">⇄</button>
         </div>
-
-        <!-- Métricas de Mercado -->
-        <div class="pt-3 border-t din-border grid grid-cols-2 gap-3">
-          <div class="din-secondary-bg rounded-md p-2.5">
-            <span class="text-[11px] din-text-muted">Variação</span>
-            <p id="mVar" class="text-sm font-bold din-text-main mt-0.5">—</p>
-          </div>
-          <div class="din-secondary-bg rounded-md p-2.5">
-            <span class="text-[11px] din-text-muted">Volatilidade diária</span>
-            <p id="mVol" class="text-sm font-bold din-text-main mt-0.5">—</p>
-          </div>
-          <div class="din-secondary-bg rounded-md p-2.5">
-            <span class="text-[11px] din-text-muted">Máxima</span>
-            <p id="mMax" class="text-sm font-bold din-text-main mt-0.5">—</p>
-          </div>
-          <div class="din-secondary-bg rounded-md p-2.5">
-            <span class="text-[11px] din-text-muted">Mínima</span>
-            <p id="mMin" class="text-sm font-bold din-text-main mt-0.5">—</p>
-          </div>
+        <div class="md:col-span-4">
+          <label class="block text-xs font-semibold din-text-main">Para
+            <select id="convPara" class="inp mt-1" onchange="converter()"></select>
+          </label>
         </div>
       </div>
 
-      <!-- Leitura Didática -->
-      <div class="din-card-bg border din-border rounded-lg p-5 space-y-2">
-        <span class="text-xs font-semibold uppercase tracking-wider din-green">Leitura do cenário</span>
-        <p id="leituraGraf" class="text-xs din-text-main leading-relaxed">Carregando série histórica...</p>
+      <div class="pt-3 border-t din-border flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
+        <div>
+          <p id="convRes" class="text-2xl sm:text-3xl font-extrabold din-green">—</p>
+          <p id="convTaxa" class="text-xs din-text-muted mt-1">—</p>
+        </div>
+        <p id="convInverso" class="text-xs din-text-muted">—</p>
       </div>
+    </section>
+
+    <!-- Gráfico Comparativo Interativo -->
+    <section id="secaoComparador" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Controles e Métricas -->
+      <div class="lg:col-span-4 space-y-4">
+        <div class="din-card-bg border din-border rounded-lg p-5 shadow-sm space-y-4">
+          <h2 class="text-base font-semibold din-text-main">Comparador histórico</h2>
+
+          <div class="grid grid-cols-2 gap-2">
+            <label class="text-xs font-semibold din-text-main">Moeda A
+              <select id="gMoedaA" class="inp mt-1" onchange="carregarGrafico()"></select>
+            </label>
+            <label class="text-xs font-semibold din-text-main">Moeda B
+              <select id="gMoedaB" class="inp mt-1" onchange="carregarGrafico()"></select>
+            </label>
+          </div>
+
+          <div>
+            <span class="block text-xs font-semibold din-text-main mb-1.5">Período</span>
+            <div class="grid grid-cols-3 gap-1.5 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+              <button id="p30" type="button" onclick="setPeriodo(30)" class="py-1.5 rounded-md din-text-muted transition">30d</button>
+              <button id="p90" type="button" onclick="setPeriodo(90)" class="py-1.5 rounded-md din-card-bg din-text-main border din-border transition">90d</button>
+              <button id="p365" type="button" onclick="setPeriodo(365)" class="py-1.5 rounded-md din-text-muted transition">1 ano</button>
+            </div>
+          </div>
+
+          <div>
+            <span class="block text-xs font-semibold din-text-main mb-1.5">Modo de visualização</span>
+            <div class="grid grid-cols-2 gap-1.5 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+              <button id="mPar" type="button" onclick="setModo('par')" class="py-1.5 rounded-md din-card-bg din-text-main border din-border transition">Par Direto (A/B)</button>
+              <button id="mBase" type="button" onclick="setModo('base100')" class="py-1.5 rounded-md din-text-muted transition">Base 100 (vs USD)</button>
+            </div>
+          </div>
+
+          <!-- Métricas de Mercado -->
+          <div class="pt-3 border-t din-border grid grid-cols-2 gap-3">
+            <div class="din-secondary-bg rounded-md p-2.5">
+              <span class="text-[11px] din-text-muted">Variação</span>
+              <p id="mVar" class="text-sm font-bold din-text-main mt-0.5">—</p>
+            </div>
+            <div class="din-secondary-bg rounded-md p-2.5">
+              <span class="text-[11px] din-text-muted">Volatilidade diária</span>
+              <p id="mVol" class="text-sm font-bold din-text-main mt-0.5">—</p>
+            </div>
+            <div class="din-secondary-bg rounded-md p-2.5">
+              <span class="text-[11px] din-text-muted">Máxima</span>
+              <p id="mMax" class="text-sm font-bold din-text-main mt-0.5">—</p>
+            </div>
+            <div class="din-secondary-bg rounded-md p-2.5">
+              <span class="text-[11px] din-text-muted">Mínima</span>
+              <p id="mMin" class="text-sm font-bold din-text-main mt-0.5">—</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Leitura Didática -->
+        <div class="din-card-bg border din-border rounded-lg p-5 shadow-sm space-y-2">
+          <span class="text-xs font-semibold uppercase tracking-wider din-green">Leitura do cenário</span>
+          <p id="leituraGraf" class="text-xs din-text-main leading-relaxed">Carregando série histórica...</p>
+        </div>
+      </div>
+
+      <!-- Canvas do Gráfico -->
+      <div class="lg:col-span-8 din-card-bg border din-border rounded-lg p-5 shadow-sm flex flex-col">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <div>
+            <h2 id="titGraf" class="text-base font-semibold din-text-main">Evolução cambial</h2>
+            <p id="subGraf" class="text-xs din-text-muted">Dados oficiais de fechamento diário (Banco Central Europeu)</p>
+          </div>
+        </div>
+        <div class="flex-1 min-h-[340px]"><canvas id="grafMoedas"></canvas></div>
+      </div>
+    </section>
+
+    <!-- Bloco Didático -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start ocultar-em-presentation">
+      <details class="lg:col-span-6 din-card-bg border din-border rounded-lg p-4 text-xs din-text-muted">
+        <summary class="font-semibold din-text-main cursor-pointer select-none">Como ler câmbio, Base 100 e o Top 5 Global?</summary>
+        <div class="mt-3 space-y-2 leading-relaxed">
+          <p><strong class="din-text-main">Relevância vs. Moeda "mais cara":</strong> O Top 5 Global (USD, EUR, GBP, JPY, CNY) reflete liquidez e reservas internacionais (FMI/BIS). Moedas como o Dinar do Kuwait (KWD) valem mais por unidade nominal, mas isso é apenas uma questão de escala, não de força econômica.</p>
+          <p><strong class="din-text-main">Par Direto vs. Base 100:</strong> No <em>Par Direto</em>, você vê quantas unidades de B compra 1 unidade de A. Na <em>Base 100</em>, ambas as moedas começam em 100 no primeiro dia e são medidas contra o Dólar — ideal para ver qual moeda se valorizou mais no período.</p>
+          <p><strong class="din-text-main">Volatilidade diária:</strong> Desvio-padrão das variações percentuais diárias. Quanto maior o número, mais instável esteve o câmbio no período.</p>
+        </div>
+      </details>
+
+      <p class="lg:col-span-6 text-xs din-text-muted leading-relaxed">
+        <strong class="din-text-main">Fontes e metodologia.</strong> Cotações atuais obtidas via ExchangeRate-API (taxa cruzada sobre USD para mais de 160 moedas, atualizada automaticamente a cada 60s). Séries históricas oficiais fornecidas pela API Frankfurter (Banco Central Europeu). Valores de referência comercial, sem incluir IOF ou spread bancário. Conteúdo educativo.
+      </p>
+    </section>
+  </main>
+</div>
+
+<!-- Rodapé Institucional -->
+<footer class="border-t din-border din-card-bg py-6 text-xs din-text-muted mt-8 ocultar-em-presentation">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+    <div class="flex items-center gap-2">
+      <span class="font-bold din-text-main">BrasilEmDados</span>
+      <span>•</span>
+      <span>Terminal de Inteligência Econômica e Setorial</span>
     </div>
-
-    <!-- Canvas do Gráfico -->
-    <div class="lg:col-span-8 din-card-bg border din-border rounded-lg p-5 flex flex-col">
-      <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-        <div>
-          <h2 id="titGraf" class="text-base font-semibold din-text-main">Evolução cambial</h2>
-          <p id="subGraf" class="text-xs din-text-muted">Dados oficiais de fechamento diário (Banco Central Europeu)</p>
-        </div>
-      </div>
-      <div class="flex-1 min-h-[340px]"><canvas id="grafMoedas"></canvas></div>
+    <div class="flex items-center gap-4">
+      <a href="index.html" class="hover:din-text-main transition">Início</a>
+      <a href="economia.html" class="hover:din-text-main transition">Economia</a>
+      <a href="glossario.html" class="hover:din-text-main transition">Glossário</a>
+      <a href="sobre.html" class="hover:din-text-main transition">Sobre</a>
+      <a href="contato.html" class="hover:din-text-main transition">Contato</a>
     </div>
-  </section>
+  </div>
+</footer>
 
-  <!-- Bloco Didático -->
-  <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-    <details class="lg:col-span-6 din-card-bg border din-border rounded-lg p-4 text-xs din-text-muted">
-      <summary class="font-semibold din-text-main cursor-pointer select-none">Como ler câmbio, Base 100 e o Top 5 Global?</summary>
-      <div class="mt-3 space-y-2 leading-relaxed">
-        <p><strong class="din-text-main">Relevância vs. Moeda "mais cara":</strong> O Top 5 Global (USD, EUR, GBP, JPY, CNY) reflete liquidez e reservas internacionais (FMI/BIS). Moedas como o Dinar do Kuwait (KWD) valem mais por unidade nominal, mas isso é apenas uma questão de escala, não de força econômica.</p>
-        <p><strong class="din-text-main">Par Direto vs. Base 100:</strong> No <em>Par Direto</em>, você vê quantas unidades de B compra 1 unidade de A. Na <em>Base 100</em>, ambas as moedas começam em 100 no primeiro dia e são medidas contra o Dólar — ideal para ver qual moeda se valorizou mais no período.</p>
-        <p><strong class="din-text-main">Volatilidade diária:</strong> Desvio-padrão das variações percentuais diárias. Quanto maior o número, mais instável esteve o câmbio no período.</p>
-      </div>
-    </details>
-
-    <p class="lg:col-span-6 text-xs din-text-muted leading-relaxed">
-      <strong class="din-text-main">Fontes e metodologia.</strong> Cotações atuais obtidas via ExchangeRate-API (taxa cruzada sobre USD para mais de 160 moedas, atualizada automaticamente a cada 60s). Séries históricas oficiais fornecidas pela API Frankfurter (Banco Central Europeu). Valores de referência comercial, sem incluir IOF ou spread bancário. Conteúdo educativo.
-    </p>
-  </section>
-</main>
-
-<div id="bd-footer"></div>
-<script src="/layout.js"></script>
 <script>
 const $ = i => document.getElementById(i);
+const BD = {
+  brl: (v, d = 2) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: d, maximumFractionDigits: d }),
+  num: (v, d = 0) => v.toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d }),
+  cor: () => { const d = document.documentElement.getAttribute('data-theme') === 'dark'; return { tx: d ? '#F5F6F7' : '#17191C', mu: d ? '#9299A3' : '#737780', grid: d ? '#2B3036' : '#E5E7EB' }; }
+};
+
+// Controles do Cabeçalho (Menu, Tema e Tela Cheia)
+function toggleDropdownMenu() { $('dropdownMenu').classList.toggle('hidden'); }
+window.addEventListener('click', e => {
+  const btn = $('menuDropdownBtn'), menu = $('dropdownMenu');
+  if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) menu.classList.add('hidden');
+});
+
+function alternarDarkLight() {
+  const novo = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  aplicarTema(novo);
+  try { localStorage.setItem('brasil_em_dados_tema', novo); } catch {}
+}
+
+function aplicarTema(tema) {
+  const html = document.documentElement, bg = $('switchBg'), ball = $('switchBall');
+  if (tema === 'dark') {
+    html.setAttribute('data-theme', 'dark');
+    if (bg && ball) { bg.style.backgroundColor = '#16C784'; ball.classList.add('translate-x-5'); }
+  } else {
+    html.removeAttribute('data-theme');
+    if (bg && ball) { bg.style.backgroundColor = '#E5E7EB'; ball.classList.remove('translate-x-5'); }
+  }
+  if (ultimoHist) desenharGrafico();
+}
+
+function alternarModoApresentacao() {
+  document.body.classList.toggle('modo-apresentacao');
+  const ativo = document.body.classList.contains('modo-apresentacao');
+  $('btnModoApresentacao').innerHTML = ativo
+    ? '<span>✕ Sair da Tela Cheia</span>'
+    : `<svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect><line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line><line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line></svg><span>Modo Tela Cheia</span>`;
+}
+
+// Lógica de Moedas & Câmbio
 const nomeMoeda = new Intl.DisplayNames(['pt-BR'], { type: 'currency' });
 const labelMoeda = c => { try { return `${c} — ${nomeMoeda.of(c)}`; } catch { return c; } };
 
@@ -179,13 +382,12 @@ const TOP5 = [
   { c: 'CNY', n: 'Yuan Chinês', pos: '#5' }
 ];
 
-// Moedas com série histórica oficial no Banco Central Europeu (Frankfurter)
 const HIST_MOEDAS = ['USD','BRL','EUR','GBP','JPY','CNY','CHF','CAD','AUD','MXN','INR','KRW','ZAR','TRY','NZD','SEK','NOK','PLN'];
 
 let ratesUSD = {};
 let chart = null;
 let periodo = 90;
-let modo = 'par'; // 'par' | 'base100'
+let modo = 'par';
 let ultimoHist = null;
 
 function taxaCruzada(de, para) {
@@ -198,7 +400,7 @@ function renderTop5() {
     const val = taxaCruzada(m.c, 'BRL');
     const dec = m.c === 'JPY' ? 4 : 2;
     return `<button type="button" onclick="selecionarPar('${m.c}','BRL')"
-      class="text-left din-card-bg border din-border rounded-lg p-3.5 hover:border-[#16C784] transition">
+      class="text-left din-card-bg border din-border rounded-lg p-3.5 shadow-sm hover:border-[#16C784] transition">
       <div class="flex items-center justify-between text-[11px] din-text-muted">
         <span class="font-bold din-text-main">${m.c}/BRL</span>
         <span>${m.pos}</span>
@@ -362,7 +564,6 @@ function desenharGrafico() {
       options: opcoesGrafico(c, v => BD.num(v, 4))
     });
   } else {
-    // Base 100: força da moeda frente ao USD (quanto maior, mais a moeda valorizou contra o Dólar)
     const invA = datas.map(dt => 1 / getUSD(dt, a));
     const invB = datas.map(dt => 1 / getUSD(dt, b));
     const baseA = invA.map(v => (v / invA[0]) * 100);
@@ -413,6 +614,10 @@ function opcoesGrafico(c, fmt) {
 
 // Inicialização
 (() => {
+  let temaSalvo = 'light';
+  try { temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light'; } catch {}
+  aplicarTema(temaSalvo);
+
   const optsHist = HIST_MOEDAS.map(c => `<option value="${c}">${labelMoeda(c)}</option>`).join('');
   $('gMoedaA').innerHTML = optsHist;
   $('gMoedaB').innerHTML = optsHist;
@@ -423,8 +628,6 @@ function opcoesGrafico(c, fmt) {
   carregarGrafico();
   setInterval(() => carregarTaxasAoVivo(false), 60000);
 })();
-
-window.addEventListener('tema', () => { if (ultimoHist) desenharGrafico(); });
 </script>
 </body>
 </html>

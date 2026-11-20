@@ -7,190 +7,397 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
+<style>
+  :root {
+    --bg-main: #FFFFFF;
+    --card-bg: #F7F8FA;
+    --bg-secondary: #F0F2F5;
+    --text-main: #17191C;
+    --text-muted: #737780;
+    --border-col: #E5E7EB;
+    --accent-green: #16C784;
+    --accent-red: #EA3943;
+  }
+  [data-theme="dark"] {
+    --bg-main: #101214;
+    --card-bg: #191C20;
+    --bg-secondary: #22262B;
+    --text-main: #F5F6F7;
+    --text-muted: #9299A3;
+    --border-col: #2B3036;
+    --accent-green: #16C784;
+    --accent-red: #EA3943;
+  }
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .din-bg-main { background-color: var(--bg-main); }
+  .din-card-bg { background-color: var(--card-bg); }
+  .din-secondary-bg { background-color: var(--bg-secondary); }
+  .din-text-main { color: var(--text-main); }
+  .din-text-muted { color: var(--text-muted); }
+  .din-border { border-color: var(--border-col); }
+  .din-green { color: var(--accent-green); }
+  .din-red { color: var(--accent-red); }
+  .din-btn { background-color: var(--accent-green); color: #FFFFFF; }
+  .din-btn:hover { opacity: 0.9; }
+  .inp { background-color: var(--bg-secondary); border: 1px solid var(--border-col); color: var(--text-main); border-radius: 0.5rem; padding: 0.5rem 0.75rem; width: 100%; font-size: 0.875rem; }
+  .inp:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--accent-green); outline-offset: 2px; }
+  select option { background-color: var(--card-bg); color: var(--text-main); }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  body.modo-apresentacao header,
+  body.modo-apresentacao .ocultar-em-presentation { display: none !important; }
+  body.modo-apresentacao main { max-width: 100% !important; padding: 16px !important; }
+</style>
 </head>
-<body class="min-h-screen font-sans flex flex-col">
-<div id="bd-header"></div>
+<body class="min-h-screen font-sans flex flex-col justify-between">
+<div>
+  <!-- Cabeçalho Institucional -->
+  <header class="sticky top-0 z-50 border-b din-border din-bg-main/95 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="flex items-center justify-between h-16 gap-4">
+        <!-- Esquerda: Logo Autoral + Badge de Status -->
+        <div class="flex items-center gap-3">
+          <a href="index.html" class="flex items-center gap-3 group">
+            <div class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center shadow-sm group-hover:border-[#16C784] transition-colors">
+              <svg class="w-5 h-5 din-text-main" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 20V10"></path>
+                <path d="M12 20V4"></path>
+                <path d="M6 20v-6"></path>
+                <circle cx="12" cy="4" r="1" fill="#16C784" stroke="#16C784"></circle>
+              </svg>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-lg font-extrabold tracking-tight din-text-main">BrasilEmDados</span>
+                <span class="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono uppercase px-2 py-0.5 rounded din-secondary-bg border din-border din-text-muted">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span> BCB SGS
+                </span>
+              </div>
+              <p class="text-[11px] din-text-muted hidden xl:block">Simulador de Selic, Renda Fixa & Juro Real</p>
+            </div>
+          </a>
+        </div>
 
-<main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-  <!-- Cabeçalho -->
-  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-    <div>
-      <a href="/economia.html" class="text-xs font-semibold din-text-muted hover:underline">← Economia e indicadores</a>
-      <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight din-text-main mt-2">Simulador de Selic e juros</h1>
-      <p class="text-sm din-text-muted mt-1 max-w-2xl">Compare quanto seu dinheiro rende em CDB, LCI/LCA e Tesouro Selic, já descontados o imposto de renda e a inflação.</p>
+        <!-- Centro: Abas de Navegação -->
+        <nav class="hidden md:flex items-center gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+          <a href="index.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Início</a>
+          <a href="glossario.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Glossário</a>
+          <a href="economia.html" class="px-3.5 py-1.5 rounded-md din-card-bg din-text-main shadow-sm border din-border transition">Economia</a>
+          <a href="sobre.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Sobre</a>
+          <a href="contato.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Contato</a>
+        </nav>
+
+        <!-- Direita: Modo Tela Cheia + Menu de Ferramentas -->
+        <div class="flex items-center gap-2.5 relative">
+          <button onclick="alternarModoApresentacao()" id="btnModoApresentacao" class="hidden lg:inline-flex items-center gap-1.5 din-secondary-bg hover:opacity-80 border din-border din-text-main text-xs font-semibold px-3 py-1.5 rounded-lg transition">
+            <svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line>
+              <line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line>
+            </svg>
+            <span>Modo Tela Cheia</span>
+          </button>
+
+          <button id="menuDropdownBtn" onclick="toggleDropdownMenu()" title="Preferências e Ferramentas" class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center hover:border-[#16C784] transition cursor-pointer">
+            <svg class="w-4 h-4 din-text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line>
+              <line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line>
+              <line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line>
+              <line x1="17" y1="16" x2="23" y2="16"></line>
+            </svg>
+          </button>
+
+          <!-- Menu Suspenso -->
+          <div id="dropdownMenu" class="hidden absolute right-0 top-11 w-64 rounded-xl din-card-bg border din-border shadow-2xl py-1.5 z-50">
+            <div class="px-4 py-1.5 border-b din-border">
+              <p class="text-[10px] font-bold uppercase tracking-wider din-text-muted">Ferramentas do Terminal</p>
+            </div>
+            <a href="economia.html" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+              <svg class="w-4 h-4 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+              Voltar ao Hub Economia
+            </a>
+            <a href="#secaoGrafico" onclick="toggleDropdownMenu()" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+              <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M7 14l4-4 4 4 5-5"></path></svg>
+              Evolução do Patrimônio
+            </a>
+            <button onclick="window.print(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left">
+              <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              Exportar Relatório (PDF)
+            </button>
+            <div class="my-1 border-t din-border"></div>
+            <div class="flex items-center justify-between px-4 py-2.5 text-xs font-medium din-text-main cursor-pointer select-none" onclick="alternarDarkLight()">
+              <div class="flex items-center gap-3">
+                <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                <span>Modo Escuro (Dark)</span>
+              </div>
+              <div id="switchBg" class="w-10 h-5 rounded-full relative transition-colors duration-200 p-0.5 flex items-center" style="background-color: var(--border-col);">
+                <div id="switchBall" class="w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-200"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navegação Mobile -->
+      <nav class="flex md:hidden items-center gap-5 h-10 overflow-x-auto no-scrollbar text-xs font-semibold border-t din-border">
+        <a href="index.html" class="din-text-muted hover:din-text-main h-full flex items-center">Início</a>
+        <a href="glossario.html" class="din-text-muted hover:din-text-main h-full flex items-center">Glossário</a>
+        <a href="economia.html" class="din-green border-b-2 border-[#16C784] h-full flex items-center">Economia</a>
+        <a href="sobre.html" class="din-text-muted hover:din-text-main h-full flex items-center">Sobre</a>
+        <a href="contato.html" class="din-text-muted hover:din-text-main h-full flex items-center">Contato</a>
+      </nav>
     </div>
-    <!-- Cenários rápidos -->
+  </header>
+
+  <!-- Barra de Trilha (Breadcrumb) + Cenários Rápidos -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex flex-wrap items-center justify-between gap-3 text-xs ocultar-em-presentation">
+    <div class="flex items-center gap-2 din-text-muted">
+      <a href="economia.html" class="hover:din-green font-semibold inline-flex items-center gap-1 transition">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        Economia e indicadores
+      </a>
+      <span>/</span>
+      <span class="din-text-main font-bold">Simulador de Selic & Juros</span>
+    </div>
+
     <div class="flex flex-wrap gap-1.5">
-      <button type="button" onclick="preset(5000, 300, 1)" class="px-2.5 py-1.5 rounded-md text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition">Reserva (1a)</button>
-      <button type="button" onclick="preset(10000, 500, 5)" class="px-2.5 py-1.5 rounded-md text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition">Médio prazo (5a)</button>
-      <button type="button" onclick="preset(20000, 1000, 20)" class="px-2.5 py-1.5 rounded-md text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition">Longo prazo (20a)</button>
+      <button type="button" onclick="preset(5000, 300, 1)" class="px-2.5 py-1 rounded-md text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition">Reserva (1a)</button>
+      <button type="button" onclick="preset(10000, 500, 5)" class="px-2.5 py-1 rounded-md text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition">Médio prazo (5a)</button>
+      <button type="button" onclick="preset(20000, 1000, 20)" class="px-2.5 py-1 rounded-md text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition">Longo prazo (20a)</button>
     </div>
   </div>
 
-  <!-- KPIs do Banco Central -->
-  <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-    <div class="din-card-bg border din-border rounded-lg p-4">
-      <span class="text-xs din-text-muted">Selic (meta)</span>
-      <p id="kSelic" class="text-xl font-bold din-green mt-1">—</p>
-      <span class="text-[11px] din-text-muted">Taxa básica de juros</span>
-    </div>
-    <div class="din-card-bg border din-border rounded-lg p-4">
-      <span class="text-xs din-text-muted">CDI</span>
-      <p id="kCdi" class="text-xl font-bold din-text-main mt-1">—</p>
-      <span class="text-[11px] din-text-muted">Referência de CDB e LCI</span>
-    </div>
-    <div class="din-card-bg border din-border rounded-lg p-4">
-      <span class="text-xs din-text-muted">IPCA em 12 meses</span>
-      <p id="kIpca" class="text-xl font-bold din-red mt-1">—</p>
-      <span class="text-[11px] din-text-muted">Inflação oficial acumulada</span>
-    </div>
-    <div class="din-card-bg border din-border rounded-lg p-4">
-      <span class="text-xs din-text-muted">Juro real da Selic</span>
-      <p id="kReal" class="text-xl font-bold din-text-main mt-1">—</p>
-      <span class="text-[11px] din-text-muted">Ganho acima da inflação</span>
-    </div>
-  </section>
-  <p id="fonte" class="text-xs din-text-muted -mt-3"></p>
-
-  <!-- Área Principal -->
-  <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-    <!-- Painel de Controles -->
-    <div class="lg:col-span-4 din-card-bg border din-border rounded-lg p-5 space-y-4 h-fit">
-      <div class="flex items-center justify-between">
-        <h2 class="text-base font-semibold din-text-main">Seu cenário</h2>
-        <button id="btnReset" type="button" onclick="restaurarBC()" class="hidden text-[11px] font-semibold din-green hover:underline">Restaurar taxas BC</button>
+  <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-5 space-y-6">
+    <!-- KPIs do Banco Central -->
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 ocultar-em-presentation">
+      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
+        <span class="text-xs din-text-muted uppercase font-semibold">Selic (meta)</span>
+        <p id="kSelic" class="text-xl font-bold din-green mt-1">—</p>
+        <span class="text-[11px] din-text-muted">Taxa básica de juros</span>
       </div>
-
-      <label class="block text-xs font-semibold din-text-main">
-        Valor inicial (R$)
-        <input id="c0" class="inp mt-1" inputmode="decimal" value="10000" oninput="calc()">
-      </label>
-
-      <label class="block text-xs font-semibold din-text-main">
-        Aporte mensal (R$)
-        <input id="ap" class="inp mt-1" inputmode="decimal" value="500" oninput="calc()">
-      </label>
-
-      <label class="block text-xs font-semibold din-text-main">
-        <span class="flex justify-between">
-          Prazo do investimento
-          <span id="lblAnos" class="din-green font-bold">10 anos</span>
-        </span>
-        <input id="anos" type="range" min="1" max="30" value="10" class="w-full accent-[#16C784] mt-1.5 cursor-pointer" oninput="calc()">
-        <span class="flex justify-between text-[10px] din-text-muted font-normal mt-0.5">
-          <span>1 ano</span><span>15 anos</span><span>30 anos</span>
-        </span>
-      </label>
-
-      <div class="pt-2 border-t din-border space-y-3">
-        <p class="text-[11px] font-semibold uppercase tracking-wider din-text-muted">Taxas anuais</p>
-        <div class="grid grid-cols-3 gap-2">
-          <label class="text-xs font-semibold din-text-main">Selic %<input id="selic" class="inp mt-1" inputmode="decimal" value="10" oninput="calc()"></label>
-          <label class="text-xs font-semibold din-text-main">CDI %<input id="cdi" class="inp mt-1" inputmode="decimal" value="9.9" oninput="calc()"></label>
-          <label class="text-xs font-semibold din-text-main">IPCA %<input id="ipca" class="inp mt-1" inputmode="decimal" value="4.5" oninput="calc()"></label>
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <label class="text-xs font-semibold din-text-main">CDB (% do CDI)<input id="pctCdb" class="inp mt-1" inputmode="decimal" value="100" oninput="calc()"></label>
-          <label class="text-xs font-semibold din-text-main">LCI/LCA (% CDI)<input id="pctLci" class="inp mt-1" inputmode="decimal" value="90" oninput="calc()"></label>
-        </div>
+      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
+        <span class="text-xs din-text-muted uppercase font-semibold">CDI</span>
+        <p id="kCdi" class="text-xl font-bold din-text-main mt-1">—</p>
+        <span class="text-[11px] din-text-muted">Referência de CDB e LCI</span>
       </div>
+      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
+        <span class="text-xs din-text-muted uppercase font-semibold">IPCA em 12 meses</span>
+        <p id="kIpca" class="text-xl font-bold din-red mt-1">—</p>
+        <span class="text-[11px] din-text-muted">Inflação oficial acumulada</span>
+      </div>
+      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
+        <span class="text-xs din-text-muted uppercase font-semibold">Juro real da Selic</span>
+        <p id="kReal" class="text-xl font-bold din-text-main mt-1">—</p>
+        <span class="text-[11px] din-text-muted">Ganho acima da inflação</span>
+      </div>
+    </section>
+    <p id="fonte" class="text-xs din-text-muted -mt-3 ocultar-em-presentation"></p>
 
-      <p class="text-[11px] din-text-muted leading-relaxed">Os campos começam com as taxas oficiais do Banco Central e podem ser editados livremente para testar outros cenários.</p>
-    </div>
-
-    <!-- Resultados e Gráficos -->
-    <div class="lg:col-span-8 space-y-6">
-      <!-- Insight Didático + Raio-X -->
-      <div class="din-card-bg border din-border rounded-lg p-5 space-y-4">
-        <div class="flex flex-wrap items-center justify-between gap-2">
-          <span class="text-xs font-semibold uppercase tracking-wider din-green">Leitura do cenário</span>
-          <span id="badgeAliquota" class="text-[11px] px-2 py-0.5 rounded din-secondary-bg border din-border din-text-muted"></span>
+    <!-- Área Principal -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Painel de Controles -->
+      <div class="lg:col-span-4 din-card-bg border din-border rounded-lg p-5 shadow-sm space-y-4 h-fit">
+        <div class="flex items-center justify-between">
+          <h2 class="text-base font-semibold din-text-main">Seu cenário</h2>
+          <button id="btnReset" type="button" onclick="restaurarBC()" class="hidden text-[11px] font-semibold din-green hover:underline">Restaurar taxas BC</button>
         </div>
-        <p id="resumoDidatico" class="text-sm din-text-main leading-relaxed"></p>
 
-        <!-- Barra de Composição (Raio-X do Vencedor) -->
-        <div class="space-y-1.5 pt-1">
-          <div class="flex justify-between text-[11px] din-text-muted">
-            <span>Composição do melhor resultado (<strong id="winNome" class="din-text-main">—</strong>)</span>
-            <span id="winTotal" class="font-semibold din-text-main">—</span>
+        <label class="block text-xs font-semibold din-text-main">
+          Valor inicial (R$)
+          <input id="c0" class="inp mt-1" inputmode="decimal" value="10000" oninput="calc()">
+        </label>
+
+        <label class="block text-xs font-semibold din-text-main">
+          Aporte mensal (R$)
+          <input id="ap" class="inp mt-1" inputmode="decimal" value="500" oninput="calc()">
+        </label>
+
+        <label class="block text-xs font-semibold din-text-main">
+          <span class="flex justify-between">
+            Prazo do investimento
+            <span id="lblAnos" class="din-green font-bold">10 anos</span>
+          </span>
+          <input id="anos" type="range" min="1" max="30" value="10" class="w-full accent-[#16C784] mt-1.5 cursor-pointer" oninput="calc()">
+          <span class="flex justify-between text-[10px] din-text-muted font-normal mt-0.5">
+            <span>1 ano</span><span>15 anos</span><span>30 anos</span>
+          </span>
+        </label>
+
+        <div class="pt-2 border-t din-border space-y-3">
+          <p class="text-[11px] font-semibold uppercase tracking-wider din-text-muted">Taxas anuais</p>
+          <div class="grid grid-cols-3 gap-2">
+            <label class="text-xs font-semibold din-text-main">Selic %<input id="selic" class="inp mt-1" inputmode="decimal" value="10" oninput="calc()"></label>
+            <label class="text-xs font-semibold din-text-main">CDI %<input id="cdi" class="inp mt-1" inputmode="decimal" value="9.9" oninput="calc()"></label>
+            <label class="text-xs font-semibold din-text-main">IPCA %<input id="ipca" class="inp mt-1" inputmode="decimal" value="4.5" oninput="calc()"></label>
           </div>
-          <div class="w-full h-3 rounded-full overflow-hidden flex din-secondary-bg">
-            <div id="barInv" class="bg-[#9299A3] h-full transition-all duration-300" title="Total investido"></div>
-            <div id="barJur" class="bg-[#16C784] h-full transition-all duration-300" title="Juros líquidos"></div>
-            <div id="barIr" class="bg-[#EA3943] h-full transition-all duration-300" title="Imposto de Renda"></div>
-          </div>
-          <div class="flex flex-wrap gap-x-4 gap-y-1 text-[11px] din-text-muted">
-            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#9299A3] inline-block"></span>Do seu bolso: <strong id="legInv" class="din-text-main">—</strong></span>
-            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#16C784] inline-block"></span>Juros líquidos: <strong id="legJur" class="din-green">—</strong></span>
-            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#EA3943] inline-block"></span>IR retido: <strong id="legIr" class="din-red">—</strong></span>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="text-xs font-semibold din-text-main">CDB (% do CDI)<input id="pctCdb" class="inp mt-1" inputmode="decimal" value="100" oninput="calc()"></label>
+            <label class="text-xs font-semibold din-text-main">LCI/LCA (% CDI)<input id="pctLci" class="inp mt-1" inputmode="decimal" value="90" oninput="calc()"></label>
           </div>
         </div>
+
+        <p class="text-[11px] din-text-muted leading-relaxed">Os campos começam com as taxas oficiais do Banco Central e podem ser editados livremente para testar outros cenários.</p>
       </div>
 
-      <!-- Tabela Comparativa -->
-      <div class="din-card-bg border din-border rounded-lg p-5">
-        <div class="flex flex-wrap justify-between gap-2 mb-3">
-          <h2 class="text-base font-semibold din-text-main">Resultado ao fim do prazo</h2>
-          <p class="text-xs din-text-muted">Total investido: <strong id="inv" class="din-text-main">—</strong></p>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr class="din-text-muted">
-                <th class="py-2 px-2">Produto</th>
-                <th class="py-2 px-2">Taxa a.a.</th>
-                <th class="py-2 px-2">Bruto</th>
-                <th class="py-2 px-2">IR</th>
-                <th class="py-2 px-2">Líquido</th>
-                <th class="py-2 px-2">Poder de compra</th>
-              </tr>
-            </thead>
-            <tbody id="tbody"></tbody>
-          </table>
-        </div>
-        <p class="text-xs din-text-muted mt-2.5">"Poder de compra" desconta a inflação (IPCA) do período: mostra quanto esse valor equivaleria em reais de hoje.</p>
-      </div>
+      <!-- Resultados e Gráficos -->
+      <div class="lg:col-span-8 space-y-6">
+        <!-- Insight Didático + Raio-X -->
+        <div class="din-card-bg border din-border rounded-lg p-5 shadow-sm space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="text-xs font-semibold uppercase tracking-wider din-green">Leitura do cenário</span>
+            <span id="badgeAliquota" class="text-[11px] px-2 py-0.5 rounded din-secondary-bg border din-border din-text-muted"></span>
+          </div>
+          <p id="resumoDidatico" class="text-sm din-text-main leading-relaxed"></p>
 
-      <!-- Gráfico Interativo -->
-      <div class="din-card-bg border din-border rounded-lg p-5">
-        <div class="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 class="text-base font-semibold din-text-main">Evolução do patrimônio líquido</h2>
-            <p id="subGraf" class="text-xs din-text-muted">Valores nominais (sem descontar inflação)</p>
-          </div>
-          <div class="inline-flex din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
-            <button id="btnNom" type="button" onclick="setModo('nominal')" class="px-3 py-1 rounded-md din-card-bg din-text-main border din-border transition">Nominal</button>
-            <button id="btnReal" type="button" onclick="setModo('real')" class="px-3 py-1 rounded-md din-text-muted transition">Poder de compra</button>
+          <!-- Barra de Composição (Raio-X do Vencedor) -->
+          <div class="space-y-1.5 pt-1">
+            <div class="flex justify-between text-[11px] din-text-muted">
+              <span>Composição do melhor resultado (<strong id="winNome" class="din-text-main">—</strong>)</span>
+              <span id="winTotal" class="font-semibold din-text-main">—</span>
+            </div>
+            <div class="w-full h-3 rounded-full overflow-hidden flex din-secondary-bg">
+              <div id="barInv" class="bg-[#9299A3] h-full transition-all duration-300" title="Total investido"></div>
+              <div id="barJur" class="bg-[#16C784] h-full transition-all duration-300" title="Juros líquidos"></div>
+              <div id="barIr" class="bg-[#EA3943] h-full transition-all duration-300" title="Imposto de Renda"></div>
+            </div>
+            <div class="flex flex-wrap gap-x-4 gap-y-1 text-[11px] din-text-muted">
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#9299A3] inline-block"></span>Do seu bolso: <strong id="legInv" class="din-text-main">—</strong></span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#16C784] inline-block"></span>Juros líquidos: <strong id="legJur" class="din-green">—</strong></span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#EA3943] inline-block"></span>IR retido: <strong id="legIr" class="din-red">—</strong></span>
+            </div>
           </div>
         </div>
-        <div class="h-[320px] mt-4"><canvas id="graf"></canvas></div>
+
+        <!-- Tabela Comparativa -->
+        <div class="din-card-bg border din-border rounded-lg p-5 shadow-sm">
+          <div class="flex flex-wrap justify-between gap-2 mb-3">
+            <h2 class="text-base font-semibold din-text-main">Resultado ao fim do prazo</h2>
+            <p class="text-xs din-text-muted">Total investido: <strong id="inv" class="din-text-main">—</strong></p>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="din-text-muted">
+                  <th class="py-2 px-2">Produto</th>
+                  <th class="py-2 px-2">Taxa a.a.</th>
+                  <th class="py-2 px-2">Bruto</th>
+                  <th class="py-2 px-2">IR</th>
+                  <th class="py-2 px-2">Líquido</th>
+                  <th class="py-2 px-2">Poder de compra</th>
+                </tr>
+              </thead>
+              <tbody id="tbody"></tbody>
+            </table>
+          </div>
+          <p class="text-xs din-text-muted mt-2.5">"Poder de compra" desconta a inflação (IPCA) do período: mostra quanto esse valor equivaleria em reais de hoje.</p>
+        </div>
+
+        <!-- Gráfico Interativo -->
+        <div id="secaoGrafico" class="din-card-bg border din-border rounded-lg p-5 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 class="text-base font-semibold din-text-main">Evolução do patrimônio líquido</h2>
+              <p id="subGraf" class="text-xs din-text-muted">Valores nominais (sem descontar inflação)</p>
+            </div>
+            <div class="inline-flex din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+              <button id="btnNom" type="button" onclick="setModo('nominal')" class="px-3 py-1 rounded-md din-card-bg din-text-main border din-border transition">Nominal</button>
+              <button id="btnReal" type="button" onclick="setModo('real')" class="px-3 py-1 rounded-md din-text-muted transition">Poder de compra</button>
+            </div>
+          </div>
+          <div class="h-[320px] mt-4"><canvas id="graf"></canvas></div>
+        </div>
       </div>
+    </section>
+
+    <!-- Bloco Didático Expansível + Premissas -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start ocultar-em-presentation">
+      <details class="lg:col-span-6 din-card-bg border din-border rounded-lg p-4 text-xs din-text-muted">
+        <summary class="font-semibold din-text-main cursor-pointer select-none">Como funciona o IR regressivo e o juro real?</summary>
+        <div class="mt-3 space-y-2 leading-relaxed">
+          <p><strong class="din-text-main">Tabela regressiva do IR:</strong> incide apenas sobre o lucro de cada aporte. Quanto mais tempo o dinheiro fica aplicado, menor a alíquota: <span class="din-text-main">22,5%</span> (até 180 dias), <span class="din-text-main">20%</span> (181 a 360 dias), <span class="din-text-main">17,5%</span> (361 a 720 dias) e <span class="din-text-main">15%</span> (acima de 720 dias). LCI e LCA são isentas para pessoa física.</p>
+          <p><strong class="din-text-main">Juro real (Equação de Fisher):</strong> não é apenas Selic menos IPCA. Calcula-se <code class="px-1 py-0.5 rounded din-secondary-bg din-text-main">(1 + Selic) / (1 + IPCA) - 1</code>. É ele que mede o ganho real de poder de compra.</p>
+        </div>
+      </details>
+
+      <p class="lg:col-span-6 text-xs din-text-muted leading-relaxed">
+        <strong class="din-text-main">Premissas.</strong> Juros compostos com aporte no fim de cada mês. IR regressivo calculado sobre o ganho de cada aporte individualmente. O Tesouro Selic rende a Selic meta, sem descontar a taxa de custódia da B3 (isenta até R$ 10 mil). Taxas futuras são constantes na simulação, mas variam na prática. Conteúdo educativo, não constitui recomendação de investimento.
+      </p>
+    </section>
+  </main>
+</div>
+
+<!-- Rodapé Institucional -->
+<footer class="border-t din-border din-card-bg py-6 text-xs din-text-muted mt-8 ocultar-em-presentation">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+    <div class="flex items-center gap-2">
+      <span class="font-bold din-text-main">BrasilEmDados</span>
+      <span>•</span>
+      <span>Terminal de Inteligência Econômica e Setorial</span>
     </div>
-  </section>
+    <div class="flex items-center gap-4">
+      <a href="index.html" class="hover:din-text-main transition">Início</a>
+      <a href="economia.html" class="hover:din-text-main transition">Economia</a>
+      <a href="glossario.html" class="hover:din-text-main transition">Glossário</a>
+      <a href="sobre.html" class="hover:din-text-main transition">Sobre</a>
+      <a href="contato.html" class="hover:din-text-main transition">Contato</a>
+    </div>
+  </div>
+</footer>
 
-  <!-- Bloco Didático Expansível + Premissas -->
-  <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-    <details class="lg:col-span-6 din-card-bg border din-border rounded-lg p-4 text-xs din-text-muted">
-      <summary class="font-semibold din-text-main cursor-pointer select-none">Como funciona o IR regressivo e o juro real?</summary>
-      <div class="mt-3 space-y-2 leading-relaxed">
-        <p><strong class="din-text-main">Tabela regressiva do IR:</strong> incide apenas sobre o lucro de cada aporte. Quanto mais tempo o dinheiro fica aplicado, menor a alíquota: <span class="din-text-main">22,5%</span> (até 180 dias), <span class="din-text-main">20%</span> (181 a 360 dias), <span class="din-text-main">17,5%</span> (361 a 720 dias) e <span class="din-text-main">15%</span> (acima de 720 dias). LCI e LCA são isentas para pessoa física.</p>
-        <p><strong class="din-text-main">Juro real (Equação de Fisher):</strong> não é apenas Selic menos IPCA. Calcula-se <code class="px-1 py-0.5 rounded din-secondary-bg din-text-main">(1 + Selic) / (1 + IPCA) - 1</code>. É ele que mede o ganho real de poder de compra.</p>
-      </div>
-    </details>
-
-    <p class="lg:col-span-6 text-xs din-text-muted leading-relaxed">
-      <strong class="din-text-main">Premissas.</strong> Juros compostos com aporte no fim de cada mês. IR regressivo calculado sobre o ganho de cada aporte individualmente. O Tesouro Selic rende a Selic meta, sem descontar a taxa de custódia da B3 (isenta até R$ 10 mil). Taxas futuras são constantes na simulação, mas variam na prática. Conteúdo educativo, não constitui recomendação de investimento.
-    </p>
-  </section>
-</main>
-
-<div id="bd-footer"></div>
-<script src="/layout.js"></script>
 <script>
 const $ = i => document.getElementById(i);
 const v = i => parseFloat(String($(i).value).replace(',', '.')) || 0;
+const BD = {
+  brl: (v, d = 2) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: d, maximumFractionDigits: d }),
+  num: (v, d = 0) => v.toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d }),
+  compact: r => {
+    const f = (x, s) => 'R$ ' + (r / x).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + s;
+    return r >= 1e12 ? f(1e12, 'tri') : r >= 1e9 ? f(1e9, 'bi') : r >= 1e6 ? f(1e6, 'mi') : BD.brl(r, 0);
+  },
+  cor: () => { const d = document.documentElement.getAttribute('data-theme') === 'dark'; return { tx: d ? '#F5F6F7' : '#17191C', mu: d ? '#9299A3' : '#737780', grid: d ? '#2B3036' : '#E5E7EB' }; }
+};
+
 let chart, modoGraf = 'nominal', taxasBC = null;
 
+// Controles do Cabeçalho (Menu, Tema e Tela Cheia)
+function toggleDropdownMenu() { $('dropdownMenu').classList.toggle('hidden'); }
+window.addEventListener('click', e => {
+  const btn = $('menuDropdownBtn'), menu = $('dropdownMenu');
+  if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) menu.classList.add('hidden');
+});
+
+function alternarDarkLight() {
+  const novo = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  aplicarTema(novo);
+  try { localStorage.setItem('brasil_em_dados_tema', novo); } catch {}
+}
+
+function aplicarTema(tema) {
+  const html = document.documentElement, bg = $('switchBg'), ball = $('switchBall');
+  if (tema === 'dark') {
+    html.setAttribute('data-theme', 'dark');
+    if (bg && ball) { bg.style.backgroundColor = '#16C784'; ball.classList.add('translate-x-5'); }
+  } else {
+    html.removeAttribute('data-theme');
+    if (bg && ball) { bg.style.backgroundColor = '#E5E7EB'; ball.classList.remove('translate-x-5'); }
+  }
+  calc();
+}
+
+function alternarModoApresentacao() {
+  document.body.classList.toggle('modo-apresentacao');
+  const ativo = document.body.classList.contains('modo-apresentacao');
+  $('btnModoApresentacao').innerHTML = ativo
+    ? '<span>✕ Sair da Tela Cheia</span>'
+    : `<svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect><line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line><line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line></svg><span>Modo Tela Cheia</span>`;
+}
+
+// Lógica do Simulador
 const IR = d => d <= 180 ? .225 : d <= 360 ? .2 : d <= 720 ? .175 : .15;
 const mes = a => Math.pow(1 + a, 1 / 12) - 1;
 
@@ -252,7 +459,6 @@ function calc() {
   const ordenado = [...R].sort((a, b) => b.liq - a.liq);
   const win = ordenado[0], seg = ordenado[1];
 
-  // Tabela
   $('tbody').innerHTML = R.map(r => {
     const isWin = r.n === win.n;
     return `<tr class="border-t din-border ${isWin ? 'din-secondary-bg' : ''}">
@@ -268,7 +474,6 @@ function calc() {
     </tr>`;
   }).join('');
 
-  // Leitura Didática & Raio-X
   const aliq = IR(m * 30) * 100;
   $('badgeAliquota').textContent = `IR no vencimento: ${BD.num(aliq, 1)}% (exceto LCI/LCA)`;
 
@@ -278,7 +483,6 @@ function calc() {
 
   $('resumoDidatico').innerHTML = `Em <strong>${anos} ${anos === 1 ? 'ano' : 'anos'}</strong>, o <strong>${win.n}</strong> entrega o maior retorno líquido (<strong>${BD.brl(win.liq, 0)}</strong>), ficando <strong class="din-green">${BD.brl(dif, 0)}</strong> à frente do ${seg.n}. Desse total, <strong>${BD.num(pctJuros, 1)}%</strong> vem apenas de juros compostos${win.iso ? ' — beneficiado pela isenção de IR' : ''}.`;
 
-  // Barra proporcional (sobre o valor bruto para mostrar também o IR)
   const base = win.bruto || 1;
   $('winNome').textContent = win.n;
   $('winTotal').textContent = `Bruto: ${BD.brl(win.bruto, 0)}`;
@@ -349,26 +553,31 @@ async function sgs(c) {
   return { v: parseFloat(j[0].valor), d: j[0].data };
 }
 
-calc();
-(async () => {
-  const r = await Promise.allSettled([sgs(432), sgs(4389), sgs(13522)]);
-  const ok = r.filter(x => x.status === 'fulfilled');
-  [['selic', 'kSelic'], ['cdi', 'kCdi'], ['ipca', 'kIpca']].forEach(([id, k], i) => {
-    if (r[i].status === 'fulfilled') {
-      $(id).value = r[i].value.v;
-      $(k).textContent = BD.num(r[i].value.v, 2) + '% a.a.';
+// Inicialização
+(() => {
+  let temaSalvo = 'light';
+  try { temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light'; } catch {}
+  aplicarTema(temaSalvo);
+
+  (async () => {
+    const r = await Promise.allSettled([sgs(432), sgs(4389), sgs(13522)]);
+    const ok = r.filter(x => x.status === 'fulfilled');
+    [['selic', 'kSelic'], ['cdi', 'kCdi'], ['ipca', 'kIpca']].forEach(([id, k], i) => {
+      if (r[i].status === 'fulfilled') {
+        $(id).value = r[i].value.v;
+        $(k).textContent = BD.num(r[i].value.v, 2) + '% a.a.';
+      }
+    });
+    if (ok.length === 3) {
+      taxasBC = { selic: r[0].value.v, cdi: r[1].value.v, ipca: r[2].value.v };
+      $('btnReset').classList.remove('hidden');
     }
-  });
-  if (ok.length === 3) {
-    taxasBC = { selic: r[0].value.v, cdi: r[1].value.v, ipca: r[2].value.v };
-    $('btnReset').classList.remove('hidden');
-  }
-  $('fonte').textContent = ok.length === 3
-    ? 'Fonte: Banco Central do Brasil (SGS), dados de ' + ok[0].value.d + '.'
-    : 'Não foi possível buscar todas as taxas no Banco Central. Os campos usam valores de exemplo que você pode editar.';
-  calc();
+    $('fonte').textContent = ok.length === 3
+      ? 'Fonte: Banco Central do Brasil (SGS), dados de ' + ok[0].value.d + '.'
+      : 'Não foi possível buscar todas as taxas no Banco Central. Os campos usam valores de exemplo que você pode editar.';
+    calc();
+  })();
 })();
-window.addEventListener('tema', calc);
 </script>
 </body>
 </html>
