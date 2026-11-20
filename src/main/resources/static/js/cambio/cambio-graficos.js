@@ -1,7 +1,52 @@
-let abaGraf = 'evol', periodo = 90, modo = 'par';
+let abaGraf = 'evol', periodo = 90, modo = 'par', tipoGrafico = 'original';
 let dataInicioCustom = null, dataFimCustom = null;
 let ultimoHist = null, dadosSazonalidade = null;
 let chart = null, chartMacro = null, chartSazonal = null;
+let reqSeq = 0;
+
+// Plugin: Linha vertical pontilhada (Crosshair) ao passar o mouse
+const crosshairPlugin = {
+  id: 'crosshairLine',
+  afterDatasetsDraw(c) {
+    const active = c.tooltip?.getActiveElements();
+    if (!active || !active.length) return;
+    const { ctx, chartArea: { top, bottom } } = c;
+    const x = active[0].element.x;
+    ctx.save();
+    ctx.beginPath();
+    ctx.setLineDash([3, 3]);
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = document.documentElement.getAttribute('data-theme') === 'dark'
+      ? 'rgba(255,255,255,0.35)' : 'rgba(23,25,28,0.30)';
+    ctx.moveTo(x, top);
+    ctx.lineTo(x, bottom);
+    ctx.stroke();
+    ctx.restore();
+  }
+};
+
+// Plugin: Pavios (high/low) das Velas (Candlestick)
+const wickPlugin = {
+  id: 'candleWicks',
+  beforeDatasetsDraw(c) {
+    const meta = c.getDatasetMeta(0);
+    const ds = c.data.datasets[0];
+    if (!ds || !ds._ohlc) return;
+    const { ctx, scales: { y } } = c;
+    ctx.save();
+    ds._ohlc.forEach((p, i) => {
+      const el = meta.data[i];
+      if (!el) return;
+      ctx.beginPath();
+      ctx.strokeStyle = p.c >= p.o ? '#16C784' : '#EA3943';
+      ctx.lineWidth = 1.5;
+      ctx.moveTo(el.x, y.getPixelForValue(p.h));
+      ctx.lineTo(el.x, y.getPixelForValue(p.l));
+      ctx.stroke();
+    });
+    ctx.restore();
+  }
+};
 
 function labelPeriodo() {
   if (periodo === 'custom' && dataInicioCustom && dataFimCustom) {
@@ -10,46 +55,54 @@ function labelPeriodo() {
   }
   if (periodo === 'tudo') return 'todo o período';
   if (periodo === 365) return '1 ano';
-  if (periodo === 270) return '9 meses';
   if (periodo === 180) return '6 meses';
   if (periodo === 90) return '3 meses';
   return `${periodo} dias`;
+}
+
+function atualizarBotoesPeriodo(ativoVal) {
+  const on = 'btn-per py-1.5 rounded-md din-card-bg din-text-main border din-border transition';
+  const off = 'btn-per py-1.5 rounded-md din-text-muted transition';
+  document.querySelectorAll('#grupoPeriodos .btn-per').forEach(btn => {
+    btn.className = String(btn.dataset.per) === String(ativoVal) ? on : off;
+  });
 }
 
 function setPeriodo(d) {
   periodo = d;
   dataInicioCustom = null;
   dataFimCustom = null;
-
-  const on = 'py-1.5 rounded-md din-card-bg din-text-main border din-border transition';
-  const off = 'py-1.5 rounded-md din-text-muted transition';
-  ['p3', 'p15', 'p30', 'p90', 'p180', 'p270', 'p365', 'ptudo'].forEach(id => {
-    const btn = $(id);
-    if (btn) btn.className = id === `p${d}` ? on : off;
-  });
-
+  atualizarBotoesPeriodo(d);
   if ($('macroDias')) $('macroDias').textContent = labelPeriodo();
   if (typeof atualizarPainelOhlcDia === 'function') atualizarPainelOhlcDia();
   carregarGrafico();
 }
 
+function setTipoGrafico(t) {
+  tipoGrafico = t;
+  const on = 'btn-tipo px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border transition';
+  const off = 'btn-tipo px-2.5 py-1 rounded-md din-text-muted transition';
+  document.querySelectorAll('.btn-tipo').forEach(btn => {
+    btn.className = btn.dataset.tipo === t ? on : off;
+  });
+  if (ultimoHist) desenharGrafico();
+}
+
 function aplicarPeriodoCustom() {
   const ini = $('dtInicio')?.value;
   const fim = $('dtFim')?.value;
-  if (!ini || !fim || ini >= fim) {
-    alert('Selecione uma data inicial anterior à data final.');
+  if (!ini || !fim) {
+    $('leituraGraf').textContent = 'Preencha a data inicial e a data final antes de clicar em Aplicar datas.';
+    return;
+  }
+  if (ini >= fim) {
+    $('leituraGraf').textContent = 'A data inicial precisa ser anterior à data final.';
     return;
   }
   dataInicioCustom = ini;
   dataFimCustom = fim;
   periodo = 'custom';
-
-  const off = 'py-1.5 rounded-md din-text-muted transition';
-  ['p3', 'p15', 'p30', 'p90', 'p180', 'p270', 'p365', 'ptudo'].forEach(id => {
-    const btn = $(id);
-    if (btn) btn.className = off;
-  });
-
+  atualizarBotoesPeriodo('');
   if ($('macroDias')) $('macroDias').textContent = labelPeriodo();
   carregarGrafico();
 }
@@ -93,7 +146,45 @@ function renderizarTudoGraficos() {
   if (dadosSazonalidade) desenharSazonalidade();
 }
 
+// Busca intradiária (horas) na AwesomeAPI para 3d / 5d em pares com BRL
+async function buscarIntradiarioAwesome(a, b, dias) {
+  const suportados = ['USD', 'EUR', 'GBP', 'JPY', 'CHF', 'CAD', 'AUD', 'CNY'];
+  const direto = b === 'BRL' && suportados.includes(a);
+  const inverso = a === 'BRL' && suportados.includes(b);
+  if (!direto && !inverso) return null;
+
+  const par = direto ? `${a}-BRL` : `${b}-BRL`;
+  const qtd = dias <= 3 ? 90 : 160;
+  try {
+    const r = await fetch(`https://economia.awesomeapi.com.br/json/${par}/${qtd}`);
+    if (!r.ok) return null;
+    const arr = await r.json();
+    if (!Array.isArray(arr) || arr.length < 5) return null;
+
+    const limiteTs = (Date.now() / 1000) - (dias * 86400);
+    const pontos = arr
+      .filter(x => Number(x.timestamp) >= limiteTs)
+      .reverse()
+      .map(x => {
+        const dt = new Date(Number(x.timestamp) * 1000);
+        const bid = parseFloat(x.bid);
+        const high = parseFloat(x.high || x.bid);
+        const low = parseFloat(x.low || x.bid);
+        const val = inverso ? (1 / bid) : bid;
+        const h = inverso ? (1 / low) : high;
+        const l = inverso ? (1 / high) : low;
+        const lbl = dt.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '')
+          + ' ' + dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        return { lbl, v: val, h, l };
+      });
+    return pontos.length >= 4 ? pontos : null;
+  } catch {
+    return null;
+  }
+}
+
 async function carregarGrafico() {
+  const minhaReq = ++reqSeq;
   const a = $('gMoedaA').value, b = $('gMoedaB').value;
   const hojeStr = dataISO(0);
   let ini, fim = hojeStr;
@@ -104,7 +195,7 @@ async function carregarGrafico() {
   } else if (periodo === 'tudo') {
     ini = '1999-01-04';
   } else {
-    const diasBusca = periodo === 3 ? 7 : Number(periodo);
+    const diasBusca = Number(periodo) <= 5 ? 10 : Number(periodo);
     ini = dataISO(diasBusca);
   }
 
@@ -112,29 +203,68 @@ async function carregarGrafico() {
   const todosSyms = [...new Set([a, b, ...MACRO_PARES.map(m => m.c)])].filter(x => x !== 'USD');
 
   try {
-    const url = `https://api.frankfurter.dev/v1/${ini}..${fim}?base=USD&symbols=${todosSyms.join(',')}`;
-    const r = await fetch(url);
-    if (!r.ok) throw new Error(`Frankfurter HTTP ${r.status}`);
-    const j = await r.json();
+    const promFrank = fetch(`https://api.frankfurter.dev/v1/${ini}..${fim}?base=USD&symbols=${todosSyms.join(',')}`);
+    const promIntra = (modo === 'par' && (periodo === 3 || periodo === 5))
+      ? buscarIntradiarioAwesome(a, b, Number(periodo))
+      : Promise.resolve(null);
 
+    const [r, intra] = await Promise.all([promFrank, promIntra]);
+    if (minhaReq !== reqSeq) return; // Ignora resposta antiga
+
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const j = await r.json();
     let rates = j.rates || {};
     const chaves = Object.keys(rates).sort();
-    if (!chaves.length) throw new Error('Sem dados para o intervalo selecionado');
+    if (!chaves.length) throw new Error('Sem dados para esse intervalo');
 
-    if (periodo === 3) {
-      const ultimas3 = chaves.slice(-3);
+    if (!intra && (periodo === 3 || periodo === 5)) {
+      const ultimas = chaves.slice(-Number(periodo));
       const filtrado = {};
-      ultimas3.forEach(dt => { filtrado[dt] = rates[dt]; });
+      ultimas.forEach(dt => { filtrado[dt] = rates[dt]; });
       rates = filtrado;
     }
 
-    ultimoHist = { a, b, rates };
+    ultimoHist = { a, b, rates, intra };
+    preencherFallbackPregao();
     desenharGrafico();
     desenharMacro();
     atualizarResumoIndicadores();
   } catch (err) {
+    if (minhaReq !== reqSeq) return;
     console.error('Erro no carregarGrafico:', err);
     $('leituraGraf').textContent = `Não foi possível carregar o histórico (${err.message}).`;
+  }
+}
+
+// Garante que o bloco "Pregão de hoje" nunca fique vazio em "—"
+function preencherFallbackPregao() {
+  if (!ultimoHist) return;
+  if ($('ohlcAtual')?.textContent && $('ohlcAtual').textContent !== '—') return;
+  const { a, b, rates, intra } = ultimoHist;
+  const fmt = v => v.toLocaleString('pt-BR', { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+  if ($('ohlcPar')) $('ohlcPar').textContent = `${a}/${b}`;
+
+  if (intra && intra.length >= 2) {
+    const ult = intra[intra.length - 1];
+    const prim = intra[0];
+    $('ohlcAbertura').textContent = fmt(prim.v);
+    $('ohlcAtual').textContent = fmt(ult.v);
+    $('ohlcMaxDia').textContent = fmt(Math.max(...intra.map(x => x.h)));
+    $('ohlcMinDia').textContent = fmt(Math.min(...intra.map(x => x.l)));
+    $('ohlcHora').textContent = 'Intradiário';
+    return;
+  }
+
+  const datas = Object.keys(rates).sort();
+  if (datas.length >= 2) {
+    const getUSD = (dt, cod) => cod === 'USD' ? 1 : rates[dt][cod];
+    const ant = getUSD(datas[datas.length - 2], b) / getUSD(datas[datas.length - 2], a);
+    const atu = getUSD(datas[datas.length - 1], b) / getUSD(datas[datas.length - 1], a);
+    $('ohlcAbertura').textContent = fmt(ant);
+    $('ohlcAtual').textContent = fmt(atu);
+    $('ohlcMaxDia').textContent = fmt(Math.max(ant, atu));
+    $('ohlcMinDia').textContent = fmt(Math.min(ant, atu));
+    $('ohlcHora').textContent = 'Fech. BCE';
   }
 }
 
@@ -219,7 +349,6 @@ function atualizarResumoIndicadores() {
   const mm20 = mm20Arr[mm20Arr.length - 1] || ultimo;
   const difMm = mm20 > 0 ? ((ultimo - mm20) / mm20) * 1500 : 0;
   const scoreMm = difMm + (mom5 * 0.3);
-
   const scoreSum = (scoreOsc + scoreMm) / 2;
 
   const itens = [
@@ -244,12 +373,10 @@ function atualizarResumoIndicadores() {
 }
 
 function desenharGrafico() {
-  const { a, b, rates } = ultimoHist;
+  const { a, b, rates, intra } = ultimoHist;
   const datas = Object.keys(rates).sort();
   if (!datas.length) return;
   const getUSD = (dt, cod) => cod === 'USD' ? 1 : rates[dt][cod];
-  const mostraAno = periodo === 'tudo' || periodo === 'custom' || Number(periodo) >= 365;
-  const labels = datas.map(d => mostraAno ? `${d.slice(8, 10)}/${d.slice(5, 7)}/${d.slice(2, 4)}` : `${d.slice(8, 10)}/${d.slice(5, 7)}`);
   const c = BD.cor();
   const showMM20 = $('chkMM20').checked, showMedia = $('chkMedia').checked;
   const lblPer = labelPeriodo();
@@ -257,7 +384,13 @@ function desenharGrafico() {
   if (chart) chart.destroy();
 
   if (modo === 'par') {
-    const serie = datas.map(dt => getUSD(dt, b) / getUSD(dt, a));
+    const usaIntra = Boolean(intra && intra.length >= 4);
+    const mostraAno = periodo === 'tudo' || periodo === 'custom' || Number(periodo) >= 365;
+    const labels = usaIntra
+      ? intra.map(p => p.lbl)
+      : datas.map(d => mostraAno ? `${d.slice(8, 10)}/${d.slice(5, 7)}/${d.slice(2, 4)}` : `${d.slice(8, 10)}/${d.slice(5, 7)}`);
+    const serie = usaIntra ? intra.map(p => p.v) : datas.map(dt => getUSD(dt, b) / getUSD(dt, a));
+
     const ini = serie[0], fim = serie[serie.length - 1];
     const variacao = ((fim - ini) / ini) * 100;
     const max = Math.max(...serie), min = Math.min(...serie);
@@ -265,7 +398,9 @@ function desenharGrafico() {
     const vol = calcVolatilidade(serie);
 
     $('titGraf').textContent = `Par direto: ${a}/${b} (${lblPer})`;
-    $('subGraf').textContent = `Quanto 1 ${a} comprou em ${b} ao longo do período`;
+    $('subGraf').textContent = usaIntra
+      ? `Série intradiária (horas) — quanto 1 ${a} comprou em ${b}`
+      : `Quanto 1 ${a} comprou em ${b} ao longo do período`;
     $('mVar').innerHTML = `<span class="${variacao >= 0 ? 'din-green' : 'din-red'}">${variacao >= 0 ? '+' : ''}${BD.num(variacao, 2)}%</span>`;
     $('mVol').textContent = `${BD.num(vol, 2)}%`;
     $('mMax').textContent = BD.num(max, 4);
@@ -273,27 +408,77 @@ function desenharGrafico() {
     atualizarRadar(fim, min, max);
 
     const dir = variacao >= 0 ? `se valorizou` : `se desvalorizou`;
-    $('leituraGraf').innerHTML = `No período (<strong>${lblPer}</strong>), o <strong>${a}</strong> ${dir} <strong>${BD.num(Math.abs(variacao), 2)}%</strong> frente ao <strong>${b}</strong> (média de ${BD.num(media, 4)} e volatilidade diária de <strong>${BD.num(vol, 2)}%</strong>).`;
+    $('leituraGraf').innerHTML = `No período (<strong>${lblPer}</strong>), o <strong>${a}</strong> ${dir} <strong>${BD.num(Math.abs(variacao), 2)}%</strong> frente ao <strong>${b}</strong> (média de ${BD.num(media, 4)} e volatilidade de <strong>${BD.num(vol, 2)}%</strong>).`;
 
-    const datasets = [{
-      label: `${a}/${b}`,
-      data: serie,
-      borderColor: '#16C784',
-      backgroundColor: 'rgba(22,199,132,0.10)',
-      fill: true,
-      borderWidth: 2,
-      pointRadius: datas.length <= 15 ? 3 : 0,
-      tension: .15
-    }];
-    if (showMM20) datasets.push({ label: 'MM20', data: calcMM(serie, 20), borderColor: '#F59E0B', borderWidth: 1.7, pointRadius: 0, tension: .2 });
-    if (showMedia) datasets.push({ label: 'Média do período', data: serie.map(() => media), borderColor: '#9299A3', borderDash: [5, 4], borderWidth: 1.4, pointRadius: 0 });
+    const corLinha = variacao >= 0 ? '#16C784' : '#EA3943';
 
-    chart = new Chart($('grafMoedas'), {
-      type: 'line',
-      data: { labels, datasets },
-      options: opcoesGrafico(c, v => BD.num(v, 4))
-    });
+    if (tipoGrafico === 'velas') {
+      // Monta velas (agrupando se houver muitos pontos para ficar legível)
+      const passo = serie.length > 60 ? Math.ceil(serie.length / 55) : 1;
+      const vLabels = [], vDados = [], ohlc = [];
+      for (let i = 0; i < serie.length; i += passo) {
+        const bloco = serie.slice(i, i + passo);
+        const o = i === 0 ? bloco[0] : serie[i - 1];
+        const cl = bloco[bloco.length - 1];
+        const h = Math.max(o, cl, ...bloco) * 1.0005;
+        const l = Math.min(o, cl, ...bloco) * 0.9995;
+        vLabels.push(labels[Math.min(i + passo - 1, labels.length - 1)]);
+        vDados.push([o, cl]);
+        ohlc.push({ o, h, l, c: cl });
+      }
+
+      chart = new Chart($('grafMoedas'), {
+        type: 'bar',
+        data: {
+          labels: vLabels,
+          datasets: [{
+            label: `${a}/${b} (Velas)`,
+            data: vDados,
+            _ohlc: ohlc,
+            backgroundColor: ohlc.map(p => p.c >= p.o ? '#16C784' : '#EA3943'),
+            borderColor: ohlc.map(p => p.c >= p.o ? '#16C784' : '#EA3943'),
+            borderWidth: 1,
+            borderSkipped: false,
+            barPercentage: 0.65
+          }]
+        },
+        options: opcoesGrafico(c, v => BD.num(v, 4), true),
+        plugins: [wickPlugin, crosshairPlugin]
+      });
+    } else {
+      const ctx = $('grafMoedas').getContext('2d');
+      const grad = ctx.createLinearGradient(0, 0, 0, 320);
+      const rgb = variacao >= 0 ? '22,199,132' : '234,57,67';
+      grad.addColorStop(0, tipoGrafico === 'limpo' ? `rgba(${rgb},0.22)` : 'rgba(22,199,132,0.14)');
+      grad.addColorStop(1, `rgba(${rgb},0.00)`);
+
+      const datasets = [{
+        label: `${a}/${b}`,
+        data: serie,
+        borderColor: tipoGrafico === 'limpo' ? corLinha : '#16C784',
+        backgroundColor: grad,
+        fill: true,
+        borderWidth: tipoGrafico === 'limpo' ? 2.2 : 2,
+        pointRadius: 0,
+        pointHoverRadius: 5,
+        pointHoverBackgroundColor: tipoGrafico === 'limpo' ? corLinha : '#16C784',
+        pointHoverBorderColor: '#FFFFFF',
+        pointHoverBorderWidth: 2,
+        tension: tipoGrafico === 'limpo' ? 0 : 0.18
+      }];
+      if (showMM20) datasets.push({ label: 'MM20', data: calcMM(serie, 20), borderColor: '#F59E0B', borderWidth: 1.7, pointRadius: 0, tension: 0.2 });
+      if (showMedia) datasets.push({ label: 'Média do período', data: serie.map(() => media), borderColor: '#9299A3', borderDash: [5, 4], borderWidth: 1.4, pointRadius: 0 });
+
+      chart = new Chart($('grafMoedas'), {
+        type: 'line',
+        data: { labels, datasets },
+        options: opcoesGrafico(c, v => BD.num(v, 4), false, tipoGrafico === 'limpo'),
+        plugins: [crosshairPlugin]
+      });
+    }
   } else {
+    const mostraAno = periodo === 'tudo' || periodo === 'custom' || Number(periodo) >= 365;
+    const labels = datas.map(d => mostraAno ? `${d.slice(8, 10)}/${d.slice(5, 7)}/${d.slice(2, 4)}` : `${d.slice(8, 10)}/${d.slice(5, 7)}`);
     const invA = datas.map(dt => 1 / getUSD(dt, a));
     const invB = datas.map(dt => 1 / getUSD(dt, b));
     const baseA = invA.map(v => (v / invA[0]) * 100);
@@ -314,15 +499,16 @@ function desenharGrafico() {
     $('leituraGraf').innerHTML = `Em <strong>${lblPer}</strong> frente ao Dólar, <strong>${venc}</strong> teve melhor performance: <strong>${a}</strong> variou <strong>${varA >= 0 ? '+' : ''}${BD.num(varA, 2)}%</strong> e <strong>${b}</strong> variou <strong>${varB >= 0 ? '+' : ''}${BD.num(varB, 2)}%</strong>.`;
 
     const datasets = [
-      { label: `${a} (Base 100)`, data: baseA, borderColor: '#16C784', borderWidth: 2, pointRadius: 0, tension: .15 },
-      { label: `${b} (Base 100)`, data: baseB, borderColor: '#2563EB', borderWidth: 2, pointRadius: 0, tension: .15 }
+      { label: `${a} (Base 100)`, data: baseA, borderColor: '#16C784', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.15 },
+      { label: `${b} (Base 100)`, data: baseB, borderColor: '#2563EB', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.15 }
     ];
     if (showMedia) datasets.push({ label: 'Linha Base (100)', data: baseA.map(() => 100), borderColor: '#9299A3', borderDash: [5, 4], borderWidth: 1.3, pointRadius: 0 });
 
     chart = new Chart($('grafMoedas'), {
       type: 'line',
       data: { labels, datasets },
-      options: opcoesGrafico(c, v => BD.num(v, 2))
+      options: opcoesGrafico(c, v => BD.num(v, 2)),
+      plugins: [crosshairPlugin]
     });
   }
 }
@@ -390,7 +576,6 @@ async function carregarSazonalidade() {
   const a = $('gMoedaA').value || 'USD';
   const b = $('gMoedaB').value || 'BRL';
   $('sazParLbl').textContent = `${a}/${b}`;
-
   const syms = [a, b].filter(x => x !== 'USD');
   const query = syms.length ? `?base=USD&symbols=${syms.join(',')}` : '?base=USD';
 
@@ -417,11 +602,7 @@ async function carregarSazonalidade() {
       matriz[ano] = [];
       for (let m = 0; m < 12; m++) {
         const cell = porAnoMes[ano][m];
-        if (cell && cell.ini > 0) {
-          matriz[ano].push(((cell.fim - cell.ini) / cell.ini) * 100);
-        } else {
-          matriz[ano].push(null);
-        }
+        matriz[ano].push(cell && cell.ini > 0 ? ((cell.fim - cell.ini) / cell.ini) * 100 : null);
       }
     });
 
@@ -451,7 +632,7 @@ function desenharSazonalidade() {
       backgroundColor: CORES_ANOS[idx % CORES_ANOS.length],
       borderWidth: ano === anos[anos.length - 1] ? 2.6 : 1.6,
       pointRadius: 2,
-      tension: .2
+      tension: 0.2
     };
   });
 
@@ -484,12 +665,10 @@ function desenharSazonalidade() {
     const vals = matriz[ano];
     const somaAno = vals.reduce((s, v) => s + (v || 0), 0);
     const corAno = somaAno >= 0 ? 'bg-[#16C784]/20 din-green font-bold' : 'bg-[#EA3943]/20 din-red font-bold';
-
     html += `<tr><td class="py-2 px-2 font-bold din-text-main">${ano}</td>`;
     vals.forEach(v => {
-      if (v == null) {
-        html += `<td class="py-2 px-2 text-right din-text-muted">—</td>`;
-      } else {
+      if (v == null) html += `<td class="py-2 px-2 text-right din-text-muted">—</td>`;
+      else {
         const bg = v >= 0.3 ? 'bg-[#16C784]/15 din-green' : v <= -0.3 ? 'bg-[#EA3943]/15 din-red' : 'din-text-muted';
         html += `<td class="py-2 px-2 text-right font-semibold ${bg}">${v >= 0 ? '+' : ''}${BD.num(v, 2)}%</td>`;
       }
@@ -533,16 +712,32 @@ function exportarCSV() {
   link.click();
 }
 
-function opcoesGrafico(c, fmt) {
+function opcoesGrafico(c, fmt, isVelas = false, isLimpo = false) {
   return {
     maintainAspectRatio: false,
     interaction: { mode: 'index', intersect: false },
     plugins: {
-      legend: { labels: { color: c.tx, boxWidth: 12, font: { size: 11 } } },
-      tooltip: { callbacks: { label: x => ` ${x.dataset.label}: ${fmt(x.parsed.y)}` } }
+      legend: { display: !isLimpo, labels: { color: c.tx, boxWidth: 12, font: { size: 11 } } },
+      tooltip: {
+        backgroundColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#1E2329' : '#FFFFFF',
+        titleColor: c.tx,
+        bodyColor: c.tx,
+        borderColor: c.grid,
+        borderWidth: 1,
+        padding: 10,
+        callbacks: {
+          label: x => {
+            if (isVelas && x.dataset._ohlc) {
+              const p = x.dataset._ohlc[x.dataIndex];
+              return ` Ab: ${fmt(p.o)} | Máx: ${fmt(p.h)} | Mín: ${fmt(p.l)} | Fech: ${fmt(p.c)}`;
+            }
+            return ` ${x.dataset.label}: ${fmt(x.parsed.y)}`;
+          }
+        }
+      }
     },
     scales: {
-      x: { ticks: { color: c.mu, maxTicksLimit: 8 }, grid: { display: false } },
+      x: { ticks: { color: c.mu, maxTicksLimit: isLimpo ? 5 : 8 }, grid: { display: false } },
       y: { ticks: { color: c.mu, callback: v => fmt(v) }, grid: { color: c.grid } }
     }
   };

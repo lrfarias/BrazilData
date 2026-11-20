@@ -266,15 +266,15 @@
           <!-- Períodos Rápidos -->
           <div>
             <span class="block text-xs font-semibold din-text-main mb-1.5">Período</span>
-            <div class="grid grid-cols-4 gap-1 din-secondary-bg p-1 rounded-lg border din-border text-[11px] font-semibold">
-              <button id="p3" type="button" onclick="setPeriodo(3)" class="py-1.5 rounded-md din-text-muted transition">3d</button>
-              <button id="p15" type="button" onclick="setPeriodo(15)" class="py-1.5 rounded-md din-text-muted transition">15d</button>
-              <button id="p30" type="button" onclick="setPeriodo(30)" class="py-1.5 rounded-md din-text-muted transition">30d</button>
-              <button id="p90" type="button" onclick="setPeriodo(90)" class="py-1.5 rounded-md din-card-bg din-text-main border din-border transition">3m</button>
-              <button id="p180" type="button" onclick="setPeriodo(180)" class="py-1.5 rounded-md din-text-muted transition">6m</button>
-              <button id="p270" type="button" onclick="setPeriodo(270)" class="py-1.5 rounded-md din-text-muted transition">9m</button>
-              <button id="p365" type="button" onclick="setPeriodo(365)" class="py-1.5 rounded-md din-text-muted transition">1 ano</button>
-              <button id="ptudo" type="button" onclick="setPeriodo('tudo')" class="py-1.5 rounded-md din-text-muted transition">Tudo</button>
+            <div id="grupoPeriodos" class="grid grid-cols-4 gap-1 din-secondary-bg p-1 rounded-lg border din-border text-[11px] font-semibold">
+              <button data-per="3" type="button" onclick="setPeriodo(3)" class="btn-per py-1.5 rounded-md din-text-muted transition">3d</button>
+              <button data-per="5" type="button" onclick="setPeriodo(5)" class="btn-per py-1.5 rounded-md din-text-muted transition">5d</button>
+              <button data-per="15" type="button" onclick="setPeriodo(15)" class="btn-per py-1.5 rounded-md din-text-muted transition">15d</button>
+              <button data-per="30" type="button" onclick="setPeriodo(30)" class="btn-per py-1.5 rounded-md din-text-muted transition">30d</button>
+              <button data-per="90" type="button" onclick="setPeriodo(90)" class="btn-per py-1.5 rounded-md din-card-bg din-text-main border din-border transition">3m</button>
+              <button data-per="180" type="button" onclick="setPeriodo(180)" class="btn-per py-1.5 rounded-md din-text-muted transition">6m</button>
+              <button data-per="365" type="button" onclick="setPeriodo(365)" class="btn-per py-1.5 rounded-md din-text-muted transition">1 ano</button>
+              <button data-per="tudo" type="button" onclick="setPeriodo('tudo')" class="btn-per py-1.5 rounded-md din-text-muted transition">Tudo</button>
             </div>
           </div>
 
@@ -380,7 +380,12 @@
             <button id="tabGrafSaz" type="button" onclick="setAbaGraf('saz')" class="px-3 py-1.5 rounded-md din-text-muted transition">Sazonalidade</button>
           </div>
 
-          <div id="ctrlTecnico" class="flex flex-wrap items-center gap-3 text-xs">
+          <div id="ctrlTecnico" class="flex flex-wrap items-center gap-2.5 text-xs">
+            <div class="inline-flex din-secondary-bg p-0.5 rounded-lg border din-border text-[11px] font-semibold">
+              <button data-tipo="original" type="button" onclick="setTipoGrafico('original')" class="btn-tipo px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border transition">Original</button>
+              <button data-tipo="velas" type="button" onclick="setTipoGrafico('velas')" class="btn-tipo px-2.5 py-1 rounded-md din-text-muted transition">Velas</button>
+              <button data-tipo="limpo" type="button" onclick="setTipoGrafico('limpo')" class="btn-tipo px-2.5 py-1 rounded-md din-text-muted transition">Limpo</button>
+            </div>
             <label class="inline-flex items-center gap-1.5 din-text-muted cursor-pointer select-none">
               <input id="chkMM20" type="checkbox" class="accent-[#F59E0B] cursor-pointer" onchange="desenharGrafico()">
               <span>MM20</span>
@@ -391,7 +396,6 @@
             </label>
             <button type="button" onclick="exportarCSV()" class="px-2.5 py-1 rounded-md font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition">↓ CSV</button>
           </div>
-        </div>
 
         <!-- ABA 1: EVOLUÇÃO DO PAR -->
         <div id="viewGrafEvol" class="flex-1 flex flex-col">
@@ -503,5 +507,7 @@
 </script>
 <script src="js/cambio/cambio-core.js?v=3"></script>
 <script src="js/cambio/cambio-graficos.js?v=3"></script>
+<script src="js/cambio/cambio-core.js?v=4"></script>
+<script src="js/cambio/cambio-graficos.js?v=4"></script>
 </body>
 </html>
