@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador Selic & Juros — BrasilEmDados</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+<body class="min-h-screen font-sans flex flex-col">
+<div id="bd-header"></div>
+<main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+  <div>
+    <a href="/economia.html" class="text-xs font-semibold din-text-muted hover:underline">← Economia e indicadores</a>
+    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight din-text-main mt-2">Simulador de Selic e juros</h1>
+    <p class="text-sm din-text-muted mt-1 max-w-2xl">Veja quanto seu dinheiro rende em CDB, LCI/LCA e Tesouro Selic, já descontados o imposto de renda e a inflação.</p>
+  </div>
+
+  <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="din-card-bg border din-border rounded-lg p-4"><span class="text-xs din-text-muted">Selic (meta)</span><p id="kSelic" class="text-xl font-bold din-green mt-1">—</p></div>
+    <div class="din-card-bg border din-border rounded-lg p-4"><span class="text-xs din-text-muted">CDI</span><p id="kCdi" class="text-xl font-bold din-text-main mt-1">—</p></div>
+    <div class="din-card-bg border din-border rounded-lg p-4"><span class="text-xs din-text-muted">IPCA em 12 meses</span><p id="kIpca" class="text-xl font-bold din-red mt-1">—</p></div>
+    <div class="din-card-bg border din-border rounded-lg p-4"><span class="text-xs din-text-muted">Juro real da Selic</span><p id="kReal" class="text-xl font-bold din-text-main mt-1">—</p></div>
+  </section>
+  <p id="fonte" class="text-xs din-text-muted -mt-3"></p>
+
+  <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <div class="lg:col-span-4 din-card-bg border din-border rounded-lg p-5 space-y-4">
+      <h2 class="text-base font-semibold din-text-main">Seu cenário</h2>
+      <label class="block text-xs font-semibold din-text-main">Valor inicial (R$)<input id="c0" class="inp mt-1" inputmode="decimal" value="10000" oninput="calc()"></label>
+      <label class="block text-xs font-semibold din-text-main">Aporte mensal (R$)<input id="ap" class="inp mt-1" inputmode="decimal" value="500" oninput="calc()"></label>
+      <label class="block text-xs font-semibold din-text-main"><span class="flex justify-between">Prazo <span id="lblAnos" class="din-green">10 anos</span></span>
+        <input id="anos" type="range" min="1" max="30" value="10" class="w-full accent-[#16C784] mt-1" oninput="calc()"></label>
+      <div class="grid grid-cols-3 gap-2">
+        <label class="text-xs font-semibold din-text-main">Selic % a.a.<input id="selic" class="inp mt-1" inputmode="decimal" value="10" oninput="calc()"></label>
+        <label class="text-xs font-semibold din-text-main">CDI % a.a.<input id="cdi" class="inp mt-1" inputmode="decimal" value="9.9" oninput="calc()"></label>
+        <label class="text-xs font-semibold din-text-main">IPCA % a.a.<input id="ipca" class="inp mt-1" inputmode="decimal" value="4.5" oninput="calc()"></label>
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <label class="text-xs font-semibold din-text-main">CDB (% do CDI)<input id="pctCdb" class="inp mt-1" inputmode="decimal" value="100" oninput="calc()"></label>
+        <label class="text-xs font-semibold din-text-main">LCI/LCA (% do CDI)<input id="pctLci" class="inp mt-1" inputmode="decimal" value="90" oninput="calc()"></label>
+      </div>
+      <p class="text-xs din-text-muted">Os campos de taxa começam com os valores do Banco Central e você pode editá-los.</p>
+    </div>
+
+    <div class="lg:col-span-8 space-y-6">
+      <div class="din-card-bg border din-border rounded-lg p-5">
+        <div class="flex flex-wrap justify-between gap-2 mb-3">
+          <h2 class="text-base font-semibold din-text-main">Resultado ao fim do prazo</h2>
+          <p class="text-xs din-text-muted">Total investido: <strong id="inv" class="din-text-main">—</strong></p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead><tr class="din-text-muted"><th class="py-2 px-2">Produto</th><th class="py-2 px-2">Taxa a.a.</th><th class="py-2 px-2">Bruto</th><th class="py-2 px-2">IR</th><th class="py-2 px-2">Líquido</th><th class="py-2 px-2">Em valores de hoje</th></tr></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+        <p class="text-xs din-text-muted mt-2">"Em valores de hoje" desconta a inflação do período: é o poder de compra que o dinheiro terá.</p>
+      </div>
+      <div class="din-card-bg border din-border rounded-lg p-5">
+        <h2 class="text-base font-semibold din-text-main">Evolução do patrimônio líquido</h2>
+        <div class="h-[320px] mt-3"><canvas id="graf"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <p class="text-xs din-text-muted max-w-3xl leading-relaxed">
+    <strong class="din-text-main">Premissas.</strong> Juros compostos com aporte no fim de cada mês. IR regressivo sobre o ganho de cada aporte: 22,5% até 180 dias, 20% até 360, 17,5% até 720 e 15% acima. LCI e LCA com isenção para pessoa física. O Tesouro Selic rende a Selic meta, sem a taxa de custódia da B3. Taxas futuras são constantes e na prática mudam. Isto é uma simulação educativa, não uma recomendação de investimento.
+  </p>
+</main>
+<div id="bd-footer"></div>
+<script src="/layout.js"></script>
+<script>
+const $ = i => document.getElementById(i);
+const v = i => parseFloat(String($(i).value).replace(',', '.')) || 0;
+let chart;
+const IR = d => d <= 180 ? .225 : d <= 360 ? .2 : d <= 720 ? .175 : .15;
+const mes = a => Math.pow(1 + a, 1 / 12) - 1;
+
+function sim(a, iso, m, c0, ap) {
+  const i = mes(a);
+  let g = c0 * Math.pow(1 + i, m), ir = iso ? 0 : (g - c0) * IR(m * 30);
+  for (let k = 1; k <= m; k++) {
+    const age = m - k, f = ap * Math.pow(1 + i, age);
+    g += f; if (!iso) ir += (f - ap) * IR(age * 30);
+  }
+  return { bruto: g, ir, liq: g - ir };
+}
+function prods() {
+  const cdi = v('cdi') / 100;
+  return [
+    { n: 'CDB', d: v('pctCdb') + '% do CDI', a: cdi * v('pctCdb') / 100, iso: false, cor: '#2563EB' },
+    { n: 'LCI / LCA', d: v('pctLci') + '% do CDI, isento de IR', a: cdi * v('pctLci') / 100, iso: true, cor: '#F59E0B' },
+    { n: 'Tesouro Selic', d: 'Selic meta', a: v('selic') / 100, iso: false, cor: '#16C784' }
+  ];
+}
+function calc() {
+  const c0 = v('c0'), ap = v('ap'), anos = v('anos'), m = anos * 12, ipca = v('ipca') / 100, fi = Math.pow(1 + ipca, anos);
+  $('lblAnos').textContent = anos + (anos === 1 ? ' ano' : ' anos');
+  $('inv').textContent = BD.brl(c0 + ap * m, 0);
+  const P = prods(), R = P.map(p => ({ ...p, ...sim(p.a, p.iso, m, c0, ap) }));
+  const top = Math.max(...R.map(r => r.liq));
+  $('tbody').innerHTML = R.map(r => `<tr class="border-t din-border ${r.liq === top ? 'din-secondary-bg' : ''}">
+    <td class="py-2.5 px-2 font-semibold din-text-main">${r.n}<span class="block text-[11px] font-normal din-text-muted">${r.d}</span></td>
+    <td class="py-2.5 px-2 din-text-main">${BD.num(r.a * 100, 2)}%</td>
+    <td class="py-2.5 px-2 din-text-main">${BD.brl(r.bruto, 0)}</td>
+    <td class="py-2.5 px-2 din-red">${BD.brl(r.ir, 0)}</td>
+    <td class="py-2.5 px-2 font-bold din-green">${BD.brl(r.liq, 0)}</td>
+    <td class="py-2.5 px-2 din-text-main">${BD.brl(r.liq / fi, 0)}</td></tr>`).join('');
+  $('kReal').textContent = BD.num(((1 + v('selic') / 100) / (1 + ipca) - 1) * 100, 2) + '% a.a.';
+  grafico(P, c0, ap, anos);
+}
+function grafico(P, c0, ap, anos) {
+  const c = BD.cor(), L = [...Array(anos + 1).keys()];
+  if (chart) chart.destroy();
+  chart = new Chart($('graf'), {
+    type: 'line',
+    data: { labels: L.map(y => y + 'a'), datasets: [
+      { label: 'Total investido', data: L.map(y => c0 + ap * 12 * y), borderColor: '#9299A3', borderDash: [5, 4], pointRadius: 0 },
+      ...P.map(p => ({ label: p.n, data: L.map(y => Math.round(sim(p.a, p.iso, y * 12, c0, ap).liq)), borderColor: p.cor, pointRadius: 0, tension: .2 }))] },
+    options: { maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+      plugins: { legend: { labels: { color: c.tx } }, tooltip: { callbacks: { label: x => ` ${x.dataset.label}: ${BD.brl(x.parsed.y, 0)}` } } },
+      scales: { x: { ticks: { color: c.mu }, grid: { display: false } }, y: { ticks: { color: c.mu, callback: x => BD.compact(x) }, grid: { color: c.grid } } } }
+  });
+}
+
+async function sgs(c) {
+  const r = await fetch(`https://api.bcb.gov.br/dados/serie/bcdata.sgs.${c}/dados/ultimos/1?formato=json`);
+  if (!r.ok) throw new Error('SGS ' + c);
+  const j = await r.json(); return { v: parseFloat(j[0].valor), d: j[0].data };
+}
+calc();
+(async () => {
+  const r = await Promise.allSettled([sgs(432), sgs(4389), sgs(13522)]);
+  const ok = r.filter(x => x.status === 'fulfilled');
+  [['selic', 'kSelic'], ['cdi', 'kCdi'], ['ipca', 'kIpca']].forEach(([id, k], i) => {
+    if (r[i].status === 'fulfilled') { $(id).value = r[i].value.v; $(k).textContent = BD.num(r[i].value.v, 2) + '% a.a.'; }
+  });
+  $('fonte').textContent = ok.length === 3 ? 'Fonte: Banco Central do Brasil (SGS), dados de ' + ok[0].value.d + '.'
+    : 'Não foi possível buscar todas as taxas no Banco Central. Os campos usam valores de exemplo que você pode editar.';
+  calc();
+})();
+window.addEventListener('tema', calc);
+</script>
+</body>
+</html>

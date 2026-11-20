@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conversor de Moedas — BrasilEmDados</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+<body class="min-h-screen font-sans flex flex-col">
+<div id="bd-header"></div>
+<main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+  <div>
+    <a href="/economia.html" class="text-xs font-semibold din-text-muted hover:underline">← Economia e indicadores</a>
+    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight din-text-main mt-2">Conversor de moedas</h1>
+    <p class="text-sm din-text-muted mt-1 max-w-2xl">Converta entre real, dólar, euro e libra com a cotação PTAX de venda do Banco Central.</p>
+  </div>
+
+  <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <div class="lg:col-span-7 din-card-bg border din-border rounded-lg p-5 space-y-4">
+      <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+        <label class="sm:col-span-4 text-xs font-semibold din-text-main">Valor
+          <input id="val" class="inp mt-1" inputmode="decimal" value="100" oninput="conv()"></label>
+        <label class="sm:col-span-3 text-xs font-semibold din-text-main">De
+          <select id="de" class="inp mt-1" onchange="conv()"></select></label>
+        <button onclick="troca()" class="sm:col-span-2 inp text-center font-bold" aria-label="Inverter moedas">⇄</button>
+        <label class="sm:col-span-3 text-xs font-semibold din-text-main">Para
+          <select id="para" class="inp mt-1" onchange="conv()"></select></label>
+      </div>
+      <div class="din-secondary-bg border din-border rounded-lg p-4">
+        <p class="text-xs din-text-muted">Resultado</p>
+        <p id="res" class="text-3xl font-extrabold din-green mt-1">—</p>
+        <p id="taxa" class="text-xs din-text-muted mt-2"></p>
+      </div>
+      <p id="aviso" class="text-xs din-text-muted">Buscando cotações no Banco Central…</p>
+    </div>
+
+    <div class="lg:col-span-5 grid grid-cols-1 gap-3 content-start" id="cards"></div>
+  </section>
+
+  <section class="din-card-bg border din-border rounded-lg p-5">
+    <h2 class="text-base font-semibold din-text-main">Dólar nos últimos 30 dias</h2>
+    <p class="text-xs din-text-muted mb-3">Cotação de venda em reais, por dia útil. Fonte: Banco Central (SGS 1).</p>
+    <div class="h-[300px]"><canvas id="graf"></canvas></div>
+  </section>
+
+  <p class="text-xs din-text-muted max-w-3xl leading-relaxed">A PTAX é a média das cotações de referência do dia e serve de base para contratos. A cotação que você paga em casas de câmbio, bancos e cartões inclui spread e impostos, então costuma ser maior. Nos fins de semana e feriados vale a última cotação disponível.</p>
+</main>
+<div id="bd-footer"></div>
+<script src="/layout.js"></script>
+<script>
+const $ = i => document.getElementById(i);
+const NOM = { BRL: 'Real', USD: 'Dólar', EUR: 'Euro', GBP: 'Libra' };
+const T = { BRL: { v: 1 } };
+let chart, hist = [];
+
+const dstr = d => String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + '-' + d.getFullYear();
+const br = s => s.slice(0, 10).split('-').reverse().join('/');
+
+async function ptax(m) {
+  for (let i = 0; i < 8; i++) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const u = `https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoMoedaDia(moeda=@moeda,dataCotacao=@dataCotacao)?@moeda='${m}'&@dataCotacao='${dstr(d)}'&$format=json`;
+    const r = await fetch(u); if (!r.ok) continue;
+    const j = (await r.json()).value || [];
+    if (j.length) { const b = j.find(x => /fecha/i.test(x.tipoBoletim)) || j[j.length - 1]; return { v: b.cotacaoVenda, d: br(b.dataHoraCotacao) }; }
+  }
+  throw new Error('sem cotação para ' + m);
+}
+
+function conv() {
+  const a = parseFloat(String($('val').value).replace(',', '.')) || 0, f = $('de').value, t = $('para').value;
+  if (!T[f] || !T[t]) { $('res').textContent = '—'; $('taxa').textContent = ''; return; }
+  const k = T[f].v / T[t].v;
+  $('res').textContent = BD.num(a * k, 2) + ' ' + t;
+  $('taxa').textContent = `1 ${f} = ${BD.num(k, 4)} ${t}`;
+}
+function troca() { const x = $('de').value; $('de').value = $('para').value; $('para').value = x; conv(); }
+
+function grafico() {
+  if (!hist.length) return;
+  const c = BD.cor(); if (chart) chart.destroy();
+  chart = new Chart($('graf'), {
+    type: 'line',
+    data: { labels: hist.map(h => h.d.slice(0, 5)), datasets: [{ label: 'USD/BRL', data: hist.map(h => h.v), borderColor: '#16C784', backgroundColor: '#16C78422', fill: true, tension: .25, pointRadius: 2 }] },
+    options: { maintainAspectRatio: false, plugins: { legend: { display: false } },
+      scales: { x: { ticks: { color: c.mu, maxTicksLimit: 8 }, grid: { display: false } }, y: { ticks: { color: c.mu, callback: v => 'R$ ' + v.toFixed(2) }, grid: { color: c.grid } } } }
+  });
+}
+
+(async () => {
+  const op = Object.keys(NOM).map(k => `<option value="${k}">${NOM[k]} (${k})</option>`).join('');
+  $('de').innerHTML = op; $('para').innerHTML = op; $('de').value = 'USD'; $('para').value = 'BRL';
+
+  const ms = ['USD', 'EUR', 'GBP'];
+  const r = await Promise.allSettled(ms.map(ptax));
+  let datas = [];
+  r.forEach((x, i) => { if (x.status === 'fulfilled') { T[ms[i]] = x.value; datas.push(x.value.d); } });
+  $('cards').innerHTML = ms.map(m => `<div class="din-card-bg border din-border rounded-lg p-4 flex justify-between items-center">
+    <div><p class="text-sm font-semibold din-text-main">${NOM[m]} (${m})</p><p class="text-xs din-text-muted">${T[m] ? 'Cotação de ' + T[m].d : 'Indisponível agora'}</p></div>
+    <p class="text-xl font-bold din-green">${T[m] ? BD.brl(T[m].v, 4) : '—'}</p></div>`).join('');
+  $('aviso').textContent = datas.length ? 'Fonte: PTAX de venda, Banco Central do Brasil.' : 'Não foi possível buscar as cotações no Banco Central. Recarregue a página em instantes.';
+  conv();
+
+  try {
+    const h = await fetch('https://api.bcb.gov.br/dados/serie/bcdata.sgs.1/dados/ultimos/30?formato=json');
+    if (!h.ok) throw new Error('SGS ' + h.status);
+    hist = (await h.json()).map(x => ({ d: x.data, v: parseFloat(x.valor) }));
+    grafico();
+  } catch (e) { console.error(e); }
+})();
+window.addEventListener('tema', grafico);
+</script>
+</body>
+</html>

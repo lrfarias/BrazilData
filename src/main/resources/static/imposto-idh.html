@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Impostos, População & IDH — BrasilEmDados</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+<body class="min-h-screen font-sans flex flex-col">
+<div id="bd-header"></div>
+<main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+  <div>
+    <a href="/economia.html" class="text-xs font-semibold din-text-muted hover:underline">← Economia e indicadores</a>
+    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight din-text-main mt-2">Impostos, população e IDH por estado</h1>
+    <p class="text-sm din-text-muted mt-1 max-w-2xl">Compare quanto cada estado produz, quantas pessoas vivem nele e quanto de tributo isso representa por habitante.</p>
+  </div>
+
+  <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="din-card-bg border din-border rounded-lg p-4"><span class="text-xs din-text-muted">Arrecadação estimada do Brasil</span><p id="k1" class="text-xl font-bold din-red mt-1">—</p></div>
+    <div class="din-card-bg border din-border rounded-lg p-4"><span class="text-xs din-text-muted">Média por habitante</span><p id="k2" class="text-xl font-bold din-text-main mt-1">—</p></div>
+    <div class="din-card-bg border din-border rounded-lg p-4"><span class="text-xs din-text-muted">Maior tributo por habitante</span><p id="k3" class="text-xl font-bold din-text-main mt-1">—</p></div>
+    <div class="din-card-bg border din-border rounded-lg p-4"><span class="text-xs din-text-muted">Menor tributo por habitante</span><p id="k4" class="text-xl font-bold din-text-main mt-1">—</p></div>
+  </section>
+
+  <section class="din-card-bg border din-border rounded-lg p-5">
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+      <h2 class="text-base font-semibold din-text-main">Ranking dos 27 estados</h2>
+      <label class="flex items-center gap-2 text-xs din-text-muted">Ano base
+        <select id="ano" class="inp !w-auto" onchange="montar(+this.value)"></select>
+      </label>
+    </div>
+    <div class="overflow-x-auto max-h-[460px] overflow-y-auto">
+      <table class="w-full text-left text-xs border-collapse">
+        <thead class="sticky top-0 din-card-bg"><tr id="thead" class="din-text-muted border-b din-border"></tr></thead>
+        <tbody id="tbody" class="divide-y din-border"><tr><td class="py-4 din-text-muted">Carregando dados…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="din-card-bg border din-border rounded-lg p-5">
+    <h2 class="text-base font-semibold din-text-main">Peso na economia e na população</h2>
+    <p class="text-xs din-text-muted mb-3">Os 10 maiores PIBs. Barra verde maior que a azul: o estado produz mais do que o tamanho da sua população sugere.</p>
+    <div class="h-[340px]"><canvas id="graf"></canvas></div>
+  </section>
+
+  <p class="text-xs din-text-muted max-w-3xl leading-relaxed">
+    <strong class="din-text-main">Como ler.</strong> PIB e população vêm do IBGE (SIDRA). A arrecadação é uma estimativa de 33% do PIB, a carga tributária bruta média do país, e não um valor oficial por estado. Ela soma tributos federais, estaduais e municipais e não mostra quanto fica disponível para o estado gastar. A coluna de IDH aparece quando o banco tiver um indicador chamado "IDH" para o ano escolhido, e ela mostra o contexto social, não o retorno individual dos impostos pagos.
+  </p>
+</main>
+<div id="bd-footer"></div>
+<script src="/layout.js"></script>
+<script>
+const $ = i => document.getElementById(i);
+const TAXA = 0.33;
+let TODOS = [], D = [], col = 'arrec', dir = -1, chart, idh = false;
+
+function montar(ano) {
+  const m = {};
+  TODOS.filter(i => +i.anoReferencia === ano && i.estado).forEach(i => {
+    const n = (i.nome || '').toLowerCase(), v = +i.valor || 0;
+    const d = m[i.estado.sigla] || (m[i.estado.sigla] = { sigla: i.estado.sigla, nome: i.estado.nome, pib: 0, pop: 0, idh: 0 });
+    if (n === 'pib estadual') d.pib = v; else if (n.includes('popula')) d.pop = v; else if (n.includes('idh')) d.idh = v;
+  });
+  D = Object.values(m).filter(d => d.pib > 0 && d.pop > 0);
+  const pT = D.reduce((a, d) => a + d.pib, 0), hT = D.reduce((a, d) => a + d.pop, 0);
+  D.forEach(d => { d.sp = d.pib / pT * 100; d.sh = d.pop / hT * 100; d.arrec = d.pib * 1000 * TAXA; d.hab = d.arrec / d.pop; });
+  idh = D.some(d => d.idh > 0);
+  const hs = [...D].sort((a, b) => b.hab - a.hab), mx = hs[0], mn = hs[hs.length - 1];
+  $('k1').textContent = BD.compact(pT * 1000 * TAXA);
+  $('k2').textContent = BD.brl(pT * 1000 * TAXA / hT, 0) + ' / ano';
+  $('k3').textContent = mx.sigla + ' · ' + BD.brl(mx.hab, 0);
+  $('k4').textContent = mn.sigla + ' · ' + BD.brl(mn.hab, 0);
+  tabela(); grafico();
+}
+
+function tabela() {
+  const cols = [['nome', 'Estado'], ['pib', 'PIB'], ['sp', '% do PIB'], ['sh', '% da pop.'], ['arrec', 'Arrecadação est.'], ['hab', 'Por habitante']];
+  if (idh) cols.push(['idh', 'IDH']);
+  $('thead').innerHTML = '<th class="py-2 px-2">#</th>' + cols.map(([k, t]) => `<th class="s py-2 px-2" onclick="ord('${k}')">${t} ↕</th>`).join('');
+  const L = [...D].sort((a, b) => col === 'nome' ? dir * -1 * a.nome.localeCompare(b.nome) : dir * (a[col] - b[col]));
+  $('tbody').innerHTML = L.map((d, i) => `<tr><td class="py-2 px-2 din-text-muted">${i + 1}</td>
+    <td class="py-2 px-2 font-semibold din-text-main">${d.nome} <span class="din-text-muted">(${d.sigla})</span></td>
+    <td class="py-2 px-2 din-text-main">${BD.compact(d.pib * 1000)}</td>
+    <td class="py-2 px-2 din-text-main">${BD.num(d.sp, 1)}%</td>
+    <td class="py-2 px-2 din-text-main">${BD.num(d.sh, 1)}%</td>
+    <td class="py-2 px-2 din-red">${BD.compact(d.arrec)}</td>
+    <td class="py-2 px-2 din-text-main">${BD.brl(d.hab, 0)}</td>
+    ${idh ? `<td class="py-2 px-2 din-green">${d.idh ? BD.num(d.idh, 3) : '—'}</td>` : ''}</tr>`).join('');
+}
+function ord(k) { if (col === k) dir *= -1; else { col = k; dir = -1; } tabela(); }
+
+function grafico() {
+  const t = [...D].sort((a, b) => b.pib - a.pib).slice(0, 10), c = BD.cor();
+  if (chart) chart.destroy();
+  chart = new Chart($('graf'), {
+    type: 'bar',
+    data: { labels: t.map(d => d.sigla), datasets: [
+      { label: '% do PIB nacional', data: t.map(d => +d.sp.toFixed(2)), backgroundColor: '#16C784', borderRadius: 4 },
+      { label: '% da população', data: t.map(d => +d.sh.toFixed(2)), backgroundColor: '#2563EB', borderRadius: 4 }] },
+    options: { indexAxis: 'y', maintainAspectRatio: false, plugins: { legend: { labels: { color: c.tx } } },
+      scales: { x: { ticks: { color: c.mu, callback: v => v + '%' }, grid: { color: c.grid } }, y: { ticks: { color: c.mu }, grid: { display: false } } } }
+  });
+}
+
+(async () => {
+  try {
+    TODOS = await BD.indicadores();
+    const anos = [...new Set(TODOS.filter(i => /per capita/i.test(i.nome)).map(i => +i.anoReferencia))].sort((a, b) => b - a);
+    if (!anos.length) throw new Error('sem anos');
+    $('ano').innerHTML = anos.map(a => `<option>${a}</option>`).join('');
+    montar(anos[0]);
+  } catch (e) {
+    $('tbody').innerHTML = '<tr><td class="py-4 din-red">Não foi possível carregar os indicadores. Recarregue a página em instantes.</td></tr>';
+    console.error(e);
+  }
+})();
+window.addEventListener('tema', () => D.length && grafico());
+</script>
+</body>
+</html>
