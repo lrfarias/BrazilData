@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contato — BrasilEmDados</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<style>
+  :root {
+    --bg-main: #FFFFFF;
+    --card-bg: #F7F8FA;
+    --bg-secondary: #F0F2F5;
+    --text-main: #17191C;
+    --text-muted: #737780;
+    --border-col: #E5E7EB;
+    --accent-green: #16C784;
+    --accent-red: #EA3943;
+  }
+  [data-theme="dark"] {
+    --bg-main: #101214;
+    --card-bg: #191C20;
+    --bg-secondary: #22262B;
+    --text-main: #F5F6F7;
+    --text-muted: #9299A3;
+    --border-col: #2B3036;
+    --accent-green: #16C784;
+    --accent-red: #EA3943;
+  }
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .din-bg-main { background-color: var(--bg-main); }
+  .din-card-bg { background-color: var(--card-bg); }
+  .din-secondary-bg { background-color: var(--bg-secondary); }
+  .din-text-main { color: var(--text-main); }
+  .din-text-muted { color: var(--text-muted); }
+  .din-border { border-color: var(--border-col); }
+  .din-green { color: var(--accent-green); }
+  .din-red { color: var(--accent-red); }
+  .din-btn { background-color: var(--accent-green); color: #FFFFFF; }
+  .din-btn:hover { opacity: 0.9; }
+  .inp { background-color: var(--bg-secondary); border: 1px solid var(--border-col); color: var(--text-main); border-radius: 0.5rem; padding: 0.6rem 0.8rem; width: 100%; font-size: 0.875rem; }
+  .inp:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--accent-green); outline-offset: 2px; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+</head>
+<body class="min-h-screen font-sans flex flex-col justify-between">
+<div>
+  <!-- Cabeçalho Institucional (Aba CONTATO Ativa) -->
+  <header class="sticky top-0 z-50 border-b din-border din-bg-main/95 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="flex items-center justify-between h-16 gap-4">
+        <div class="flex items-center gap-3">
+          <a href="index.html" class="flex items-center gap-3 group">
+            <div class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center shadow-sm group-hover:border-[#16C784] transition-colors">
+              <svg class="w-5 h-5 din-text-main" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 20V10"></path>
+                <path d="M12 20V4"></path>
+                <path d="M6 20v-6"></path>
+                <circle cx="12" cy="4" r="1" fill="#16C784" stroke="#16C784"></circle>
+              </svg>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-lg font-extrabold tracking-tight din-text-main">BrasilEmDados</span>
+                <span class="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono uppercase px-2 py-0.5 rounded din-secondary-bg border din-border din-text-muted">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span> CONTATO
+                </span>
+              </div>
+              <p class="text-[11px] din-text-muted hidden xl:block">Sugestões de Dados, Correções & Parcerias</p>
+            </div>
+          </a>
+        </div>
+
+        <nav class="hidden md:flex items-center gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+          <a href="index.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Início</a>
+          <a href="glossario.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Glossário</a>
+          <a href="economia.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Economia</a>
+          <a href="sobre.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Sobre</a>
+          <a href="contato.html" class="px-3.5 py-1.5 rounded-md din-card-bg din-text-main shadow-sm border din-border transition">Contato</a>
+        </nav>
+
+        <div class="flex items-center gap-2.5 relative">
+          <button id="menuDropdownBtn" onclick="toggleDropdownMenu()" title="Preferências" class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center hover:border-[#16C784] transition cursor-pointer">
+            <svg class="w-4 h-4 din-text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line>
+              <line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line>
+              <line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line>
+              <line x1="17" y1="16" x2="23" y2="16"></line>
+            </svg>
+          </button>
+
+          <div id="dropdownMenu" class="hidden absolute right-0 top-11 w-64 rounded-xl din-card-bg border din-border shadow-2xl py-1.5 z-50">
+            <div class="px-4 py-1.5 border-b din-border">
+              <p class="text-[10px] font-bold uppercase tracking-wider din-text-muted">Preferências</p>
+            </div>
+            <a href="economia.html" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+              <svg class="w-4 h-4 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+              Ir para Economia
+            </a>
+            <div class="my-1 border-t din-border"></div>
+            <div class="flex items-center justify-between px-4 py-2.5 text-xs font-medium din-text-main cursor-pointer select-none" onclick="alternarDarkLight()">
+              <div class="flex items-center gap-3">
+                <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                <span>Modo Escuro (Dark)</span>
+              </div>
+              <div id="switchBg" class="w-10 h-5 rounded-full relative transition-colors duration-200 p-0.5 flex items-center" style="background-color: var(--border-col);">
+                <div id="switchBall" class="w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-200"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="flex md:hidden items-center gap-5 h-10 overflow-x-auto no-scrollbar text-xs font-semibold border-t din-border">
+        <a href="index.html" class="din-text-muted hover:din-text-main h-full flex items-center">Início</a>
+        <a href="glossario.html" class="din-text-muted hover:din-text-main h-full flex items-center">Glossário</a>
+        <a href="economia.html" class="din-text-muted hover:din-text-main h-full flex items-center">Economia</a>
+        <a href="sobre.html" class="din-text-muted hover:din-text-main h-full flex items-center">Sobre</a>
+        <a href="contato.html" class="din-green border-b-2 border-[#16C784] h-full flex items-center">Contato</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="w-full max-w-5xl mx-auto px-4 sm:px-6 py-10 space-y-8">
+    <!-- Abertura Direta -->
+    <section class="space-y-2">
+      <span class="inline-flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider din-green font-semibold">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span> Canal direto com a equipe
+      </span>
+      <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight din-text-main">Fale com o BrasilEmDados</h1>
+      <p class="text-sm din-text-muted max-w-2xl leading-relaxed">
+        Encontrou alguma divergência nos números, quer sugerir um novo indicador público ou discutir uma parceria? Escolha o assunto abaixo e mande direto.
+      </p>
+    </section>
+
+    <!-- Grid Principal: Formulário (7 cols) + Canais e FAQ (5 cols) -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+      <!-- Formulário com Triagem Inteligente -->
+      <div class="lg:col-span-7 din-card-bg border din-border rounded-xl p-6 shadow-sm space-y-5">
+        <div class="space-y-2">
+          <span class="text-xs font-semibold din-text-main block">Sobre o que você quer falar?</span>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-semibold">
+            <button type="button" data-motivo="Sugestão de indicador" onclick="setMotivo(this)"
+              class="btn-motivo py-2 px-2.5 rounded-lg din-btn border border-transparent transition">Sugerir dado</button>
+            <button type="button" data-motivo="Reportar divergência ou erro" onclick="setMotivo(this)"
+              class="btn-motivo py-2 px-2.5 rounded-lg din-secondary-bg border din-border din-text-muted hover:din-text-main transition">Reportar erro</button>
+            <button type="button" data-motivo="Parceria ou imprensa" onclick="setMotivo(this)"
+              class="btn-motivo py-2 px-2.5 rounded-lg din-secondary-bg border din-border din-text-muted hover:din-text-main transition">Parceria</button>
+            <button type="button" data-motivo="Contato geral" onclick="setMotivo(this)"
+              class="btn-motivo py-2 px-2.5 rounded-lg din-secondary-bg border din-border din-text-muted hover:din-text-main transition">Outro</button>
+          </div>
+        </div>
+
+        <form id="formContato" onsubmit="enviarMensagem(event)" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <label class="block text-xs font-semibold din-text-main">Seu nome
+              <input id="fNome" type="text" required placeholder="Como prefere ser chamado" class="inp mt-1">
+            </label>
+            <label class="block text-xs font-semibold din-text-main">Seu e-mail
+              <input id="fEmail" type="email" required placeholder="voce@exemplo.com" class="inp mt-1">
+            </label>
+          </div>
+
+          <label class="block text-xs font-semibold din-text-main">Mensagem
+            <textarea id="fMsg" rows="5" required placeholder="Ex: Seria útil adicionar a série histórica de desemprego (PNAD) por estado..." class="inp mt-1 resize-y"></textarea>
+          </label>
+
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+            <span id="formFeedback" class="text-xs din-text-muted">Sem formulários burocráticos: abre pronto para envio.</span>
+            <button type="submit" class="din-btn px-5 py-2.5 rounded-lg text-xs font-bold transition cursor-pointer">
+              Enviar mensagem →
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Coluna Lateral: E-mail Direto + FAQ Ultra-direto -->
+      <div class="lg:col-span-5 space-y-5">
+        <!-- Card E-mail Direto -->
+        <div class="din-card-bg border din-border rounded-xl p-5 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold uppercase tracking-wider din-text-muted">E-mail direto</span>
+            <span class="text-[11px] din-green font-semibold">Resposta em até 48h</span>
+          </div>
+          <div class="flex items-center justify-between gap-2 din-secondary-bg border din-border rounded-lg px-3.5 py-2.5">
+            <span id="emailOficial" class="text-xs sm:text-sm font-mono font-semibold din-text-main truncate">contato@brasilemdados.com</span>
+            <button id="btnCopy" type="button" onclick="copiarEmail()"
+              class="shrink-0 px-2.5 py-1 rounded-md text-[11px] font-bold din-card-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
+              Copiar
+            </button>
+          </div>
+          <p class="text-[11px] din-text-muted leading-relaxed">
+            Prefere enviar anexos, planilhas ou links de fontes oficiais? Mande direto para o endereço acima.
+          </p>
+        </div>
+
+        <!-- Card Perguntas Rápidas -->
+        <div class="din-card-bg border din-border rounded-xl p-5 shadow-sm space-y-3">
+          <span class="text-[11px] font-bold uppercase tracking-wider din-text-muted block">Antes de enviar</span>
+
+          <details class="group border-b din-border pb-2.5 text-xs">
+            <summary class="font-semibold din-text-main cursor-pointer select-none list-none flex justify-between items-center">
+              Posso usar os gráficos em TCC, artigos ou relatórios?
+              <span class="din-green group-open:rotate-45 transition-transform">+</span>
+            </summary>
+            <p class="din-text-muted mt-2 leading-relaxed">Sim. Todos os gráficos e tabelas exportadas em CSV podem ser usados livremente, citando o BrasilEmDados e a fonte primária (IBGE, BCB ou BCE).</p>
+          </details>
+
+          <details class="group border-b din-border pb-2.5 text-xs">
+            <summary class="font-semibold din-text-main cursor-pointer select-none list-none flex justify-between items-center">
+              De onde vêm os dados do site?
+              <span class="din-green group-open:rotate-45 transition-transform">+</span>
+            </summary>
+            <p class="din-text-muted mt-2 leading-relaxed">Consultamos APIs públicas oficiais como IBGE (SIDRA), Banco Central do Brasil (SGS) e Banco Central Europeu (Frankfurter).</p>
+          </details>
+
+          <details class="group text-xs">
+            <summary class="font-semibold din-text-main cursor-pointer select-none list-none flex justify-between items-center">
+              Como sugerir uma nova ferramenta?
+              <span class="din-green group-open:rotate-45 transition-transform">+</span>
+            </summary>
+            <p class="din-text-muted mt-2 leading-relaxed">Selecione "Sugerir dado" ao lado e diga qual indicador ou calculadora ajudaria no seu estudo ou trabalho.</p>
+          </details>
+        </div>
+      </div>
+
+    </section>
+  </main>
+</div>
+
+<!-- Rodapé Institucional -->
+<footer class="border-t din-border din-card-bg py-6 text-xs din-text-muted mt-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+    <div class="flex items-center gap-2">
+      <span class="font-bold din-text-main">BrasilEmDados</span>
+      <span>•</span>
+      <span>Terminal de Inteligência Econômica e Setorial</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <a href="index.html" class="hover:din-text-main transition">Início</a>
+      <a href="economia.html" class="hover:din-text-main transition">Economia</a>
+      <a href="glossario.html" class="hover:din-text-main transition">Glossário</a>
+      <a href="sobre.html" class="hover:din-text-main transition">Sobre</a>
+      <a href="contato.html" class="din-text-main font-semibold">Contato</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const $ = i => document.getElementById(i);
+const EMAIL_DESTINO = 'contato@brasilemdados.com';
+let motivoAtual = 'Sugestão de indicador';
+
+const PLACEHOLDERS = {
+  'Sugestão de indicador': 'Ex: Seria útil adicionar a série histórica de desemprego (PNAD) por estado...',
+  'Reportar divergência ou erro': 'Informe qual página, o valor exibido e o que deveria aparecer...',
+  'Parceria ou imprensa': 'Conte brevemente sobre o projeto, veículo ou proposta...',
+  'Contato geral': 'Escreva sua mensagem de forma direta...'
+};
+
+function setMotivo(btn) {
+  motivoAtual = btn.dataset.motivo;
+  document.querySelectorAll('.btn-motivo').forEach(b => {
+    b.className = 'btn-motivo py-2 px-2.5 rounded-lg din-secondary-bg border din-border din-text-muted hover:din-text-main transition';
+  });
+  btn.className = 'btn-motivo py-2 px-2.5 rounded-lg din-btn border border-transparent transition';
+  $('fMsg').placeholder = PLACEHOLDERS[motivoAtual] || 'Escreva sua mensagem...';
+}
+
+function enviarMensagem(e) {
+  e.preventDefault();
+  const nome = $('fNome').value.trim();
+  const email = $('fEmail').value.trim();
+  const msg = $('fMsg').value.trim();
+
+  const assunto = encodeURIComponent(`[BrasilEmDados · ${motivoAtual}] ${nome}`);
+  const corpo = encodeURIComponent(`Motivo: ${motivoAtual}\nNome: ${nome}\nE-mail: ${email}\n\nMensagem:\n${msg}`);
+  window.location.href = `mailto:${EMAIL_DESTINO}?subject=${assunto}&body=${corpo}`;
+
+  $('formFeedback').innerHTML = '<span class="din-green font-semibold">Abrindo seu aplicativo de e-mail com a mensagem pronta.</span>';
+}
+
+function copiarEmail() {
+  navigator.clipboard?.writeText(EMAIL_DESTINO);
+  const btn = $('btnCopy');
+  btn.textContent = 'Copiado ✓';
+  setTimeout(() => btn.textContent = 'Copiar', 2000);
+}
+
+// Controles do Cabeçalho (Menu e Tema)
+function toggleDropdownMenu() { $('dropdownMenu').classList.toggle('hidden'); }
+window.addEventListener('click', e => {
+  const btn = $('menuDropdownBtn'), menu = $('dropdownMenu');
+  if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) menu.classList.add('hidden');
+});
+
+function alternarDarkLight() {
+  const novo = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  aplicarTema(novo);
+  try { localStorage.setItem('brasil_em_dados_tema', novo); } catch {}
+}
+
+function aplicarTema(tema) {
+  const html = document.documentElement, bg = $('switchBg'), ball = $('switchBall');
+  if (tema === 'dark') {
+    html.setAttribute('data-theme', 'dark');
+    if (bg && ball) { bg.style.backgroundColor = '#16C784'; ball.classList.add('translate-x-5'); }
+  } else {
+    html.removeAttribute('data-theme');
+    if (bg && ball) { bg.style.backgroundColor = '#E5E7EB'; ball.classList.remove('translate-x-5'); }
+  }
+}
+
+(() => {
+  let temaSalvo = 'light';
+  try { temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light'; } catch {}
+  aplicarTema(temaSalvo);
+})();
+</script>
+</body>
+</html>
