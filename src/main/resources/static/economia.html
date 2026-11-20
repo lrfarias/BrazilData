@@ -422,6 +422,91 @@
       Explorar mapa global →
     </span>
   </div>
+  <!-- Quadro 06: Inflação & Poder de Compra -->
+<div id="modulo-inflacao" class="din-card-bg border din-border rounded-2xl p-5 shadow-sm flex flex-col justify-between card-hover">
+    <div class="space-y-3">
+        <div class="flex items-center justify-between gap-2">
+            <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M7 14l4-4 4 3 5-6"></path>
+                </svg>
+            </div>
+            <span class="text-[11px] font-medium din-text-muted">06 / 07</span>
+        </div>
+
+        <div class="flex items-center justify-between gap-2">
+            <h3 class="text-sm font-bold din-text-main">Inflação & Poder de Compra</h3>
+            <span id="badgeIpca12m" class="text-[11px] font-mono font-bold din-green">IPCA 12m: —</span>
+        </div>
+
+        <p class="text-xs din-text-muted leading-relaxed">
+            Acompanhe a variação acumulada do IPCA e do INPC e simule a perda ou ganho real do poder de compra no tempo.
+        </p>
+
+        <div class="grid grid-cols-2 gap-2 pt-1 text-xs">
+            <div class="din-secondary-bg border din-border rounded-lg p-2.5">
+                <span class="text-[10px] din-text-muted block">Valor Inicial (R$)</span>
+                <input id="infValorInicial" type="number" value="1000" min="0" step="50"
+                    oninput="calcularPoderCompra()"
+                    class="w-full bg-transparent font-bold din-text-main text-xs focus:outline-none mt-0.5">
+            </div>
+            <div class="din-secondary-bg border din-border rounded-lg p-2.5">
+                <span class="text-[10px] din-text-muted block">Inflação Acum. (%)</span>
+                <input id="infTaxaAcum" type="number" value="4.50" step="0.10"
+                    oninput="calcularPoderCompra()"
+                    class="w-full bg-transparent font-bold din-text-main text-xs focus:outline-none mt-0.5">
+            </div>
+        </div>
+    </div>
+
+    <div class="pt-4 mt-4 border-t din-border flex items-center justify-between text-xs">
+        <span class="din-text-muted">Poder de compra equivalente:</span>
+        <strong id="infResultadoEquiv" class="din-green font-bold">R$ 956,94</strong>
+    </div>
+</div>
+
+<!-- Quadro 07: Contas Públicas & Dívida -->
+<div id="modulo-contas-publicas" class="din-card-bg border din-border rounded-2xl p-5 shadow-sm flex flex-col justify-between card-hover">
+    <div class="space-y-3">
+        <div class="flex items-center justify-between gap-2">
+            <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+            <span class="text-[11px] font-medium din-text-muted">07 / 07</span>
+        </div>
+
+        <div class="flex items-center justify-between gap-2">
+            <h3 class="text-sm font-bold din-text-main">Contas Públicas & Dívida</h3>
+            <span id="badgeDividaPib" class="text-[11px] font-mono font-bold din-text-main">DBGG / PIB: —</span>
+        </div>
+
+        <p class="text-xs din-text-muted leading-relaxed">
+            Avalie o peso da dívida pública frente ao PIB e o efeito da taxa de juros média sobre a dinâmica fiscal.
+        </p>
+
+        <div class="grid grid-cols-2 gap-2 pt-1 text-xs">
+            <div class="din-secondary-bg border din-border rounded-lg p-2.5">
+                <span class="text-[10px] din-text-muted block">Dívida / PIB (%)</span>
+                <input id="fiscDividaPib" type="number" value="77.5" step="0.5"
+                    oninput="simularDinamicaFiscal()"
+                    class="w-full bg-transparent font-bold din-text-main text-xs focus:outline-none mt-0.5">
+            </div>
+            <div class="din-secondary-bg border din-border rounded-lg p-2.5">
+                <span class="text-[10px] din-text-muted block">Juros Real - Cresc. (p.p.)</span>
+                <input id="fiscSpreadReal" type="number" value="4.0" step="0.25"
+                    oninput="simularDinamicaFiscal()"
+                    class="w-full bg-transparent font-bold din-text-main text-xs focus:outline-none mt-0.5">
+            </div>
+        </div>
+    </div>
+
+    <div class="pt-4 mt-4 border-t din-border flex items-center justify-between text-xs">
+        <span class="din-text-muted">Estabilização primária:</span>
+        <strong id="fiscResultadoPrimario" class="din-green font-bold">+3,10% do PIB</strong>
+    </div>
+</div>
 </a>
         </main>
 
