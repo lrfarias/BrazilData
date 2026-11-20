@@ -11,78 +11,9 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">    <style>
-        :root {
-            /* Light — Paleta Claro (Padrão) */
-            --bg-main: #FFFFFF;
-            --card-bg: #F7F8FA;
-            --bg-secondary: #F0F2F5;
-            --text-main: #17191C;
-            --text-muted: #737780;
-            --border-col: #E5E7EB;
-            --accent-green: #16C784;
-            --accent-red: #EA3943;
-        }
+<link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">        
+<link rel="stylesheet" href="css/theme.css">
 
-        [data-theme="dark"] {
-            /* Dark — Paleta Escuro */
-            --bg-main: #101214;
-            --card-bg: #191C20;
-            --bg-secondary: #22262B;
-            --text-main: #F5F6F7;
-            --text-muted: #9299A3;
-            --border-col: #2B3036;
-            --accent-green: #16C784;
-            --accent-red: #EA3943;
-        }
-
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            transition: background-color 0.2s ease, color 0.2s ease;
-        }
-
-        #map { height: 480px; width: 100%; border-radius: 0.5rem; background: var(--bg-secondary); }
-        .leaflet-container { background: var(--bg-secondary) !important; font-family: inherit; }
-        path.leaflet-interactive:focus { outline: none; }
-        .leaflet-tooltip.custom-tooltip {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-col);
-            border-radius: 0.5rem;
-            color: var(--text-main);
-            padding: 12px 14px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.35);
-            min-width: 250px;
-        }
-        .leaflet-tooltip-top:before, .leaflet-tooltip-bottom:before,
-        .leaflet-tooltip-left:before, .leaflet-tooltip-right:before { display: none; }
-        
-        th.sortable { cursor: pointer; user-select: none; }
-        th.sortable:hover { color: var(--accent-green); }
-
-        /* Classes Utilitárias Dinâmicas */
-        .din-bg-main { background-color: var(--bg-main); }
-        .din-card-bg { background-color: var(--card-bg); }
-        .din-secondary-bg { background-color: var(--bg-secondary); }
-        .din-text-main { color: var(--text-main); }
-        .din-text-muted { color: var(--text-muted); }
-        .din-border { border-color: var(--border-col); }
-        .din-green { color: var(--accent-green); }
-        .din-red { color: var(--accent-red); }
-        
-        .din-btn {
-            background-color: var(--accent-green);
-            color: #FFFFFF;
-        }
-        .din-btn:hover { opacity: 0.9; }
-
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        body.modo-apresentacao header,
-        body.modo-apresentacao .ocultar-em-presentation { display: none !important; }
-        body.modo-apresentacao main { max-width: 100% !important; padding: 16px !important; }
-    </style>
 </head>
 <body class="min-h-screen font-sans flex flex-col justify-between">
     <div>
