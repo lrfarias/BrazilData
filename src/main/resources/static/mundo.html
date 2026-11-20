@@ -216,15 +216,6 @@
           <span id="filtroAtivoBadge" class="text-[11px] font-semibold din-green">Filtro: Todos os países</span>
         </div>
         <div id="opcoesFiltro" class="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto pr-1"></div>
-
-        <!-- Faixa de Vocação da Região/Recorte Selecionado -->
-        <div id="boxVocacaoFiltro" class="hidden mt-2 din-secondary-bg border din-border rounded-lg px-3 py-2 text-xs flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <span class="text-[10px] font-bold uppercase tracking-wider din-green">Vocação econômica do recorte:</span>
-            <span id="txtVocacaoFiltro" class="din-text-main font-medium ml-1">—</span>
-          </div>
-          <span id="resumoFiltroPib" class="text-[11px] din-text-muted font-semibold">—</span>
-        </div>
       </div>
     </section>
 
@@ -233,7 +224,7 @@
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 class="text-lg sm:text-xl font-extrabold din-text-main">Mapa-múndi econômico</h1>
-          <p id="mapFiltroDesc" class="text-xs din-text-muted">Base global ISO-3166 · arraste para mover, use zoom e clique em qualquer país.</p>
+          <p id="mapFiltroDesc" class="text-xs din-text-muted">Base global ISO-3166 · país selecionado destacado em azul; recorte ativo em verde.</p>
         </div>
         <select id="mapIndicador" class="inp !w-auto text-xs font-semibold" onchange="pintarMapa()">
           <option value="pib">PIB nominal (US$)</option>
@@ -260,10 +251,70 @@
         </div>
       </div>
 
-      <div class="pt-1 flex items-center justify-between gap-3 text-[11px] din-text-muted">
+      <div class="pt-1 flex flex-wrap items-center justify-between gap-3 text-[11px] din-text-muted">
         <span id="legMin">Menor</span>
         <div class="flex-1 h-2 rounded-full max-w-xs" style="background: linear-gradient(90deg, rgba(22,199,132,0.16), #16C784);"></div>
         <span id="legMax">Maior</span>
+        <span class="inline-flex items-center gap-1.5 text-[11px]"><span class="w-2.5 h-2.5 rounded-sm bg-[#2563EB] inline-block"></span> País selecionado</span>
+      </div>
+    </section>
+
+    <!-- 2.5 PAINEL CONSOLIDADO DA REGIÃO / BLOCO SELECIONADO (SOMA PIB, POP, IDH MÉDIO + PIZZA VOCAÇÃO) -->
+    <section id="secaoResumoRegiao" class="hidden din-card-bg border border-[#16C784]/50 rounded-xl p-5 shadow-sm space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b din-border">
+        <div>
+          <span class="text-[10px] font-bold uppercase tracking-wider din-green">Consolidado do Recorte Selecionado</span>
+          <h2 id="regTit" class="text-lg font-extrabold din-text-main">—</h2>
+        </div>
+        <span id="regQtd" class="text-xs font-semibold px-2.5 py-1 rounded-md din-secondary-bg border din-border din-text-muted">—</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
+        <!-- KPIs Consolidados da Região -->
+        <div class="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
+          <div class="din-secondary-bg border din-border rounded-lg p-3">
+            <span class="text-[11px] din-text-muted block">PIB Nominal Somado</span>
+            <strong id="regPib" class="text-base font-extrabold din-green mt-0.5 block">—</strong>
+            <span class="text-[9px] din-text-muted">Banco Mundial · Soma</span>
+          </div>
+          <div class="din-secondary-bg border din-border rounded-lg p-3">
+            <span class="text-[11px] din-text-muted block">População Total</span>
+            <strong id="regPop" class="text-base font-extrabold din-text-main mt-0.5 block">—</strong>
+            <span class="text-[9px] din-text-muted">Banco Mundial · Soma</span>
+          </div>
+          <div class="din-secondary-bg border din-border rounded-lg p-3">
+            <span class="text-[11px] din-text-muted block">PIB per capita Médio</span>
+            <strong id="regPibPc" class="text-base font-extrabold din-text-main mt-0.5 block">—</strong>
+            <span class="text-[9px] din-text-muted">Estimado (PIB ÷ Pop)</span>
+          </div>
+          <div class="din-secondary-bg border din-border rounded-lg p-3">
+            <span class="text-[11px] din-text-muted block">IDH Médio (PNUD)</span>
+            <strong id="regIdh" class="text-base font-extrabold din-green mt-0.5 block">—</strong>
+            <span class="text-[9px] din-text-muted">Média do recorte</span>
+          </div>
+          <div class="din-secondary-bg border din-border rounded-lg p-3">
+            <span class="text-[11px] din-text-muted block">Inflação Média</span>
+            <strong id="regInfla" class="text-base font-extrabold din-red mt-0.5 block">—</strong>
+            <span class="text-[9px] din-text-muted">Média anual</span>
+          </div>
+          <div class="din-secondary-bg border din-border rounded-lg p-3">
+            <span class="text-[11px] din-text-muted block">Maior Economia</span>
+            <strong id="regLider" class="text-sm font-extrabold din-text-main mt-0.5 block truncate">—</strong>
+            <span class="text-[9px] din-text-muted">Líder em PIB</span>
+          </div>
+        </div>
+
+        <!-- Mini Gráfico Pizza de Vocação da Região -->
+        <div class="lg:col-span-5 din-secondary-bg border din-border rounded-lg p-4 space-y-2.5">
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-wider din-green block">VOCAÇÃO ECONÔMICA REAL (RECORTE)</span>
+            <strong id="regVocTxt" class="text-xs din-text-main block mt-0.5">—</strong>
+          </div>
+          <div class="grid grid-cols-12 items-center gap-3 pt-1">
+            <div class="col-span-5 h-[125px]"><canvas id="grafVocRegiao"></canvas></div>
+            <div id="legVocRegiao" class="col-span-7 space-y-2 text-xs"></div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -288,20 +339,32 @@
         </div>
       </div>
 
-      <!-- Moeda + Vocação Econômica do País -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-        <div class="din-secondary-bg border din-border rounded-lg p-3 flex items-center justify-between gap-2">
-          <div>
-            <span class="din-text-muted">Moeda:</span>
-            <strong id="rxMoedaNome" class="din-text-main">—</strong>
-            <span id="rxPopArea" class="din-text-muted block text-[11px] mt-0.5">—</span>
+      <!-- Resumo Moeda + Gráfico Pizza de Vocação Econômica Real do País -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+        <div class="lg:col-span-5 din-secondary-bg border din-border rounded-lg p-4 flex flex-col justify-between gap-3 text-xs">
+          <div class="flex items-center justify-between gap-2">
+            <div>
+              <span class="din-text-muted">Moeda oficial:</span>
+              <strong id="rxMoedaNome" class="din-text-main block text-sm mt-0.5">—</strong>
+            </div>
+            <div id="rxTendencia" class="text-right font-bold din-green">—</div>
           </div>
-          <div id="rxTendencia" class="text-right font-bold din-green">—</div>
+          <div class="pt-2 border-t din-border flex items-center justify-between text-[11px] din-text-muted">
+            <span id="rxPopArea">População: —</span>
+            <span id="rxRegiaoBadge" class="font-semibold din-text-main">—</span>
+          </div>
         </div>
 
-        <div class="din-secondary-bg border din-border rounded-lg p-3 flex flex-col justify-center">
-          <span class="text-[10px] font-bold uppercase tracking-wider din-green">Vocação econômica do país</span>
-          <strong id="rxVocacao" class="din-text-main text-xs mt-0.5">—</strong>
+        <!-- Mini Gráfico Pizza de Vocação Econômica Real do País -->
+        <div class="lg:col-span-7 din-secondary-bg border din-border rounded-lg p-4 space-y-2">
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-wider din-green block">VOCAÇÃO ECONÔMICA REAL</span>
+            <strong id="rxVocacao" class="text-xs din-text-main block mt-0.5">—</strong>
+          </div>
+          <div class="grid grid-cols-12 items-center gap-3 pt-1">
+            <div class="col-span-4 sm:col-span-4 h-[120px]"><canvas id="grafVocPais"></canvas></div>
+            <div id="legVocPais" class="col-span-8 sm:col-span-8 space-y-2 text-xs"></div>
+          </div>
         </div>
       </div>
 
@@ -470,7 +533,7 @@
         <span id="dataAtualizacaoGlobal" class="text-[11px] din-text-muted">Última consulta: —</span>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 text-[11px] din-text-muted">
-        <div class="din-secondary-bg rounded-lg p-2.5"><strong class="din-text-main block">Banco Mundial (API v2)</strong>PIB nominal/PPC, população, inflação, Gini, comércio exterior, IED, dívida externa e reservas (observados).</div>
+        <div class="din-secondary-bg rounded-lg p-2.5"><strong class="din-text-main block">Banco Mundial (API v2)</strong>PIB nominal/PPC, população, inflação, Gini, composição setorial (Serviços/Indústria/Agro), comércio exterior, IED e reservas.</div>
         <div class="din-secondary-bg rounded-lg p-2.5"><strong class="din-text-main block">BCE / Frankfurter & ER-API</strong>Séries históricas diárias oficiais de câmbio (5d a 2a) e taxa comercial em tempo real.</div>
         <div class="din-secondary-bg rounded-lg p-2.5"><strong class="din-text-main block">PNUD & UN Comtrade</strong>Relatório de Desenvolvimento Humano (IDH) e composição bilateral de parceiros/produtos exportados.</div>
         <div class="din-secondary-bg rounded-lg p-2.5"><strong class="din-text-main block">FMI, OCDE, BIS & BCB</strong>Referências de classificação macroeconômica, blocos, tributação comparada e câmbio doméstico.</div>
@@ -499,7 +562,7 @@
 
 <script>
 const $ = i => document.getElementById(i);
-const CACHE_KEY = 'bd_mundo_cache_v1';
+const CACHE_KEY = 'bd_mundo_cache_v2';
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 horas
 
 const BD = {
@@ -523,7 +586,7 @@ const BD = {
   cor: () => { const d = document.documentElement.getAttribute('data-theme') === 'dark'; return { tx: d ? '#F5F6F7' : '#17191C', mu: d ? '#9299A3' : '#737780', grid: d ? '#2B3036' : '#E5E7EB' }; }
 };
 
-// Fallback de mapeamento numérico ISO -> ISO3 (garante que o mapa nunca fique sem vínculo)
+// Mapeamento numérico ISO -> ISO3 (garante vínculo com o mapa-múndi)
 const FALLBACK_CCN3 = {
   '076':'BRA','840':'USA','156':'CHN','276':'DEU','392':'JPN','356':'IND','826':'GBR','250':'FRA',
   '380':'ITA','124':'CAN','643':'RUS','410':'KOR','484':'MEX','036':'AUS','724':'ESP','360':'IDN',
@@ -532,8 +595,75 @@ const FALLBACK_CCN3 = {
   '818':'EGY','566':'NGA','231':'ETH','180':'COD','591':'PAN','214':'DOM','858':'URY','600':'PRY',
   '554':'NZL','620':'PRT','056':'BEL','040':'AUT','372':'IRL','208':'DNK','246':'FIN','300':'GRC',
   '203':'CZE','642':'ROU','348':'HUN','804':'UKR','376':'ISR','764':'THA','458':'MYS','608':'PHL',
-  '586':'PAK','050':'BGD','504':'MAR','012':'DZA','404':'KEN','862':'VEN','218':'ECU','068':'BOL'
+  '586':'PAK','050':'BGD','504':'MAR','012':'DZA','404':'KEN','862':'VEN','218':'ECU','068':'BOL',
+  '192':'CUB','188':'CRI','320':'GTM','340':'HND','222':'SLV','558':'NIC','364':'IRN','368':'IRQ',
+  '634':'QAT','414':'KWT','512':'OMN','400':'JOR','860':'UZB','112':'BLR','024':'AGO','288':'GHA'
 };
+
+// Moedas de fallback caso REST Countries não responda
+const MOEDA_FALLBACK = {
+  BRA:['BRL','Real Brasileiro'], USA:['USD','Dólar Americano'], CHN:['CNY','Yuan Chinês'],
+  DEU:['EUR','Euro'], FRA:['EUR','Euro'], ITA:['EUR','Euro'], ESP:['EUR','Euro'], NLD:['EUR','Euro'], PRT:['EUR','Euro'], BEL:['EUR','Euro'], AUT:['EUR','Euro'], IRL:['EUR','Euro'], FIN:['EUR','Euro'], GRC:['EUR','Euro'],
+  JPN:['JPY','Iene Japonês'], IND:['INR','Rupia Indiana'], GBR:['GBP','Libra Esterlina'], CAN:['CAD','Dólar Canadense'],
+  RUS:['RUB','Rublo Russo'], KOR:['KRW','Won Sul-Coreano'], MEX:['MXN','Peso Mexicano'], AUS:['AUD','Dólar Australiano'],
+  IDN:['IDR','Rupia Indonésia'], TUR:['TRY','Lira Turca'], SAU:['SAR','Rial Saudita'], CHE:['CHF','Franco Suíço'],
+  POL:['PLN','Zloty Polonês'], ARG:['ARS','Peso Argentino'], SWE:['SEK','Coroa Sueca'], NOR:['NOK','Coroa Norueguesa'],
+  ARE:['AED','Dirham dos EAU'], SGP:['SGD','Dólar de Singapura'], VNM:['VND','Dong Vietnamita'], ZAF:['ZAR','Rand Sul-Africano'],
+  CHL:['CLP','Peso Chileno'], COL:['COP','Peso Colombiano'], PER:['PEN','Sol Peruano'], URY:['UYU','Peso Uruguaio'],
+  PRY:['PYG','Guarani Paraguaio'], EGY:['EGP','Libra Egípcia'], NGA:['NGN','Naira Nigeriana'], NZL:['NZD','Dólar Neozelandês']
+};
+
+// Mapeamento de sub-regiões por ISO3 (funciona 100% mesmo sem REST Countries)
+const SUBREGIOES_ISO = {
+  'América do Sul': ['BRA','ARG','CHL','COL','PER','URY','PRY','BOL','ECU','VEN','GUY','SUR'],
+  'América do Norte': ['USA','CAN','MEX'],
+  'América Central': ['CRI','PAN','GTM','HND','SLV','NIC','BLZ'],
+  'Caribe': ['CUB','DOM','HTI','JAM','TTO','BHS','BRB'],
+  'Europa Ocidental': ['FRA','NLD','BEL','LUX','IRL','GBR'],
+  'Europa Central': ['DEU','CHE','AUT','POL','CZE','SVK','HUN','SVN'],
+  'Europa Oriental': ['RUS','UKR','ROU','BLR','BGR','MDA'],
+  'Europa Setentrional': ['SWE','NOR','DNK','FIN','ISL','EST','LVA','LTU'],
+  'Europa Meridional': ['ITA','ESP','PRT','GRC','HRV','SRB','CYP','MLT'],
+  'Norte da África': ['EGY','MAR','DZA','TUN','LBY','SDN'],
+  'África Ocidental': ['NGA','GHA','CIV','SEN','MLI','BFA','NER'],
+  'África Central': ['COD','AGO','CMR','GAB','COG','TCD'],
+  'África Oriental': ['ETH','KEN','TZA','UGA','RWA','MOZ','MDG'],
+  'África Austral': ['ZAF','BWA','NAM','ZWE','ZMB'],
+  'Ásia Oriental': ['CHN','JPN','KOR','PRK','MNG','HKG','TWN'],
+  'Sudeste Asiático': ['IDN','VNM','THA','MYS','SGP','PHL','MMR','KHM','LAO','BRN'],
+  'Ásia Meridional': ['IND','PAK','BGD','LKA','NPL'],
+  'Ásia Central': ['KAZ','UZB','TKM','KGZ','TJK'],
+  'Ásia Ocidental (Oriente Médio)': ['SAU','ARE','TUR','ISR','IRN','IRQ','QAT','KWT','OMN','JOR','LBN','BHR'],
+  'Oceania': ['AUS','NZL','PNG','FJI']
+};
+
+// Mapeamento robusto de região do World Bank -> Continente PT
+function inferirContinente(iso3, wbRegion, restRegion) {
+  if (restRegion && REGIAO_PT[restRegion]) return REGIAO_PT[restRegion];
+  for (const [sub, list] of Object.entries(SUBREGIOES_ISO)) {
+    if (list.includes(iso3)) {
+      if (sub.includes('América') || sub === 'Caribe') return 'Américas';
+      if (sub.includes('Europa')) return 'Europa';
+      if (sub.includes('África')) return 'África';
+      if (sub.includes('Ásia')) return 'Ásia';
+      if (sub === 'Oceania') return 'Oceania';
+    }
+  }
+  const r = (wbRegion || '').toLowerCase();
+  if (r.includes('latin america') || r.includes('north america')) return 'Américas';
+  if (r.includes('europe')) return 'Europa';
+  if (r.includes('africa') || r.includes('middle east')) return r.includes('sub-saharan') ? 'África' : 'Ásia';
+  if (r.includes('asia') || r.includes('pacific')) return 'Ásia';
+  return 'Outros';
+}
+
+function inferirSubregiao(iso3, cont, restSub) {
+  if (restSub && SUBREGIAO_PT[restSub]) return SUBREGIAO_PT[restSub];
+  for (const [sub, list] of Object.entries(SUBREGIOES_ISO)) {
+    if (list.includes(iso3)) return sub;
+  }
+  return cont;
+}
 
 // IDH Oficial (PNUD 2023/2024)
 const IDH_PNUD = {
@@ -546,7 +676,7 @@ const IDH_PNUD = {
   NGA:0.548, ETH:0.498, COD:0.481
 };
 
-// Vocação Econômica por País e por Região
+// Vocação Econômica (Texto)
 const VOCACAO_PAIS = {
   BRA: 'Agronegócio, Energia, Mineração & Serviços',
   USA: 'Tecnologia, Serviços Financeiros, Energia & Indústria Avançada',
@@ -611,7 +741,7 @@ const VOCACAO_REGIAO = {
   'União Europeia': 'Mercado único integrado de indústria avançada, serviços e regulação'
 };
 
-// Comércio Bilateral e Principais Produtos Exportados (UN Comtrade / OEC)
+// Comércio Bilateral (UN Comtrade / OEC)
 const COMERCIO_EXTRA = {
   BRA: { parceiros: [['China', 30.7], ['Estados Unidos', 11.2], ['Argentina', 4.9], ['Países Baixos', 3.6], ['Espanha', 2.9]], produtos: ['Soja em grãos', 'Petróleo bruto', 'Minério de ferro', 'Açúcar e carnes', 'Celulose e milho'] },
   USA: { parceiros: [['Canadá', 17.5], ['México', 16.0], ['China', 7.3], ['Países Baixos', 4.1], ['Alemanha', 3.8]], produtos: ['Petróleo refinado e gás', 'Aeronaves e peças', 'Semicondutores e TI', 'Veículos e máquinas', 'Farmacêuticos'] },
@@ -667,10 +797,7 @@ const SETS = {
 };
 
 const CATEGORIAS_FILTRO = {
-  cont: {
-    label: 'Continentes',
-    opcoes: ['Todos os países', 'Américas', 'Europa', 'Ásia', 'África', 'Oceania']
-  },
+  cont: { label: 'Continentes', opcoes: ['Todos os países', 'Américas', 'Europa', 'Ásia', 'África', 'Oceania'] },
   reg: {
     label: 'Regiões geográficas e sub-regiões',
     opcoes: [
@@ -696,12 +823,10 @@ const SUBREGIAO_PT = {
 };
 const REGIAO_PT = { Americas:'Américas', Europe:'Europa', Asia:'Ásia', Africa:'África', Oceania:'Oceania' };
 
-let PAISES_MAP = {};
-let CCN3_TO_ISO3 = { ...FALLBACK_CCN3 };
-let PAISES = [];
-let ratesUSD = null;
+let PAISES_MAP = {}, CCN3_TO_ISO3 = { ...FALLBACK_CCN3 }, PAISES = [], ratesUSD = null;
 let catAtiva = 'cont', filtroValor = 'Todos os países', isoAtivo = 'BRA', abaRx = 'econ', topN = 5;
 let svgMap = null, zoomBehavior = null, chartParceiros = null, chartHist = null, chartCmp = null;
+let chartVocPais = null, chartVocRegiao = null;
 let cacheDetalhe = {}, ultimoHistReal = null;
 
 // Cabeçalho
@@ -726,6 +851,8 @@ function aplicarTema(tema) {
   }
   pintarMapa();
   renderComparadorMulti();
+  if (PAISES_MAP[isoAtivo]) renderPizzaVocacao('pais', PAISES_MAP[isoAtivo].setores);
+  atualizarResumoRegiao();
   if (abaRx === 'hist' && ultimoHistReal) desenharHistoricoReal();
   if (abaRx === 'comercio') renderComercio(PAISES_MAP[isoAtivo]);
 }
@@ -736,7 +863,7 @@ function alternarModoApresentacao() {
     : `<svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect><line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line><line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line></svg><span>Modo Tela Cheia</span>`;
 }
 
-// 1. CARREGAMENTO GLOBAL BLINDADO + CACHE LOCAL (6h)
+// 1. CARREGAMENTO GLOBAL BLINDADO + SETORES REAIS (BANCO MUNDIAL)
 async function fetchWBGlobal(ind) {
   try {
     const r = await fetch(`https://api.worldbank.org/v2/country/all/indicator/${ind}?format=json&mrnev=1&per_page=300`);
@@ -750,6 +877,16 @@ async function fetchWBGlobal(ind) {
     }
     return out;
   } catch { return {}; }
+}
+
+function normalizarSetores(serv, ind, agro) {
+  let s = serv != null ? Math.round(serv) : 58;
+  let i = ind != null ? Math.round(ind) : 25;
+  let a = agro != null ? Math.round(agro) : 7;
+  let adm = Math.max(4, 100 - (s + i + a));
+  const soma = s + i + a + adm;
+  if (soma > 100) s = Math.max(10, s - (soma - 100));
+  return { serv: s, ind: i, agro: a, adm };
 }
 
 function aplicarDadosGlobais(paisesArr, ccnMap, ts, origem) {
@@ -766,6 +903,7 @@ function aplicarDadosGlobais(paisesArr, ccnMap, ts, origem) {
   $('dataAtualizacaoGlobal').textContent = `Última consulta às APIs: ${dataStr}`;
 
   atualizarDescFiltro();
+  atualizarResumoRegiao();
   pintarMapa();
   renderRanking();
   renderComparadorMulti();
@@ -796,7 +934,11 @@ async function carregarBaseGlobal(ignorarCache = false) {
     const restUrl = 'https://restcountries.com/v3.1/all?fields=cca3,ccn3,name,translations,flags,capital,region,subregion,currencies';
     const wbCountriesUrl = 'https://api.worldbank.org/v2/country?format=json&per_page=300';
 
-    const [resRest, resWbList, resFx, resPib, resPpc, resPc, resPop, resCresc, resInfla, resImp, resGini] = await Promise.allSettled([
+    const [
+      resRest, resWbList, resFx,
+      resPib, resPpc, resPc, resPop, resCresc, resInfla, resImp, resGini,
+      resServ, resInd, resAgro
+    ] = await Promise.allSettled([
       fetch(restUrl).then(r => r.ok ? r.json() : null),
       fetch(wbCountriesUrl).then(r => r.ok ? r.json() : null),
       fetch('https://open.er-api.com/v6/latest/USD').then(r => r.ok ? r.json() : null),
@@ -807,29 +949,27 @@ async function carregarBaseGlobal(ignorarCache = false) {
       fetchWBGlobal('NY.GDP.MKTP.KD.ZG'),
       fetchWBGlobal('FP.CPI.TOTL.ZG'),
       fetchWBGlobal('GC.TAX.TOTL.GD.ZS'),
-      fetchWBGlobal('SI.POV.GINI')
+      fetchWBGlobal('SI.POV.GINI'),
+      fetchWBGlobal('NV.SRV.TOTL.ZS'),
+      fetchWBGlobal('NV.IND.TOTL.ZS'),
+      fetchWBGlobal('NV.AGR.TOTL.ZS')
     ]);
 
     const rRest = resRest.status === 'fulfilled' && Array.isArray(resRest.value) ? resRest.value : null;
     const rWbList = resWbList.status === 'fulfilled' && Array.isArray(resWbList.value?.[1]) ? resWbList.value[1] : [];
     ratesUSD = resFx.status === 'fulfilled' ? resFx.value?.rates : null;
 
-    const wbPib = resPib.status === 'fulfilled' ? resPib.value : {};
-    const wbPpc = resPpc.status === 'fulfilled' ? resPpc.value : {};
-    const wbPc = resPc.status === 'fulfilled' ? resPc.value : {};
-    const wbPop = resPop.status === 'fulfilled' ? resPop.value : {};
-    const wbCresc = resCresc.status === 'fulfilled' ? resCresc.value : {};
-    const wbInfla = resInfla.status === 'fulfilled' ? resInfla.value : {};
-    const wbImp = resImp.status === 'fulfilled' ? resImp.value : {};
-    const wbGini = resGini.status === 'fulfilled' ? resGini.value : {};
+    const getV = res => res.status === 'fulfilled' ? res.value : {};
+    const wbPib = getV(resPib), wbPpc = getV(resPpc), wbPc = getV(resPc), wbPop = getV(resPop);
+    const wbCresc = getV(resCresc), wbInfla = getV(resInfla), wbImp = getV(resImp), wbGini = getV(resGini);
+    const wbServ = getV(resServ), wbInd = getV(resInd), wbAgro = getV(resAgro);
 
     const fonteLista = rRest || rWbList.filter(c => c.region?.value !== 'Aggregates').map(c => ({
       cca3: c.id,
       ccn3: Object.keys(FALLBACK_CCN3).find(k => FALLBACK_CCN3[k] === c.id) || '',
       name: { common: c.name },
       capital: [c.capitalCity || '—'],
-      region: c.region?.value || 'Outros',
-      subregion: c.region?.value || 'Outros',
+      wbRegion: c.region?.value || '',
       flags: { png: c.iso2Code ? `https://flagcdn.com/w80/${c.iso2Code.toLowerCase()}.png` : '' }
     }));
 
@@ -840,12 +980,13 @@ async function carregarBaseGlobal(ignorarCache = false) {
       if (!c.cca3) return;
       const iso3 = c.cca3;
       const currObj = c.currencies ? Object.entries(c.currencies)[0] : null;
-      const moeda = currObj ? currObj[0] : (iso3 === 'BRA' ? 'BRL' : 'USD');
-      const mNome = currObj ? currObj[1].name : moeda;
+      const fbM = MOEDA_FALLBACK[iso3];
+      const moeda = currObj ? currObj[0] : (fbM ? fbM[0] : 'USD');
+      const mNome = currObj ? currObj[1].name : (fbM ? fbM[1] : moeda);
       const moedaBRL = (moeda === 'BRL') ? 1 : (ratesUSD && ratesUSD[moeda] && ratesUSD['BRL'] ? ratesUSD['BRL'] / ratesUSD[moeda] : null);
       const nomePT = c.translations?.por?.common || c.name?.common || iso3;
-      const cont = REGIAO_PT[c.region] || c.region || 'Outros';
-      const regiaoGeo = SUBREGIAO_PT[c.subregion] || cont;
+      const cont = inferirContinente(iso3, c.wbRegion, c.region);
+      const regiaoGeo = inferirSubregiao(iso3, cont, c.subregion);
       const ccn3 = c.ccn3 ? String(c.ccn3).padStart(3, '0') : '';
 
       if (ccn3) ccnMap[ccn3] = iso3;
@@ -856,6 +997,7 @@ async function carregarBaseGlobal(ignorarCache = false) {
         cap: Array.isArray(c.capital) && c.capital[0] ? c.capital[0] : '—',
         cont, regiaoGeo,
         vocacao: VOCACAO_PAIS[iso3] || VOCACAO_REGIAO[regiaoGeo] || VOCACAO_REGIAO[cont] || 'Economia diversificada',
+        setores: normalizarSetores(wbServ[iso3]?.v, wbInd[iso3]?.v, wbAgro[iso3]?.v),
         moeda, mNome, moedaBRL,
         pib: wbPib[iso3]?.v ?? null, pibAno: wbPib[iso3]?.ano ?? '',
         pibPpc: wbPpc[iso3]?.v ?? null, pibPpcAno: wbPpc[iso3]?.ano ?? '',
@@ -881,13 +1023,14 @@ async function carregarBaseGlobal(ignorarCache = false) {
   }
 }
 
-// 2. FILTROS POR CATEGORIA
+// 2. FILTROS POR CATEGORIA + PAINEL CONSOLIDADO DE REGIÃO/BLOCO
 function paisNoFiltro(p) {
   if (!filtroValor || filtroValor === 'Todos os países') return true;
   if (catAtiva === 'cont') return p.cont === filtroValor;
   if (catAtiva === 'reg') {
     if (filtroValor === 'América Latina') return SETS.geopol['América Latina'].includes(p.iso3);
     if (filtroValor === 'Eurásia') return SETS.geopol['Eurásia'].includes(p.iso3);
+    if (SUBREGIOES_ISO[filtroValor]) return SUBREGIOES_ISO[filtroValor].includes(p.iso3) || p.regiaoGeo === filtroValor;
     return p.regiaoGeo === filtroValor;
   }
   if (catAtiva === 'blocos') return (SETS.blocos[filtroValor] || []).includes(p.iso3);
@@ -938,6 +1081,7 @@ function selecionarFiltroOpcao(op) {
   filtroValor = op;
   renderOpcoesFiltro();
   atualizarDescFiltro();
+  atualizarResumoRegiao();
   pintarMapa();
   renderRanking();
 }
@@ -947,6 +1091,7 @@ function limparFiltros() {
   $('inpBuscaPais').value = '';
   renderOpcoesFiltro();
   atualizarDescFiltro();
+  atualizarResumoRegiao();
   pintarMapa();
   renderRanking();
 }
@@ -955,17 +1100,96 @@ function atualizarDescFiltro() {
   const ativos = PAISES.filter(paisNoFiltro);
   const lbl = filtroValor === 'Todos os países' ? 'Todos os países' : filtroValor;
   $('filtroAtivoBadge').textContent = `Filtro: ${lbl} (${ativos.length} países)`;
-  $('mapFiltroDesc').textContent = `Exibindo "${lbl}" (${ativos.length} países) · arraste para mover e clique em qualquer território.`;
+  $('mapFiltroDesc').textContent = `Exibindo "${lbl}" (${ativos.length} países) · país selecionado em azul, recorte ativo em verde.`;
+}
 
-  if (filtroValor !== 'Todos os países' && ativos.length) {
-    const pibSoma = ativos.reduce((s, p) => s + (p.pib || 0), 0);
-    const popSoma = ativos.reduce((s, p) => s + (p.pop || 0), 0);
-    const voc = VOCACAO_REGIAO[filtroValor] || 'Perfis econômicos diversos conforme os países do agrupamento';
-    $('txtVocacaoFiltro').textContent = voc;
-    $('resumoFiltroPib').textContent = `PIB somado: ${BD.compactUSD(pibSoma)} · Pop.: ${BD.compactPop(popSoma)}`;
-    $('boxVocacaoFiltro').classList.remove('hidden');
+function atualizarResumoRegiao() {
+  const sec = $('secaoResumoRegiao');
+  if (!PAISES.length || filtroValor === 'Todos os países') {
+    sec.classList.add('hidden');
+    return;
+  }
+  const ativos = PAISES.filter(paisNoFiltro);
+  if (!ativos.length) { sec.classList.add('hidden'); return; }
+
+  sec.classList.remove('hidden');
+  $('regTit').textContent = filtroValor;
+  $('regQtd').textContent = `${ativos.length} países no recorte`;
+
+  const pibSoma = ativos.reduce((s, p) => s + (p.pib || 0), 0);
+  const popSoma = ativos.reduce((s, p) => s + (p.pop || 0), 0);
+  const pibPcMed = popSoma > 0 ? pibSoma / popSoma : null;
+
+  const comIdh = ativos.filter(p => p.idh != null);
+  const idhMed = comIdh.length ? comIdh.reduce((s, p) => s + p.idh, 0) / comIdh.length : null;
+
+  const comInfla = ativos.filter(p => p.infla != null && p.infla < 80);
+  const inflaMed = comInfla.length ? comInfla.reduce((s, p) => s + p.infla, 0) / comInfla.length : null;
+
+  const lider = [...ativos].filter(p => p.pib).sort((a, b) => b.pib - a.pib)[0];
+
+  $('regPib').textContent = BD.compactUSD(pibSoma);
+  $('regPop').textContent = BD.compactPop(popSoma);
+  $('regPibPc').textContent = BD.usd(pibPcMed, 0);
+  $('regIdh').textContent = idhMed != null ? BD.num(idhMed, 3) : 'N/D';
+  $('regInfla').textContent = inflaMed != null ? `${BD.num(inflaMed, 1)}%` : 'N/D';
+  $('regLider').textContent = lider ? `${lider.nome} (${BD.compactUSD(lider.pib)})` : '—';
+  $('regVocTxt').textContent = VOCACAO_REGIAO[filtroValor] || 'Economia diversificada do agrupamento selecionado';
+
+  // Média setorial do recorte para a pizza
+  const n = ativos.length;
+  const s = Math.round(ativos.reduce((a, p) => a + (p.setores?.serv || 58), 0) / n);
+  const i = Math.round(ativos.reduce((a, p) => a + (p.setores?.ind || 25), 0) / n);
+  const ag = Math.round(ativos.reduce((a, p) => a + (p.setores?.agro || 7), 0) / n);
+  const adm = Math.max(2, 100 - (s + i + ag));
+  renderPizzaVocacao('regiao', { serv: s, ind: i, agro: ag, adm });
+}
+
+// Gráfico Pizza (Rosca) + Barrinhas estilo 4ª imagem (para País e para Região)
+function renderPizzaVocacao(alvo, setores) {
+  const s = setores || { serv: 60, ind: 22, agro: 8, adm: 10 };
+  const itens = [
+    { n: 'Serviços', v: s.serv, cor: '#16C784' },
+    { n: 'Indústria', v: s.ind, cor: '#2563EB' },
+    { n: 'Agropecuária', v: s.agro, cor: '#F59E0B' },
+    { n: 'Adm. Pública / Outros', v: s.adm, cor: '#EA3943' }
+  ];
+
+  const legId = alvo === 'pais' ? 'legVocPais' : 'legVocRegiao';
+  const canvasId = alvo === 'pais' ? 'grafVocPais' : 'grafVocRegiao';
+
+  $(legId).innerHTML = itens.map(x => `
+    <div class="space-y-1">
+      <div class="flex items-center justify-between text-[11px]">
+        <span class="din-text-muted">${x.n}</span>
+        <strong class="din-text-main">${x.v}%</strong>
+      </div>
+      <div class="w-full h-1.5 rounded-full din-card-bg overflow-hidden">
+        <div class="h-full rounded-full" style="width:${Math.min(100, x.v)}%; background:${x.cor};"></div>
+      </div>
+    </div>
+  `).join('');
+
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const cfg = {
+    type: 'doughnut',
+    data: {
+      labels: itens.map(x => x.n),
+      datasets: [{ data: itens.map(x => x.v), backgroundColor: itens.map(x => x.cor), borderColor: dark ? '#22262B' : '#F0F2F5', borderWidth: 2 }]
+    },
+    options: {
+      maintainAspectRatio: false,
+      cutout: '62%',
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: x => ` ${x.label}: ${x.parsed}%` } } }
+    }
+  };
+
+  if (alvo === 'pais') {
+    if (chartVocPais) chartVocPais.destroy();
+    chartVocPais = new Chart($(canvasId), cfg);
   } else {
-    $('boxVocacaoFiltro').classList.add('hidden');
+    if (chartVocRegiao) chartVocRegiao.destroy();
+    chartVocRegiao = new Chart($(canvasId), cfg);
   }
 }
 
@@ -976,7 +1200,7 @@ function buscarPais(termo) {
   if (achado) selecionarPais(achado.iso3);
 }
 
-// 3. MAPA-MÚNDI D3
+// 3. MAPA-MÚNDI D3 (PAÍS SELECIONADO EM AZUL + REGIÃO EM VERDE)
 function fmtInd(p, k) {
   if (!p || p[k] == null) return 'N/D';
   if (k === 'pib' || k === 'pibPpc') return BD.compactUSD(p[k]);
@@ -1058,11 +1282,10 @@ function pintarMapa() {
   const max = vals.length ? Math.max(...vals) : 1;
 
   const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-  const escala = d3.scaleLinear().domain([min, max]).range([dark ? '#23282E' : '#E7F7F0', '#16C784']);
-  const foraFiltro = dark ? '#14171B' : '#E5E7EB';
+  const escala = d3.scaleLinear().domain([min, max]).range([dark ? '#1E3A30' : '#D1F7E7', '#16C784']);
+  const foraFiltro = dark ? '#16191D' : '#E5E7EB';
   const semDado = dark ? '#1D2126' : '#F3F4F6';
   const borda = dark ? '#101214' : '#FFFFFF';
-  const bordaSel = dark ? '#F5F6F7' : '#17191C';
 
   if (ativos.length) {
     const pMin = ativos.find(p => p[k] === min), pMax = ativos.find(p => p[k] === max);
@@ -1073,18 +1296,20 @@ function pintarMapa() {
   svgMap.selectAll('path')
     .attr('fill', function() {
       const iso3 = CCN3_TO_ISO3[this.getAttribute('data-ccn3')];
+      if (iso3 === isoAtivo) return '#2563EB'; // País selecionado claramente destacado em azul
       const p = PAISES_MAP[iso3];
-      if (!p || p[k] == null) return semDado;
+      if (!p) return semDado;
       if (!paisNoFiltro(p)) return foraFiltro;
+      if (p[k] == null) return dark ? '#1D332B' : '#DCFCE7';
       return escala(p[k]);
     })
     .attr('stroke', function() {
       const iso3 = CCN3_TO_ISO3[this.getAttribute('data-ccn3')];
-      return iso3 === isoAtivo ? bordaSel : borda;
+      return iso3 === isoAtivo ? '#FFFFFF' : borda;
     })
     .attr('stroke-width', function() {
       const iso3 = CCN3_TO_ISO3[this.getAttribute('data-ccn3')];
-      return iso3 === isoAtivo ? 2.2 : 0.65;
+      return iso3 === isoAtivo ? 2.0 : 0.65;
     });
 }
 
@@ -1133,8 +1358,9 @@ async function selecionarPais(iso3) {
   $('rxMeta').textContent = `${p.regiaoGeo} (${p.cont}) · Capital: ${p.cap}`;
   $('rxMoedaCod').textContent = p.moeda;
   $('rxMoedaBrl').textContent = p.moedaBRL != null ? BD.brl(p.moedaBRL, p.moedaBRL < 0.1 ? 4 : 2) : 'N/D';
-  $('rxMoedaNome').textContent = p.mNome;
+  $('rxMoedaNome').textContent = `${p.mNome} (${p.moeda})`;
   $('rxPopArea').textContent = `População: ${BD.compactPop(p.pop)} (${p.popAno || 'ref.'})`;
+  $('rxRegiaoBadge').textContent = p.regiaoGeo;
   $('rxVocacao').textContent = p.vocacao;
 
   const subiu = p.cresc != null && p.cresc >= 0;
@@ -1142,6 +1368,7 @@ async function selecionarPais(iso3) {
     ? `PIB ${subiu ? '↑' : '↓'} <span class="${subiu ? 'din-green' : 'din-red'}">${subiu ? '+' : ''}${BD.num(p.cresc, 1)}%</span> <span class="text-[10px] din-text-muted font-normal">(${p.crescAno})</span>`
     : '<span class="din-text-muted">Cresc. N/D</span>';
 
+  renderPizzaVocacao('pais', p.setores);
   pintarMapa();
   $('gridMacro').innerHTML = `<div class="col-span-full text-xs din-text-muted py-4">Consultando Banco Mundial para ${p.nome}...</div>`;
 
@@ -1354,7 +1581,7 @@ function renderRanking() {
 
   $('gridRanking').innerHTML = lista.map((p, i) => `
     <button type="button" onclick="selecionarPais('${p.iso3}')"
-      class="text-left din-secondary-bg border din-border rounded-lg p-3 hover:border-[#16C784] transition ${p.iso3 === isoAtivo ? 'ring-1 ring-[#16C784]' : ''}">
+      class="text-left din-secondary-bg border din-border rounded-lg p-3 hover:border-[#16C784] transition ${p.iso3 === isoAtivo ? 'ring-1 ring-[#2563EB]' : ''}">
       <div class="flex items-center justify-between text-[11px] din-text-muted">
         <span class="font-bold din-text-main truncate">#${i + 1} · ${p.nome}</span>
         <span class="font-mono text-[10px]">${p.iso3}</span>
