@@ -11,28 +11,146 @@ body{background:var(--bg);color:var(--tx)}
 th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}`;
   const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
-  const nav = [['index.html','Início'],['glossario.html','Glossário'],['economia.html','Economia'],['sobre.html','Sobre'],['contato.html','Contato']];
-  const links = f => nav.map(([h,t]) => `<a href="/${h}" class="${f(t)}">${t}</a>`).join('');
-  const on = t => t === 'Economia';
+  const elHdr = document.getElementById('bd-header');
+  const badge = (elHdr && elHdr.dataset.badge) || 'IBGE SIDRA';
+  const sub = (elHdr && elHdr.dataset.sub) || 'Inteligência Macroeconômica e Contas Regionais';
 
-  const hdr = `<header class="sticky top-0 z-50 border-b din-border din-card-bg"><div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-<a href="/index.html" class="text-lg font-extrabold tracking-tight din-text-main">BrasilEmDados</a>
-<nav class="hidden md:flex gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">${links(t => 'px-3.5 py-1.5 rounded-md ' + (on(t) ? 'din-card-bg din-text-main border din-border' : 'din-text-muted'))}</nav>
-<button id="bdTema" class="w-9 h-9 rounded-lg din-secondary-bg border din-border din-text-main" aria-label="Alternar tema claro e escuro">◐</button></div>
-<nav class="md:hidden flex gap-5 h-10 px-4 overflow-x-auto items-center text-xs font-semibold border-t din-border">${links(t => on(t) ? 'din-green' : 'din-text-muted')}</nav></header>`;
+  const nav = [
+    ['index.html', 'Início'],
+    ['glossario.html', 'Glossário'],
+    ['economia.html', 'Economia'],
+    ['sobre.html', 'Sobre'],
+    ['contato.html', 'Contato']
+  ];
+
+  const path = location.pathname.toLowerCase();
+  const isAtivo = (h, t) => {
+    if (path.endsWith('/' + h) || (h === 'index.html' && (path === '/' || path === ''))) return true;
+    if (t === 'Economia' && /economia|imposto|simulador|selic|moeda|cambio/.test(path)) return true;
+    return false;
+  };
+  const links = f => nav.map(([h, t]) => `<a href="/${h}" class="${f(isAtivo(h, t))}">${t}</a>`).join('');
+
+  const hdr = `<header class="sticky top-0 z-50 border-b din-border din-card-bg">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+    <!-- Esquerda: Ícone + Marca + Selo + Subtítulo -->
+    <a href="/index.html" class="flex items-center gap-3 min-w-0">
+      <div class="w-9 h-9 shrink-0 rounded-lg din-secondary-bg border din-border flex items-center justify-center">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <path d="M6 18v-5" class="din-text-main"/>
+          <path d="M11 18V8" class="din-text-main"/>
+          <path d="M16 18v-8" class="din-text-main"/>
+          <circle cx="16" cy="6" r="1.8" fill="#16C784" stroke="none"/>
+        </svg>
+      </div>
+      <div class="min-w-0">
+        <div class="flex items-center gap-2">
+          <span class="text-base sm:text-lg font-extrabold tracking-tight din-text-main leading-none">BrasilEmDados</span>
+          <span class="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md din-secondary-bg border din-border text-[10px] font-bold din-text-muted tracking-wide">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>${badge}
+          </span>
+        </div>
+        <p class="hidden sm:block text-[11px] din-text-muted leading-tight mt-0.5 truncate">${sub}</p>
+      </div>
+    </a>
+
+    <!-- Centro: Navegação -->
+    <nav class="hidden lg:flex gap-1 din-secondary-bg p-1 rounded-xl border din-border text-xs font-semibold">
+      ${links(on => 'px-3.5 py-1.5 rounded-lg transition ' + (on ? 'din-card-bg din-text-main border din-border shadow-sm' : 'din-text-muted hover:din-text-main'))}
+    </nav>
+
+    <!-- Direita: Slot de Base + Tela Cheia + Menu Ferramentas -->
+    <div class="flex items-center gap-2">
+      <div id="bd-base-slot" class="hidden items-center gap-1.5 px-2.5 h-9 rounded-lg din-secondary-bg border din-border text-xs"></div>
+
+      <button id="bdFull" type="button" class="hidden md:inline-flex items-center gap-1.5 px-3 h-9 rounded-lg din-secondary-bg border din-border text-xs font-semibold din-text-main hover:border-[#16C784] transition">
+        <svg class="w-4 h-4 din-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+        </svg>
+        <span id="bdFullTxt">Modo Tela Cheia</span>
+      </button>
+
+      <div class="relative">
+        <button id="bdMenuBtn" type="button" aria-label="Ferramentas do terminal"
+          class="w-9 h-9 rounded-lg din-secondary-bg border din-border din-text-main flex items-center justify-center hover:border-[#16C784] transition">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/>
+          </svg>
+        </button>
+
+        <div id="bdMenu" class="hidden absolute right-0 mt-2 w-64 rounded-xl din-card-bg border din-border shadow-xl py-2 z-50">
+          <p class="px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider din-text-muted">Ferramentas do terminal</p>
+          <a href="/economia.html" class="flex items-center gap-3 px-4 py-2 text-xs font-semibold din-text-main hover:din-secondary-bg transition">
+            <span class="din-green text-sm leading-none">←</span> Voltar ao Hub Economia
+          </a>
+          <a href="#titTabela" onclick="document.getElementById('bdMenu').classList.add('hidden')" class="flex items-center gap-3 px-4 py-2 text-xs font-semibold din-text-main hover:din-secondary-bg transition">
+            <svg class="w-4 h-4 din-text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 10v10"/></svg>
+            Classificação Estadual
+          </a>
+          <button type="button" onclick="document.getElementById('bdMenu').classList.add('hidden'); window.print();" class="w-full text-left flex items-center gap-3 px-4 py-2 text-xs font-semibold din-text-main hover:din-secondary-bg transition">
+            <svg class="w-4 h-4 din-text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M12 18v-6M9 15l3 3 3-3"/></svg>
+            Exportar Relatório (PDF)
+          </button>
+          <div class="my-1.5 border-t din-border"></div>
+          <button id="bdTema" type="button" class="w-full flex items-center justify-between px-4 py-2 text-xs font-semibold din-text-main hover:din-secondary-bg transition">
+            <span class="flex items-center gap-3">
+              <svg class="w-4 h-4 din-text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+              Modo Escuro (Dark)
+            </span>
+            <span id="bdToggleTrack" class="w-9 h-5 rounded-full din-secondary-bg border din-border p-0.5 flex items-center transition">
+              <span id="bdToggleDot" class="w-3.5 h-3.5 rounded-full bg-white shadow transition-transform"></span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nav class="lg:hidden flex gap-5 h-10 px-4 overflow-x-auto items-center text-xs font-semibold border-t din-border">
+    ${links(on => on ? 'din-green' : 'din-text-muted')}
+  </nav>
+</header>`;
+
   const ftr = `<footer class="border-t din-border din-card-bg py-6 text-xs din-text-muted mt-8"><div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between gap-2"><span><strong class="din-text-main">BrasilEmDados</strong> · Terminal de Inteligência Econômica e Setorial</span><span>Conteúdo educativo, sem recomendação de investimento.</span></div></footer>`;
-  document.getElementById('bd-header').innerHTML = hdr;
-  document.getElementById('bd-footer').innerHTML = ftr;
+  if (elHdr) elHdr.innerHTML = hdr;
+  const elFtr = document.getElementById('bd-footer');
+  if (elFtr) elFtr.innerHTML = ftr;
 
+  // Tema claro/escuro com switch animado
   const K = 'brasil_em_dados_tema', H = document.documentElement;
-  const ap = t => t === 'dark' ? H.setAttribute('data-theme', 'dark') : H.removeAttribute('data-theme');
+  const syncToggle = dark => {
+    const tr = document.getElementById('bdToggleTrack'), dot = document.getElementById('bdToggleDot');
+    if (!tr || !dot) return;
+    tr.style.background = dark ? '#16C784' : '';
+    dot.style.transform = dark ? 'translateX(16px)' : 'translateX(0)';
+  };
+  const ap = t => {
+    const dark = t === 'dark';
+    dark ? H.setAttribute('data-theme', 'dark') : H.removeAttribute('data-theme');
+    syncToggle(dark);
+  };
   let salvo = 'light'; try { salvo = localStorage.getItem(K) || 'light'; } catch (e) {}
   ap(salvo);
+
   document.getElementById('bdTema').onclick = () => {
     const n = H.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
     ap(n); try { localStorage.setItem(K, n); } catch (e) {}
     window.dispatchEvent(new Event('tema'));
   };
+
+  // Menu Ferramentas (abre/fecha)
+  const btnM = document.getElementById('bdMenuBtn'), menu = document.getElementById('bdMenu');
+  btnM.onclick = e => { e.stopPropagation(); menu.classList.toggle('hidden'); };
+  document.addEventListener('click', e => { if (!menu.contains(e.target) && e.target !== btnM) menu.classList.add('hidden'); });
+
+  // Modo Tela Cheia
+  const btnF = document.getElementById('bdFull'), txtF = document.getElementById('bdFullTxt');
+  btnF.onclick = () => {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+    else document.exitFullscreen?.();
+  };
+  document.addEventListener('fullscreenchange', () => {
+    txtF.textContent = document.fullscreenElement ? 'Sair Tela Cheia' : 'Modo Tela Cheia';
+  });
 
   window.BD = {
     brl: (v, d = 2) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: d, maximumFractionDigits: d }),
