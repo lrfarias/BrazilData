@@ -9,240 +9,412 @@
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <style>
+  :root {
+    --bg-main: #FFFFFF;
+    --card-bg: #F7F8FA;
+    --bg-secondary: #F0F2F5;
+    --text-main: #17191C;
+    --text-muted: #737780;
+    --border-col: #E5E7EB;
+    --accent-green: #16C784;
+    --accent-red: #EA3943;
+  }
+  [data-theme="dark"] {
+    --bg-main: #101214;
+    --card-bg: #191C20;
+    --bg-secondary: #22262B;
+    --text-main: #F5F6F7;
+    --text-muted: #9299A3;
+    --border-col: #2B3036;
+    --accent-green: #16C784;
+    --accent-red: #EA3943;
+  }
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .din-bg-main { background-color: var(--bg-main); }
+  .din-card-bg { background-color: var(--card-bg); }
+  .din-secondary-bg { background-color: var(--bg-secondary); }
+  .din-text-main { color: var(--text-main); }
+  .din-text-muted { color: var(--text-muted); }
+  .din-border { border-color: var(--border-col); }
+  .din-green { color: var(--accent-green); }
+  .din-red { color: var(--accent-red); }
+  .din-btn { background-color: var(--accent-green); color: #FFFFFF; }
+  .din-btn:hover { opacity: 0.9; }
+  .inp { background-color: var(--bg-secondary); border: 1px solid var(--border-col); color: var(--text-main); border-radius: 0.5rem; padding: 0.45rem 0.7rem; width: 100%; font-size: 0.8rem; }
+  select option { background-color: var(--card-bg); color: var(--text-main); }
+  th.s { cursor: pointer; user-select: none; }
+  th.s:hover { color: var(--accent-green); }
   .uf-path { transition: fill .2s ease, opacity .15s ease, stroke-width .15s ease; cursor: pointer; }
   .uf-path:hover { opacity: .85; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  body.modo-apresentacao header,
+  body.modo-apresentacao .ocultar-em-presentation { display: none !important; }
+  body.modo-apresentacao main { max-width: 100% !important; padding: 16px !important; }
 </style>
 </head>
-<body class="min-h-screen font-sans flex flex-col">
-<div id="bd-header" data-badge="IBGE SIDRA" data-sub="Inteligência Macroeconômica e Contas Regionais"></div>
+<body class="min-h-screen font-sans flex flex-col justify-between">
+<div>
+  <!-- Cabeçalho Institucional -->
+  <header class="sticky top-0 z-50 border-b din-border din-bg-main/95 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="flex items-center justify-between h-16 gap-4">
+        <!-- Esquerda: Logo Autoral + Badge de Status -->
+        <div class="flex items-center gap-3">
+          <a href="index.html" class="flex items-center gap-3 group">
+            <div class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center shadow-sm group-hover:border-[#16C784] transition-colors">
+              <svg class="w-5 h-5 din-text-main" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 20V10"></path>
+                <path d="M12 20V4"></path>
+                <path d="M6 20v-6"></path>
+                <circle cx="12" cy="4" r="1" fill="#16C784" stroke="#16C784"></circle>
+              </svg>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-lg font-extrabold tracking-tight din-text-main">BrasilEmDados</span>
+                <span class="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono uppercase px-2 py-0.5 rounded din-secondary-bg border din-border din-text-muted">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span> IBGE SIDRA
+                </span>
+              </div>
+              <p class="text-[11px] din-text-muted hidden xl:block">Inteligência Macroeconômica e Contas Regionais</p>
+            </div>
+          </a>
+        </div>
 
-<!-- Tooltip do mapa -->
-<div id="mapTip" class="pointer-events-none fixed z-50 hidden px-3 py-2 rounded-lg text-xs shadow-lg border din-border din-card-bg">
-  <p id="tipNome" class="font-bold din-text-main"></p>
-  <p id="tipVal" class="din-green font-semibold mt-0.5"></p>
-  <p id="tipHint" class="text-[10px] din-text-muted mt-0.5">Clique para ver o raio-x</p>
-</div>
+        <!-- Centro: Abas de Navegação -->
+        <nav class="hidden md:flex items-center gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+          <a href="index.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Início</a>
+          <a href="glossario.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Glossário</a>
+          <a href="economia.html" class="px-3.5 py-1.5 rounded-md din-card-bg din-text-main shadow-sm border din-border transition">Economia</a>
+          <a href="sobre.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Sobre</a>
+          <a href="contato.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Contato</a>
+        </nav>
 
-<main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-  <!-- Cabeçalho -->
-  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-    <div>
-      <a href="/economia.html" class="text-xs font-semibold din-text-muted hover:underline">← Economia e indicadores</a>
-      <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight din-text-main mt-2">Impostos, população e economia por estado</h1>
-      <p class="text-sm din-text-muted mt-1 max-w-2xl">Explore a arrecadação estimada, vocação produtiva e evolução histórica dos 27 estados brasileiros.</p>
+        <!-- Direita: Base + Tela Cheia + Ferramentas -->
+        <div class="flex items-center gap-2.5 relative">
+          <div class="flex items-center gap-1.5 din-secondary-bg border din-border rounded-lg px-3 py-1.5">
+            <span class="text-xs din-text-muted font-medium">Base:</span>
+            <select id="ano" onchange="montar(+this.value)"
+              class="bg-transparent text-xs font-bold din-text-main focus:outline-none cursor-pointer">
+              <option value="2021">2021</option>
+            </select>
+          </div>
+
+          <button onclick="alternarModoApresentacao()" id="btnModoApresentacao" class="hidden lg:inline-flex items-center gap-1.5 din-secondary-bg hover:opacity-80 border din-border din-text-main text-xs font-semibold px-3 py-1.5 rounded-lg transition">
+            <svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line>
+              <line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line>
+            </svg>
+            <span>Modo Tela Cheia</span>
+          </button>
+
+          <button id="menuDropdownBtn" onclick="toggleDropdownMenu()" title="Preferências e Ferramentas" class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center hover:border-[#16C784] transition cursor-pointer">
+            <svg class="w-4 h-4 din-text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line>
+              <line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line>
+              <line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line>
+              <line x1="17" y1="16" x2="23" y2="16"></line>
+            </svg>
+          </button>
+
+          <!-- Menu Suspenso -->
+          <div id="dropdownMenu" class="hidden absolute right-0 top-11 w-64 rounded-xl din-card-bg border din-border shadow-2xl py-1.5 z-50">
+            <div class="px-4 py-1.5 border-b din-border">
+              <p class="text-[10px] font-bold uppercase tracking-wider din-text-muted">Ferramentas do Terminal</p>
+            </div>
+            <a href="economia.html" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+              <svg class="w-4 h-4 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+              Voltar ao Hub Economia
+            </a>
+            <a href="#secaoRanking" onclick="toggleDropdownMenu()" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+              <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+              Classificação Estadual
+            </a>
+            <button onclick="window.print(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left">
+              <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              Exportar Relatório (PDF)
+            </button>
+            <div class="my-1 border-t din-border"></div>
+            <div class="flex items-center justify-between px-4 py-2.5 text-xs font-medium din-text-main cursor-pointer select-none" onclick="alternarDarkLight()">
+              <div class="flex items-center gap-3">
+                <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                <span>Modo Escuro (Dark)</span>
+              </div>
+              <div id="switchBg" class="w-10 h-5 rounded-full relative transition-colors duration-200 p-0.5 flex items-center" style="background-color: var(--border-col);">
+                <div id="switchBall" class="w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-200"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navegação Mobile -->
+      <nav class="flex md:hidden items-center gap-5 h-10 overflow-x-auto no-scrollbar text-xs font-semibold border-t din-border">
+        <a href="index.html" class="din-text-muted hover:din-text-main h-full flex items-center">Início</a>
+        <a href="glossario.html" class="din-text-muted hover:din-text-main h-full flex items-center">Glossário</a>
+        <a href="economia.html" class="din-green border-b-2 border-[#16C784] h-full flex items-center">Economia</a>
+        <a href="sobre.html" class="din-text-muted hover:din-text-main h-full flex items-center">Sobre</a>
+        <a href="contato.html" class="din-text-muted hover:din-text-main h-full flex items-center">Contato</a>
+      </nav>
     </div>
-    <label class="flex items-center gap-2 text-xs font-semibold din-text-muted">Ano base
-      <select id="ano" class="inp !w-auto" onchange="montar(+this.value)"></select>
-    </label>
+  </header>
+
+  <!-- Barra de Trilha (Breadcrumb) -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex items-center justify-between text-xs ocultar-em-presentation">
+    <div class="flex items-center gap-2 din-text-muted">
+      <a href="economia.html" class="hover:din-green font-semibold inline-flex items-center gap-1 transition">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        Economia e indicadores
+      </a>
+      <span>/</span>
+      <span class="din-text-main font-bold">Impostos, População & Vocação Setorial</span>
+    </div>
   </div>
 
-  <!-- Barra de Controles Unificada (Região + Simulador de Carga Tributária) -->
-  <section class="din-card-bg border din-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-    <!-- Filtro de Região -->
-    <div class="space-y-1.5">
-      <span class="text-[11px] font-semibold uppercase tracking-wider din-text-muted">Filtrar por região</span>
-      <div id="btnsRegiao" class="flex flex-wrap gap-1.5"></div>
-    </div>
+  <!-- Tooltip do mapa -->
+  <div id="mapTip" class="pointer-events-none fixed z-50 hidden px-3 py-2 rounded-lg text-xs shadow-lg border din-border din-card-bg">
+    <p id="tipNome" class="font-bold din-text-main"></p>
+    <p id="tipVal" class="din-green font-semibold mt-0.5"></p>
+    <p id="tipHint" class="text-[10px] din-text-muted mt-0.5">Clique para ver o raio-x</p>
+  </div>
 
-    <!-- Simulador de Carga Tributária -->
-    <div class="lg:w-[360px] space-y-1.5 lg:border-l lg:pl-5 din-border">
-      <div class="flex items-center justify-between text-xs">
-        <span class="font-semibold din-text-main">Carga tributária simulada</span>
-        <strong id="lblTaxa" class="din-green">33,0% do PIB</strong>
+  <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-5 space-y-6">
+    <!-- Barra de Controles Unificada (Região + Simulador de Carga Tributária) -->
+    <section class="din-card-bg border din-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4 ocultar-em-presentation">
+      <div class="space-y-1.5">
+        <span class="text-[11px] font-semibold uppercase tracking-wider din-text-muted">Filtrar por região</span>
+        <div id="btnsRegiao" class="flex flex-wrap gap-1.5"></div>
       </div>
-      <input id="rngTaxa" type="range" min="20" max="45" step="0.5" value="33"
-        class="w-full accent-[#16C784] cursor-pointer" oninput="mudarTaxa(+this.value)">
-      <div class="flex flex-wrap gap-1.5 pt-0.5">
-        <button type="button" onclick="mudarTaxa(27)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main">EUA 27%</button>
-        <button type="button" onclick="mudarTaxa(33)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784]">Brasil 33%</button>
-        <button type="button" onclick="mudarTaxa(34)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main">OCDE 34%</button>
-        <button type="button" onclick="mudarTaxa(45)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main">França 45%</button>
+
+      <div class="lg:w-[360px] space-y-1.5 lg:border-l lg:pl-5 din-border">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-semibold din-text-main">Carga tributária simulada</span>
+          <strong id="lblTaxa" class="din-green">33,0% do PIB</strong>
+        </div>
+        <input id="rngTaxa" type="range" min="20" max="45" step="0.5" value="33"
+          class="w-full accent-[#16C784] cursor-pointer" oninput="mudarTaxa(+this.value)">
+        <div class="flex flex-wrap gap-1.5 pt-0.5">
+          <button type="button" onclick="mudarTaxa(27)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main">EUA 27%</button>
+          <button type="button" onclick="mudarTaxa(33)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784]">Brasil 33%</button>
+          <button type="button" onclick="mudarTaxa(34)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main">OCDE 34%</button>
+          <button type="button" onclick="mudarTaxa(45)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main">França 45%</button>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- KPIs Consolidados (refletem região e carga tributária) -->
-  <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-    <div class="din-card-bg border din-border rounded-lg p-4">
-      <span id="k1Lbl" class="text-xs din-text-muted">Arrecadação estimada</span>
-      <p id="k1" class="text-xl font-bold din-red mt-1">—</p>
-    </div>
-    <div class="din-card-bg border din-border rounded-lg p-4">
-      <span class="text-xs din-text-muted">Média por habitante</span>
-      <p id="k2" class="text-xl font-bold din-text-main mt-1">—</p>
-    </div>
-    <div class="din-card-bg border din-border rounded-lg p-4">
-      <span class="text-xs din-text-muted">Maior tributo / hab.</span>
-      <p id="k3" class="text-xl font-bold din-text-main mt-1">—</p>
-    </div>
-    <div class="din-card-bg border din-border rounded-lg p-4">
-      <span class="text-xs din-text-muted">Menor tributo / hab.</span>
-      <p id="k4" class="text-xl font-bold din-text-main mt-1">—</p>
-    </div>
-  </section>
+    <!-- KPIs Consolidados -->
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 ocultar-em-presentation">
+      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
+        <span id="k1Lbl" class="text-xs din-text-muted uppercase font-semibold">Arrecadação estimada</span>
+        <p id="k1" class="text-xl font-bold din-red mt-1">—</p>
+      </div>
+      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
+        <span class="text-xs din-text-muted uppercase font-semibold">Média por habitante</span>
+        <p id="k2" class="text-xl font-bold din-text-main mt-1">—</p>
+      </div>
+      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
+        <span class="text-xs din-text-muted uppercase font-semibold">Maior tributo / hab.</span>
+        <p id="k3" class="text-xl font-bold din-text-main mt-1">—</p>
+      </div>
+      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
+        <span class="text-xs din-text-muted uppercase font-semibold">Menor tributo / hab.</span>
+        <p id="k4" class="text-xl font-bold din-text-main mt-1">—</p>
+      </div>
+    </section>
 
-  <!-- Mapa + Raio-X com Abas -->
-  <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-    <!-- Mapa -->
-    <div class="lg:col-span-7 din-card-bg border din-border rounded-lg p-5 flex flex-col">
+    <!-- Mapa + Raio-X com Abas -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-7 din-card-bg border din-border rounded-lg p-5 shadow-sm flex flex-col">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+          <div>
+            <h2 class="text-base font-semibold din-text-main">Mapa interativo do Brasil</h2>
+            <p id="mapSub" class="text-xs din-text-muted">Passe o mouse para ver o nome e clique para abrir o raio-x.</p>
+          </div>
+          <select id="mapMetrica" class="inp !w-auto text-xs font-semibold" onchange="pintarMapa()">
+            <option value="hab">Tributo por habitante</option>
+            <option value="arrec">Arrecadação estimada</option>
+            <option value="pib">PIB estadual</option>
+            <option value="pop">População total</option>
+            <option value="prod">Produtividade (%PIB ÷ %Pop)</option>
+          </select>
+        </div>
+
+        <div class="relative flex-1 min-h-[380px] flex items-center justify-center">
+          <p id="mapLoading" class="text-xs din-text-muted">Carregando malha geográfica…</p>
+          <svg id="mapaBr" viewBox="0 0 600 560" class="w-full max-h-[450px] hidden"></svg>
+        </div>
+
+        <div class="mt-3 pt-3 border-t din-border flex items-center justify-between gap-3 text-[11px] din-text-muted">
+          <span id="legMin">Menor</span>
+          <div class="flex-1 h-2 rounded-full max-w-xs" style="background: linear-gradient(90deg, rgba(22,199,132,0.15), #16C784);"></div>
+          <span id="legMax">Maior</span>
+        </div>
+      </div>
+
+      <!-- Raio-X do Estado -->
+      <div class="lg:col-span-5 din-card-bg border din-border rounded-lg p-5 shadow-sm flex flex-col space-y-4">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <span id="stRegiao" class="text-[11px] font-semibold uppercase tracking-wider din-green">—</span>
+            <h3 id="stNome" class="text-xl font-extrabold din-text-main mt-0.5">—</h3>
+          </div>
+          <span id="stSigla" class="px-2.5 py-1 rounded-md din-secondary-bg border din-border text-sm font-extrabold din-green">--</span>
+        </div>
+
+        <div class="grid grid-cols-3 gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+          <button id="tabResumo" type="button" onclick="setAba('resumo')" class="py-1.5 rounded-md din-card-bg din-text-main border din-border transition">Resumo</button>
+          <button id="tabEvolucao" type="button" onclick="setAba('evolucao')" class="py-1.5 rounded-md din-text-muted transition">Evolução</button>
+          <button id="tabComparar" type="button" onclick="setAba('comparar')" class="py-1.5 rounded-md din-text-muted transition">Comparar</button>
+        </div>
+
+        <!-- ABA 1: RESUMO + PIZZA VOCAÇÃO -->
+        <div id="viewResumo" class="space-y-4 flex-1 flex flex-col justify-between">
+          <div class="grid grid-cols-2 gap-2.5">
+            <div class="din-secondary-bg rounded-lg p-3">
+              <span class="text-[11px] din-text-muted">Arrecadação est.</span>
+              <p id="stArrec" class="text-base font-bold din-red mt-0.5">—</p>
+              <span id="stRankArrec" class="text-[10px] din-text-muted">—</span>
+            </div>
+            <div class="din-secondary-bg rounded-lg p-3">
+              <span class="text-[11px] din-text-muted">Tributo / hab.</span>
+              <p id="stHab" class="text-base font-bold din-text-main mt-0.5">—</p>
+              <span id="stVsMedia" class="text-[10px] font-semibold">—</span>
+            </div>
+            <div class="din-secondary-bg rounded-lg p-3">
+              <span class="text-[11px] din-text-muted">População</span>
+              <p id="stPop" class="text-base font-bold din-text-main mt-0.5">—</p>
+              <span id="stPopPct" class="text-[10px] din-text-muted">—</span>
+            </div>
+            <div class="din-secondary-bg rounded-lg p-3">
+              <span class="text-[11px] din-text-muted">PIB estadual</span>
+              <p id="stPib" class="text-base font-bold din-green mt-0.5">—</p>
+              <span id="stPibPct" class="text-[10px] din-text-muted">—</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2 pt-2 border-t din-border text-center text-xs">
+            <div>
+              <span class="block text-[10px] din-text-muted">PIB per capita</span>
+              <strong id="stPibPc" class="din-text-main">—</strong>
+            </div>
+            <div>
+              <span class="block text-[10px] din-text-muted">Produtividade</span>
+              <strong id="stProd" class="din-text-main">—</strong>
+            </div>
+            <div>
+              <span id="lblIdh" class="block text-[10px] din-text-muted">Arrec. / dia</span>
+              <strong id="stExtra" class="din-text-main">—</strong>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t din-border">
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <span class="text-xs font-semibold din-text-main">Vocação produtiva</span>
+              <span id="stVocacaoTag" class="text-[10px] px-2 py-0.5 rounded din-secondary-bg border din-border din-green font-semibold truncate">—</span>
+            </div>
+            <div class="grid grid-cols-12 items-center gap-3">
+              <div class="col-span-5 h-[125px]"><canvas id="grafVocacao"></canvas></div>
+              <div id="legVocacao" class="col-span-7 space-y-1.5 text-xs"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ABA 2: EVOLUÇÃO -->
+        <div id="viewEvolucao" class="hidden space-y-3 flex-1 flex flex-col">
+          <div class="flex items-center justify-between text-xs">
+            <span class="din-text-muted">Evolução do PIB e arrecadação</span>
+            <strong id="histCresc" class="din-green">—</strong>
+          </div>
+          <div class="flex-1 min-h-[240px]"><canvas id="grafHist"></canvas></div>
+          <p id="histNota" class="text-[11px] din-text-muted leading-relaxed"></p>
+        </div>
+
+        <!-- ABA 3: COMPARAR -->
+        <div id="viewComparar" class="hidden space-y-3 flex-1 flex flex-col">
+          <div class="grid grid-cols-2 gap-2">
+            <label class="text-[11px] font-semibold din-text-muted">Estado A
+              <select id="selCompA" class="inp mt-1 text-xs" onchange="ufSel=this.value; selecionarEstado(ufSel)"></select>
+            </label>
+            <label class="text-[11px] font-semibold din-text-muted">Estado B (ou clique no mapa)
+              <select id="selCompB" class="inp mt-1 text-xs" onchange="ufComp=this.value; renderComparar()"></select>
+            </label>
+          </div>
+          <div id="compBody" class="divide-y din-border text-xs flex-1"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ranking + Exportar CSV -->
+    <section id="secaoRanking" class="din-card-bg border din-border rounded-lg p-5 shadow-sm">
       <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
         <div>
-          <h2 class="text-base font-semibold din-text-main">Mapa interativo do Brasil</h2>
-          <p id="mapSub" class="text-xs din-text-muted">Passe o mouse para ver o nome e clique para abrir o raio-x.</p>
+          <h2 id="titTabela" class="text-base font-semibold din-text-main">Ranking dos 27 estados</h2>
+          <span class="text-xs din-text-muted">Clique em qualquer coluna para ordenar ou na linha para inspecionar</span>
         </div>
-        <select id="mapMetrica" class="inp !w-auto text-xs font-semibold" onchange="pintarMapa()">
-          <option value="hab">Tributo por habitante</option>
-          <option value="arrec">Arrecadação estimada</option>
-          <option value="pib">PIB estadual</option>
-          <option value="pop">População total</option>
-          <option value="prod">Produtividade (%PIB ÷ %Pop)</option>
-        </select>
+        <button type="button" onclick="exportarCSV()"
+          class="px-3 py-1.5 rounded-lg text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition">
+          ↓ Exportar CSV
+        </button>
       </div>
+      <div class="overflow-x-auto max-h-[440px] overflow-y-auto">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead class="sticky top-0 din-card-bg"><tr id="thead" class="din-text-muted border-b din-border"></tr></thead>
+          <tbody id="tbody" class="divide-y din-border"><tr><td class="py-4 din-text-muted">Carregando dados…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
 
-      <div class="relative flex-1 min-h-[380px] flex items-center justify-center">
-        <p id="mapLoading" class="text-xs din-text-muted">Carregando malha geográfica do IBGE…</p>
-        <svg id="mapaBr" viewBox="0 0 600 560" class="w-full max-h-[450px] hidden"></svg>
-      </div>
+    <!-- Gráfico Comparativo PIB vs População -->
+    <section class="din-card-bg border din-border rounded-lg p-5 shadow-sm">
+      <h2 class="text-base font-semibold din-text-main">Peso na economia e na população</h2>
+      <p class="text-xs din-text-muted mb-3">Barra verde maior que a azul: o estado produz mais riqueza do que o tamanho da sua população sugere.</p>
+      <div class="h-[320px]"><canvas id="graf"></canvas></div>
+    </section>
 
-      <div class="mt-3 pt-3 border-t din-border flex items-center justify-between gap-3 text-[11px] din-text-muted">
-        <span id="legMin">Menor</span>
-        <div class="flex-1 h-2 rounded-full max-w-xs" style="background: linear-gradient(90deg, rgba(22,199,132,0.15), #16C784);"></div>
-        <span id="legMax">Maior</span>
-      </div>
+    <p class="text-xs din-text-muted max-w-4xl leading-relaxed ocultar-em-presentation">
+      <strong class="din-text-main">Metodologia.</strong> PIB e população vêm do IBGE (SIDRA). A arrecadação é estimada pela carga tributária selecionada no simulador (padrão 33% do PIB, média bruta do Brasil) e soma tributos federais, estaduais e municipais. A <em>Vocação Produtiva</em> reflete a composição setorial do Valor Adicionado Bruto conforme as Contas Regionais do IBGE.
+    </p>
+  </main>
+</div>
+
+<!-- Rodapé Institucional -->
+<footer class="border-t din-border din-card-bg py-6 text-xs din-text-muted mt-8 ocultar-em-presentation">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+    <div class="flex items-center gap-2">
+      <span class="font-bold din-text-main">BrasilEmDados</span>
+      <span>•</span>
+      <span>Terminal de Inteligência Econômica e Setorial</span>
     </div>
-
-    <!-- Raio-X do Estado (Organizado em 3 Abas Limpas) -->
-    <div class="lg:col-span-5 din-card-bg border din-border rounded-lg p-5 flex flex-col space-y-4">
-      <!-- Cabeçalho do Estado + Navegação de Abas -->
-      <div class="flex items-start justify-between gap-2">
-        <div>
-          <span id="stRegiao" class="text-[11px] font-semibold uppercase tracking-wider din-green">—</span>
-          <h3 id="stNome" class="text-xl font-extrabold din-text-main mt-0.5">—</h3>
-        </div>
-        <span id="stSigla" class="px-2.5 py-1 rounded-md din-secondary-bg border din-border text-sm font-extrabold din-text-main">--</span>
-      </div>
-
-      <div class="grid grid-cols-3 gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
-        <button id="tabResumo" type="button" onclick="setAba('resumo')" class="py-1.5 rounded-md din-card-bg din-text-main border din-border transition">Resumo</button>
-        <button id="tabEvolucao" type="button" onclick="setAba('evolucao')" class="py-1.5 rounded-md din-text-muted transition">Evolução</button>
-        <button id="tabComparar" type="button" onclick="setAba('comparar')" class="py-1.5 rounded-md din-text-muted transition">Comparar</button>
-      </div>
-
-      <!-- ABA 1: RESUMO + PIZZA VOCAÇÃO ECONÔMICA -->
-      <div id="viewResumo" class="space-y-4 flex-1 flex flex-col justify-between">
-        <div class="grid grid-cols-2 gap-2.5">
-          <div class="din-secondary-bg rounded-lg p-3">
-            <span class="text-[11px] din-text-muted">Arrecadação est.</span>
-            <p id="stArrec" class="text-base font-bold din-red mt-0.5">—</p>
-            <span id="stRankArrec" class="text-[10px] din-text-muted">—</span>
-          </div>
-          <div class="din-secondary-bg rounded-lg p-3">
-            <span class="text-[11px] din-text-muted">Tributo / hab.</span>
-            <p id="stHab" class="text-base font-bold din-text-main mt-0.5">—</p>
-            <span id="stVsMedia" class="text-[10px] font-semibold">—</span>
-          </div>
-          <div class="din-secondary-bg rounded-lg p-3">
-            <span class="text-[11px] din-text-muted">População</span>
-            <p id="stPop" class="text-base font-bold din-text-main mt-0.5">—</p>
-            <span id="stPopPct" class="text-[10px] din-text-muted">—</span>
-          </div>
-          <div class="din-secondary-bg rounded-lg p-3">
-            <span class="text-[11px] din-text-muted">PIB estadual</span>
-            <p id="stPib" class="text-base font-bold din-green mt-0.5">—</p>
-            <span id="stPibPct" class="text-[10px] din-text-muted">—</span>
-          </div>
-        </div>
-
-        <!-- Linha compacta de métricas extras -->
-        <div class="grid grid-cols-3 gap-2 pt-2 border-t din-border text-center text-xs">
-          <div>
-            <span class="block text-[10px] din-text-muted">PIB per capita</span>
-            <strong id="stPibPc" class="din-text-main">—</strong>
-          </div>
-          <div>
-            <span class="block text-[10px] din-text-muted">Produtividade</span>
-            <strong id="stProd" class="din-text-main">—</strong>
-          </div>
-          <div id="boxIdh">
-            <span id="lblIdh" class="block text-[10px] din-text-muted">Arrec. / dia</span>
-            <strong id="stExtra" class="din-text-main">—</strong>
-          </div>
-        </div>
-
-        <!-- Gráfico de Pizza: Vocação / Trabalho do Estado -->
-        <div class="pt-3 border-t din-border">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-semibold din-text-main">Vocação produtiva (setores do PIB)</span>
-            <span id="stVocacaoTag" class="text-[10px] px-2 py-0.5 rounded din-secondary-bg border din-border din-green font-semibold">—</span>
-          </div>
-          <div class="grid grid-cols-12 items-center gap-3">
-            <div class="col-span-5 h-[125px]"><canvas id="grafVocacao"></canvas></div>
-            <div id="legVocacao" class="col-span-7 space-y-1.5 text-xs"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ABA 2: EVOLUÇÃO HISTÓRICA -->
-      <div id="viewEvolucao" class="hidden space-y-3 flex-1 flex flex-col">
-        <div class="flex items-center justify-between text-xs">
-          <span class="din-text-muted">Evolução do PIB e arrecadação</span>
-          <strong id="histCresc" class="din-green">—</strong>
-        </div>
-        <div class="flex-1 min-h-[240px]"><canvas id="grafHist"></canvas></div>
-        <p id="histNota" class="text-[11px] din-text-muted leading-relaxed"></p>
-      </div>
-
-      <!-- ABA 3: COMPARAR 2 ESTADOS -->
-      <div id="viewComparar" class="hidden space-y-3 flex-1 flex flex-col">
-        <div class="grid grid-cols-2 gap-2">
-          <label class="text-[11px] font-semibold din-text-muted">Estado A
-            <select id="selCompA" class="inp mt-1 text-xs" onchange="ufSel=this.value; selecionarEstado(ufSel)"></select>
-          </label>
-          <label class="text-[11px] font-semibold din-text-muted">Estado B (ou clique no mapa)
-            <select id="selCompB" class="inp mt-1 text-xs" onchange="ufComp=this.value; renderComparar()"></select>
-          </label>
-        </div>
-        <div id="compBody" class="divide-y din-border text-xs flex-1"></div>
-      </div>
+    <div class="flex items-center gap-4">
+      <a href="index.html" class="hover:din-text-main transition">Início</a>
+      <a href="economia.html" class="hover:din-text-main transition">Economia</a>
+      <a href="glossario.html" class="hover:din-text-main transition">Glossário</a>
+      <a href="sobre.html" class="hover:din-text-main transition">Sobre</a>
+      <a href="contato.html" class="hover:din-text-main transition">Contato</a>
     </div>
-  </section>
+  </div>
+</footer>
 
-  <!-- Ranking + Exportar CSV -->
-  <section class="din-card-bg border din-border rounded-lg p-5">
-    <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
-      <div>
-        <h2 id="titTabela" class="text-base font-semibold din-text-main">Ranking dos 27 estados</h2>
-        <span class="text-xs din-text-muted">Clique em qualquer coluna para ordenar ou na linha para inspecionar</span>
-      </div>
-      <button type="button" onclick="exportarCSV()"
-        class="px-3 py-1.5 rounded-lg text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition">
-        ↓ Exportar CSV
-      </button>
-    </div>
-    <div class="overflow-x-auto max-h-[440px] overflow-y-auto">
-      <table class="w-full text-left text-xs border-collapse">
-        <thead class="sticky top-0 din-card-bg"><tr id="thead" class="din-text-muted border-b din-border"></tr></thead>
-        <tbody id="tbody" class="divide-y din-border"><tr><td class="py-4 din-text-muted">Carregando dados…</td></tr></tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- Gráfico Comparativo PIB vs População -->
-  <section class="din-card-bg border din-border rounded-lg p-5">
-    <h2 class="text-base font-semibold din-text-main">Peso na economia e na população</h2>
-    <p class="text-xs din-text-muted mb-3">Barra verde maior que a azul: o estado produz mais riqueza do que o tamanho da sua população sugere.</p>
-    <div class="h-[320px]"><canvas id="graf"></canvas></div>
-  </section>
-
-  <p class="text-xs din-text-muted max-w-4xl leading-relaxed">
-    <strong class="din-text-main">Metodologia.</strong> PIB e população vêm do IBGE (SIDRA). A arrecadação é estimada pela carga tributária selecionada no simulador (padrão 33% do PIB, média bruta do Brasil) e soma tributos federais, estaduais e municipais. A <em>Vocação Produtiva</em> reflete a composição do Valor Adicionado Bruto por setor (Agropecuária, Indústria e Serviços) conforme as Contas Regionais do IBGE. O <em>Índice de Produtividade</em> divide % do PIB por % da população (acima de 1,00x indica produção per capita acima da média nacional).
-  </p>
-</main>
-
-<div id="bd-footer"></div>
-<script src="/layout.js"></script>
 <script>
 const $ = i => document.getElementById(i);
+const BD = {
+  brl: (v, d = 2) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: d, maximumFractionDigits: d }),
+  num: (v, d = 0) => v.toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d }),
+  compact: r => {
+    const f = (x, s) => 'R$ ' + (r / x).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + s;
+    return r >= 1e12 ? f(1e12, 'tri') : r >= 1e9 ? f(1e9, 'bi') : r >= 1e6 ? f(1e6, 'mi') : BD.brl(r, 0);
+  },
+  cor: () => { const d = document.documentElement.getAttribute('data-theme') === 'dark'; return { tx: d ? '#F5F6F7' : '#17191C', mu: d ? '#9299A3' : '#737780', grid: d ? '#2B3036' : '#E5E7EB' }; },
+  indicadores: async () => { const r = await fetch('/api/indicadores'); if (!r.ok) throw new Error('API ' + r.status); return r.json(); }
+};
+
 let TAXA = 0.33, anoAtual = null;
 let TODOS = [], D_ALL = [], D = [], col = 'arrec', dir = -1, idh = false;
 let mediaHabBR = 0, ufSel = 'SP', ufComp = 'RJ', regiaoSel = 'Todas', abaRx = 'resumo', geoPronto = false;
@@ -263,15 +435,75 @@ const REGIAO = {
 };
 const REGIOES = ['Todas', 'Norte', 'Nordeste', 'Centro-Oeste', 'Sudeste', 'Sul'];
 
-// Composição setorial aproximada do VAB estadual (% Agro, % Indústria, % Serviços — IBGE Contas Regionais)
-const VOCACAO = {
-  AC:[11,10,79], AL:[12,16,72], AP:[3,12,85],  AM:[6,33,61],  BA:[9,24,67],  CE:[6,18,76],
-  DF:[1,4,95],   ES:[5,31,64],  GO:[15,22,63], MA:[14,19,67], MT:[30,17,53], MS:[23,21,56],
-  MG:[8,30,62],  PA:[11,42,47], PB:[4,17,79],  PR:[12,26,62], PE:[5,20,75],  PI:[11,14,75],
-  RJ:[1,30,69],  RN:[4,21,75],  RS:[12,24,64], RO:[19,20,61], RR:[10,9,81],  SC:[7,29,64],
-  SP:[2,22,76],  SE:[5,23,72],  TO:[21,14,65]
+const COMPOSICAO_SETORIAL_UF = {
+  SP: { agro: 2,  ind: 22, serv: 67, adm: 9,  vocacao: 'Polo Financeiro e Serviços' },
+  RJ: { agro: 1,  ind: 28, serv: 53, adm: 18, vocacao: 'Petróleo, Gás e Serviços' },
+  MG: { agro: 9,  ind: 29, serv: 47, adm: 15, vocacao: 'Mineração e Agroindústria' },
+  RS: { agro: 13, ind: 23, serv: 51, adm: 13, vocacao: 'Agroindústria e Metalmecânica' },
+  PR: { agro: 14, ind: 25, serv: 49, adm: 12, vocacao: 'Agroindustrial e Logística' },
+  SC: { agro: 7,  ind: 29, serv: 52, adm: 12, vocacao: 'Manufatura e Tecnologia' },
+  BA: { agro: 11, ind: 22, serv: 47, adm: 20, vocacao: 'Petroquímica e Agronegócio' },
+  DF: { agro: 1,  ind: 4,  serv: 48, adm: 47, vocacao: 'Centro Administrativo' },
+  GO: { agro: 18, ind: 21, serv: 45, adm: 16, vocacao: 'Agroindustrial e Fármacos' },
+  MT: { agro: 34, ind: 16, serv: 36, adm: 14, vocacao: 'Commodities Agrícolas' },
+  MS: { agro: 26, ind: 21, serv: 37, adm: 16, vocacao: 'Agronegócio e Celulose' },
+  PA: { agro: 13, ind: 36, serv: 31, adm: 20, vocacao: 'Complexo Mineral' },
+  PE: { agro: 5,  ind: 20, serv: 52, adm: 23, vocacao: 'Tecnologia e Serviços' },
+  CE: { agro: 6,  ind: 19, serv: 52, adm: 23, vocacao: 'Comércio e Renováveis' },
+  ES: { agro: 6,  ind: 32, serv: 47, adm: 15, vocacao: 'Siderurgia e Portos' },
+  AM: { agro: 5,  ind: 38, serv: 37, adm: 20, vocacao: 'Polo Industrial de Manaus' },
+  MA: { agro: 14, ind: 18, serv: 41, adm: 27, vocacao: 'Logística Portuária e Grãos' },
+  RN: { agro: 5,  ind: 19, serv: 47, adm: 29, vocacao: 'Energia Eólica e Turismo' },
+  PB: { agro: 5,  ind: 15, serv: 47, adm: 33, vocacao: 'Serviços e Adm. Pública' },
+  AL: { agro: 14, ind: 15, serv: 43, adm: 28, vocacao: 'Sucroenergético e Turismo' },
+  PI: { agro: 12, ind: 13, serv: 43, adm: 32, vocacao: 'Expansão Agrícola' },
+  SE: { agro: 6,  ind: 20, serv: 44, adm: 30, vocacao: 'Energia (Óleo e Gás)' },
+  RO: { agro: 21, ind: 15, serv: 38, adm: 26, vocacao: 'Pecuária e Grãos' },
+  TO: { agro: 24, ind: 12, serv: 36, adm: 28, vocacao: 'Fronteira Agrícola' },
+  AC: { agro: 14, ind: 8,  serv: 38, adm: 40, vocacao: 'Serviços e Setor Público' },
+  AP: { agro: 4,  ind: 11, serv: 39, adm: 46, vocacao: 'Adm. Pública Federal' },
+  RR: { agro: 9,  ind: 9,  serv: 36, adm: 46, vocacao: 'Comércio e Setor Público' }
 };
 
+// Controles do Cabeçalho (Menu, Tema e Tela Cheia)
+function toggleDropdownMenu() { $('dropdownMenu').classList.toggle('hidden'); }
+window.addEventListener('click', e => {
+  const btn = $('menuDropdownBtn'), menu = $('dropdownMenu');
+  if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) menu.classList.add('hidden');
+});
+
+function alternarDarkLight() {
+  const novo = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  aplicarTema(novo);
+  try { localStorage.setItem('brasil_em_dados_tema', novo); } catch {}
+}
+
+function aplicarTema(tema) {
+  const html = document.documentElement, bg = $('switchBg'), ball = $('switchBall');
+  if (tema === 'dark') {
+    html.setAttribute('data-theme', 'dark');
+    if (bg && ball) { bg.style.backgroundColor = '#16C784'; ball.classList.add('translate-x-5'); }
+  } else {
+    html.removeAttribute('data-theme');
+    if (bg && ball) { bg.style.backgroundColor = '#E5E7EB'; ball.classList.remove('translate-x-5'); }
+  }
+  if (D.length) {
+    graficoBar();
+    pintarMapa();
+    if (abaRx === 'resumo') renderPizzaVocacao(ufSel);
+    if (abaRx === 'evolucao') renderEvolucao(ufSel);
+  }
+}
+
+function alternarModoApresentacao() {
+  document.body.classList.toggle('modo-apresentacao');
+  const ativo = document.body.classList.contains('modo-apresentacao');
+  $('btnModoApresentacao').innerHTML = ativo
+    ? '<span>✕ Sair da Tela Cheia</span>'
+    : `<svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect><line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line><line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line></svg><span>Modo Tela Cheia</span>`;
+}
+
+// Lógica dos Dados
 function fmtMetrica(d, k) {
   if (!d) return '—';
   if (k === 'hab') return BD.brl(d.hab, 0) + ' / hab';
@@ -290,11 +522,7 @@ function renderBotoesRegiao() {
   }).join('');
 }
 
-function setRegiao(r) {
-  regiaoSel = r;
-  renderBotoesRegiao();
-  aplicarFiltros();
-}
+function setRegiao(r) { regiaoSel = r; renderBotoesRegiao(); aplicarFiltros(); }
 
 function mudarTaxa(pct) {
   TAXA = pct / 100;
@@ -329,7 +557,6 @@ function montar(ano) {
   [...D_ALL].sort((a, b) => b.hab - a.hab).forEach((d, i) => d.rkHab = i + 1);
   idh = D_ALL.some(d => d.idh > 0);
 
-  // Popular selects do comparador
   const opts = [...D_ALL].sort((a, b) => a.nome.localeCompare(b.nome))
     .map(d => `<option value="${d.sigla}">${d.nome} (${d.sigla})</option>`).join('');
   $('selCompA').innerHTML = opts;
@@ -346,15 +573,12 @@ function aplicarFiltros() {
   const arrecReg = pReg * 1000 * TAXA;
   const hs = [...D].sort((a, b) => b.hab - a.hab), mx = hs[0], mn = hs[hs.length - 1];
 
-  $('k1Lbl').textContent = regiaoSel === 'Todas' ? 'Arrecadação est. do Brasil' : `Arrecadação est. (${regiaoSel})`;
+  $('k1Lbl').textContent = regiaoSel === 'Todas' ? `Arrecadação est. (${anoAtual})` : `Arrecadação est. (${regiaoSel})`;
   $('k1').textContent = BD.compact(arrecReg);
   $('k2').textContent = BD.brl(arrecReg / hReg, 0) + ' / ano';
   $('k3').textContent = `${mx.sigla} · ${BD.brl(mx.hab, 0)}`;
   $('k4').textContent = `${mn.sigla} · ${BD.brl(mn.hab, 0)}`;
-
-  $('titTabela').textContent = regiaoSel === 'Todas'
-    ? `Ranking dos ${D.length} estados`
-    : `Estados da região ${regiaoSel} (${D.length})`;
+  $('titTabela').textContent = regiaoSel === 'Todas' ? `Ranking dos ${D.length} estados (${anoAtual})` : `Estados da região ${regiaoSel} (${D.length})`;
 
   if (!D.some(d => d.sigla === ufSel)) ufSel = D[0].sigla;
   tabela();
@@ -427,14 +651,14 @@ function selecionarEstado(sigla) {
 }
 
 function renderPizzaVocacao(sigla) {
-  const [agro, ind, serv] = VOCACAO[sigla] || [10, 20, 70];
-  const destaque = agro >= 15 ? 'Forte no Agronegócio' : ind >= 28 ? 'Perfil Industrial' : 'Economia de Serviços';
-  $('stVocacaoTag').textContent = destaque;
+  const comp = COMPOSICAO_SETORIAL_UF[sigla] || { agro: 10, ind: 20, serv: 50, adm: 20, vocacao: 'Diversificada' };
+  $('stVocacaoTag').textContent = comp.vocacao;
 
   const itens = [
-    { n: 'Serviços & Comércio', v: serv, cor: '#2563EB' },
-    { n: 'Indústria', v: ind, cor: '#F59E0B' },
-    { n: 'Agropecuária', v: agro, cor: '#16C784' }
+    { n: 'Serviços', v: comp.serv, cor: '#16C784' },
+    { n: 'Indústria', v: comp.ind, cor: '#2563EB' },
+    { n: 'Agropecuária', v: comp.agro, cor: '#F59E0B' },
+    { n: 'Adm. Pública', v: comp.adm, cor: '#EA3943' }
   ];
   $('legVocacao').innerHTML = itens.map(x => `
     <div class="flex items-center justify-between">
@@ -452,7 +676,7 @@ function renderPizzaVocacao(sigla) {
     },
     options: {
       maintainAspectRatio: false,
-      cutout: '62%',
+      cutout: '60%',
       plugins: { legend: { display: false }, tooltip: { callbacks: { label: x => ` ${x.label}: ${x.parsed}%` } } }
     }
   });
@@ -477,7 +701,7 @@ function renderEvolucao(sigla) {
   const arrecs = pibs.map(v => v * TAXA);
   const cresc = ((pibs[pibs.length - 1] - pibs[0]) / pibs[0]) * 100;
   $('histCresc').textContent = `${cresc >= 0 ? '+' : ''}${BD.num(cresc, 1)}% (${anos[0]}–${anos[anos.length - 1]})`;
-  $('histNota').textContent = `Crescimento nominal do PIB de ${sigla} entre ${anos[0]} e ${anos[anos.length - 1]}, com arrecadação recalculada para a carga de ${BD.num(TAXA * 100, 1)}%.`;
+  $('histNota').textContent = `Crescimento nominal do PIB de ${sigla} entre ${anos[0]} e ${anos[anos.length - 1]}, com arrecadação recalculada para ${BD.num(TAXA * 100, 1)}%.`;
 
   const c = BD.cor();
   chartHist = new Chart($('grafHist'), {
@@ -499,10 +723,8 @@ function renderEvolucao(sigla) {
 }
 
 function renderComparar() {
-  const a = D_ALL.find(x => x.sigla === ufSel);
-  const b = D_ALL.find(x => x.sigla === ufComp);
+  const a = D_ALL.find(x => x.sigla === ufSel), b = D_ALL.find(x => x.sigla === ufComp);
   if (!a || !b) return;
-
   const linhas = [
     ['PIB estadual', a.pib * 1000, b.pib * 1000, v => BD.compact(v)],
     ['PIB per capita', a.pibPc, b.pibPc, v => BD.brl(v, 0)],
@@ -523,8 +745,8 @@ function renderComparar() {
 
 async function iniciarMapa() {
   const urls = [
-    'https://servicodados.ibge.gov.br/api/v3/malhas/paises/BR?formato=application/vnd.geo+json&qualidade=minima&intrarregiao=UF',
-    'https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson'
+    'https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson',
+    'https://servicodados.ibge.gov.br/api/v3/malhas/paises/BR?formato=application/vnd.geo+json&qualidade=minima&intrarregiao=UF'
   ];
   let geo = null;
   for (const u of urls) {
@@ -542,7 +764,7 @@ async function iniciarMapa() {
     .join('path')
     .attr('class', 'uf-path')
     .attr('d', path)
-    .attr('data-uf', f => IBGE_UF[String(f.properties.codarea)] || f.properties.sigla || '')
+    .attr('data-uf', f => f.properties.sigla || IBGE_UF[String(f.properties.codarea)] || '')
     .on('mouseenter', function() {
       const uf = this.getAttribute('data-uf');
       const d = D_ALL.find(x => x.sigla === uf);
@@ -557,10 +779,7 @@ async function iniciarMapa() {
       const uf = this.getAttribute('data-uf');
       if (!uf) return;
       if (abaRx === 'comparar' && uf !== ufSel) {
-        ufComp = uf;
-        $('selCompB').value = ufComp;
-        renderComparar();
-        pintarMapa();
+        ufComp = uf; $('selCompB').value = ufComp; renderComparar(); pintarMapa();
       } else {
         selecionarEstado(uf);
       }
@@ -589,8 +808,7 @@ function pintarMapa() {
 
   d3.select('#mapaBr').selectAll('path')
     .attr('fill', function() {
-      const uf = this.getAttribute('data-uf');
-      const d = D.find(x => x.sigla === uf);
+      const d = D.find(x => x.sigla === this.getAttribute('data-uf'));
       return d ? escala(d[k]) : apagado;
     })
     .attr('stroke', function() {
@@ -601,8 +819,7 @@ function pintarMapa() {
     })
     .attr('stroke-width', function() {
       const uf = this.getAttribute('data-uf');
-      if (uf === ufSel || (abaRx === 'comparar' && uf === ufComp)) return 2.4;
-      return 0.9;
+      return (uf === ufSel || (abaRx === 'comparar' && uf === ufComp)) ? 2.4 : 0.9;
     });
 }
 
@@ -638,11 +855,11 @@ function graficoBar() {
 
 function exportarCSV() {
   if (!D.length) return;
-  const cab = ['Estado','Sigla','Regiao','Ano','Carga_Simulada_%','PIB_R$','Part_PIB_%','Populacao','Part_Pop_%','Arrecadacao_Est_R$','Tributo_Por_Hab_R$','PIB_Per_Capita_R$','Produtividade_x','Agro_%','Industria_%','Servicos_%'];
+  const cab = ['Estado','Sigla','Regiao','Ano','Carga_Simulada_%','PIB_R$','Part_PIB_%','Populacao','Part_Pop_%','Arrecadacao_Est_R$','Tributo_Por_Hab_R$','PIB_Per_Capita_R$','Produtividade_x','Servicos_%','Industria_%','Agro_%','Adm_Publica_%'];
   if (idh) cab.push('IDH');
   const linhas = D.map(d => {
-    const [ag, ind, sv] = VOCACAO[d.sigla] || [0,0,0];
-    const row = [d.nome, d.sigla, d.regiao, anoAtual, (TAXA*100).toFixed(1), Math.round(d.pib*1000), d.sp.toFixed(2), Math.round(d.pop), d.sh.toFixed(2), Math.round(d.arrec), Math.round(d.hab), Math.round(d.pibPc), d.prod.toFixed(2), ag, ind, sv];
+    const c = COMPOSICAO_SETORIAL_UF[d.sigla] || { serv:0, ind:0, agro:0, adm:0 };
+    const row = [d.nome, d.sigla, d.regiao, anoAtual, (TAXA*100).toFixed(1), Math.round(d.pib*1000), d.sp.toFixed(2), Math.round(d.pop), d.sh.toFixed(2), Math.round(d.arrec), Math.round(d.hab), Math.round(d.pibPc), d.prod.toFixed(2), c.serv, c.ind, c.agro, c.adm];
     if (idh) row.push(d.idh ? d.idh.toFixed(3) : '');
     return row.join(';');
   });
@@ -654,27 +871,22 @@ function exportarCSV() {
 }
 
 (async () => {
+  let temaSalvo = 'light';
+  try { temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light'; } catch {}
+  aplicarTema(temaSalvo);
   renderBotoesRegiao();
   iniciarMapa();
   try {
     TODOS = await BD.indicadores();
     const anos = [...new Set(TODOS.filter(i => /per capita/i.test(i.nome)).map(i => +i.anoReferencia))].sort((a, b) => b - a);
     if (!anos.length) throw new Error('sem anos');
-    $('ano').innerHTML = anos.map(a => `<option>${a}</option>`).join('');
+    $('ano').innerHTML = anos.map(a => `<option value="${a}">${a}</option>`).join('');
     montar(anos[0]);
   } catch (e) {
     $('tbody').innerHTML = '<tr><td class="py-4 din-red">Não foi possível carregar os indicadores. Recarregue a página em instantes.</td></tr>';
     console.error(e);
   }
 })();
-
-window.addEventListener('tema', () => {
-  if (!D.length) return;
-  graficoBar();
-  pintarMapa();
-  if (abaRx === 'resumo') renderPizzaVocacao(ufSel);
-  if (abaRx === 'evolucao') renderEvolucao(ufSel);
-});
 </script>
 </body>
 </html>
