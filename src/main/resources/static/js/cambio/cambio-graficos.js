@@ -650,10 +650,17 @@ function exportarCSV() {
 
 function opcoesGrafico(c, fmt) {
   return {
+    responsive: true,
     maintainAspectRatio: false,
+    layout: {
+      padding: { top: 10, right: 14, bottom: 4, left: 4 }
+    },
     interaction: { mode: 'index', intersect: false },
     plugins: {
-      legend: { labels: { color: c.tx, boxWidth: 12, font: { size: 11 } } },
+      legend: {
+        align: 'end',
+        labels: { color: c.tx, boxWidth: 12, padding: 12, font: { size: 11 } }
+      },
       tooltip: {
         backgroundColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#1E2329' : '#FFFFFF',
         titleColor: c.tx,
@@ -661,12 +668,20 @@ function opcoesGrafico(c, fmt) {
         borderColor: c.grid,
         borderWidth: 1,
         padding: 10,
+        displayColors: true,
         callbacks: { label: x => ` ${x.dataset.label}: ${fmt(x.parsed.y)}` }
       }
     },
     scales: {
-      x: { ticks: { color: c.mu, maxTicksLimit: 8 }, grid: { display: false } },
-      y: { ticks: { color: c.mu, callback: v => fmt(v) }, grid: { color: c.grid } }
+      x: {
+        ticks: { color: c.mu, maxTicksLimit: 8, padding: 6 },
+        grid: { display: false }
+      },
+      y: {
+        grace: '6%',
+        ticks: { color: c.mu, padding: 8, callback: v => fmt(v) },
+        grid: { color: c.grid }
+      }
     }
   };
 }
