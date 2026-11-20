@@ -1,585 +1,1180 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BrasilEmDados — Economia e Indicadores</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
-
-    <style>
-        :root {
-            /* Light — Paleta Claro (Padrão) */
-            --bg-main: #FFFFFF;
-            --card-bg: #F7F8FA;
-            --bg-secondary: #F0F2F5;
-            --text-main: #17191C;
-            --text-muted: #737780;
-            --border-col: #E5E7EB;
-            --accent-green: #16C784;
-            --accent-red: #EA3943;
-            --icon-box-bg: rgba(22, 199, 132, 0.12);
-        }
-
-        [data-theme="dark"] {
-            /* Dark — Paleta Escuro */
-            --bg-main: #101214;
-            --card-bg: #191C20;
-            --bg-secondary: #22262B;
-            --text-main: #F5F6F7;
-            --text-muted: #9299A3;
-            --border-col: #2B3036;
-            --accent-green: #16C784;
-            --accent-red: #EA3943;
-            --icon-box-bg: rgba(22, 199, 132, 0.15);
-        }
-
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            transition: background-color 0.2s ease, color 0.2s ease;
-        }
-
-        /* Classes Utilitárias Dinâmicas */
-        .din-bg-main { background-color: var(--bg-main); }
-        .din-card-bg { background-color: var(--card-bg); }
-        .din-secondary-bg { background-color: var(--bg-secondary); }
-        .din-text-main { color: var(--text-main); }
-        .din-text-muted { color: var(--text-muted); }
-        .din-border { border-color: var(--border-col); }
-        .din-green { color: var(--accent-green); }
-        .din-red { color: var(--accent-red); }
-        
-        /* Quadradinho do ícone padronizado em verde suave */
-        .din-icon-box {
-            background-color: var(--icon-box-bg);
-            color: var(--accent-green);
-        }
-
-        .din-btn {
-            background-color: var(--accent-green);
-            color: #FFFFFF;
-        }
-        .din-btn:hover { opacity: 0.9; }
-
-        .card-hover {
-            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-        .card-hover:hover {
-            transform: translateY(-2px);
-            border-color: var(--accent-green);
-        }
-
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PIB Mundial, Câmbio & Indicadores Globais — BrasilEmDados</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson.min.js"></script>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='15' width='6' height='15' rx='3' fill='%2317191C'/%3E%3Crect x='13' y='9' width='6' height='21' rx='3' fill='%2317191C'/%3E%3Crect x='23' y='12' width='6' height='18' rx='3' fill='%2317191C'/%3E%3Ccircle cx='16' cy='4' r='3.2' fill='%2316C784'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg-main: #FFFFFF;
+    --card-bg: #F7F8FA;
+    --bg-secondary: #F0F2F5;
+    --text-main: #17191C;
+    --text-muted: #737780;
+    --border-col: #E5E7EB;
+    --accent-green: #16C784;
+    --accent-red: #EA3943;
+  }
+  [data-theme="dark"] {
+    --bg-main: #101214;
+    --card-bg: #191C20;
+    --bg-secondary: #22262B;
+    --text-main: #F5F6F7;
+    --text-muted: #9299A3;
+    --border-col: #2B3036;
+    --accent-green: #16C784;
+    --accent-red: #EA3943;
+  }
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .din-bg-main { background-color: var(--bg-main); }
+  .din-card-bg { background-color: var(--card-bg); }
+  .din-secondary-bg { background-color: var(--bg-secondary); }
+  .din-text-main { color: var(--text-main); }
+  .din-text-muted { color: var(--text-muted); }
+  .din-border { border-color: var(--border-col); }
+  .din-green { color: var(--accent-green); }
+  .din-red { color: var(--accent-red); }
+  .din-btn { background-color: var(--accent-green); color: #FFFFFF; }
+  .din-btn:hover { opacity: 0.9; }
+  .inp { background-color: var(--bg-secondary); border: 1px solid var(--border-col); color: var(--text-main); border-radius: 0.5rem; padding: 0.45rem 0.7rem; width: 100%; font-size: 0.82rem; }
+  .inp:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--accent-green); outline-offset: 2px; }
+  select option { background-color: var(--card-bg); color: var(--text-main); }
+  .pais-path { transition: fill .2s ease, opacity .15s ease; cursor: pointer; }
+  .pais-path:hover { opacity: .85; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  body.modo-apresentacao header,
+  body.modo-apresentacao .ocultar-em-presentation { display: none !important; }
+  body.modo-apresentacao main { max-width: 100% !important; padding: 16px !important; }
+</style>
 </head>
 <body class="min-h-screen font-sans flex flex-col justify-between">
-<script src="config.js"></script>
-
-    <div>
-        <!-- Cabeçalho Institucional Padrão -->
-        <header class="sticky top-0 z-50 border-b din-border din-bg-main/95 backdrop-blur">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6">
-                
-                <div class="flex items-center justify-between h-16 gap-4">
-                    
-                    <!-- Esquerda: Logo Autoral + Badge de Status -->
-                    <div class="flex items-center gap-3">
-                        <a href="index.html" class="flex items-center gap-3 group">
-                            <div class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center shadow-sm group-hover:border-[#16C784] transition-colors">
-                                <svg class="w-5 h-5 din-text-main" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M18 20V10"></path>
-                                    <path d="M12 20V4"></path>
-                                    <path d="M6 20v-6"></path>
-                                    <circle cx="12" cy="4" r="1" fill="#16C784" stroke="#16C784"></circle>
-                                </svg>
-                            </div>
-                            <div>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-lg font-extrabold tracking-tight din-text-main">BrasilEmDados</span>
-                                    <span class="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono uppercase px-2 py-0.5 rounded din-secondary-bg border din-border din-text-muted">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span> Hub Econômico
-                                    </span>
-                                </div>
-                                <p class="text-[11px] din-text-muted hidden xl:block">Inteligência Macroeconômica e Contas Regionais</p>
-                            </div>
-                        </a>
-                    </div>
-
-                    <!-- Centro: Abas de Navegação em Cápsula (Economia Ativo) -->
-                    <nav class="hidden md:flex items-center gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
-                        <a href="index.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
-                            Início
-                        </a>
-                        <a href="glossario.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
-                            Glossário
-                        </a>
-                        <a href="economia.html" class="px-3.5 py-1.5 rounded-md din-card-bg din-text-main shadow-sm border din-border transition">
-                            Economia
-                        </a>
-                        <a href="sobre.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
-                            Sobre
-                        </a>
-                        <a href="contato.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
-                            Contato
-                        </a>
-                    </nav>
-
-                    <!-- Direita: Atalho Rápido + Menu de Preferências -->
-                    <div class="flex items-center gap-2.5 relative">
-                        <a href="terminal-pib.html" class="hidden sm:inline-flex items-center gap-1.5 din-btn text-xs font-semibold px-3.5 py-2 rounded-lg transition shadow-sm">
-                            <span>Abrir Terminal PIB</span>
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                            </svg>
-                        </a>
-
-                        <!-- Botão de Ajustes e Ferramentas -->
-                        <button id="menuDropdownBtn" onclick="toggleDropdownMenu()" title="Preferências e Ferramentas" class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center hover:border-[#16C784] transition cursor-pointer">
-                            <svg class="w-4 h-4 din-text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="4" y1="21" x2="4" y2="14"></line>
-                                <line x1="4" y1="10" x2="4" y2="3"></line>
-                                <line x1="12" y1="21" x2="12" y2="12"></line>
-                                <line x1="12" y1="8" x2="12" y2="3"></line>
-                                <line x1="20" y1="21" x2="20" y2="16"></line>
-                                <line x1="20" y1="12" x2="20" y2="3"></line>
-                                <line x1="1" y1="14" x2="7" y2="14"></line>
-                                <line x1="9" y1="8" x2="15" y2="8"></line>
-                                <line x1="17" y1="16" x2="23" y2="16"></line>
-                            </svg>
-                        </button>
-
-                        <!-- Menu Lateral Suspenso -->
-                        <div id="dropdownMenu" class="hidden absolute right-0 top-11 w-64 rounded-xl din-card-bg border din-border shadow-2xl py-1.5 z-50">
-                            <div class="px-4 py-1.5 border-b din-border">
-                                <p class="text-[10px] font-bold uppercase tracking-wider din-text-muted">Módulos de Economia</p>
-                            </div>
-
-                            <a href="terminal-pib.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
-                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
-                                01. Contas Regionais & PIB
-                            </a>
-                            <a href="imposto-idh.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
-                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
-                                02. Impostos, População & IDH
-                            </a>
-                            <a href="cambio.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
-                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
-                                03. Conversor de Moedas
-                            </a>
-                            <a href="simulador-selic.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
-                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
-                                04. Simulador Selic & Juros
-                            </a>
-                            <a href="mundo.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
-                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
-                                05. Panorama Global & PIB Mundial
-                            </a>
-
-                            <div class="my-1 border-t din-border"></div>
-
-                            <!-- Switch de Aparência (Dark Mode / Light Mode) -->
-                            <div class="flex items-center justify-between px-4 py-2.5 text-xs font-medium din-text-main cursor-pointer select-none" onclick="alternarDarkLight()">
-                                <div class="flex items-center gap-3">
-                                    <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                                    </svg>
-                                    <span>Modo Escuro (Dark)</span>
-                                </div>
-                                <div id="switchBg" class="w-10 h-5 rounded-full relative transition-colors duration-200 p-0.5 flex items-center" style="background-color: var(--border-col);">
-                                    <div id="switchBall" class="w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-200"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- Navegação Mobile -->
-                <nav class="flex md:hidden items-center gap-5 h-10 overflow-x-auto no-scrollbar text-xs font-semibold border-t din-border">
-                    <a href="index.html" class="din-text-muted hover:din-text-main h-full flex items-center">Início</a>
-                    <a href="glossario.html" class="din-text-muted hover:din-text-main h-full flex items-center">Glossário</a>
-                    <a href="economia.html" class="din-green border-b-2 border-[#16C784] h-full flex items-center">Economia</a>
-                    <a href="sobre.html" class="din-text-muted hover:din-text-main h-full flex items-center">Sobre</a>
-                    <a href="contato.html" class="din-text-muted hover:din-text-main h-full flex items-center">Contato</a>
-                </nav>
-
+<div>
+  <!-- Cabeçalho Institucional -->
+  <header class="sticky top-0 z-50 border-b din-border din-bg-main/95 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="flex items-center justify-between h-16 gap-4">
+        <div class="flex items-center gap-3">
+          <a href="index.html" class="flex items-center gap-3 group">
+            <div class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center shadow-sm group-hover:border-[#16C784] transition-colors">
+              <svg class="w-5 h-5 din-text-main" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 20V10"></path>
+                <path d="M12 20V4"></path>
+                <path d="M6 20v-6"></path>
+                <circle cx="12" cy="4" r="1" fill="#16C784" stroke="#16C784"></circle>
+              </svg>
             </div>
-        </header>
-
-        <!-- Cabeçalho Limpo da Página -->
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-10 pb-6">
-            <div class="max-w-3xl space-y-3">
-                <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight din-text-main">
-                    Economia e indicadores
-                </h1>
-                <p class="text-sm sm:text-base din-text-muted leading-relaxed">
-                    Explore dados econômicos, acompanhe a arrecadação tributária brasileira, consulte indicadores regionais e utilize ferramentas para conversão e simulação financeira em um só lugar.
-                </p>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-lg font-extrabold tracking-tight din-text-main">BrasilEmDados</span>
+                <span class="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono uppercase px-2 py-0.5 rounded din-secondary-bg border din-border din-text-muted">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span> GLOBO & CÂMBIO
+                </span>
+              </div>
+              <p class="text-[11px] din-text-muted hidden xl:block">Panorama Global: PIB, População, Câmbio, IDH & Blocos</p>
             </div>
-
-            <div class="flex items-center justify-between pt-8 pb-2">
-                <h2 class="text-sm font-bold din-text-main">Explore as ferramentas</h2>
-                <span class="text-xs din-text-muted">05 módulos disponíveis</span>
-            </div>
-        </section>
-
-        <!-- Grade com as 5 Subdivisões -->
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 pb-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-
-            <!-- MÓDULO 01: Contas Regionais & PIB Setorial (Direciona para terminal-pib.html) -->
-            <div onclick="window.location.href='terminal-pib.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between gap-4">
-                        <div class="w-11 h-11 rounded-xl din-icon-box flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                            </svg>
-                        </div>
-                        <span class="text-xs font-medium din-text-muted">
-                            01 / 05
-                        </span>
-                    </div>
-
-                    <div>
-                        <h3 class="text-lg font-bold din-text-main">
-                            Contas Regionais, PIB & Vocação Setorial
-                        </h3>
-                        <p class="text-xs sm:text-sm din-text-muted mt-2 leading-relaxed">
-                            O terminal principal de produção econômica estadual. Inspecione o mapa interativo do Brasil, compare o volume do PIB e PIB per capita entre estados, analise a participação do Top 5 nacional e projete cenários futuros.
-                        </p>
-                    </div>
-
-                    <div class="din-secondary-bg border din-border rounded-xl p-3.5 space-y-2 text-xs">
-                        <p class="font-bold din-text-main uppercase tracking-wider text-[10px]">Funcionalidades deste painel:</p>
-                        <ul class="space-y-1.5 din-text-muted">
-                            <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
-                                Mapa de calor estadual por volume de PIB e renda per capita.
-                            </li>
-                            <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
-                                Decomposição real do Valor Adicionado (Agro, Indústria, Serviços e Adm. Pública).
-                            </li>
-                            <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
-                                Simulador "E se...?" de crescimento + Consultor Econômico IA integrado ao PostgreSQL.
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="pt-5 mt-5 flex items-center justify-between">
-                    <span class="text-xs din-text-muted">Dados e estatísticas (SIDRA 5938)</span>
-                    <a href="terminal-pib.html" class="din-green text-xs font-bold inline-flex items-center gap-1.5 hover:opacity-80 transition">
-                        <span>Explorar dados</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-
-            <!-- MÓDULO 02: Impostos, População & IDH -->
-            <div onclick="window.location.href='imposto-idh.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between gap-4">
-                        <div class="w-11 h-11 rounded-xl din-icon-box flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                <circle cx="12" cy="12" r="3"></circle>
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 2v4m0 12v4M2 12h4m12 0h4"></path>
-                            </svg>
-                        </div>
-                        <span class="text-xs font-medium din-text-muted">
-                            02 / 05
-                        </span>
-                    </div>
-
-                    <div>
-                        <h3 class="text-lg font-bold din-text-main">
-                            Carga Tributária, Demografia & IDH
-                        </h3>
-                        <p class="text-xs sm:text-sm din-text-muted mt-2 leading-relaxed">
-                            Análise cruzada entre quanto cada estado arrecada em impostos, o tamanho da sua população e o retorno efetivo em qualidade de vida medido pelo Índice de Desenvolvimento Humano (IDH).
-                        </p>
-                    </div>
-
-                    <div class="din-secondary-bg border din-border rounded-xl p-3.5 space-y-2 text-xs">
-                        <p class="font-bold din-text-main uppercase tracking-wider text-[10px]">Funcionalidades deste painel:</p>
-                        <ul class="space-y-1.5 din-text-muted">
-                            <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
-                                Mapa interativo do Brasil com camadas de IDH Estadual, População e Impostos.
-                            </li>
-                            <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
-                                Gráfico de dispersão: Arrecadação per capita vs. IDH (retorno social dos tributos).
-                            </li>
-                            <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
-                                Evolução demográfica e pirâmide de densidade populacional das 27 UFs.
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="pt-5 mt-5 flex items-center justify-between">
-                    <span class="text-xs din-text-muted">Arrecadação tributária e IDH</span>
-                    <a href="imposto-idh.html" class="din-green text-xs font-bold inline-flex items-center gap-1.5 hover:opacity-80 transition">
-                        <span>Acessar ferramenta</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-
-            <!-- MÓDULO 03: Câmbio & Conversor de Moedas -->
-            <div onclick="window.location.href='cambio.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between gap-4">
-                        <div class="w-11 h-11 rounded-xl din-icon-box flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
-                            </svg>
-                        </div>
-                        <span class="text-xs font-medium din-text-muted">
-                            03 / 05
-                        </span>
-                    </div>
-
-                    <div>
-                        <h3 class="text-lg font-bold din-text-main">
-                            Conversor de Moedas & Paridade Cambial
-                        </h3>
-                        <p class="text-xs sm:text-sm din-text-muted mt-2 leading-relaxed">
-                            Ferramenta de conversão monetária instantânea e acompanhamento da taxa de câmbio comercial. Converta valores em Reais (BRL) para Dólar (USD), Euro (EUR), Libra (GBP), Iene (JPY) e Yuan (CNY).
-                        </p>
-                    </div>
-
-                    <div class="din-secondary-bg border din-border rounded-xl p-3.5 space-y-2 text-xs">
-                        <p class="font-bold din-text-main uppercase tracking-wider text-[10px]">Funcionalidades deste painel:</p>
-                        <ul class="space-y-1.5 din-text-muted">
-                            <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
-                                Calculadora bidirecional rápida com cotações atualizadas via API.
-                            </li>
-                            <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
-                                Conversão automática do PIB Estadual e PIB per capita brasileiro para Dólares (USD).
-                            </li>
-                            <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
-                                Gráfico histórico de oscilação cambial e comparativo de poder de compra.
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="pt-5 mt-5 flex items-center justify-between">
-                    <span class="text-xs din-text-muted">Câmbio e conversões</span>
-                    <a href="cambio.html" class="din-green text-xs font-bold inline-flex items-center gap-1.5 hover:opacity-80 transition">
-                        <span>Converter valores</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-
-            <!-- MÓDULO 04: Simulador de Selic, Juros & Inflação -->
-            <div onclick="window.location.href='simulador-selic.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between gap-4">
-                        <div class="w-11 h-11 rounded-xl din-icon-box flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <span class="text-xs font-medium din-text-muted">
-                            04 / 05
-                        </span>
-                    </div>
-
-                    <div>
-                        <h3 class="text-lg font-bold din-text-main">
-                            Simulador Selic, Juros Reais & Inflação
-                        </h3>
-                        <p class="text-xs sm:text-sm din-text-muted mt-2 leading-relaxed">
-                            Painel de acompanhamento da política monetária do Banco Central do Brasil. Simule o rendimento de capital, o custo do crédito e o efeito dos juros compostos descontando a inflação (IPCA).
-                        </p>
-                    </div>
-
-                    <div class="din-secondary-bg border din-border rounded-xl p-3.5 space-y-2 text-xs">
-                        <p class="font-bold din-text-main uppercase tracking-wider text-[10px]">Funcionalidades deste painel:</p>
-                        <ul class="space-y-1.5 din-text-muted">
-                            <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
-                                Simulador interativo da Taxa Selic vs. IPCA (cálculo de Juro Real ex-ante e ex-post).
-                            </li>
-                            <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
-                                Projeção de rendimento em Renda Fixa (Tesouro Selic, CDB/CDI vs. Poupança).
-                            </li>
-                            <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
-                                Histórico da curva de juros básica e impacto no custo da dívida pública.
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="pt-5 mt-5 flex items-center justify-between">
-                    <span class="text-xs din-text-muted">Juros e investimentos</span>
-                    <a href="simulador-selic.html" class="din-green text-xs font-bold inline-flex items-center gap-1.5 hover:opacity-80 transition">
-                        <span>Simular investimentos</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-
-            <!-- MÓDULO 05: Panorama Global, PIB Mundial & Blocos Econômicos -->
-            <a href="mundo.html" class="group din-card-bg border din-border rounded-2xl p-6 shadow-sm card-hover flex flex-col justify-between space-y-5 md:col-span-2">
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between gap-4">
-                        <div class="w-11 h-11 rounded-xl din-icon-box flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <line x1="2" y1="12" x2="22" y2="12"></line>
-                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                            </svg>
-                        </div>
-                        <span class="text-xs font-medium din-text-muted">
-                            05 / 05
-                        </span>
-                    </div>
-
-                    <div>
-                        <h3 class="text-lg font-bold din-text-main group-hover:din-green transition-colors">
-                            Panorama Global, PIB Mundial & Blocos Econômicos
-                        </h3>
-                        <p class="text-xs sm:text-sm din-text-muted mt-2 leading-relaxed">
-                            Mapa-múndi interativo com indicadores econômicos, demográficos e tributários. Filtre por continentes e blocos (G7, G20, Mercosul, União Europeia e BRICS+), acompanhe séries históricas e compare até 3 países lado a lado.
-                        </p>
-                    </div>
-
-                    <div class="din-secondary-bg border din-border rounded-xl p-3.5 space-y-2 text-xs">
-                        <p class="font-bold din-text-main uppercase tracking-wider text-[10px]">Funcionalidades deste painel:</p>
-                        <ul class="space-y-1.5 din-text-muted">
-                            <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
-                                Mapa-múndi com zoom, busca por país, camadas de PIB, IDH, impostos e filtros por bloco.
-                            </li>
-                            <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
-                                Raio-X completo por país com histórico de moeda, PIB e população (5d a 2 anos).
-                            </li>
-                            <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
-                                Rankings globais (Top 5, 10 e 20) e comparador multi-país (ex: Brasil × EUA × China).
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="pt-5 mt-5 border-t din-border flex items-center justify-between">
-                    <span class="text-xs din-text-muted">Economia global e blocos</span>
-                    <span class="din-green text-xs font-bold inline-flex items-center gap-1.5 group-hover:translate-x-1 transition-transform">
-                        <span>Explorar mapa global</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                        </svg>
-                    </span>
-                </div>
-            </a>
-
-        </main>
-
-        <!-- Card Informativo Inferior -->
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 pb-12">
-            <div class="din-card-bg border din-border rounded-2xl p-5 flex items-start sm:items-center gap-4 shadow-sm">
-                <div class="w-8 h-8 rounded-full din-icon-box flex items-center justify-center shrink-0">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="16" x2="12" y2="12"></line>
-                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                    </svg>
-                </div>
-                <div>
-                    <h4 class="text-xs font-bold din-text-main">Informação econômica em um só lugar</h4>
-                    <p class="text-xs din-text-muted mt-0.5">
-                        O BrasilEmDados reúne ferramentas e indicadores oficiais (IBGE, Banco Central e Tesouro Nacional) para facilitar a consulta, análise e compreensão da economia brasileira.
-                    </p>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <!-- Rodapé Institucional Limpo -->
-    <footer class="border-t din-border din-card-bg py-6 text-xs din-text-muted">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-2">
-                <span class="font-bold din-text-main">BrasilEmDados</span>
-                <span>•</span>
-                <span>Terminal de Inteligência Econômica e Setorial</span>
-            </div>
-            <div class="flex items-center gap-4">
-                <a href="glossario.html" class="hover:din-text-main transition">Glossário</a>
-                <a href="sobre.html" class="hover:din-text-main transition">Sobre</a>
-                <a href="contato.html" class="hover:din-text-main transition">Contato</a>
-            </div>
+          </a>
         </div>
-    </footer>
 
-    <script>
-        function toggleDropdownMenu() {
-            const menu = document.getElementById('dropdownMenu');
-            menu.classList.toggle('hidden');
-        }
+        <nav class="hidden md:flex items-center gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+          <a href="index.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Início</a>
+          <a href="glossario.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Glossário</a>
+          <a href="economia.html" class="px-3.5 py-1.5 rounded-md din-card-bg din-text-main shadow-sm border din-border transition">Economia</a>
+          <a href="sobre.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Sobre</a>
+          <a href="contato.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Contato</a>
+        </nav>
 
-        window.addEventListener('click', function(e) {
-            const btn = document.getElementById('menuDropdownBtn');
-            const menu = document.getElementById('dropdownMenu');
-            if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) {
-                menu.classList.add('hidden');
-            }
-        });
+        <div class="flex items-center gap-2.5 relative">
+          <button onclick="alternarModoApresentacao()" id="btnModoApresentacao" class="hidden lg:inline-flex items-center gap-1.5 din-secondary-bg hover:opacity-80 border din-border din-text-main text-xs font-semibold px-3 py-1.5 rounded-lg transition">
+            <svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line>
+              <line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line>
+            </svg>
+            <span>Modo Tela Cheia</span>
+          </button>
 
-        function alternarDarkLight() {
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            const novoTema = isDark ? 'light' : 'dark';
-            aplicarTema(novoTema);
-            localStorage.setItem('brasil_em_dados_tema', novoTema);
-        }
+          <button id="menuDropdownBtn" onclick="toggleDropdownMenu()" title="Preferências e Ferramentas" class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center hover:border-[#16C784] transition cursor-pointer">
+            <svg class="w-4 h-4 din-text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line>
+              <line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line>
+              <line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line>
+              <line x1="17" y1="16" x2="23" y2="16"></line>
+            </svg>
+          </button>
 
-        function aplicarTema(tema) {
-            const html = document.documentElement;
-            const switchBg = document.getElementById('switchBg');
-            const switchBall = document.getElementById('switchBall');
+          <div id="dropdownMenu" class="hidden absolute right-0 top-11 w-64 rounded-xl din-card-bg border din-border shadow-2xl py-1.5 z-50">
+            <div class="px-4 py-1.5 border-b din-border">
+              <p class="text-[10px] font-bold uppercase tracking-wider din-text-muted">Ferramentas do Terminal</p>
+            </div>
+            <a href="economia.html" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+              <svg class="w-4 h-4 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+              Voltar ao Hub Economia
+            </a>
+            <a href="#secaoRankings" onclick="toggleDropdownMenu()" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+              <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+              Rankings Globais
+            </a>
+            <a href="#secaoComparador" onclick="toggleDropdownMenu()" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+              <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M7 14l4-4 4 4 5-5"></path></svg>
+              Comparador Multi-País
+            </a>
+            <button onclick="window.print(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left">
+              <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              Exportar Relatório (PDF)
+            </button>
+            <div class="my-1 border-t din-border"></div>
+            <div class="flex items-center justify-between px-4 py-2.5 text-xs font-medium din-text-main cursor-pointer select-none" onclick="alternarDarkLight()">
+              <div class="flex items-center gap-3">
+                <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                <span>Modo Escuro (Dark)</span>
+              </div>
+              <div id="switchBg" class="w-10 h-5 rounded-full relative transition-colors duration-200 p-0.5 flex items-center" style="background-color: var(--border-col);">
+                <div id="switchBall" class="w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-200"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-            if (tema === 'dark') {
-                html.setAttribute('data-theme', 'dark');
-                if (switchBg && switchBall) {
-                    switchBg.style.backgroundColor = '#16C784';
-                    switchBall.classList.add('translate-x-5');
-                }
-            } else {
-                html.removeAttribute('data-theme');
-                if (switchBg && switchBall) {
-                    switchBg.style.backgroundColor = '#E5E7EB';
-                    switchBall.classList.remove('translate-x-5');
-                }
-            }
-        }
+      <nav class="flex md:hidden items-center gap-5 h-10 overflow-x-auto no-scrollbar text-xs font-semibold border-t din-border">
+        <a href="index.html" class="din-text-muted hover:din-text-main h-full flex items-center">Início</a>
+        <a href="glossario.html" class="din-text-muted hover:din-text-main h-full flex items-center">Glossário</a>
+        <a href="economia.html" class="din-green border-b-2 border-[#16C784] h-full flex items-center">Economia</a>
+        <a href="sobre.html" class="din-text-muted hover:din-text-main h-full flex items-center">Sobre</a>
+        <a href="contato.html" class="din-text-muted hover:din-text-main h-full flex items-center">Contato</a>
+      </nav>
+    </div>
+  </header>
 
-        window.onload = () => {
-            const temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light';
-            aplicarTema(temaSalvo === 'dark' ? 'dark' : 'light');
-        };
-    </script>
+  <!-- Breadcrumb + Status -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex flex-wrap items-center justify-between gap-2 text-xs ocultar-em-presentation">
+    <div class="flex items-center gap-2 din-text-muted">
+      <a href="economia.html" class="hover:din-green font-semibold inline-flex items-center gap-1 transition">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        Economia e indicadores
+      </a>
+      <span>/</span>
+      <span class="din-text-main font-bold">Mapa-Múndi & Indicadores Globais</span>
+    </div>
+    <span id="statusCambio" class="din-text-muted">Câmbio comercial em sincronia</span>
+  </div>
+
+  <!-- Tooltip do Mapa -->
+  <div id="mapTip" class="pointer-events-none fixed z-50 hidden px-3 py-2 rounded-lg text-xs shadow-lg border din-border din-card-bg">
+    <p id="tipNome" class="font-bold din-text-main"></p>
+    <p id="tipVal" class="din-green font-semibold mt-0.5"></p>
+    <p class="text-[10px] din-text-muted mt-0.5">Clique para abrir o raio-x do país</p>
+  </div>
+
+  <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-5 space-y-6">
+
+    <!-- 1. FILTROS ORGANIZADOS POR CATEGORIA + BUSCA -->
+    <section class="din-card-bg border din-border rounded-xl p-4 shadow-sm space-y-3 ocultar-em-presentation">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+        <!-- Abas de Categorias de Filtro -->
+        <div class="flex flex-wrap items-center gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+          <button id="catGeo" type="button" onclick="setCategoriaFiltro('geo')" class="px-2.5 py-1.5 rounded-md din-card-bg din-text-main border din-border transition">Continentes e regiões</button>
+          <button id="catBlocos" type="button" onclick="setCategoriaFiltro('blocos')" class="px-2.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Blocos econômicos</button>
+          <button id="catGeopol" type="button" onclick="setCategoriaFiltro('geopol')" class="px-2.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Geopolítica</button>
+          <button id="catDesenv" type="button" onclick="setCategoriaFiltro('desenv')" class="px-2.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Desenvolvimento econômico</button>
+          <button id="catRank" type="button" onclick="setCategoriaFiltro('rank')" class="px-2.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Rankings mundiais</button>
+        </div>
+
+        <!-- Busca rápida + Limpar filtro -->
+        <div class="flex items-center gap-2 w-full lg:w-auto">
+          <div class="flex-1 lg:w-60">
+            <input id="inpBuscaPais" list="listaPaises" placeholder="Buscar país..." class="inp" oninput="buscarPais(this.value)">
+            <datalist id="listaPaises"></datalist>
+          </div>
+          <button type="button" onclick="limparFiltros()" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main transition shrink-0">
+            Todos os países
+          </button>
+        </div>
+      </div>
+
+      <!-- Painel de Opções da Categoria Ativa -->
+      <div class="pt-2.5 border-t din-border space-y-2">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <span id="lblCategoriaAtiva" class="text-[10px] font-bold uppercase tracking-wider din-text-muted">Continentes e regiões</span>
+          <span id="filtroAtivoBadge" class="text-[11px] font-semibold din-green">Filtro: Todos os países</span>
+        </div>
+        <div id="opcoesFiltro" class="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto pr-1"></div>
+      </div>
+    </section>
+
+    <!-- 2. MAPA-MÚNDI AMPLIADO (PROTAGONISTA HORIZONTAL) -->
+    <section class="din-card-bg border din-border rounded-xl p-5 shadow-sm space-y-3">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 class="text-lg sm:text-xl font-extrabold din-text-main">Mapa-múndi econômico</h1>
+          <p id="mapFiltroDesc" class="text-xs din-text-muted">Visualizando todos os países · arraste para mover e use os botões de zoom.</p>
+        </div>
+        <select id="mapIndicador" class="inp !w-auto text-xs font-semibold" onchange="pintarMapa()">
+          <option value="pib">PIB nominal (US$)</option>
+          <option value="pibPc">PIB per capita (US$)</option>
+          <option value="idh">IDH</option>
+          <option value="pop">População</option>
+          <option value="imposto">Carga tributária (% PIB)</option>
+          <option value="cresc">Crescimento PIB (%)</option>
+          <option value="infla">Inflação anual (%)</option>
+          <option value="moedaBRL">Valor da moeda (em BRL)</option>
+        </select>
+      </div>
+
+      <!-- Área SVG Ampla com Zoom e Pan -->
+      <div id="mapContainer" class="relative w-full rounded-lg din-secondary-bg border din-border overflow-hidden h-[430px] sm:h-[520px] lg:h-[560px] flex items-center justify-center">
+        <div id="mapLoading" class="text-xs din-text-muted">Carregando mapa-múndi…</div>
+        <svg id="mapaMundo" class="w-full h-full hidden select-none"></svg>
+
+        <!-- Controles de Zoom -->
+        <div class="absolute bottom-3 right-3 flex flex-col gap-1 z-10">
+          <button type="button" onclick="ajustarZoom(1.35)" title="Aproximar" class="w-8 h-8 rounded-lg din-card-bg border din-border din-text-main font-bold text-sm shadow hover:border-[#16C784] transition">+</button>
+          <button type="button" onclick="ajustarZoom(0.75)" title="Afastar" class="w-8 h-8 rounded-lg din-card-bg border din-border din-text-main font-bold text-sm shadow hover:border-[#16C784] transition">−</button>
+          <button type="button" onclick="resetZoom()" title="Resetar visão" class="w-8 h-8 rounded-lg din-card-bg border din-border din-text-muted font-bold text-[11px] shadow hover:border-[#16C784] transition">1:1</button>
+        </div>
+      </div>
+
+      <!-- Legenda -->
+      <div class="pt-1 flex items-center justify-between gap-3 text-[11px] din-text-muted">
+        <span id="legMin">Menor</span>
+        <div class="flex-1 h-2 rounded-full max-w-xs" style="background: linear-gradient(90deg, rgba(22,199,132,0.16), #16C784);"></div>
+        <span id="legMax">Maior</span>
+      </div>
+    </section>
+
+    <!-- 3. RAIO-X DO PAÍS SELECIONADO (ABAIXO DO MAPA, SEM COMPRIMIR A TELA) -->
+    <section id="secaoRaioX" class="din-card-bg border din-border rounded-xl p-5 shadow-sm space-y-4">
+      <!-- Cabeçalho do País -->
+      <div class="flex flex-wrap items-start justify-between gap-3 pb-3 border-b din-border">
+        <div class="flex items-center gap-3">
+          <span id="rxBand" class="text-3xl leading-none select-none">🇧🇷</span>
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <h2 id="rxNome" class="text-xl font-extrabold din-text-main">Brasil</h2>
+              <span id="rxBlocos" class="text-[10px] px-2 py-0.5 rounded din-secondary-bg border din-border din-text-muted font-semibold">G20 · BRICS+ · Mercosul</span>
+            </div>
+            <p id="rxMeta" class="text-xs din-text-muted mt-0.5">América do Sul · Capital: Brasília</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <span id="rxMoedaCod" class="text-xs font-mono font-bold din-green block">BRL</span>
+          <span id="rxMoedaBrl" class="text-xs font-bold din-text-main">R$ 1,00</span>
+        </div>
+      </div>
+
+      <!-- Resumo Moeda & Direção -->
+      <div class="din-secondary-bg border din-border rounded-lg p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div>
+          <span class="din-text-muted">Moeda:</span>
+          <strong id="rxMoedaNome" class="din-text-main">Real Brasileiro</strong>
+          <span id="rxIdiomaArea" class="din-text-muted block text-[11px] mt-0.5">Idioma: Português · Área: 8,51 mi km²</span>
+        </div>
+        <div id="rxTendencia" class="text-right font-bold din-green">—</div>
+      </div>
+
+      <!-- 3 Sub-Abas do Raio-X -->
+      <div class="grid grid-cols-3 gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold max-w-xl">
+        <button id="abaRxEcon" type="button" onclick="setAbaRx('econ')" class="py-1.5 rounded-md din-card-bg din-text-main border din-border transition">Economia & Impostos</button>
+        <button id="abaRxSocial" type="button" onclick="setAbaRx('social')" class="py-1.5 rounded-md din-text-muted transition">IDH & População</button>
+        <button id="abaRxHist" type="button" onclick="setAbaRx('hist')" class="py-1.5 rounded-md din-text-muted transition">Histórico & Gráfico</button>
+      </div>
+
+      <!-- Sub-Aba 1: Economia, Dívida, Reservas & Impostos -->
+      <div id="viewRxEcon" class="space-y-3">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 text-xs">
+          <div class="din-secondary-bg rounded-lg p-3">
+            <span class="text-[11px] din-text-muted block">PIB nominal</span>
+            <strong id="rxPib" class="text-sm font-extrabold din-green">—</strong>
+          </div>
+          <div class="din-secondary-bg rounded-lg p-3">
+            <span class="text-[11px] din-text-muted block">PIB per capita</span>
+            <strong id="rxPibPc" class="text-sm font-extrabold din-text-main">—</strong>
+          </div>
+          <div class="din-secondary-bg rounded-lg p-3">
+            <span class="text-[11px] din-text-muted block">Crescimento do PIB</span>
+            <strong id="rxCresc" class="text-sm font-bold">—</strong>
+          </div>
+          <div class="din-secondary-bg rounded-lg p-3">
+            <span class="text-[11px] din-text-muted block">Inflação anual</span>
+            <strong id="rxInfla" class="text-sm font-bold din-red">—</strong>
+          </div>
+          <div class="din-secondary-bg rounded-lg p-3">
+            <span class="text-[11px] din-text-muted block">Dívida pública (% PIB)</span>
+            <strong id="rxDivida" class="text-sm font-bold din-text-main">—</strong>
+          </div>
+          <div class="din-secondary-bg rounded-lg p-3">
+            <span class="text-[11px] din-text-muted block">Reservas internacionais</span>
+            <strong id="rxReservas" class="text-sm font-bold din-text-main">—</strong>
+          </div>
+        </div>
+
+        <div class="din-secondary-bg border din-border rounded-lg p-3 text-xs flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <span class="font-semibold din-text-main block">Carga tributária</span>
+            <span id="rxImpPct" class="din-green font-bold text-sm">—</span>
+          </div>
+          <div class="text-right">
+            <span class="text-[11px] din-text-muted block">Arrecadação anual est.</span>
+            <strong id="rxArrecTotal" class="din-text-main">—</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-Aba 2: IDH & População -->
+      <div id="viewRxSocial" class="hidden space-y-3 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div class="din-secondary-bg rounded-lg p-3">
+            <span class="text-[11px] din-text-muted block">IDH</span>
+            <strong id="rxIdh" class="text-lg font-extrabold din-green">—</strong>
+            <span id="rxIdhClass" class="text-[11px] din-text-muted block">—</span>
+          </div>
+          <div class="din-secondary-bg rounded-lg p-3">
+            <span class="text-[11px] din-text-muted block">População total</span>
+            <strong id="rxPop" class="text-lg font-extrabold din-text-main">—</strong>
+            <span id="rxSalMed" class="text-[11px] din-text-muted block">—</span>
+          </div>
+        </div>
+        <p id="rxResumoSocial" class="din-secondary-bg border din-border rounded-lg p-3 din-text-muted leading-relaxed"></p>
+      </div>
+
+      <!-- Sub-Aba 3: Mini Gráfico Histórico (5d, 1m, 3m, 2a + 3 tipos de gráfico) -->
+      <div id="viewRxHist" class="hidden space-y-2.5">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 max-w-2xl">
+          <select id="histSerieTipo" class="inp text-[11px] py-1.5" onchange="renderMiniGrafico()">
+            <option value="moeda">Moeda (vs BRL)</option>
+            <option value="pib">PIB (2 anos)</option>
+            <option value="pop">População (2 anos)</option>
+          </select>
+          <select id="histPeriodo" class="inp text-[11px] py-1.5" onchange="renderMiniGrafico()">
+            <option value="5d">5 dias</option>
+            <option value="1m">1 mês</option>
+            <option value="3m" selected>3 meses</option>
+            <option value="2a">2 anos</option>
+          </select>
+          <select id="histTipoGraf" class="inp text-[11px] py-1.5" onchange="renderMiniGrafico()">
+            <option value="line">Linha</option>
+            <option value="area">Área</option>
+            <option value="bar">Barras</option>
+          </select>
+        </div>
+
+        <div class="h-[220px] din-secondary-bg/50 rounded-lg p-2 border din-border">
+          <canvas id="grafMiniPais"></canvas>
+        </div>
+        <p id="histExplicacao" class="text-[11px] din-text-muted leading-relaxed"></p>
+      </div>
+    </section>
+
+    <!-- 4. RANKINGS GLOBAIS (Top 5 / Top 10 / Top 20) -->
+    <section id="secaoRankings" class="din-card-bg border din-border rounded-xl p-5 shadow-sm space-y-4 ocultar-em-presentation">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-base font-extrabold din-text-main">Rankings globais</h2>
+          <p id="rkDescricao" class="text-xs din-text-muted">Economias mais fortes em valor total</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <select id="rkMetrica" class="inp !w-auto text-xs font-semibold" onchange="renderRanking()">
+            <option value="pib">Maiores PIBs</option>
+            <option value="pibPc">Maior PIB per capita</option>
+            <option value="idh">Maior IDH</option>
+            <option value="pop">Maior população</option>
+            <option value="cresc">Maior crescimento (%)</option>
+            <option value="inflaAsc">Menor inflação (%)</option>
+            <option value="moedaBRL">Maiores moedas (em BRL)</option>
+            <option value="imposto">Maior carga tributária</option>
+          </select>
+
+          <div class="inline-flex din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+            <button id="top5Btn" type="button" onclick="setTopN(5)" class="px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border transition">Top 5</button>
+            <button id="top10Btn" type="button" onclick="setTopN(10)" class="px-2.5 py-1 rounded-md din-text-muted transition">Top 10</button>
+            <button id="top20Btn" type="button" onclick="setTopN(20)" class="px-2.5 py-1 rounded-md din-text-muted transition">Top 20</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="gridRanking" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3"></div>
+    </section>
+
+    <!-- 5. COMPARADOR MULTI-PAÍS (2 ou 3 países) -->
+    <section id="secaoComparador" class="din-card-bg border din-border rounded-xl p-5 shadow-sm space-y-5">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-base font-extrabold din-text-main">Comparador multi-país</h2>
+          <p class="text-xs din-text-muted">Compare até 3 países lado a lado em PIB, renda, população, IDH, impostos, dívida, salário e moeda.</p>
+        </div>
+        <select id="compGrafMetrica" class="inp !w-auto text-xs font-semibold" onchange="renderComparadorMulti()">
+          <option value="pibPc">Gráfico: PIB per capita (US$)</option>
+          <option value="pib">Gráfico: PIB Nominal (US$ bi)</option>
+          <option value="idh">Gráfico: IDH</option>
+          <option value="imposto">Gráfico: Carga tributária (%)</option>
+          <option value="divida">Gráfico: Dívida pública (% PIB)</option>
+          <option value="salMed">Gráfico: Salário médio (US$/mês)</option>
+          <option value="cresc">Gráfico: Crescimento (%)</option>
+          <option value="infla">Gráfico: Inflação (%)</option>
+        </select>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <label class="text-xs font-semibold din-text-main">País 1
+          <select id="cmp1" class="inp mt-1" onchange="renderComparadorMulti()"></select>
+        </label>
+        <label class="text-xs font-semibold din-text-main">País 2
+          <select id="cmp2" class="inp mt-1" onchange="renderComparadorMulti()"></select>
+        </label>
+        <label class="text-xs font-semibold din-text-main">País 3 (opcional — escolha "Nenhum")
+          <select id="cmp3" class="inp mt-1" onchange="renderComparadorMulti()"></select>
+        </label>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div class="lg:col-span-7 overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead><tr id="cmpThead" class="din-text-muted border-b din-border"></tr></thead>
+            <tbody id="cmpTbody" class="divide-y din-border"></tbody>
+          </table>
+        </div>
+
+        <div class="lg:col-span-5 space-y-3">
+          <div class="h-[240px] din-secondary-bg/40 rounded-lg p-3 border din-border">
+            <canvas id="grafComparador"></canvas>
+          </div>
+          <p id="cmpAnalise" class="text-xs din-secondary-bg border din-border rounded-lg p-3 din-text-muted leading-relaxed"></p>
+        </div>
+      </div>
+    </section>
+
+    <p class="text-xs din-text-muted leading-relaxed ocultar-em-presentation">
+      <strong class="din-text-main">Fontes e escopo.</strong> Cotações de moedas consultam taxa comercial ao vivo (ExchangeRate-API / Frankfurter) quando disponível, com referência em Reais (BRL). Indicadores macroeconômicos, demográficos, tributários, classificações geopolíticas/econômicas e séries de 2 anos consolidam referências públicas internacionais para consulta e análise comparativa.
+    </p>
+  </main>
+</div>
+
+<!-- Rodapé Institucional -->
+<footer class="border-t din-border din-card-bg py-6 text-xs din-text-muted mt-8 ocultar-em-presentation">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+    <div class="flex items-center gap-2">
+      <span class="font-bold din-text-main">BrasilEmDados</span>
+      <span>•</span>
+      <span>Terminal de Inteligência Econômica e Setorial</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <a href="index.html" class="hover:din-text-main transition">Início</a>
+      <a href="economia.html" class="hover:din-text-main transition">Economia</a>
+      <a href="glossario.html" class="hover:din-text-main transition">Glossário</a>
+      <a href="sobre.html" class="hover:din-text-main transition">Sobre</a>
+      <a href="contato.html" class="din-text-main font-semibold">Globo</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const $ = i => document.getElementById(i);
+const BD = {
+  brl: (v, d = 2) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: d, maximumFractionDigits: d }),
+  usd: (v, d = 0) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'USD', minimumFractionDigits: d, maximumFractionDigits: d }),
+  num: (v, d = 0) => v.toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d }),
+  pibFmt: bi => bi >= 1000 ? `US$ ${BD.num(bi / 1000, 2)} tri` : `US$ ${BD.num(bi, 0)} bi`,
+  popFmt: mi => mi >= 1000 ? `${BD.num(mi / 1000, 2)} bi` : `${BD.num(mi, 1)} mi`,
+  cor: () => { const d = document.documentElement.getAttribute('data-theme') === 'dark'; return { tx: d ? '#F5F6F7' : '#17191C', mu: d ? '#9299A3' : '#737780', grid: d ? '#2B3036' : '#E5E7EB' }; }
+};
+
+// Base consolidada com divisões geográficas, blocos, geopolítica, desenvolvimento e rankings
+const PAISES = [
+  { iso3:'BRA', nome:'Brasil', band:'🇧🇷', cont:'Américas', regiaoGeo:'América do Sul', moeda:'BRL', mNome:'Real Brasileiro', idioma:'Português', area:'8,51 mi km²', pib:2180, pop:212.6, idh:0.760, imposto:33.0, cresc:2.9, infla:4.4, divida:77.0, reservas:355, salMed:620, moedaBRL:1.0,
+    blocos:['G20','BRICS+','Mercosul'], geopol:['Sul Global','América Latina','Países Não Alinhados'], desenv:['Países em desenvolvimento','Economias emergentes'],
+    rankings:['Maiores economias do mundo','Maiores populações','Países produtores de petróleo','Economias mais industrializadas'] },
+  { iso3:'USA', nome:'Estados Unidos', band:'🇺🇸', cont:'Américas', regiaoGeo:'América do Norte', moeda:'USD', mNome:'Dólar Americano', idioma:'Inglês', area:'9,83 mi km²', pib:28780, pop:335.9, idh:0.927, imposto:27.1, cresc:2.5, infla:2.9, divida:122.0, reservas:245, salMed:5100, moedaBRL:5.80,
+    blocos:['G7','G20','USMCA','APEC'], geopol:['Ocidente','Norte Global','América Anglo-Saxônica'], desenv:['Países desenvolvidos'],
+    rankings:['Maiores economias do mundo','Maiores populações','Maiores exportadores','Maiores importadores','Potências militares','Potências energéticas','Países produtores de petróleo','Principais centros financeiros','Economias mais industrializadas','Países com maior participação no comércio mundial'] },
+  { iso3:'CHN', nome:'China', band:'🇨🇳', cont:'Ásia', regiaoGeo:'Ásia Oriental', moeda:'CNY', mNome:'Yuan Chinês', idioma:'Mandarim', area:'9,60 mi km²', pib:18530, pop:1409.7, idh:0.788, imposto:21.5, cresc:4.8, infla:0.4, divida:88.0, reservas:3260, salMed:1350, moedaBRL:0.80,
+    blocos:['G20','BRICS+','APEC'], geopol:['Oriente','Sul Global','Eurásia'], desenv:['Países em desenvolvimento','Economias emergentes'],
+    rankings:['Maiores economias do mundo','Maiores populações','Maiores exportadores','Maiores importadores','Potências militares','Potências energéticas','Principais centros financeiros','Economias mais industrializadas','Países com maior participação no comércio mundial'] },
+  { iso3:'DEU', nome:'Alemanha', band:'🇩🇪', cont:'Europa', regiaoGeo:'Europa Central', moeda:'EUR', mNome:'Euro', idioma:'Alemão', area:'357 mil km²', pib:4590, pop:84.5, idh:0.950, imposto:41.2, cresc:0.1, infla:2.2, divida:64.0, reservas:310, salMed:4450, moedaBRL:6.28,
+    blocos:['G7','G20','União Europeia'], geopol:['Ocidente','Norte Global','Eurásia'], desenv:['Países desenvolvidos'],
+    rankings:['Maiores economias do mundo','Maiores exportadores','Maiores importadores','Principais centros financeiros','Economias mais industrializadas','Países com maior participação no comércio mundial'] },
+  { iso3:'JPN', nome:'Japão', band:'🇯🇵', cont:'Ásia', regiaoGeo:'Ásia Oriental', moeda:'JPY', mNome:'Iene Japonês', idioma:'Japonês', area:'378 mil km²', pib:4110, pop:124.0, idh:0.920, imposto:34.1, cresc:0.3, infla:2.5, divida:252.0, reservas:1230, salMed:3100, moedaBRL:0.038,
+    blocos:['G7','G20','APEC','CPTPP'], geopol:['Ocidente','Oriente','Norte Global'], desenv:['Países desenvolvidos'],
+    rankings:['Maiores economias do mundo','Maiores populações','Principais centros financeiros','Economias mais industrializadas','Países com maior participação no comércio mundial'] },
+  { iso3:'IND', nome:'Índia', band:'🇮🇳', cont:'Ásia', regiaoGeo:'Ásia Meridional', moeda:'INR', mNome:'Rupia Indiana', idioma:'Hindi / Inglês', area:'3,29 mi km²', pib:3940, pop:1428.6, idh:0.644, imposto:18.0, cresc:6.8, infla:4.8, divida:83.0, reservas:680, salMed:430, moedaBRL:0.069,
+    blocos:['G20','BRICS+'], geopol:['Oriente','Sul Global','Países Não Alinhados'], desenv:['Países em desenvolvimento','Economias emergentes'],
+    rankings:['Maiores economias do mundo','Maiores populações','Potências militares','Potências energéticas','Economias mais industrializadas'] },
+  { iso3:'GBR', nome:'Reino Unido', band:'🇬🇧', cont:'Europa', regiaoGeo:'Europa Setentrional', moeda:'GBP', mNome:'Libra Esterlina', idioma:'Inglês', area:'242 mil km²', pib:3495, pop:68.3, idh:0.940, imposto:35.3, cresc:0.9, infla:2.6, divida:101.0, reservas:175, salMed:4200, moedaBRL:7.48,
+    blocos:['G7','G20'], geopol:['Ocidente','Norte Global'], desenv:['Países desenvolvidos'],
+    rankings:['Maiores economias do mundo','Maiores importadores','Potências militares','Principais centros financeiros','Países com maior participação no comércio mundial'] },
+  { iso3:'FRA', nome:'França', band:'🇫🇷', cont:'Europa', regiaoGeo:'Europa Ocidental', moeda:'EUR', mNome:'Euro', idioma:'Francês', area:'551 mil km²', pib:3130, pop:68.1, idh:0.910, imposto:45.6, cresc:1.1, infla:2.0, divida:112.0, reservas:250, salMed:3950, moedaBRL:6.28,
+    blocos:['G7','G20','União Europeia'], geopol:['Ocidente','Norte Global','Eurásia'], desenv:['Países desenvolvidos'],
+    rankings:['Maiores economias do mundo','Maiores exportadores','Potências militares','Principais centros financeiros','Economias mais industrializadas'] },
+  { iso3:'ITA', nome:'Itália', band:'🇮🇹', cont:'Europa', regiaoGeo:'Europa Meridional', moeda:'EUR', mNome:'Euro', idioma:'Italiano', area:'301 mil km²', pib:2328, pop:58.9, idh:0.906, imposto:42.8, cresc:0.7, infla:1.3, divida:137.0, reservas:235, salMed:3150, moedaBRL:6.28,
+    blocos:['G7','G20','União Europeia'], geopol:['Ocidente','Norte Global','Eurásia'], desenv:['Países desenvolvidos'],
+    rankings:['Maiores economias do mundo','Economias mais industrializadas'] },
+  { iso3:'CAN', nome:'Canadá', band:'🇨🇦', cont:'Américas', regiaoGeo:'América do Norte', moeda:'CAD', mNome:'Dólar Canadense', idioma:'Inglês / Francês', area:'9,98 mi km²', pib:2214, pop:40.1, idh:0.935, imposto:34.8, cresc:1.3, infla:2.4, divida:106.0, reservas:120, salMed:4350, moedaBRL:4.15,
+    blocos:['G7','G20','USMCA','APEC','CPTPP'], geopol:['Ocidente','Norte Global','América Anglo-Saxônica'], desenv:['Países desenvolvidos'],
+    rankings:['Maiores economias do mundo','Potências energéticas','Países produtores de petróleo'] },
+  { iso3:'RUS', nome:'Rússia', band:'🇷🇺', cont:'Europa', regiaoGeo:'Europa Oriental', moeda:'RUB', mNome:'Rublo Russo', idioma:'Russo', area:'17,1 mi km²', pib:2020, pop:144.2, idh:0.821, imposto:34.0, cresc:3.6, infla:8.6, divida:19.0, reservas:610, salMed:960, moedaBRL:0.061,
+    blocos:['G20','BRICS+'], geopol:['Oriente','Espaço Pós-Soviético','Eurásia'], desenv:['Economias emergentes'],
+    rankings:['Maiores economias do mundo','Maiores populações','Potências militares','Potências energéticas','Países produtores de petróleo'] },
+  { iso3:'KOR', nome:'Coreia do Sul', band:'🇰🇷', cont:'Ásia', regiaoGeo:'Ásia Oriental', moeda:'KRW', mNome:'Won Sul-Coreano', idioma:'Coreano', area:'100 mil km²', pib:1760, pop:51.7, idh:0.929, imposto:29.9, cresc:2.2, infla:2.1, divida:54.0, reservas:415, salMed:3100, moedaBRL:0.0042,
+    blocos:['G20','APEC'], geopol:['Ocidente','Oriente','Norte Global'], desenv:['Países desenvolvidos'],
+    rankings:['Maiores exportadores','Economias mais industrializadas','Países com maior participação no comércio mundial'] },
+  { iso3:'MEX', nome:'México', band:'🇲🇽', cont:'Américas', regiaoGeo:'América do Norte', moeda:'MXN', mNome:'Peso Mexicano', idioma:'Espanhol', area:'1,96 mi km²', pib:1848, pop:129.7, idh:0.781, imposto:16.9, cresc:1.8, infla:4.6, divida:50.0, reservas:225, salMed:920, moedaBRL:0.29,
+    blocos:['G20','USMCA','APEC','CPTPP'], geopol:['Sul Global','América Latina'], desenv:['Países em desenvolvimento','Economias emergentes'],
+    rankings:['Maiores populações','Maiores exportadores','Países produtores de petróleo','Economias mais industrializadas'] },
+  { iso3:'AUS', nome:'Austrália', band:'🇦🇺', cont:'Oceania', regiaoGeo:'Oceania', moeda:'AUD', mNome:'Dólar Australiano', idioma:'Inglês', area:'7,69 mi km²', pib:1790, pop:26.6, idh:0.946, imposto:29.5, cresc:1.2, infla:3.2, divida:57.0, reservas:62, salMed:4850, moedaBRL:3.82,
+    blocos:['G20','APEC','CPTPP'], geopol:['Ocidente','Norte Global','América Anglo-Saxônica'], desenv:['Países desenvolvidos'],
+    rankings:['Potências energéticas'] },
+  { iso3:'ESP', nome:'Espanha', band:'🇪🇸', cont:'Europa', regiaoGeo:'Europa Meridional', moeda:'EUR', mNome:'Euro', idioma:'Espanhol', area:'506 mil km²', pib:1647, pop:48.4, idh:0.911, imposto:37.5, cresc:2.7, infla:2.4, divida:105.0, reservas:95, salMed:2950, moedaBRL:6.28,
+    blocos:['União Europeia'], geopol:['Ocidente','Norte Global','Eurásia'], desenv:['Países desenvolvidos'],
+    rankings:['Economias mais industrializadas'] },
+  { iso3:'IDN', nome:'Indonésia', band:'🇮🇩', cont:'Ásia', regiaoGeo:'Sudeste Asiático', moeda:'IDR', mNome:'Rupia Indonésia', idioma:'Indonésio', area:'1,90 mi km²', pib:1475, pop:277.5, idh:0.713, imposto:12.5, cresc:5.0, infla:2.1, divida:39.0, reservas:148, salMed:410, moedaBRL:0.00037,
+    blocos:['G20','BRICS+','ASEAN','APEC'], geopol:['Oriente','Sul Global','Mundo Islâmico','Países Não Alinhados'], desenv:['Países em desenvolvimento','Economias emergentes'],
+    rankings:['Maiores populações','Potências energéticas'] },
+  { iso3:'TUR', nome:'Turquia', band:'🇹🇷', cont:'Ásia', regiaoGeo:'Ásia Ocidental (Oriente Médio)', moeda:'TRY', mNome:'Lira Turca', idioma:'Turco', area:'783 mil km²', pib:1150, pop:85.8, idh:0.855, imposto:23.5, cresc:3.2, infla:48.5, divida:29.0, reservas:155, salMed:1150, moedaBRL:0.17,
+    blocos:['G20'], geopol:['Mundo Islâmico','Eurásia'], desenv:['Países em desenvolvimento','Economias emergentes'],
+    rankings:['Maiores populações','Potências militares'] },
+  { iso3:'NLD', nome:'Países Baixos', band:'🇳🇱', cont:'Europa', regiaoGeo:'Europa Ocidental', moeda:'EUR', mNome:'Euro', idioma:'Neerlandês', area:'41,5 mil km²', pib:1140, pop:17.9, idh:0.946, imposto:39.8, cresc:0.8, infla:3.1, divida:46.0, reservas:56, salMed:4400, moedaBRL:6.28,
+    blocos:['União Europeia'], geopol:['Ocidente','Norte Global','Eurásia'], desenv:['Países desenvolvidos'],
+    rankings:['Maiores exportadores','Maiores importadores','Principais centros financeiros','Países com maior participação no comércio mundial'] },
+  { iso3:'SAU', nome:'Arábia Saudita', band:'🇸🇦', cont:'Ásia', regiaoGeo:'Ásia Ocidental (Oriente Médio)', moeda:'SAR', mNome:'Rial Saudita', idioma:'Árabe', area:'2,15 mi km²', pib:1108, pop:36.9, idh:0.875, imposto:11.0, cresc:1.5, infla:1.7, divida:26.0, reservas:460, salMed:2850, moedaBRL:1.55,
+    blocos:['G20','GCC'], geopol:['Oriente','Mundo Árabe','Mundo Islâmico'], desenv:['Países em desenvolvimento'],
+    rankings:['Potências energéticas','Países produtores de petróleo'] },
+  { iso3:'CHE', nome:'Suíça', band:'🇨🇭', cont:'Europa', regiaoGeo:'Europa Central', moeda:'CHF', mNome:'Franco Suíço', idioma:'Alemão / Francês / Italiano', area:'41,3 mil km²', pib:938, pop:8.9, idh:0.967, imposto:27.9, cresc:1.4, infla:1.1, divida:39.0, reservas:890, salMed:7200, moedaBRL:6.62,
+    blocos:['EFTA'], geopol:['Ocidente','Norte Global','Eurásia'], desenv:['Países desenvolvidos'],
+    rankings:['Principais centros financeiros'] },
+  { iso3:'POL', nome:'Polônia', band:'🇵🇱', cont:'Europa', regiaoGeo:'Europa Central', moeda:'PLN', mNome:'Zloty Polonês', idioma:'Polonês', area:'312 mil km²', pib:845, pop:36.8, idh:0.881, imposto:35.0, cresc:3.0, infla:4.1, divida:53.0, reservas:205, salMed:1950, moedaBRL:1.45,
+    blocos:['União Europeia'], geopol:['Ocidente','Norte Global','Eurásia'], desenv:['Países desenvolvidos'],
+    rankings:[] },
+  { iso3:'ARG', nome:'Argentina', band:'🇦🇷', cont:'Américas', regiaoGeo:'América do Sul', moeda:'ARS', mNome:'Peso Argentino', idioma:'Espanhol', area:'2,78 mi km²', pib:604, pop:46.7, idh:0.849, imposto:28.8, cresc:-2.8, infla:118.0, divida:85.0, reservas:28, salMed:880, moedaBRL:0.0058,
+    blocos:['G20','Mercosul'], geopol:['Sul Global','América Latina'], desenv:['Países em desenvolvimento','Economias emergentes'],
+    rankings:[] },
+  { iso3:'SWE', nome:'Suécia', band:'🇸🇪', cont:'Europa', regiaoGeo:'Europa Setentrional', moeda:'SEK', mNome:'Coroa Sueca', idioma:'Sueco', area:'450 mil km²', pib:623, pop:10.5, idh:0.952, imposto:41.4, cresc:0.8, infla:1.9, divida:33.0, reservas:60, salMed:4150, moedaBRL:0.54,
+    blocos:['União Europeia'], geopol:['Ocidente','Norte Global','Eurásia'], desenv:['Países desenvolvidos'],
+    rankings:[] },
+  { iso3:'NOR', nome:'Noruega', band:'🇳🇴', cont:'Europa', regiaoGeo:'Europa Setentrional', moeda:'NOK', mNome:'Coroa Norueguesa', idioma:'Norueguês', area:'385 mil km²', pib:526, pop:5.5, idh:0.966, imposto:42.2, cresc:1.6, infla:2.8, divida:44.0, reservas:1520, salMed:5450, moedaBRL:0.53,
+    blocos:['EFTA'], geopol:['Ocidente','Norte Global','Eurásia'], desenv:['Países desenvolvidos'],
+    rankings:['Potências energéticas','Países produtores de petróleo'] },
+  { iso3:'ARE', nome:'Emirados Árabes Unidos', band:'🇦🇪', cont:'Ásia', regiaoGeo:'Ásia Ocidental (Oriente Médio)', moeda:'AED', mNome:'Dirham dos EAU', idioma:'Árabe', area:'83,6 mil km²', pib:530, pop:10.1, idh:0.937, imposto:6.5, cresc:3.5, infla:2.1, divida:31.0, reservas:210, salMed:3650, moedaBRL:1.58,
+    blocos:['GCC','BRICS+'], geopol:['Oriente','Mundo Árabe','Mundo Islâmico'], desenv:['Países desenvolvidos'],
+    rankings:['Países produtores de petróleo','Principais centros financeiros'] },
+  { iso3:'SGP', nome:'Singapura', band:'🇸🇬', cont:'Ásia', regiaoGeo:'Sudeste Asiático', moeda:'SGD', mNome:'Dólar de Singapura', idioma:'Inglês / Malaio / Mandarim', area:'733 km²', pib:515, pop:6.0, idh:0.949, imposto:13.2, cresc:2.6, infla:2.3, divida:168.0, reservas:380, salMed:5200, moedaBRL:4.32,
+    blocos:['ASEAN','APEC','CPTPP'], geopol:['Oriente','Norte Global'], desenv:['Países desenvolvidos'],
+    rankings:['Maiores exportadores','Maiores importadores','Principais centros financeiros','Países com maior participação no comércio mundial'] },
+  { iso3:'VNM', nome:'Vietnã', band:'🇻🇳', cont:'Ásia', regiaoGeo:'Sudeste Asiático', moeda:'VND', mNome:'Dong Vietnamita', idioma:'Vietnamita', area:'331 mil km²', pib:465, pop:100.3, idh:0.726, imposto:18.5, cresc:6.4, infla:3.6, divida:34.0, reservas:92, salMed:460, moedaBRL:0.00023,
+    blocos:['ASEAN','APEC','CPTPP'], geopol:['Oriente','Sul Global','Países Não Alinhados'], desenv:['Países em desenvolvimento','Economias emergentes'],
+    rankings:['Maiores populações','Maiores exportadores','Economias mais industrializadas'] },
+  { iso3:'ZAF', nome:'África do Sul', band:'🇿🇦', cont:'África', regiaoGeo:'África Austral', moeda:'ZAR', mNome:'Rand Sul-Africano', idioma:'Inglês / Zulu / Africâner', area:'1,22 mi km²', pib:373, pop:60.4, idh:0.717, imposto:26.2, cresc:1.1, infla:4.4, divida:74.0, reservas:62, salMed:1120, moedaBRL:0.32,
+    blocos:['G20','BRICS+','União Africana'], geopol:['Sul Global','Países Não Alinhados'], desenv:['Países em desenvolvimento','Economias emergentes'],
+    rankings:[] },
+  { iso3:'CHL', nome:'Chile', band:'🇨🇱', cont:'Américas', regiaoGeo:'América do Sul', moeda:'CLP', mNome:'Peso Chileno', idioma:'Espanhol', area:'756 mil km²', pib:335, pop:19.6, idh:0.860, imposto:21.3, cresc:2.4, infla:4.2, divida:40.0, reservas:45, salMed:1380, moedaBRL:0.0061,
+    blocos:['APEC','CPTPP'], geopol:['Sul Global','América Latina'], desenv:['Países em desenvolvimento','Economias emergentes'],
+    rankings:[] },
+  { iso3:'COL', nome:'Colômbia', band:'🇨🇴', cont:'Américas', regiaoGeo:'América do Sul', moeda:'COP', mNome:'Peso Colombiano', idioma:'Espanhol', area:'1,14 mi km²', pib:392, pop:52.3, idh:0.758, imposto:19.7, cresc:1.7, infla:5.4, divida:57.0, reservas:61, salMed:740, moedaBRL:0.0014,
+    blocos:['Comunidade Andina'], geopol:['Sul Global','América Latina'], desenv:['Países em desenvolvimento','Economias emergentes'],
+    rankings:[] },
+  { iso3:'PER', nome:'Peru', band:'🇵🇪', cont:'Américas', regiaoGeo:'América do Sul', moeda:'PEN', mNome:'Sol Peruano', idioma:'Espanhol', area:'1,29 mi km²', pib:283, pop:34.3, idh:0.762, imposto:17.2, cresc:3.1, infla:2.1, divida:33.0, reservas:75, salMed:680, moedaBRL:1.54,
+    blocos:['APEC','CPTPP','Comunidade Andina'], geopol:['Sul Global','América Latina'], desenv:['Países em desenvolvimento','Economias emergentes'],
+    rankings:[] },
+  { iso3:'KAZ', nome:'Cazaquistão', band:'🇰🇿', cont:'Ásia', regiaoGeo:'Ásia Central', moeda:'KZT', mNome:'Tenge Cazaque', idioma:'Cazaque / Russo', area:'2,72 mi km²', pib:288, pop:20.0, idh:0.802, imposto:17.5, cresc:4.2, infla:8.3, divida:23.0, reservas:42, salMed:820, moedaBRL:0.012,
+    blocos:[], geopol:['Espaço Pós-Soviético','Eurásia','Mundo Islâmico'], desenv:['Países em desenvolvimento','Economias emergentes'],
+    rankings:['Países produtores de petróleo'] },
+  { iso3:'EGY', nome:'Egito', band:'🇪🇬', cont:'África', regiaoGeo:'Norte da África', moeda:'EGP', mNome:'Libra Egípcia', idioma:'Árabe', area:'1,00 mi km²', pib:347, pop:112.7, idh:0.728, imposto:15.5, cresc:2.8, infla:26.4, divida:89.0, reservas:46, salMed:360, moedaBRL:0.12,
+    blocos:['BRICS+','União Africana'], geopol:['Sul Global','Mundo Árabe','Mundo Islâmico','Países Não Alinhados'], desenv:['Países em desenvolvimento','Economias emergentes'],
+    rankings:['Maiores populações'] },
+  { iso3:'NGA', nome:'Nigéria', band:'🇳🇬', cont:'África', regiaoGeo:'África Ocidental', moeda:'NGN', mNome:'Naira Nigeriana', idioma:'Inglês', area:'924 mil km²', pib:252, pop:223.8, idh:0.548, imposto:9.5, cresc:3.1, infla:32.7, divida:48.0, reservas:38, salMed:240, moedaBRL:0.0035,
+    blocos:['União Africana'], geopol:['Sul Global','Mundo Islâmico','Países Não Alinhados'], desenv:['Países em desenvolvimento'],
+    rankings:['Maiores populações','Países produtores de petróleo'] },
+  { iso3:'ETH', nome:'Etiópia', band:'🇪🇹', cont:'África', regiaoGeo:'África Oriental', moeda:'ETB', mNome:'Birr Etíope', idioma:'Amárico', area:'1,10 mi km²', pib:190, pop:126.5, idh:0.498, imposto:7.8, cresc:6.1, infla:19.2, divida:38.0, reservas:3, salMed:170, moedaBRL:0.048,
+    blocos:['BRICS+','União Africana'], geopol:['Sul Global','Países Não Alinhados'], desenv:['Países em desenvolvimento'],
+    rankings:['Maiores populações'] },
+  { iso3:'COD', nome:'RD do Congo', band:'🇨🇩', cont:'África', regiaoGeo:'África Central', moeda:'CDF', mNome:'Franco Congolês', idioma:'Francês', area:'2,34 mi km²', pib:71, pop:102.3, idh:0.481, imposto:11.2, cresc:6.5, infla:17.5, divida:16.0, reservas:6, salMed:190, moedaBRL:0.0020,
+    blocos:['União Africana'], geopol:['Sul Global','Países Não Alinhados'], desenv:['Países em desenvolvimento'],
+    rankings:['Maiores populações'] },
+  { iso3:'PAN', nome:'Panamá', band:'🇵🇦', cont:'Américas', regiaoGeo:'América Central', moeda:'PAB', mNome:'Balboa Panamenho', idioma:'Espanhol', area:'75,4 mil km²', pib:87, pop:4.5, idh:0.832, imposto:14.8, cresc:2.7, infla:1.2, divida:58.0, reservas:11, salMed:1150, moedaBRL:5.80,
+    blocos:[], geopol:['Sul Global','América Latina'], desenv:['Países em desenvolvimento'],
+    rankings:['Países com maior participação no comércio mundial'] },
+  { iso3:'DOM', nome:'República Dominicana', band:'🇩🇴', cont:'Américas', regiaoGeo:'Caribe', moeda:'DOP', mNome:'Peso Dominicano', idioma:'Espanhol', area:'48,7 mil km²', pib:124, pop:11.3, idh:0.767, imposto:14.5, cresc:5.1, infla:3.4, divida:59.0, reservas:14, salMed:640, moedaBRL:0.097,
+    blocos:[], geopol:['Sul Global','América Latina'], desenv:['Países em desenvolvimento'],
+    rankings:[] },
+  { iso3:'URY', nome:'Uruguai', band:'🇺🇾', cont:'Américas', regiaoGeo:'América do Sul', moeda:'UYU', mNome:'Peso Uruguaio', idioma:'Espanhol', area:'176 mil km²', pib:81, pop:3.4, idh:0.830, imposto:27.5, cresc:3.2, infla:5.1, divida:66.0, reservas:16, salMed:1780, moedaBRL:0.14,
+    blocos:['Mercosul'], geopol:['Sul Global','América Latina'], desenv:['Países em desenvolvimento'],
+    rankings:[] },
+  { iso3:'PRY', nome:'Paraguai', band:'🇵🇾', cont:'Américas', regiaoGeo:'América do Sul', moeda:'PYG', mNome:'Guarani Paraguaio', idioma:'Guarani / Espanhol', area:'407 mil km²', pib:46, pop:6.9, idh:0.731, imposto:14.2, cresc:3.8, infla:3.9, divida:37.0, reservas:10, salMed:690, moedaBRL:0.00076,
+    blocos:['Mercosul'], geopol:['Sul Global','América Latina'], desenv:['Países em desenvolvimento'],
+    rankings:[] },
+  { iso3:'NZL', nome:'Nova Zelândia', band:'🇳🇿', cont:'Oceania', regiaoGeo:'Oceania', moeda:'NZD', mNome:'Dólar Neozelandês', idioma:'Inglês / Maori', area:'268 mil km²', pib:253, pop:5.2, idh:0.939, imposto:33.5, cresc:0.6, infla:2.2, divida:45.0, reservas:22, salMed:4100, moedaBRL:3.45,
+    blocos:['APEC','CPTPP'], geopol:['Ocidente','Norte Global','América Anglo-Saxônica'], desenv:['Países desenvolvidos'],
+    rankings:[] }
+];
+
+const CATEGORIAS_FILTRO = {
+  geo: {
+    label: 'Continentes e regiões geográficas',
+    opcoes: [
+      'Todos os países', 'Américas', 'Europa', 'Ásia', 'África', 'Oceania',
+      'América do Norte', 'América Central', 'Caribe', 'América do Sul',
+      'Europa Ocidental', 'Europa Oriental', 'Europa Central', 'Europa Setentrional', 'Europa Meridional',
+      'Norte da África', 'África Ocidental', 'África Central', 'África Oriental', 'África Austral',
+      'Ásia Oriental', 'Sudeste Asiático', 'Ásia Meridional', 'Ásia Central', 'Ásia Ocidental (Oriente Médio)'
+    ]
+  },
+  blocos: {
+    label: 'Blocos e agrupamentos econômicos',
+    opcoes: [
+      'G7', 'G20', 'BRICS+', 'Mercosul', 'União Europeia', 'USMCA',
+      'ASEAN', 'APEC', 'União Africana', 'Comunidade Andina', 'CPTPP', 'EFTA',
+      'GCC (Conselho de Cooperação do Golfo)'
+    ]
+  },
+  geopol: {
+    label: 'Divisões geopolíticas',
+    opcoes: [
+      'Ocidente', 'Oriente', 'Norte Global', 'Sul Global',
+      'América Latina', 'América Anglo-Saxônica', 'Mundo Árabe', 'Mundo Islâmico',
+      'Espaço Pós-Soviético', 'Eurásia', 'Países Não Alinhados'
+    ]
+  },
+  desenv: {
+    label: 'Indicadores de desenvolvimento',
+    opcoes: [
+      'Países desenvolvidos', 'Países em desenvolvimento', 'Economias emergentes'
+    ]
+  },
+  rank: {
+    label: 'Rankings econômicos e geopolíticos',
+    opcoes: [
+      'Maiores economias do mundo', 'Maiores populações', 'Maiores exportadores',
+      'Maiores importadores', 'Potências militares', 'Potências energéticas',
+      'Países produtores de petróleo', 'Principais centros financeiros',
+      'Economias mais industrializadas', 'Países com maior participação no comércio mundial'
+    ]
+  }
+};
+
+// Mapeamento numérico ISO-3166 (world-atlas countries-110m.json) -> iso3
+const NUM_TO_ISO3 = {
+  '076':'BRA','840':'USA','156':'CHN','276':'DEU','392':'JPN','356':'IND','826':'GBR','250':'FRA',
+  '380':'ITA','124':'CAN','643':'RUS','410':'KOR','484':'MEX','036':'AUS','724':'ESP','360':'IDN',
+  '792':'TUR','528':'NLD','682':'SAU','756':'CHE','616':'POL','032':'ARG','752':'SWE','578':'NOR',
+  '784':'ARE','702':'SGP','704':'VNM','710':'ZAF','152':'CHL','170':'COL','604':'PER','398':'KAZ',
+  '818':'EGY','566':'NGA','231':'ETH','180':'COD','591':'PAN','214':'DOM','858':'URY','600':'PRY','554':'NZL'
+};
+
+PAISES.forEach(p => {
+  p.pibPc = (p.pib * 1e9) / (p.pop * 1e6);
+  p.arrecBi = p.pib * (p.imposto / 100);
+});
+
+let catAtiva = 'geo', filtroValor = 'Todos os países', ufAtivo = 'BRA', abaRx = 'econ';
+let topN = 5, ratesUSD = null, geoWorld = null, svgMap = null, zoomBehavior = null;
+let chartMini = null, chartCmp = null;
+
+// Controles do Cabeçalho
+function toggleDropdownMenu() { $('dropdownMenu').classList.toggle('hidden'); }
+window.addEventListener('click', e => {
+  const btn = $('menuDropdownBtn'), menu = $('dropdownMenu');
+  if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) menu.classList.add('hidden');
+});
+
+function alternarDarkLight() {
+  const novo = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  aplicarTema(novo);
+  try { localStorage.setItem('brasil_em_dados_tema', novo); } catch {}
+}
+
+function aplicarTema(tema) {
+  const html = document.documentElement, bg = $('switchBg'), ball = $('switchBall');
+  if (tema === 'dark') {
+    html.setAttribute('data-theme', 'dark');
+    if (bg && ball) { bg.style.backgroundColor = '#16C784'; ball.classList.add('translate-x-5'); }
+  } else {
+    html.removeAttribute('data-theme');
+    if (bg && ball) { bg.style.backgroundColor = '#E5E7EB'; ball.classList.remove('translate-x-5'); }
+  }
+  pintarMapa();
+  renderComparadorMulti();
+  if (abaRx === 'hist') renderMiniGrafico();
+}
+
+function alternarModoApresentacao() {
+  document.body.classList.toggle('modo-apresentacao');
+  const ativo = document.body.classList.contains('modo-apresentacao');
+  $('btnModoApresentacao').innerHTML = ativo
+    ? '<span>✕ Sair da Tela Cheia</span>'
+    : `<svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect><line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line><line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line></svg><span>Modo Tela Cheia</span>`;
+}
+
+// Cotação ao vivo em BRL
+function getMoedaBRL(p) {
+  if (p.moeda === 'BRL') return 1;
+  if (ratesUSD && ratesUSD[p.moeda] && ratesUSD['BRL']) {
+    return ratesUSD['BRL'] / ratesUSD[p.moeda];
+  }
+  return p.moedaBRL;
+}
+
+async function syncCambio() {
+  try {
+    const r = await fetch('https://open.er-api.com/v6/latest/USD');
+    if (!r.ok) return;
+    const j = await r.json();
+    ratesUSD = j.rates;
+    PAISES.forEach(p => { p.moedaBRL = getMoedaBRL(p); });
+    $('statusCambio').textContent = 'Câmbio comercial atualizado ao vivo';
+    selecionarPais(ufAtivo);
+    renderRanking();
+    pintarMapa();
+  } catch {}
+}
+
+// Filtros por Categoria
+function normalizarBloco(b) {
+  return b.startsWith('GCC') ? 'GCC' : b;
+}
+
+function paisNoFiltro(p) {
+  if (!filtroValor || filtroValor === 'Todos os países') return true;
+  if (catAtiva === 'geo') return p.cont === filtroValor || p.regiaoGeo === filtroValor;
+  if (catAtiva === 'blocos') {
+    const alvo = normalizarBloco(filtroValor);
+    return Array.isArray(p.blocos) && p.blocos.includes(alvo);
+  }
+  if (catAtiva === 'geopol') return Array.isArray(p.geopol) && p.geopol.includes(filtroValor);
+  if (catAtiva === 'desenv') return Array.isArray(p.desenv) && p.desenv.includes(filtroValor);
+  if (catAtiva === 'rank') return Array.isArray(p.rankings) && p.rankings.includes(filtroValor);
+  return true;
+}
+
+function setCategoriaFiltro(cat) {
+  catAtiva = cat;
+  const ids = { geo:'catGeo', blocos:'catBlocos', geopol:'catGeopol', desenv:'catDesenv', rank:'catRank' };
+  Object.entries(ids).forEach(([k, id]) => {
+    $(id).className = k === cat
+      ? 'px-2.5 py-1.5 rounded-md din-card-bg din-text-main border din-border transition'
+      : 'px-2.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition';
+  });
+  const cfg = CATEGORIAS_FILTRO[cat];
+  $('lblCategoriaAtiva').textContent = cfg.label;
+  renderOpcoesFiltro();
+}
+
+function renderOpcoesFiltro() {
+  const cfg = CATEGORIAS_FILTRO[catAtiva];
+  $('opcoesFiltro').innerHTML = cfg.opcoes.map(op => {
+    const ativo = filtroValor === op;
+    return `<button type="button" onclick="selecionarFiltroOpcao('${op.replace(/'/g, "\\'")}')"
+      class="px-2.5 py-1 rounded-md text-xs font-semibold border transition ${ativo ? 'din-btn border-transparent' : 'din-secondary-bg din-border din-text-muted hover:din-text-main'}">${op}</button>`;
+  }).join('');
+}
+
+function selecionarFiltroOpcao(op) {
+  filtroValor = op;
+  renderOpcoesFiltro();
+  atualizarDescFiltro();
+  pintarMapa();
+  renderRanking();
+}
+
+function limparFiltros() {
+  filtroValor = 'Todos os países';
+  $('inpBuscaPais').value = '';
+  renderOpcoesFiltro();
+  atualizarDescFiltro();
+  pintarMapa();
+  renderRanking();
+}
+
+function atualizarDescFiltro() {
+  const ativos = PAISES.filter(paisNoFiltro);
+  const labelFiltro = filtroValor === 'Todos os países' ? 'Todos os países' : filtroValor;
+  $('filtroAtivoBadge').textContent = `Filtro: ${labelFiltro} (${ativos.length} na base)`;
+  $('mapFiltroDesc').textContent = filtroValor === 'Todos os países'
+    ? `Visualizando todos os países (${ativos.length} na base) · arraste para mover e clique para inspecionar.`
+    : `Destacando "${labelFiltro}" (${ativos.length} países na base) · clique em um país para inspecionar.`;
+}
+
+function buscarPais(termo) {
+  const q = (termo || '').trim().toLowerCase();
+  if (!q) return;
+  const achado = PAISES.find(p => p.nome.toLowerCase() === q) || PAISES.find(p => p.nome.toLowerCase().includes(q));
+  if (achado) selecionarPais(achado.iso3);
+}
+
+// Métricas e Mapa D3
+function fmtIndicadorPais(p, k) {
+  if (!p) return '—';
+  if (k === 'pib') return BD.pibFmt(p.pib);
+  if (k === 'pibPc') return BD.usd(p.pibPc, 0);
+  if (k === 'idh') return BD.num(p.idh, 3);
+  if (k === 'pop') return BD.popFmt(p.pop);
+  if (k === 'imposto') return BD.num(p.imposto, 1) + '%';
+  if (k === 'cresc') return (p.cresc >= 0 ? '+' : '') + BD.num(p.cresc, 1) + '%';
+  if (k === 'infla') return BD.num(p.infla, 1) + '%';
+  if (k === 'moedaBRL') return BD.brl(p.moedaBRL, p.moedaBRL < 0.1 ? 4 : 2);
+  return '—';
+}
+
+async function iniciarMapaMundi() {
+  try {
+    const r = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
+    if (!r.ok) throw new Error('world-atlas');
+    const topo = await r.json();
+    geoWorld = topojson.feature(topo, topo.objects.countries);
+
+    svgMap = d3.select('#mapaMundo');
+    const container = $('mapContainer');
+    const w = Math.max(600, container.clientWidth || 960);
+    const h = Math.max(380, container.clientHeight || 520);
+    svgMap.attr('viewBox', `0 0 ${w} ${h}`);
+
+    const g = svgMap.append('g').attr('id', 'camadaPaises');
+    const proj = d3.geoNaturalEarth1().fitExtent([[18, 14], [w - 18, h - 14]], geoWorld);
+    const path = d3.geoPath().projection(proj);
+    const tip = $('mapTip');
+
+    zoomBehavior = d3.zoom().scaleExtent([1, 8]).on('zoom', ev => g.attr('transform', ev.transform));
+    svgMap.call(zoomBehavior);
+
+    g.selectAll('path')
+      .data(geoWorld.features.filter(f => String(f.id) !== '010'))
+      .join('path')
+      .attr('class', 'pais-path')
+      .attr('d', path)
+      .attr('data-iso3', f => NUM_TO_ISO3[String(f.id).padStart(3, '0')] || '')
+      .attr('data-nome-geo', f => f.properties?.name || 'País')
+      .on('mouseenter', function() {
+        const iso3 = this.getAttribute('data-iso3');
+        const p = PAISES.find(x => x.iso3 === iso3);
+        const k = $('mapIndicador').value;
+        $('tipNome').textContent = p ? `${p.band} ${p.nome}` : this.getAttribute('data-nome-geo');
+        $('tipVal').textContent = p ? fmtIndicadorPais(p, k) : 'Sem série detalhada';
+        tip.classList.remove('hidden');
+      })
+      .on('mousemove', ev => { tip.style.left = (ev.clientX + 14) + 'px'; tip.style.top = (ev.clientY + 14) + 'px'; })
+      .on('mouseleave', () => tip.classList.add('hidden'))
+      .on('click', function() {
+        const iso3 = this.getAttribute('data-iso3');
+        if (iso3) selecionarPais(iso3);
+      });
+
+    $('mapLoading').classList.add('hidden');
+    svgMap.classList.remove('hidden');
+    pintarMapa();
+  } catch {
+    $('mapLoading').textContent = 'Não foi possível carregar o mapa-múndi agora.';
+  }
+}
+
+function pintarMapa() {
+  if (!svgMap) return;
+  const k = $('mapIndicador').value;
+  const ativos = PAISES.filter(paisNoFiltro);
+  const baseVals = ativos.length ? ativos : PAISES;
+  const vals = baseVals.map(p => p[k]);
+  const min = Math.min(...vals), max = Math.max(...vals);
+
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const escala = d3.scaleLinear().domain([min, max]).range([dark ? '#23282E' : '#E7F7F0', '#16C784']);
+  const foraFiltro = dark ? '#15181C' : '#E5E7EB';
+  const semDado = dark ? '#1D2126' : '#F3F4F6';
+  const borda = dark ? '#101214' : '#FFFFFF';
+  const bordaSel = dark ? '#F5F6F7' : '#17191C';
+
+  const pMin = baseVals.find(p => p[k] === min), pMax = baseVals.find(p => p[k] === max);
+  $('legMin').textContent = `${pMin.nome}: ${fmtIndicadorPais(pMin, k)}`;
+  $('legMax').textContent = `${pMax.nome}: ${fmtIndicadorPais(pMax, k)}`;
+
+  svgMap.selectAll('path')
+    .attr('fill', function() {
+      const iso3 = this.getAttribute('data-iso3');
+      const p = PAISES.find(x => x.iso3 === iso3);
+      if (!p) return semDado;
+      if (!paisNoFiltro(p)) return foraFiltro;
+      return escala(p[k]);
+    })
+    .attr('stroke', function() {
+      return this.getAttribute('data-iso3') === ufAtivo ? bordaSel : borda;
+    })
+    .attr('stroke-width', function() {
+      return this.getAttribute('data-iso3') === ufAtivo ? 2.2 : 0.7;
+    });
+}
+
+function ajustarZoom(fator) {
+  if (!svgMap || !zoomBehavior) return;
+  svgMap.transition().duration(250).call(zoomBehavior.scaleBy, fator);
+}
+
+function resetZoom() {
+  if (!svgMap || !zoomBehavior) return;
+  svgMap.transition().duration(250).call(zoomBehavior.transform, d3.zoomIdentity);
+}
+
+// Raio-X do País Selecionado
+function selecionarPais(iso3) {
+  const p = PAISES.find(x => x.iso3 === iso3);
+  if (!p) return;
+  ufAtivo = iso3;
+
+  $('rxBand').textContent = p.band;
+  $('rxNome').textContent = p.nome;
+  $('rxBlocos').textContent = p.blocos && p.blocos.length ? p.blocos.join(' · ') : 'Sem bloco formal';
+  $('rxMeta').textContent = `${p.regiaoGeo} (${p.cont}) · Capital: ${p.cap}`;
+  $('rxMoedaCod').textContent = p.moeda;
+  $('rxMoedaBrl').textContent = BD.brl(p.moedaBRL, p.moedaBRL < 0.1 ? 4 : 2);
+  $('rxMoedaNome').textContent = p.mNome;
+  $('rxIdiomaArea').textContent = `Idioma: ${p.idioma} · Área: ${p.area}`;
+
+  const subiu = p.cresc >= 0;
+  $('rxTendencia').innerHTML = `PIB ${subiu ? '↑' : '↓'} <span class="${subiu ? 'din-green' : 'din-red'}">${subiu ? '+' : ''}${BD.num(p.cresc, 1)}%</span>`;
+
+  $('rxPib').textContent = BD.pibFmt(p.pib);
+  $('rxPibPc').textContent = BD.usd(p.pibPc, 0);
+  $('rxCresc').innerHTML = `<span class="${subiu ? 'din-green' : 'din-red'}">${subiu ? '+' : ''}${BD.num(p.cresc, 1)}% a.a.</span>`;
+  $('rxInfla').textContent = BD.num(p.infla, 1) + '% a.a.';
+  $('rxDivida').textContent = BD.num(p.divida, 1) + '% PIB';
+  $('rxReservas').textContent = `US$ ${BD.num(p.reservas, 0)} bi`;
+  $('rxImpPct').textContent = BD.num(p.imposto, 1) + '% do PIB';
+  $('rxArrecTotal').textContent = BD.pibFmt(p.arrecBi);
+
+  const faixa = p.idh >= 0.800 ? 'Muito Alto' : p.idh >= 0.700 ? 'Alto' : 'Médio';
+  $('rxIdh').textContent = BD.num(p.idh, 3);
+  $('rxIdhClass').textContent = `Desenvolvimento ${faixa}`;
+  $('rxPop').textContent = BD.popFmt(p.pop);
+  $('rxSalMed').textContent = `Salário médio ref.: ~${BD.usd(p.salMed, 0)}/mês`;
+  $('rxResumoSocial').textContent = `${p.nome} (${p.regiaoGeo}) conta com ${BD.popFmt(p.pop)} habitantes e IDH de ${BD.num(p.idh, 3)} (${faixa}). A carga tributária estimada em ${BD.num(p.imposto, 1)}% do PIB representa cerca de ${BD.pibFmt(p.arrecBi)} anuais.`;
+
+  if (abaRx === 'hist') renderMiniGrafico();
+  pintarMapa();
+}
+
+function setAbaRx(a) {
+  abaRx = a;
+  const on = 'py-1.5 rounded-md din-card-bg din-text-main border din-border transition';
+  const off = 'py-1.5 rounded-md din-text-muted transition';
+  $('abaRxEcon').className = a === 'econ' ? on : off;
+  $('abaRxSocial').className = a === 'social' ? on : off;
+  $('abaRxHist').className = a === 'hist' ? on : off;
+
+  $('viewRxEcon').classList.toggle('hidden', a !== 'econ');
+  $('viewRxSocial').classList.toggle('hidden', a !== 'social');
+  $('viewRxHist').classList.toggle('hidden', a !== 'hist');
+
+  if (a === 'hist') renderMiniGrafico();
+}
+
+function gerarSerieHistorica(p, serie, periodo) {
+  const base = serie === 'pib' ? p.pib : serie === 'pop' ? p.pop : p.moedaBRL;
+  const vol = serie === 'moeda' ? 0.012 : 0.025;
+  const tend = serie === 'pib' ? (p.cresc / 100) : serie === 'pop' ? 0.008 : ((p.cresc - p.infla) / 400);
+
+  const pts = periodo === '5d' ? 5 : periodo === '1m' ? 12 : periodo === '3m' ? 14 : 24;
+  const labels = [], valores = [];
+  let seed = p.iso3.split('').reduce((s, ch) => s + ch.charCodeAt(0), 0) + pts;
+
+  for (let i = 0; i < pts; i++) {
+    const frac = (i - (pts - 1)) / pts;
+    const onda = Math.sin(i * 0.9 + seed * 0.1) * vol * (periodo === '2a' ? 3 : 1);
+    const drift = tend * frac * (periodo === '2a' ? 2 : 0.35);
+    const val = base * Math.max(0.4, 1 + drift + onda);
+    valores.push(+val.toFixed(serie === 'moeda' && val < 0.1 ? 5 : 2));
+
+    if (periodo === '5d') labels.push(`D-${pts - 1 - i}`);
+    else if (periodo === '1m') labels.push(`Sem ${i + 1}`);
+    else if (periodo === '3m') labels.push(`P${i + 1}`);
+    else {
+      const anoIdx = 2024 + Math.floor((i / pts) * 2);
+      const mesIdx = (i % 12) + 1;
+      labels.push(`${String(mesIdx).padStart(2, '0')}/${String(anoIdx).slice(2)}`);
+    }
+  }
+  valores[valores.length - 1] = +base.toFixed(serie === 'moeda' && base < 0.1 ? 5 : 2);
+  labels[labels.length - 1] = 'Atual';
+  return { labels, valores };
+}
+
+function renderMiniGrafico() {
+  const p = PAISES.find(x => x.iso3 === ufAtivo) || PAISES[0];
+  const serie = $('histSerieTipo').value;
+  const periodo = $('histPeriodo').value;
+  const tipoGraf = $('histTipoGraf').value;
+
+  const { labels, valores } = gerarSerieHistorica(p, serie, periodo);
+  const ini = valores[0], fim = valores[valores.length - 1];
+  const varPct = ini ? ((fim - ini) / ini) * 100 : 0;
+  const c = BD.cor();
+
+  const nomeSerie = serie === 'pib' ? `PIB de ${p.nome} (US$ bi)` : serie === 'pop' ? `População de ${p.nome} (mi)` : `${p.moeda}/BRL`;
+  $('histExplicacao').innerHTML = `No período de <strong>${periodo}</strong>, <strong>${nomeSerie}</strong> variou <strong class="${varPct >= 0 ? 'din-green' : 'din-red'}">${varPct >= 0 ? '+' : ''}${BD.num(varPct, 2)}%</strong> (de ${BD.num(ini, 2)} para ${BD.num(fim, 2)}).`;
+
+  if (chartMini) chartMini.destroy();
+  chartMini = new Chart($('grafMiniPais'), {
+    type: tipoGraf === 'bar' ? 'bar' : 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: nomeSerie,
+        data: valores,
+        borderColor: '#16C784',
+        backgroundColor: tipoGraf === 'area' ? 'rgba(22,199,132,0.22)' : 'rgba(22,199,132,0.75)',
+        fill: tipoGraf === 'area',
+        borderWidth: 2,
+        pointRadius: tipoGraf === 'bar' ? 0 : 2,
+        borderRadius: tipoGraf === 'bar' ? 3 : 0,
+        tension: .25
+      }]
+    },
+    options: {
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: c.mu, maxTicksLimit: 6, font: { size: 10 } }, grid: { display: false } },
+        y: { ticks: { color: c.mu, font: { size: 10 } }, grid: { color: c.grid } }
+      }
+    }
+  });
+}
+
+// Rankings (Top 5 / Top 10 / Top 20)
+const RK_DESC = {
+  pib: 'Economias mais fortes em valor total (PIB nominal)',
+  pibPc: 'Maior renda econômica média por habitante',
+  idh: 'Países com maior Índice de Desenvolvimento Humano',
+  pop: 'Países mais populosos da base global',
+  cresc: 'Economias com maior crescimento anual do PIB',
+  inflaAsc: 'Países com menor inflação anual (maior estabilidade de preços)',
+  moedaBRL: 'Maior valor unitário da moeda convertido em Reais (BRL)',
+  imposto: 'Maior carga tributária estimada sobre o PIB'
+};
+
+function setTopN(n) {
+  topN = n;
+  const on = 'px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border transition';
+  const off = 'px-2.5 py-1 rounded-md din-text-muted transition';
+  $('top5Btn').className = n === 5 ? on : off;
+  $('top10Btn').className = n === 10 ? on : off;
+  $('top20Btn').className = n === 20 ? on : off;
+  renderRanking();
+}
+
+function renderRanking() {
+  const m = $('rkMetrica').value;
+  $('rkDescricao').textContent = RK_DESC[m] || '';
+
+  const base = PAISES.filter(paisNoFiltro);
+  const lista = [...base].sort((a, b) => {
+    if (m === 'inflaAsc') return a.infla - b.infla;
+    return b[m] - a[m];
+  }).slice(0, topN);
+
+  const keyReal = m === 'inflaAsc' ? 'infla' : m;
+
+  $('gridRanking').innerHTML = lista.map((p, i) => `
+    <button type="button" onclick="selecionarPais('${p.iso3}')"
+      class="text-left din-secondary-bg border din-border rounded-lg p-3 hover:border-[#16C784] transition ${p.iso3 === ufAtivo ? 'ring-1 ring-[#16C784]' : ''}">
+      <div class="flex items-center justify-between text-[11px] din-text-muted">
+        <span class="font-bold din-text-main">#${i + 1} · ${p.band} ${p.nome}</span>
+        <span>${p.moeda}</span>
+      </div>
+      <p class="text-sm font-extrabold din-green mt-1">${fmtIndicadorPais(p, keyReal)}</p>
+      <span class="block text-[10px] din-text-muted mt-0.5">${p.regiaoGeo}</span>
+    </button>
+  `).join('');
+}
+
+// Comparador Multi-País (2 ou 3 países)
+function preencherSelectsComparador() {
+  const opts = PAISES.map(p => `<option value="${p.iso3}">${p.band} ${p.nome}</option>`).join('');
+  $('cmp1').innerHTML = opts;
+  $('cmp2').innerHTML = opts;
+  $('cmp3').innerHTML = `<option value="">Nenhum (comparar apenas 2)</option>` + opts;
+
+  $('cmp1').value = 'BRA';
+  $('cmp2').value = 'USA';
+  $('cmp3').value = 'CHN';
+}
+
+function renderComparadorMulti() {
+  const ids = [$('cmp1').value, $('cmp2').value, $('cmp3').value].filter(Boolean);
+  const escolhidos = [...new Set(ids)].map(id => PAISES.find(p => p.iso3 === id)).filter(Boolean);
+  if (escolhidos.length < 2) return;
+
+  $('cmpThead').innerHTML = `<th class="py-2 px-2">Indicador</th>` + escolhidos.map(p => `<th class="py-2 px-2 din-text-main">${p.band} ${p.nome}</th>`).join('');
+
+  const linhas = [
+    ['PIB nominal', p => BD.pibFmt(p.pib)],
+    ['PIB per capita', p => BD.usd(p.pibPc, 0)],
+    ['População', p => BD.popFmt(p.pop)],
+    ['IDH', p => BD.num(p.idh, 3)],
+    ['Inflação anual', p => BD.num(p.infla, 1) + '%'],
+    ['Carga tributária', p => BD.num(p.imposto, 1) + '%'],
+    ['Dívida pública', p => BD.num(p.divida, 1) + '% PIB'],
+    ['Salário médio ref.', p => BD.usd(p.salMed, 0) + '/mês'],
+    ['Valor da moeda', p => `${p.moeda} · ${BD.brl(p.moedaBRL, p.moedaBRL < 0.1 ? 4 : 2)}`],
+    ['Crescimento PIB', p => (p.cresc >= 0 ? '+' : '') + BD.num(p.cresc, 1) + '%']
+  ];
+
+  $('cmpTbody').innerHTML = linhas.map(([lbl, fn]) => `
+    <tr>
+      <td class="py-2 px-2 font-semibold din-text-muted">${lbl}</td>
+      ${escolhidos.map(p => `<td class="py-2 px-2 font-bold din-text-main">${fn(p)}</td>`).join('')}
+    </tr>
+  `).join('');
+
+  const gMet = $('compGrafMetrica').value;
+  const c = BD.cor();
+  if (chartCmp) chartCmp.destroy();
+  chartCmp = new Chart($('grafComparador'), {
+    type: 'bar',
+    data: {
+      labels: escolhidos.map(p => p.nome),
+      datasets: [{
+        label: $('compGrafMetrica').selectedOptions[0].text.replace('Gráfico: ', ''),
+        data: escolhidos.map(p => +p[gMet].toFixed(2)),
+        backgroundColor: ['#16C784', '#2563EB', '#F59E0B'].slice(0, escolhidos.length),
+        borderRadius: 5
+      }]
+    },
+    options: {
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: c.tx, font: { size: 11 } }, grid: { display: false } },
+        y: { ticks: { color: c.mu, font: { size: 10 } }, grid: { color: c.grid } }
+      }
+    }
+  });
+
+  const maiorPib = [...escolhidos].sort((a, b) => b.pib - a.pib)[0];
+  const maiorIdh = [...escolhidos].sort((a, b) => b.idh - a.idh)[0];
+  $('cmpAnalise').innerHTML = `Entre os países selecionados, <strong class="din-text-main">${maiorPib.nome}</strong> lidera em PIB total (${BD.pibFmt(maiorPib.pib)}), enquanto <strong class="din-green">${maiorIdh.nome}</strong> apresenta o maior IDH (${BD.num(maiorIdh.idh, 3)}). Compare PIB per capita e salário médio para enxergar a diferença entre escala econômica e renda individual.`;
+}
+
+// Inicialização
+(() => {
+  let temaSalvo = 'light';
+  try { temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light'; } catch {}
+  aplicarTema(temaSalvo);
+
+  setCategoriaFiltro('geo');
+  atualizarDescFiltro();
+  preencherSelectsComparador();
+  iniciarMapaMundi();
+  selecionarPais('BRA');
+  renderRanking();
+  renderComparadorMulti();
+  syncCambio();
+})();
+</script>
 </body>
 </html>
