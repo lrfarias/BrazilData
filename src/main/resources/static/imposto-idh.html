@@ -9,64 +9,101 @@
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <style>
-  .uf-path { transition: fill .2s ease, stroke-width .15s ease, opacity .15s ease; cursor: pointer; }
-  .uf-path:hover { opacity: .88; }
+  .uf-path { transition: fill .2s ease, opacity .15s ease, stroke-width .15s ease; cursor: pointer; }
+  .uf-path:hover { opacity: .85; }
 </style>
 </head>
 <body class="min-h-screen font-sans flex flex-col">
 <div id="bd-header"></div>
 
-<!-- Tooltip flutuante do mapa -->
+<!-- Tooltip do mapa -->
 <div id="mapTip" class="pointer-events-none fixed z-50 hidden px-3 py-2 rounded-lg text-xs shadow-lg border din-border din-card-bg">
   <p id="tipNome" class="font-bold din-text-main"></p>
   <p id="tipVal" class="din-green font-semibold mt-0.5"></p>
-  <p class="text-[10px] din-text-muted mt-0.5">Clique para ver o raio-x</p>
+  <p id="tipHint" class="text-[10px] din-text-muted mt-0.5">Clique para ver o raio-x</p>
 </div>
 
 <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+  <!-- Cabeçalho -->
   <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
     <div>
       <a href="/economia.html" class="text-xs font-semibold din-text-muted hover:underline">← Economia e indicadores</a>
-      <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight din-text-main mt-2">Impostos, população e IDH por estado</h1>
-      <p class="text-sm din-text-muted mt-1 max-w-2xl">Compare quanto cada estado produz, quantas pessoas vivem nele e quanto de tributo isso representa por habitante.</p>
+      <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight din-text-main mt-2">Impostos, população e economia por estado</h1>
+      <p class="text-sm din-text-muted mt-1 max-w-2xl">Explore a arrecadação estimada, vocação produtiva e evolução histórica dos 27 estados brasileiros.</p>
     </div>
     <label class="flex items-center gap-2 text-xs font-semibold din-text-muted">Ano base
       <select id="ano" class="inp !w-auto" onchange="montar(+this.value)"></select>
     </label>
   </div>
 
-  <!-- KPIs Nacionais -->
-  <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-    <div class="din-card-bg border din-border rounded-lg p-4"><span class="text-xs din-text-muted">Arrecadação estimada do Brasil</span><p id="k1" class="text-xl font-bold din-red mt-1">—</p></div>
-    <div class="din-card-bg border din-border rounded-lg p-4"><span class="text-xs din-text-muted">Média por habitante</span><p id="k2" class="text-xl font-bold din-text-main mt-1">—</p></div>
-    <div class="din-card-bg border din-border rounded-lg p-4"><span class="text-xs din-text-muted">Maior tributo por habitante</span><p id="k3" class="text-xl font-bold din-text-main mt-1">—</p></div>
-    <div class="din-card-bg border din-border rounded-lg p-4"><span class="text-xs din-text-muted">Menor tributo por habitante</span><p id="k4" class="text-xl font-bold din-text-main mt-1">—</p></div>
+  <!-- Barra de Controles Unificada (Região + Simulador de Carga Tributária) -->
+  <section class="din-card-bg border din-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+    <!-- Filtro de Região -->
+    <div class="space-y-1.5">
+      <span class="text-[11px] font-semibold uppercase tracking-wider din-text-muted">Filtrar por região</span>
+      <div id="btnsRegiao" class="flex flex-wrap gap-1.5"></div>
+    </div>
+
+    <!-- Simulador de Carga Tributária -->
+    <div class="lg:w-[360px] space-y-1.5 lg:border-l lg:pl-5 din-border">
+      <div class="flex items-center justify-between text-xs">
+        <span class="font-semibold din-text-main">Carga tributária simulada</span>
+        <strong id="lblTaxa" class="din-green">33,0% do PIB</strong>
+      </div>
+      <input id="rngTaxa" type="range" min="20" max="45" step="0.5" value="33"
+        class="w-full accent-[#16C784] cursor-pointer" oninput="mudarTaxa(+this.value)">
+      <div class="flex flex-wrap gap-1.5 pt-0.5">
+        <button type="button" onclick="mudarTaxa(27)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main">EUA 27%</button>
+        <button type="button" onclick="mudarTaxa(33)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784]">Brasil 33%</button>
+        <button type="button" onclick="mudarTaxa(34)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main">OCDE 34%</button>
+        <button type="button" onclick="mudarTaxa(45)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main">França 45%</button>
+      </div>
+    </div>
   </section>
 
-  <!-- Mapa Interativo + Raio-X do Estado -->
+  <!-- KPIs Consolidados (refletem região e carga tributária) -->
+  <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="din-card-bg border din-border rounded-lg p-4">
+      <span id="k1Lbl" class="text-xs din-text-muted">Arrecadação estimada</span>
+      <p id="k1" class="text-xl font-bold din-red mt-1">—</p>
+    </div>
+    <div class="din-card-bg border din-border rounded-lg p-4">
+      <span class="text-xs din-text-muted">Média por habitante</span>
+      <p id="k2" class="text-xl font-bold din-text-main mt-1">—</p>
+    </div>
+    <div class="din-card-bg border din-border rounded-lg p-4">
+      <span class="text-xs din-text-muted">Maior tributo / hab.</span>
+      <p id="k3" class="text-xl font-bold din-text-main mt-1">—</p>
+    </div>
+    <div class="din-card-bg border din-border rounded-lg p-4">
+      <span class="text-xs din-text-muted">Menor tributo / hab.</span>
+      <p id="k4" class="text-xl font-bold din-text-main mt-1">—</p>
+    </div>
+  </section>
+
+  <!-- Mapa + Raio-X com Abas -->
   <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
     <!-- Mapa -->
     <div class="lg:col-span-7 din-card-bg border din-border rounded-lg p-5 flex flex-col">
       <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
         <div>
           <h2 class="text-base font-semibold din-text-main">Mapa interativo do Brasil</h2>
-          <p class="text-xs din-text-muted">Passe o mouse para identificar e clique em um estado para detalhar.</p>
+          <p id="mapSub" class="text-xs din-text-muted">Passe o mouse para ver o nome e clique para abrir o raio-x.</p>
         </div>
         <select id="mapMetrica" class="inp !w-auto text-xs font-semibold" onchange="pintarMapa()">
           <option value="hab">Tributo por habitante</option>
           <option value="arrec">Arrecadação estimada</option>
           <option value="pib">PIB estadual</option>
           <option value="pop">População total</option>
-          <option value="prod">Produtividade (%PIB / %Pop)</option>
+          <option value="prod">Produtividade (%PIB ÷ %Pop)</option>
         </select>
       </div>
 
-      <div id="mapWrap" class="relative flex-1 min-h-[380px] flex items-center justify-center">
+      <div class="relative flex-1 min-h-[380px] flex items-center justify-center">
         <p id="mapLoading" class="text-xs din-text-muted">Carregando malha geográfica do IBGE…</p>
-        <svg id="mapaBr" viewBox="0 0 600 560" class="w-full max-h-[440px] hidden"></svg>
+        <svg id="mapaBr" viewBox="0 0 600 560" class="w-full max-h-[450px] hidden"></svg>
       </div>
 
-      <!-- Legenda de intensidade -->
       <div class="mt-3 pt-3 border-t din-border flex items-center justify-between gap-3 text-[11px] din-text-muted">
         <span id="legMin">Menor</span>
         <div class="flex-1 h-2 rounded-full max-w-xs" style="background: linear-gradient(90deg, rgba(22,199,132,0.15), #16C784);"></div>
@@ -74,31 +111,38 @@
       </div>
     </div>
 
-    <!-- Painel de Detalhes (Raio-X) -->
-    <div class="lg:col-span-5 din-card-bg border din-border rounded-lg p-5 flex flex-col justify-between space-y-4">
-      <div id="painelEstado" class="space-y-4">
-        <div class="flex items-start justify-between gap-2 pb-3 border-b din-border">
-          <div>
-            <span id="stRegiao" class="text-[11px] font-semibold uppercase tracking-wider din-green">Selecione um estado</span>
-            <h3 id="stNome" class="text-xl font-extrabold din-text-main mt-0.5">—</h3>
-          </div>
-          <span id="stSigla" class="px-2.5 py-1 rounded-md din-secondary-bg border din-border text-sm font-extrabold din-text-main">--</span>
+    <!-- Raio-X do Estado (Organizado em 3 Abas Limpas) -->
+    <div class="lg:col-span-5 din-card-bg border din-border rounded-lg p-5 flex flex-col space-y-4">
+      <!-- Cabeçalho do Estado + Navegação de Abas -->
+      <div class="flex items-start justify-between gap-2">
+        <div>
+          <span id="stRegiao" class="text-[11px] font-semibold uppercase tracking-wider din-green">—</span>
+          <h3 id="stNome" class="text-xl font-extrabold din-text-main mt-0.5">—</h3>
         </div>
+        <span id="stSigla" class="px-2.5 py-1 rounded-md din-secondary-bg border din-border text-sm font-extrabold din-text-main">--</span>
+      </div>
 
-        <!-- Métricas principais -->
-        <div class="grid grid-cols-2 gap-3">
+      <div class="grid grid-cols-3 gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+        <button id="tabResumo" type="button" onclick="setAba('resumo')" class="py-1.5 rounded-md din-card-bg din-text-main border din-border transition">Resumo</button>
+        <button id="tabEvolucao" type="button" onclick="setAba('evolucao')" class="py-1.5 rounded-md din-text-muted transition">Evolução</button>
+        <button id="tabComparar" type="button" onclick="setAba('comparar')" class="py-1.5 rounded-md din-text-muted transition">Comparar</button>
+      </div>
+
+      <!-- ABA 1: RESUMO + PIZZA VOCAÇÃO ECONÔMICA -->
+      <div id="viewResumo" class="space-y-4 flex-1 flex flex-col justify-between">
+        <div class="grid grid-cols-2 gap-2.5">
           <div class="din-secondary-bg rounded-lg p-3">
-            <span class="text-[11px] din-text-muted">Arrecadação estimada</span>
+            <span class="text-[11px] din-text-muted">Arrecadação est.</span>
             <p id="stArrec" class="text-base font-bold din-red mt-0.5">—</p>
             <span id="stRankArrec" class="text-[10px] din-text-muted">—</span>
           </div>
           <div class="din-secondary-bg rounded-lg p-3">
-            <span class="text-[11px] din-text-muted">Tributo / habitante</span>
+            <span class="text-[11px] din-text-muted">Tributo / hab.</span>
             <p id="stHab" class="text-base font-bold din-text-main mt-0.5">—</p>
             <span id="stVsMedia" class="text-[10px] font-semibold">—</span>
           </div>
           <div class="din-secondary-bg rounded-lg p-3">
-            <span class="text-[11px] din-text-muted">População total</span>
+            <span class="text-[11px] din-text-muted">População</span>
             <p id="stPop" class="text-base font-bold din-text-main mt-0.5">—</p>
             <span id="stPopPct" class="text-[10px] din-text-muted">—</span>
           </div>
@@ -109,41 +153,73 @@
           </div>
         </div>
 
-        <!-- Métricas analíticas (para estudantes e analistas) -->
-        <div class="pt-2 border-t din-border space-y-2 text-xs">
-          <div class="flex justify-between">
-            <span class="din-text-muted">PIB per capita</span>
+        <!-- Linha compacta de métricas extras -->
+        <div class="grid grid-cols-3 gap-2 pt-2 border-t din-border text-center text-xs">
+          <div>
+            <span class="block text-[10px] din-text-muted">PIB per capita</span>
             <strong id="stPibPc" class="din-text-main">—</strong>
           </div>
-          <div class="flex justify-between">
-            <span class="din-text-muted">Arrecadação diária estimada</span>
-            <strong id="stDia" class="din-text-main">—</strong>
-          </div>
-          <div class="flex justify-between">
-            <span class="din-text-muted">Índice de produtividade (%PIB ÷ %Pop)</span>
+          <div>
+            <span class="block text-[10px] din-text-muted">Produtividade</span>
             <strong id="stProd" class="din-text-main">—</strong>
           </div>
-          <div id="rowIdh" class="flex justify-between hidden">
-            <span class="din-text-muted">IDH</span>
-            <strong id="stIdh" class="din-green">—</strong>
+          <div id="boxIdh">
+            <span id="lblIdh" class="block text-[10px] din-text-muted">Arrec. / dia</span>
+            <strong id="stExtra" class="din-text-main">—</strong>
           </div>
         </div>
 
-        <!-- Insight didático -->
-        <div class="din-secondary-bg border din-border rounded-lg p-3">
-          <p id="stInsight" class="text-xs din-text-muted leading-relaxed">Clique em qualquer estado no mapa ou na tabela abaixo para comparar seu peso econômico, demográfico e tributário.</p>
+        <!-- Gráfico de Pizza: Vocação / Trabalho do Estado -->
+        <div class="pt-3 border-t din-border">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold din-text-main">Vocação produtiva (setores do PIB)</span>
+            <span id="stVocacaoTag" class="text-[10px] px-2 py-0.5 rounded din-secondary-bg border din-border din-green font-semibold">—</span>
+          </div>
+          <div class="grid grid-cols-12 items-center gap-3">
+            <div class="col-span-5 h-[125px]"><canvas id="grafVocacao"></canvas></div>
+            <div id="legVocacao" class="col-span-7 space-y-1.5 text-xs"></div>
+          </div>
         </div>
+      </div>
+
+      <!-- ABA 2: EVOLUÇÃO HISTÓRICA -->
+      <div id="viewEvolucao" class="hidden space-y-3 flex-1 flex flex-col">
+        <div class="flex items-center justify-between text-xs">
+          <span class="din-text-muted">Evolução do PIB e arrecadação</span>
+          <strong id="histCresc" class="din-green">—</strong>
+        </div>
+        <div class="flex-1 min-h-[240px]"><canvas id="grafHist"></canvas></div>
+        <p id="histNota" class="text-[11px] din-text-muted leading-relaxed"></p>
+      </div>
+
+      <!-- ABA 3: COMPARAR 2 ESTADOS -->
+      <div id="viewComparar" class="hidden space-y-3 flex-1 flex flex-col">
+        <div class="grid grid-cols-2 gap-2">
+          <label class="text-[11px] font-semibold din-text-muted">Estado A
+            <select id="selCompA" class="inp mt-1 text-xs" onchange="ufSel=this.value; selecionarEstado(ufSel)"></select>
+          </label>
+          <label class="text-[11px] font-semibold din-text-muted">Estado B (ou clique no mapa)
+            <select id="selCompB" class="inp mt-1 text-xs" onchange="ufComp=this.value; renderComparar()"></select>
+          </label>
+        </div>
+        <div id="compBody" class="divide-y din-border text-xs flex-1"></div>
       </div>
     </div>
   </section>
 
-  <!-- Tabela Ranking -->
+  <!-- Ranking + Exportar CSV -->
   <section class="din-card-bg border din-border rounded-lg p-5">
     <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
-      <h2 class="text-base font-semibold din-text-main">Ranking dos 27 estados</h2>
-      <span class="text-xs din-text-muted">Clique em uma linha para destacar no mapa</span>
+      <div>
+        <h2 id="titTabela" class="text-base font-semibold din-text-main">Ranking dos 27 estados</h2>
+        <span class="text-xs din-text-muted">Clique em qualquer coluna para ordenar ou na linha para inspecionar</span>
+      </div>
+      <button type="button" onclick="exportarCSV()"
+        class="px-3 py-1.5 rounded-lg text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition">
+        ↓ Exportar CSV
+      </button>
     </div>
-    <div class="overflow-x-auto max-h-[460px] overflow-y-auto">
+    <div class="overflow-x-auto max-h-[440px] overflow-y-auto">
       <table class="w-full text-left text-xs border-collapse">
         <thead class="sticky top-0 din-card-bg"><tr id="thead" class="din-text-muted border-b din-border"></tr></thead>
         <tbody id="tbody" class="divide-y din-border"><tr><td class="py-4 din-text-muted">Carregando dados…</td></tr></tbody>
@@ -151,15 +227,15 @@
     </div>
   </section>
 
-  <!-- Gráfico Top 10 -->
+  <!-- Gráfico Comparativo PIB vs População -->
   <section class="din-card-bg border din-border rounded-lg p-5">
     <h2 class="text-base font-semibold din-text-main">Peso na economia e na população</h2>
-    <p class="text-xs din-text-muted mb-3">Os 10 maiores PIBs. Barra verde maior que a azul: o estado produz mais do que o tamanho da sua população sugere.</p>
-    <div class="h-[340px]"><canvas id="graf"></canvas></div>
+    <p class="text-xs din-text-muted mb-3">Barra verde maior que a azul: o estado produz mais riqueza do que o tamanho da sua população sugere.</p>
+    <div class="h-[320px]"><canvas id="graf"></canvas></div>
   </section>
 
-  <p class="text-xs din-text-muted max-w-3xl leading-relaxed">
-    <strong class="din-text-main">Como ler.</strong> PIB e população vêm do IBGE (SIDRA). A arrecadação é uma estimativa de 33% do PIB, a carga tributária bruta média do país, e não um valor oficial por estado. Ela soma tributos federais, estaduais e municipais e não mostra quanto fica disponível para o estado gastar. O <em>Índice de Produtividade</em> divide a participação do estado no PIB pela sua participação na população (acima de 1,00x indica produção per capita superior à média nacional). A coluna de IDH aparece quando o banco tiver um indicador chamado "IDH" para o ano escolhido.
+  <p class="text-xs din-text-muted max-w-4xl leading-relaxed">
+    <strong class="din-text-main">Metodologia.</strong> PIB e população vêm do IBGE (SIDRA). A arrecadação é estimada pela carga tributária selecionada no simulador (padrão 33% do PIB, média bruta do Brasil) e soma tributos federais, estaduais e municipais. A <em>Vocação Produtiva</em> reflete a composição do Valor Adicionado Bruto por setor (Agropecuária, Indústria e Serviços) conforme as Contas Regionais do IBGE. O <em>Índice de Produtividade</em> divide % do PIB por % da população (acima de 1,00x indica produção per capita acima da média nacional).
   </p>
 </main>
 
@@ -167,9 +243,10 @@
 <script src="/layout.js"></script>
 <script>
 const $ = i => document.getElementById(i);
-const TAXA = 0.33;
-let TODOS = [], D = [], col = 'arrec', dir = -1, chart, idh = false;
-let mediaHabBR = 0, ufSel = 'SP', geoPronto = false;
+let TAXA = 0.33, anoAtual = null;
+let TODOS = [], D_ALL = [], D = [], col = 'arrec', dir = -1, idh = false;
+let mediaHabBR = 0, ufSel = 'SP', ufComp = 'RJ', regiaoSel = 'Todas', abaRx = 'resumo', geoPronto = false;
+let chartBar = null, chartPie = null, chartHist = null;
 
 const IBGE_UF = {
   '11':'RO','12':'AC','13':'AM','14':'RR','15':'PA','16':'AP','17':'TO',
@@ -184,6 +261,16 @@ const REGIAO = {
   PR:'Sul',SC:'Sul',RS:'Sul',
   MS:'Centro-Oeste',MT:'Centro-Oeste',GO:'Centro-Oeste',DF:'Centro-Oeste'
 };
+const REGIOES = ['Todas', 'Norte', 'Nordeste', 'Centro-Oeste', 'Sudeste', 'Sul'];
+
+// Composição setorial aproximada do VAB estadual (% Agro, % Indústria, % Serviços — IBGE Contas Regionais)
+const VOCACAO = {
+  AC:[11,10,79], AL:[12,16,72], AP:[3,12,85],  AM:[6,33,61],  BA:[9,24,67],  CE:[6,18,76],
+  DF:[1,4,95],   ES:[5,31,64],  GO:[15,22,63], MA:[14,19,67], MT:[30,17,53], MS:[23,21,56],
+  MG:[8,30,62],  PA:[11,42,47], PB:[4,17,79],  PR:[12,26,62], PE:[5,20,75],  PI:[11,14,75],
+  RJ:[1,30,69],  RN:[4,21,75],  RS:[12,24,64], RO:[19,20,61], RR:[10,9,81],  SC:[7,29,64],
+  SP:[2,22,76],  SE:[5,23,72],  TO:[21,14,65]
+};
 
 function fmtMetrica(d, k) {
   if (!d) return '—';
@@ -195,18 +282,41 @@ function fmtMetrica(d, k) {
   return '—';
 }
 
+function renderBotoesRegiao() {
+  $('btnsRegiao').innerHTML = REGIOES.map(r => {
+    const ativo = r === regiaoSel;
+    return `<button type="button" onclick="setRegiao('${r}')"
+      class="px-2.5 py-1 rounded-md text-xs font-semibold border transition ${ativo ? 'din-btn border-transparent' : 'din-secondary-bg din-border din-text-muted hover:din-text-main'}">${r === 'Todas' ? 'Brasil' : r}</button>`;
+  }).join('');
+}
+
+function setRegiao(r) {
+  regiaoSel = r;
+  renderBotoesRegiao();
+  aplicarFiltros();
+}
+
+function mudarTaxa(pct) {
+  TAXA = pct / 100;
+  $('rngTaxa').value = pct;
+  $('lblTaxa').textContent = BD.num(pct, 1) + '% do PIB';
+  if (anoAtual) montar(anoAtual);
+}
+
 function montar(ano) {
+  anoAtual = ano;
   const m = {};
   TODOS.filter(i => +i.anoReferencia === ano && i.estado).forEach(i => {
     const n = (i.nome || '').toLowerCase(), v = +i.valor || 0;
-    const d = m[i.estado.sigla] || (m[i.estado.sigla] = { sigla: i.estado.sigla, nome: i.estado.nome, pib: 0, pop: 0, idh: 0 });
+    const d = m[i.estado.sigla] || (m[i.estado.sigla] = { sigla: i.estado.sigla, nome: i.estado.nome, regiao: REGIAO[i.estado.sigla] || '', pib: 0, pop: 0, idh: 0 });
     if (n === 'pib estadual') d.pib = v; else if (n.includes('popula')) d.pop = v; else if (n.includes('idh')) d.idh = v;
   });
-  D = Object.values(m).filter(d => d.pib > 0 && d.pop > 0);
-  const pT = D.reduce((a, d) => a + d.pib, 0), hT = D.reduce((a, d) => a + d.pop, 0);
+
+  D_ALL = Object.values(m).filter(d => d.pib > 0 && d.pop > 0);
+  const pT = D_ALL.reduce((a, d) => a + d.pib, 0), hT = D_ALL.reduce((a, d) => a + d.pop, 0);
   mediaHabBR = (pT * 1000 * TAXA) / hT;
 
-  D.forEach(d => {
+  D_ALL.forEach(d => {
     d.sp = d.pib / pT * 100;
     d.sh = d.pop / hT * 100;
     d.arrec = d.pib * 1000 * TAXA;
@@ -215,62 +325,200 @@ function montar(ano) {
     d.prod = d.sp / d.sh;
   });
 
-  // Rankings internos
-  [...D].sort((a, b) => b.arrec - a.arrec).forEach((d, i) => d.rkArrec = i + 1);
-  [...D].sort((a, b) => b.hab - a.hab).forEach((d, i) => d.rkHab = i + 1);
+  [...D_ALL].sort((a, b) => b.arrec - a.arrec).forEach((d, i) => d.rkArrec = i + 1);
+  [...D_ALL].sort((a, b) => b.hab - a.hab).forEach((d, i) => d.rkHab = i + 1);
+  idh = D_ALL.some(d => d.idh > 0);
 
-  idh = D.some(d => d.idh > 0);
+  // Popular selects do comparador
+  const opts = [...D_ALL].sort((a, b) => a.nome.localeCompare(b.nome))
+    .map(d => `<option value="${d.sigla}">${d.nome} (${d.sigla})</option>`).join('');
+  $('selCompA').innerHTML = opts;
+  $('selCompB').innerHTML = opts;
+
+  aplicarFiltros();
+}
+
+function aplicarFiltros() {
+  D = regiaoSel === 'Todas' ? [...D_ALL] : D_ALL.filter(d => d.regiao === regiaoSel);
+  if (!D.length) return;
+
+  const pReg = D.reduce((a, d) => a + d.pib, 0), hReg = D.reduce((a, d) => a + d.pop, 0);
+  const arrecReg = pReg * 1000 * TAXA;
   const hs = [...D].sort((a, b) => b.hab - a.hab), mx = hs[0], mn = hs[hs.length - 1];
-  $('k1').textContent = BD.compact(pT * 1000 * TAXA);
-  $('k2').textContent = BD.brl(mediaHabBR, 0) + ' / ano';
-  $('k3').textContent = mx.sigla + ' · ' + BD.brl(mx.hab, 0);
-  $('k4').textContent = mn.sigla + ' · ' + BD.brl(mn.hab, 0);
 
-  if (!D.some(d => d.sigla === ufSel) && D.length) ufSel = D[0].sigla;
+  $('k1Lbl').textContent = regiaoSel === 'Todas' ? 'Arrecadação est. do Brasil' : `Arrecadação est. (${regiaoSel})`;
+  $('k1').textContent = BD.compact(arrecReg);
+  $('k2').textContent = BD.brl(arrecReg / hReg, 0) + ' / ano';
+  $('k3').textContent = `${mx.sigla} · ${BD.brl(mx.hab, 0)}`;
+  $('k4').textContent = `${mn.sigla} · ${BD.brl(mn.hab, 0)}`;
+
+  $('titTabela').textContent = regiaoSel === 'Todas'
+    ? `Ranking dos ${D.length} estados`
+    : `Estados da região ${regiaoSel} (${D.length})`;
+
+  if (!D.some(d => d.sigla === ufSel)) ufSel = D[0].sigla;
   tabela();
-  grafico();
+  graficoBar();
   if (geoPronto) pintarMapa();
   selecionarEstado(ufSel);
 }
 
+function setAba(a) {
+  abaRx = a;
+  const on = 'py-1.5 rounded-md din-card-bg din-text-main border din-border transition';
+  const off = 'py-1.5 rounded-md din-text-muted transition';
+  $('tabResumo').className = a === 'resumo' ? on : off;
+  $('tabEvolucao').className = a === 'evolucao' ? on : off;
+  $('tabComparar').className = a === 'comparar' ? on : off;
+
+  $('viewResumo').classList.toggle('hidden', a !== 'resumo');
+  $('viewEvolucao').classList.toggle('hidden', a !== 'evolucao');
+  $('viewComparar').classList.toggle('hidden', a !== 'comparar');
+
+  $('mapSub').textContent = a === 'comparar'
+    ? 'Modo comparação ativo: clique em um estado no mapa para comparar como Estado B.'
+    : 'Passe o mouse para ver o nome e clique para abrir o raio-x.';
+
+  if (a === 'resumo') renderPizzaVocacao(ufSel);
+  if (a === 'evolucao') renderEvolucao(ufSel);
+  if (a === 'comparar') renderComparar();
+  if (geoPronto) pintarMapa();
+}
+
 function selecionarEstado(sigla) {
-  const d = D.find(x => x.sigla === sigla);
+  const d = D_ALL.find(x => x.sigla === sigla);
   if (!d) return;
   ufSel = sigla;
+  if (ufComp === ufSel) ufComp = (D_ALL.find(x => x.sigla !== ufSel) || d).sigla;
 
-  $('stRegiao').textContent = `${REGIAO[sigla] || 'Brasil'} · #${d.rkHab} em tributo/hab`;
+  $('stRegiao').textContent = `${d.regiao} · #${d.rkHab}º em tributo/hab`;
   $('stNome').textContent = d.nome;
   $('stSigla').textContent = d.sigla;
   $('stArrec').textContent = BD.compact(d.arrec);
-  $('stRankArrec').textContent = `#${d.rkArrec}º maior do país`;
+  $('stRankArrec').textContent = `#${d.rkArrec}º do país`;
   $('stHab').textContent = BD.brl(d.hab, 0);
 
   const diff = ((d.hab - mediaHabBR) / mediaHabBR) * 100;
-  $('stVsMedia').innerHTML = `<span class="${diff >= 0 ? 'din-green' : 'din-red'}">${diff >= 0 ? '+' : ''}${BD.num(diff, 1)}% vs média BR</span>`;
+  $('stVsMedia').innerHTML = `<span class="${diff >= 0 ? 'din-green' : 'din-red'}">${diff >= 0 ? '+' : ''}${BD.num(diff, 1)}% vs BR</span>`;
 
   $('stPop').textContent = BD.num(d.pop, 0);
-  $('stPopPct').textContent = `${BD.num(d.sh, 2)}% da população`;
+  $('stPopPct').textContent = `${BD.num(d.sh, 1)}% da pop. BR`;
   $('stPib').textContent = BD.compact(d.pib * 1000);
-  $('stPibPct').textContent = `${BD.num(d.sp, 2)}% do PIB nacional`;
-
+  $('stPibPct').textContent = `${BD.num(d.sp, 1)}% do PIB BR`;
   $('stPibPc').textContent = BD.brl(d.pibPc, 0);
-  $('stDia').textContent = BD.compact(d.arrec / 365) + ' / dia';
   $('stProd').innerHTML = `<span class="${d.prod >= 1 ? 'din-green' : 'din-red'}">${BD.num(d.prod, 2)}x</span>`;
 
   if (idh && d.idh) {
-    $('rowIdh').classList.remove('hidden');
-    $('stIdh').textContent = BD.num(d.idh, 3);
+    $('lblIdh').textContent = 'IDH';
+    $('stExtra').innerHTML = `<span class="din-green">${BD.num(d.idh, 3)}</span>`;
   } else {
-    $('rowIdh').classList.add('hidden');
+    $('lblIdh').textContent = 'Arrec. / dia';
+    $('stExtra').textContent = BD.compact(d.arrec / 365);
   }
 
-  const pesoTxt = d.prod >= 1
-    ? `gera uma fatia do PIB <strong>${BD.num(d.prod, 2)}x maior</strong> do que seu peso populacional`
-    : `concentra <strong>${BD.num(d.sh, 1)}% da população</strong> para <strong>${BD.num(d.sp, 1)}% do PIB</strong>`;
-  $('stInsight').innerHTML = `<strong class="din-text-main">${d.nome}</strong> ${pesoTxt}, com carga tributária estimada em <strong>${BD.brl(d.hab, 0)}</strong> por habitante ao ano.`;
+  $('selCompA').value = ufSel;
+  $('selCompB').value = ufComp;
 
+  if (abaRx === 'resumo') renderPizzaVocacao(ufSel);
+  if (abaRx === 'evolucao') renderEvolucao(ufSel);
+  if (abaRx === 'comparar') renderComparar();
   if (geoPronto) pintarMapa();
   tabela();
+}
+
+function renderPizzaVocacao(sigla) {
+  const [agro, ind, serv] = VOCACAO[sigla] || [10, 20, 70];
+  const destaque = agro >= 15 ? 'Forte no Agronegócio' : ind >= 28 ? 'Perfil Industrial' : 'Economia de Serviços';
+  $('stVocacaoTag').textContent = destaque;
+
+  const itens = [
+    { n: 'Serviços & Comércio', v: serv, cor: '#2563EB' },
+    { n: 'Indústria', v: ind, cor: '#F59E0B' },
+    { n: 'Agropecuária', v: agro, cor: '#16C784' }
+  ];
+  $('legVocacao').innerHTML = itens.map(x => `
+    <div class="flex items-center justify-between">
+      <span class="flex items-center gap-1.5 din-text-muted"><span class="w-2.5 h-2.5 rounded-sm inline-block" style="background:${x.cor}"></span>${x.n}</span>
+      <strong class="din-text-main">${x.v}%</strong>
+    </div>`).join('');
+
+  if (chartPie) chartPie.destroy();
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  chartPie = new Chart($('grafVocacao'), {
+    type: 'doughnut',
+    data: {
+      labels: itens.map(x => x.n),
+      datasets: [{ data: itens.map(x => x.v), backgroundColor: itens.map(x => x.cor), borderColor: dark ? '#191C20' : '#F7F8FA', borderWidth: 2 }]
+    },
+    options: {
+      maintainAspectRatio: false,
+      cutout: '62%',
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: x => ` ${x.label}: ${x.parsed}%` } } }
+    }
+  });
+}
+
+function renderEvolucao(sigla) {
+  const porAno = {};
+  TODOS.filter(i => i.estado && i.estado.sigla === sigla).forEach(i => {
+    const a = +i.anoReferencia, n = (i.nome || '').toLowerCase();
+    if (n === 'pib estadual') porAno[a] = (+i.valor || 0) * 1000;
+  });
+  const anos = Object.keys(porAno).map(Number).sort((a, b) => a - b);
+  if (chartHist) chartHist.destroy();
+
+  if (anos.length < 2) {
+    $('histCresc').textContent = 'Série única';
+    $('histNota').textContent = 'O banco possui apenas 1 ano de referência para este estado no momento.';
+    return;
+  }
+
+  const pibs = anos.map(a => porAno[a]);
+  const arrecs = pibs.map(v => v * TAXA);
+  const cresc = ((pibs[pibs.length - 1] - pibs[0]) / pibs[0]) * 100;
+  $('histCresc').textContent = `${cresc >= 0 ? '+' : ''}${BD.num(cresc, 1)}% (${anos[0]}–${anos[anos.length - 1]})`;
+  $('histNota').textContent = `Crescimento nominal do PIB de ${sigla} entre ${anos[0]} e ${anos[anos.length - 1]}, com arrecadação recalculada para a carga de ${BD.num(TAXA * 100, 1)}%.`;
+
+  const c = BD.cor();
+  chartHist = new Chart($('grafHist'), {
+    type: 'line',
+    data: {
+      labels: anos,
+      datasets: [
+        { label: 'PIB estadual', data: pibs, borderColor: '#16C784', borderWidth: 2, tension: .2, pointRadius: 3 },
+        { label: 'Arrecadação est.', data: arrecs, borderColor: '#EA3943', borderWidth: 2, borderDash: [4, 3], tension: .2, pointRadius: 2 }
+      ]
+    },
+    options: {
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: { legend: { labels: { color: c.tx, boxWidth: 10, font: { size: 11 } } }, tooltip: { callbacks: { label: x => ` ${x.dataset.label}: ${BD.compact(x.parsed.y)}` } } },
+      scales: { x: { ticks: { color: c.mu }, grid: { display: false } }, y: { ticks: { color: c.mu, callback: v => BD.compact(v) }, grid: { color: c.grid } } }
+    }
+  });
+}
+
+function renderComparar() {
+  const a = D_ALL.find(x => x.sigla === ufSel);
+  const b = D_ALL.find(x => x.sigla === ufComp);
+  if (!a || !b) return;
+
+  const linhas = [
+    ['PIB estadual', a.pib * 1000, b.pib * 1000, v => BD.compact(v)],
+    ['PIB per capita', a.pibPc, b.pibPc, v => BD.brl(v, 0)],
+    ['População', a.pop, b.pop, v => BD.num(v, 0)],
+    ['Arrecadação est.', a.arrec, b.arrec, v => BD.compact(v)],
+    ['Tributo / hab.', a.hab, b.hab, v => BD.brl(v, 0)],
+    ['Produtividade', a.prod, b.prod, v => BD.num(v, 2) + 'x']
+  ];
+  if (idh) linhas.push(['IDH', a.idh, b.idh, v => v ? BD.num(v, 3) : '—']);
+
+  $('compBody').innerHTML = linhas.map(([lbl, va, vb, fmt]) => `
+    <div class="py-2 grid grid-cols-12 items-center gap-1">
+      <span class="col-span-4 font-bold ${va >= vb ? 'din-green' : 'din-text-main'}">${fmt(va)}</span>
+      <span class="col-span-4 text-center text-[11px] din-text-muted">${lbl}</span>
+      <span class="col-span-4 text-right font-bold ${vb > va ? 'din-green' : 'din-text-main'}">${fmt(vb)}</span>
+    </div>`).join('');
 }
 
 async function iniciarMapa() {
@@ -280,18 +528,12 @@ async function iniciarMapa() {
   ];
   let geo = null;
   for (const u of urls) {
-    try {
-      const r = await fetch(u);
-      if (r.ok) { geo = await r.json(); break; }
-    } catch {}
+    try { const r = await fetch(u); if (r.ok) { geo = await r.json(); break; } } catch {}
   }
-  if (!geo) {
-    $('mapLoading').textContent = 'Não foi possível carregar o mapa no momento.';
-    return;
-  }
+  if (!geo) { $('mapLoading').textContent = 'Não foi possível carregar o mapa no momento.'; return; }
 
   const svg = d3.select('#mapaBr');
-  const proj = d3.geoIdentity().reflectY(true).fitExtent([[16, 16], [584, 544]], geo);
+  const proj = d3.geoMercator().fitExtent([[16, 16], [584, 544]], geo);
   const path = d3.geoPath().projection(proj);
   const tip = $('mapTip');
 
@@ -301,22 +543,27 @@ async function iniciarMapa() {
     .attr('class', 'uf-path')
     .attr('d', path)
     .attr('data-uf', f => IBGE_UF[String(f.properties.codarea)] || f.properties.sigla || '')
-    .on('mouseenter', function(ev, f) {
+    .on('mouseenter', function() {
       const uf = this.getAttribute('data-uf');
-      const d = D.find(x => x.sigla === uf);
-      const met = $('mapMetrica').value;
+      const d = D_ALL.find(x => x.sigla === uf);
       $('tipNome').textContent = d ? `${d.nome} (${uf})` : uf;
-      $('tipVal').textContent = d ? fmtMetrica(d, met) : 'Sem dados';
+      $('tipVal').textContent = d ? fmtMetrica(d, $('mapMetrica').value) : 'Sem dados';
+      $('tipHint').textContent = abaRx === 'comparar' ? 'Clique para comparar como Estado B' : 'Clique para ver o raio-x';
       tip.classList.remove('hidden');
     })
-    .on('mousemove', ev => {
-      tip.style.left = (ev.clientX + 14) + 'px';
-      tip.style.top = (ev.clientY + 14) + 'px';
-    })
+    .on('mousemove', ev => { tip.style.left = (ev.clientX + 14) + 'px'; tip.style.top = (ev.clientY + 14) + 'px'; })
     .on('mouseleave', () => tip.classList.add('hidden'))
     .on('click', function() {
       const uf = this.getAttribute('data-uf');
-      if (uf) selecionarEstado(uf);
+      if (!uf) return;
+      if (abaRx === 'comparar' && uf !== ufSel) {
+        ufComp = uf;
+        $('selCompB').value = ufComp;
+        renderComparar();
+        pintarMapa();
+      } else {
+        selecionarEstado(uf);
+      }
     });
 
   $('mapLoading').classList.add('hidden');
@@ -331,8 +578,8 @@ function pintarMapa() {
   const vals = D.map(d => d[k]);
   const min = Math.min(...vals), max = Math.max(...vals);
   const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-  const baseBg = dark ? '#22262B' : '#E8F7F0';
-  const escala = d3.scaleLinear().domain([min, max]).range([baseBg, '#16C784']);
+  const escala = d3.scaleLinear().domain([min, max]).range([dark ? '#22262B' : '#E8F7F0', '#16C784']);
+  const apagado = dark ? '#16191D' : '#F0F2F5';
   const borda = dark ? '#101214' : '#FFFFFF';
   const bordaSel = dark ? '#F5F6F7' : '#17191C';
 
@@ -342,19 +589,25 @@ function pintarMapa() {
 
   d3.select('#mapaBr').selectAll('path')
     .attr('fill', function() {
-      const d = D.find(x => x.sigla === this.getAttribute('data-uf'));
-      return d ? escala(d[k]) : (dark ? '#2B3036' : '#E5E7EB');
+      const uf = this.getAttribute('data-uf');
+      const d = D.find(x => x.sigla === uf);
+      return d ? escala(d[k]) : apagado;
     })
     .attr('stroke', function() {
-      return this.getAttribute('data-uf') === ufSel ? bordaSel : borda;
+      const uf = this.getAttribute('data-uf');
+      if (uf === ufSel) return bordaSel;
+      if (abaRx === 'comparar' && uf === ufComp) return '#2563EB';
+      return borda;
     })
     .attr('stroke-width', function() {
-      return this.getAttribute('data-uf') === ufSel ? 2.4 : 0.9;
+      const uf = this.getAttribute('data-uf');
+      if (uf === ufSel || (abaRx === 'comparar' && uf === ufComp)) return 2.4;
+      return 0.9;
     });
 }
 
 function tabela() {
-  const cols = [['nome', 'Estado'], ['pib', 'PIB'], ['sp', '% do PIB'], ['sh', '% da pop.'], ['arrec', 'Arrecadação est.'], ['hab', 'Por habitante']];
+  const cols = [['nome', 'Estado'], ['pib', 'PIB'], ['sp', '% PIB'], ['sh', '% Pop.'], ['arrec', 'Arrecadação est.'], ['hab', 'Por hab.']];
   if (idh) cols.push(['idh', 'IDH']);
   $('thead').innerHTML = '<th class="py-2 px-2">#</th>' + cols.map(([k, t]) => `<th class="s py-2 px-2" onclick="ord('${k}')">${t} ↕</th>`).join('');
   const L = [...D].sort((a, b) => col === 'nome' ? dir * -1 * a.nome.localeCompare(b.nome) : dir * (a[col] - b[col]));
@@ -370,10 +623,10 @@ function tabela() {
 }
 function ord(k) { if (col === k) dir *= -1; else { col = k; dir = -1; } tabela(); }
 
-function grafico() {
+function graficoBar() {
   const t = [...D].sort((a, b) => b.pib - a.pib).slice(0, 10), c = BD.cor();
-  if (chart) chart.destroy();
-  chart = new Chart($('graf'), {
+  if (chartBar) chartBar.destroy();
+  chartBar = new Chart($('graf'), {
     type: 'bar',
     data: { labels: t.map(d => d.sigla), datasets: [
       { label: '% do PIB nacional', data: t.map(d => +d.sp.toFixed(2)), backgroundColor: '#16C784', borderRadius: 4 },
@@ -383,7 +636,25 @@ function grafico() {
   });
 }
 
+function exportarCSV() {
+  if (!D.length) return;
+  const cab = ['Estado','Sigla','Regiao','Ano','Carga_Simulada_%','PIB_R$','Part_PIB_%','Populacao','Part_Pop_%','Arrecadacao_Est_R$','Tributo_Por_Hab_R$','PIB_Per_Capita_R$','Produtividade_x','Agro_%','Industria_%','Servicos_%'];
+  if (idh) cab.push('IDH');
+  const linhas = D.map(d => {
+    const [ag, ind, sv] = VOCACAO[d.sigla] || [0,0,0];
+    const row = [d.nome, d.sigla, d.regiao, anoAtual, (TAXA*100).toFixed(1), Math.round(d.pib*1000), d.sp.toFixed(2), Math.round(d.pop), d.sh.toFixed(2), Math.round(d.arrec), Math.round(d.hab), Math.round(d.pibPc), d.prod.toFixed(2), ag, ind, sv];
+    if (idh) row.push(d.idh ? d.idh.toFixed(3) : '');
+    return row.join(';');
+  });
+  const blob = new Blob(['\uFEFF' + [cab.join(';'), ...linhas].join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `brasilemdados_${regiaoSel.toLowerCase()}_${anoAtual}.csv`;
+  a.click();
+}
+
 (async () => {
+  renderBotoesRegiao();
   iniciarMapa();
   try {
     TODOS = await BD.indicadores();
@@ -398,7 +669,11 @@ function grafico() {
 })();
 
 window.addEventListener('tema', () => {
-  if (D.length) { grafico(); pintarMapa(); }
+  if (!D.length) return;
+  graficoBar();
+  pintarMapa();
+  if (abaRx === 'resumo') renderPizzaVocacao(ufSel);
+  if (abaRx === 'evolucao') renderEvolucao(ufSel);
 });
 </script>
 </body>
