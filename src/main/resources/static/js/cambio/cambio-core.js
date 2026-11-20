@@ -329,38 +329,27 @@ function renderRetrospectivo() {
 }
 
 async function carregarTaxasAoVivo(inicial = false) {
-  const endpoints = ['/api/cambio/cotacoes', 'https://open.er-api.com/v6/latest/USD'];
-  let j = null;
+  try {
+    const r = await fetch('https://open.er-api.com/v6/latest/USD');
+    if (!r.ok) throw new Error('API Live');
+    const j = await r.json();
+    ratesUSD = j.rates;
 
-  for (const url of endpoints) {
-    try {
-      const r = await fetch(url);
-      if (r.ok) {
-        j = await r.json();
-        if (j && j.rates) break;
-      }
-    } catch {}
-  }
+    if (inicial) {
+      const cods = Object.keys(ratesUSD).sort();
+      $('qtdMoedas').textContent = `${cods.length} moedas disponíveis`;
+      const opts = cods.map(c => `<option value="${c}">${labelMoeda(c)}</option>`).join('');
+      $('convDe').innerHTML = opts;
+      $('convPara').innerHTML = opts;
+      $('convDe').value = 'BRL';
+      $('convPara').value = 'USD';
+    }
 
-  if (!j || !j.rates) {
+    renderTop5();
+    converter();
+    const hora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    $('statusLive').textContent = `Atualizado às ${hora} (auto 60s)`;
+  } catch {
     $('statusLive').textContent = 'Erro ao atualizar cotações';
-    return;
   }
-
-  ratesUSD = j.rates;
-
-  if (inicial) {
-    const cods = Object.keys(ratesUSD).sort();
-    $('qtdMoedas').textContent = `${cods.length} moedas disponíveis`;
-    const opts = cods.map(c => `<option value="${c}">${labelMoeda(c)}</option>`).join('');
-    $('convDe').innerHTML = opts;
-    $('convPara').innerHTML = opts;
-    $('convDe').value = 'BRL';
-    $('convPara').value = 'USD';
-  }
-
-  renderTop5();
-  converter();
-  const hora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  $('statusLive').textContent = `Atualizado às ${hora} (auto 60s)`;
 }
