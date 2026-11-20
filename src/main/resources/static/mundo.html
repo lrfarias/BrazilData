@@ -48,8 +48,7 @@
   .inp { background-color: var(--bg-secondary); border: 1px solid var(--border-col); color: var(--text-main); border-radius: 0.5rem; padding: 0.45rem 0.7rem; width: 100%; font-size: 0.82rem; }
   .inp:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--accent-green); outline-offset: 2px; }
   select option { background-color: var(--card-bg); color: var(--text-main); }
-  .pais-path { fill: #F8FAFC; stroke: #CBD5E1; stroke-width: 0.65; transition: fill .18s ease, stroke .15s ease, stroke-width .15s ease; cursor: pointer; }
-  [data-theme="dark"] .pais-path { fill: #1D2126; stroke: #2B3036; }
+  .pais-path { transition: fill .18s ease, stroke .15s ease, stroke-width .15s ease; cursor: pointer; }
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   body.modo-apresentacao header,
@@ -257,7 +256,6 @@
         <div id="mapLoading" class="text-xs din-text-muted">Carregando malha mundial (ISO-3166)…</div>
         <svg id="mapaMundo" class="w-full h-full hidden select-none"></svg>
 
-        <!-- Controles de Zoom no canto superior esquerdo -->
         <div class="absolute top-3 left-3 flex flex-col gap-1 z-10">
           <button type="button" onclick="ajustarZoom(1.35)" title="Aproximar" class="w-8 h-8 rounded-lg din-card-bg border din-border din-text-main font-bold text-sm shadow hover:border-[#16C784] transition">+</button>
           <button type="button" onclick="ajustarZoom(0.75)" title="Afastar" class="w-8 h-8 rounded-lg din-card-bg border din-border din-text-main font-bold text-sm shadow hover:border-[#16C784] transition">−</button>
@@ -265,7 +263,6 @@
         </div>
       </div>
 
-      <!-- Legenda dinâmica -->
       <div id="legendaMapa" class="pt-1 flex flex-wrap items-center justify-between gap-3 text-[11px] din-text-muted">
         <span id="legMin" class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-[#16C784] inline-block"></span> País ou recorte selecionado</span>
         <div id="legBarra" class="hidden flex-1 h-2 rounded-full max-w-xs" style="background: linear-gradient(90deg, rgba(22,199,132,0.16), #16C784);"></div>
@@ -273,7 +270,7 @@
       </div>
     </section>
 
-    <!-- 2.5 PAINEL CONSOLIDADO DO RECORTE (CONTINENTE / REGIÃO / BLOCO / DESENVOLVIMENTO / RANKING) -->
+    <!-- 2.5 PAINEL CONSOLIDADO DO RECORTE -->
     <section id="secaoResumoRegiao" class="hidden din-card-bg border border-[#16C784]/60 rounded-xl p-5 shadow-sm space-y-4">
       <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b din-border">
         <div>
@@ -332,7 +329,6 @@
         </div>
       </div>
 
-      <!-- Lista Clicável dos Países do Recorte -->
       <div class="pt-3 border-t din-border space-y-2">
         <span class="text-[10px] font-bold uppercase tracking-wider din-text-muted block">Países incluídos neste recorte (clique para abrir o raio-x):</span>
         <div id="listaPaisesRecorte" class="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto pr-1"></div>
@@ -360,7 +356,6 @@
         </div>
       </div>
 
-      <!-- Resumo Moeda + Gráfico Pizza de Vocação Econômica Real do País -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
         <div class="lg:col-span-5 din-secondary-bg border din-border rounded-lg p-4 flex flex-col justify-between gap-3 text-xs">
           <div class="flex items-center justify-between gap-2">
@@ -388,7 +383,6 @@
         </div>
       </div>
 
-      <!-- 4 Sub-Abas do Raio-X -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
         <button id="abaRxEcon" type="button" onclick="setAbaRx('econ')" class="py-1.5 rounded-md din-card-bg din-text-main border din-border transition">Macro & Fiscal</button>
         <button id="abaRxComercio" type="button" onclick="setAbaRx('comercio')" class="py-1.5 rounded-md din-text-muted transition">Comércio Exterior</button>
@@ -396,15 +390,12 @@
         <button id="abaRxHist" type="button" onclick="setAbaRx('hist')" class="py-1.5 rounded-md din-text-muted transition">Histórico Real</button>
       </div>
 
-      <!-- SUB-ABA 1: MACRO & FISCAL -->
       <div id="viewRxEcon" class="space-y-3">
         <div id="gridMacro" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 text-xs"></div>
       </div>
 
-      <!-- SUB-ABA 2: COMÉRCIO EXTERIOR -->
       <div id="viewRxComercio" class="hidden space-y-4">
         <div id="gridComercioKpi" class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs"></div>
-
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
           <div class="lg:col-span-7 din-secondary-bg border din-border rounded-lg p-4 space-y-2">
             <div class="flex items-center justify-between">
@@ -412,9 +403,8 @@
               <span class="text-[10px] din-text-muted">Fonte: UN Comtrade / OEC · Observado</span>
             </div>
             <div id="boxGrafParceiros" class="h-[190px]"><canvas id="grafParceiros"></canvas></div>
-            <p id="msgSemParceiros" class="hidden text-xs din-text-muted py-6 text-center">Detalhamento bilateral de parceiros disponível para as principais economias globais. Consulte os totais de Exportação e Importação acima (Banco Mundial).</p>
+            <p id="msgSemParceiros" class="hidden text-xs din-text-muted py-6 text-center">Detalhamento bilateral disponível para as principais economias globais.</p>
           </div>
-
           <div class="lg:col-span-5 din-secondary-bg border din-border rounded-lg p-4 space-y-2.5">
             <div class="flex items-center justify-between">
               <span class="text-xs font-bold din-text-main">Principais produtos exportados</span>
@@ -425,13 +415,11 @@
         </div>
       </div>
 
-      <!-- SUB-ABA 3: SOCIAL, IDH & GINI -->
       <div id="viewRxSocial" class="hidden space-y-3 text-xs">
         <div id="gridSocial" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
         <p id="rxResumoSocial" class="din-secondary-bg border din-border rounded-lg p-3 din-text-muted leading-relaxed"></p>
       </div>
 
-      <!-- SUB-ABA 4: HISTÓRICO REAL -->
       <div id="viewRxHist" class="hidden space-y-3">
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 max-w-3xl">
           <select id="histSerieTipo" class="inp text-xs py-1.5" onchange="atualizarControlesHist(); carregarHistoricoReal()">
@@ -443,21 +431,18 @@
             <option value="NE.EXP.GNFS.CD">Exportações US$ (Banco Mundial)</option>
             <option value="NE.IMP.GNFS.CD">Importações US$ (Banco Mundial)</option>
           </select>
-
           <select id="histPeriodo" class="inp text-xs py-1.5" onchange="carregarHistoricoReal()">
             <option value="5d">5 dias (câmbio)</option>
             <option value="1m">1 mês (câmbio)</option>
             <option value="3m" selected>3 meses (câmbio)</option>
             <option value="2a">2 anos (câmbio)</option>
           </select>
-
           <select id="histTipoGraf" class="inp text-xs py-1.5" onchange="desenharHistoricoReal()">
             <option value="line">Linha</option>
             <option value="area">Área</option>
             <option value="bar">Barras</option>
           </select>
         </div>
-
         <div class="h-[240px] din-secondary-bg/50 rounded-lg p-3 border din-border">
           <canvas id="grafMiniPais"></canvas>
         </div>
@@ -472,7 +457,6 @@
           <h2 class="text-base font-extrabold din-text-main">Rankings globais</h2>
           <p id="rkDescricao" class="text-xs din-text-muted">Economias mais fortes em valor total</p>
         </div>
-
         <div class="flex flex-wrap items-center gap-2">
           <select id="rkMetrica" class="inp !w-auto text-xs font-semibold" onchange="renderRanking()">
             <option value="pib">Maiores PIBs (Nominal)</option>
@@ -486,7 +470,6 @@
             <option value="moedaBRL">Maiores moedas (em BRL)</option>
             <option value="imposto">Maior carga tributária</option>
           </select>
-
           <div class="inline-flex din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
             <button id="top5Btn" type="button" onclick="setTopN(5)" class="px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border transition">Top 5</button>
             <button id="top10Btn" type="button" onclick="setTopN(10)" class="px-2.5 py-1 rounded-md din-text-muted transition">Top 10</button>
@@ -494,7 +477,6 @@
           </div>
         </div>
       </div>
-
       <div id="gridRanking" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3"></div>
     </section>
 
@@ -536,7 +518,6 @@
             <tbody id="cmpTbody" class="divide-y din-border"></tbody>
           </table>
         </div>
-
         <div class="lg:col-span-5 space-y-3">
           <div class="h-[240px] din-secondary-bg/40 rounded-lg p-3 border din-border">
             <canvas id="grafComparador"></canvas>
@@ -546,7 +527,7 @@
       </div>
     </section>
 
-    <!-- 6. GOVERNANÇA DE DADOS & FONTES OFICIAIS -->
+    <!-- 6. GOVERNANÇA DE DADOS -->
     <section class="din-card-bg border din-border rounded-xl p-5 shadow-sm space-y-3 ocultar-em-presentation">
       <div class="flex flex-wrap items-center justify-between gap-2">
         <h3 class="text-sm font-bold din-text-main">Fontes oficiais, unidades e transparência</h3>
@@ -562,7 +543,6 @@
   </main>
 </div>
 
-<!-- Rodapé Institucional -->
 <footer class="border-t din-border din-card-bg py-6 text-xs din-text-muted mt-8 ocultar-em-presentation">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
     <div class="flex items-center gap-2">
@@ -582,8 +562,8 @@
 
 <script>
 const $ = i => document.getElementById(i);
-const CACHE_KEY = 'bd_mundo_cache_v3';
-const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 horas
+const CACHE_KEY = 'bd_mundo_cache_v4';
+const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 
 const BD = {
   brl: (v, d = 2) => v == null ? 'N/D' : v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: d, maximumFractionDigits: d }),
@@ -606,7 +586,46 @@ const BD = {
   cor: () => { const d = document.documentElement.getAttribute('data-theme') === 'dark'; return { tx: d ? '#F5F6F7' : '#17191C', mu: d ? '#9299A3' : '#737780', grid: d ? '#2B3036' : '#E5E7EB' }; }
 };
 
-// Mapeamento numérico ISO -> ISO3 (cobertura global para o mapa-múndi)
+// Base de contingência (FMI/Banco Mundial) usada apenas se alguma requisição ao vivo do Banco Mundial sofrer rate-limit
+const FALLBACK_MACRO = {
+  USA:{pib:28.78e12,ppc:28.78e12,pc:85370,pop:335.9e6,cresc:2.5,infla:2.9,imp:27.1,gini:41.3},
+  CHN:{pib:18.53e12,ppc:35.29e12,pc:13136,pop:1409.7e6,cresc:4.8,infla:0.4,imp:21.5,gini:37.1},
+  DEU:{pib:4.59e12,ppc:5.69e12,pc:54291,pop:84.5e6,cresc:0.1,infla:2.2,imp:41.2,gini:31.7},
+  JPN:{pib:4.11e12,ppc:6.72e12,pc:33138,pop:124.0e6,cresc:0.3,infla:2.5,imp:34.1,gini:32.9},
+  IND:{pib:3.94e12,ppc:14.59e12,pc:2731,pop:1428.6e6,cresc:6.8,infla:4.8,imp:18.0,gini:32.8},
+  GBR:{pib:3.50e12,ppc:4.03e12,pc:51075,pop:68.3e6,cresc:0.9,infla:2.6,imp:35.3,gini:32.4},
+  FRA:{pib:3.13e12,ppc:3.99e12,pc:47359,pop:68.1e6,cresc:1.1,infla:2.0,imp:45.6,gini:31.5},
+  ITA:{pib:2.33e12,ppc:3.35e12,pc:39580,pop:58.9e6,cresc:0.7,infla:1.3,imp:42.8,gini:34.8},
+  BRA:{pib:2.18e12,ppc:4.27e12,pc:10296,pop:212.6e6,cresc:2.9,infla:4.4,imp:33.0,gini:52.0},
+  CAN:{pib:2.21e12,ppc:2.47e12,pc:54866,pop:40.1e6,cresc:1.3,infla:2.4,imp:34.8,gini:31.7},
+  RUS:{pib:2.02e12,ppc:6.45e12,pc:14391,pop:144.2e6,cresc:3.6,infla:8.6,imp:34.0,gini:35.1},
+  MEX:{pib:1.85e12,ppc:3.43e12,pc:14266,pop:129.7e6,cresc:1.8,infla:4.6,imp:16.9,gini:43.5},
+  AUS:{pib:1.79e12,ppc:1.79e12,pc:66589,pop:26.6e6,cresc:1.2,infla:3.2,imp:29.5,gini:34.3},
+  KOR:{pib:1.76e12,ppc:3.06e12,pc:34165,pop:51.7e6,cresc:2.2,infla:2.1,imp:29.9,gini:31.4},
+  ESP:{pib:1.65e12,ppc:2.52e12,pc:34045,pop:48.4e6,cresc:2.7,infla:2.4,imp:37.5,gini:33.9},
+  IDN:{pib:1.48e12,ppc:4.72e12,pc:5271,pop:277.5e6,cresc:5.0,infla:2.1,imp:12.5,gini:36.1},
+  TUR:{pib:1.15e12,ppc:3.83e12,pc:13384,pop:85.8e6,cresc:3.2,infla:48.5,imp:23.5,gini:44.4},
+  NLD:{pib:1.14e12,ppc:1.33e12,pc:63750,pop:17.9e6,cresc:0.8,infla:3.1,imp:39.8,gini:25.7},
+  SAU:{pib:1.11e12,ppc:2.35e12,pc:33040,pop:36.9e6,cresc:1.5,infla:1.7,imp:11.0,gini:45.9},
+  CHE:{pib:0.94e12,ppc:0.82e12,pc:105669,pop:8.9e6,cresc:1.4,infla:1.1,imp:27.9,gini:33.7},
+  POL:{pib:0.85e12,ppc:1.80e12,pc:23014,pop:36.8e6,cresc:3.0,infla:4.1,imp:35.0,gini:28.5},
+  ARG:{pib:0.60e12,ppc:1.24e12,pc:12814,pop:46.7e6,cresc:-2.8,infla:118.0,imp:28.8,gini:40.7},
+  SWE:{pib:0.62e12,ppc:0.74e12,pc:58529,pop:10.5e6,cresc:0.8,infla:1.9,imp:41.4,gini:29.8},
+  NOR:{pib:0.53e12,ppc:0.57e12,pc:94660,pop:5.5e6,cresc:1.6,infla:2.8,imp:42.2,gini:27.7},
+  ARE:{pib:0.53e12,ppc:0.95e12,pc:53916,pop:10.1e6,cresc:3.5,infla:2.1,imp:6.5,gini:26.0},
+  SGP:{pib:0.52e12,ppc:0.79e12,pc:88447,pop:6.0e6,cresc:2.6,infla:2.3,imp:13.2,gini:37.5},
+  VNM:{pib:0.47e12,ppc:1.56e12,pc:4623,pop:100.3e6,cresc:6.4,infla:3.6,imp:18.5,gini:36.1},
+  COL:{pib:0.39e12,ppc:1.04e12,pc:7327,pop:52.3e6,cresc:1.7,infla:5.4,imp:19.7,gini:54.8},
+  ZAF:{pib:0.37e12,ppc:1.03e12,pc:5975,pop:60.4e6,cresc:1.1,infla:4.4,imp:26.2,gini:63.0},
+  EGY:{pib:0.35e12,ppc:1.90e12,pc:3225,pop:112.7e6,cresc:2.8,infla:26.4,imp:15.5,gini:31.9},
+  CHL:{pib:0.34e12,ppc:0.62e12,pc:16616,pop:19.6e6,cresc:2.4,infla:4.2,imp:21.3,gini:43.0},
+  PER:{pib:0.28e12,ppc:0.56e12,pc:8291,pop:34.3e6,cresc:3.1,infla:2.1,imp:17.2,gini:40.3},
+  NGA:{pib:0.25e12,ppc:1.44e12,pc:1110,pop:223.8e6,cresc:3.1,infla:32.7,imp:9.5,gini:35.1},
+  NZL:{pib:0.25e12,ppc:0.29e12,pc:48531,pop:5.2e6,cresc:0.6,infla:2.2,imp:33.5,gini:32.5},
+  URY:{pib:0.08e12,ppc:0.11e12,pc:23088,pop:3.4e6,cresc:3.2,infla:5.1,imp:27.5,gini:40.6},
+  PRY:{pib:0.05e12,ppc:0.12e12,pc:6000,pop:6.9e6,cresc:3.8,infla:3.9,imp:14.2,gini:45.1}
+};
+
 const FALLBACK_CCN3 = {
   '004':'AFG','008':'ALB','012':'DZA','024':'AGO','032':'ARG','036':'AUS','040':'AUT','031':'AZE','044':'BHS','048':'BHR',
   '050':'BGD','056':'BEL','084':'BLZ','204':'BEN','064':'BTN','068':'BOL','070':'BIH','072':'BWA','076':'BRA','096':'BRN',
@@ -626,7 +645,6 @@ const FALLBACK_CCN3 = {
   '784':'ARE','826':'GBR','840':'USA','858':'URY','860':'UZB','862':'VEN','704':'VNM','887':'YEM','894':'ZMB','716':'ZWE','112':'BLR'
 };
 
-// Composição Setorial Real por País (Serviços, Indústria, Agropecuária, Adm. Pública/Outros — %)
 const SETORES_REAIS_ISO = {
   BRA:{serv:59,ind:21,agro:7,adm:13}, USA:{serv:72,ind:18,agro:1,adm:9}, CHN:{serv:54,ind:38,agro:7,adm:1},
   DEU:{serv:63,ind:27,agro:1,adm:9}, JPN:{serv:69,ind:28,agro:1,adm:2}, IND:{serv:49,ind:25,agro:18,adm:8},
@@ -641,17 +659,9 @@ const SETORES_REAIS_ISO = {
   PER:{serv:53,ind:33,agro:7,adm:7}, KAZ:{serv:54,ind:34,agro:5,adm:7}, EGY:{serv:51,ind:32,agro:11,adm:6},
   NGA:{serv:44,ind:28,agro:23,adm:5}, ETH:{serv:36,ind:22,agro:37,adm:5}, COD:{serv:33,ind:44,agro:18,adm:5},
   PAN:{serv:71,ind:22,agro:3,adm:4}, DOM:{serv:59,ind:29,agro:6,adm:6}, URY:{serv:63,ind:20,agro:7,adm:10},
-  PRY:{serv:47,ind:33,agro:11,adm:9}, NZL:{serv:66,ind:21,agro:6,adm:7}, PRT:{serv:67,ind:20,agro:2,adm:11},
-  BEL:{serv:70,ind:19,agro:1,adm:10}, AUT:{serv:63,ind:26,agro:1,adm:10}, IRL:{serv:56,ind:40,agro:1,adm:3},
-  DNK:{serv:65,ind:22,agro:1,adm:12}, FIN:{serv:61,ind:25,agro:2,adm:12}, GRC:{serv:69,ind:16,agro:4,adm:11},
-  UKR:{serv:51,ind:21,agro:10,adm:18}, ISR:{serv:71,ind:19,agro:1,adm:9}, THA:{serv:56,ind:33,agro:9,adm:2},
-  MYS:{serv:53,ind:38,agro:8,adm:1}, PHL:{serv:61,ind:28,agro:9,adm:2}, PAK:{serv:53,ind:19,agro:24,adm:4},
-  BGD:{serv:51,ind:35,agro:11,adm:3}, MAR:{serv:53,ind:26,agro:11,adm:10}, DZA:{serv:44,ind:42,agro:12,adm:2},
-  KEN:{serv:52,ind:17,agro:22,adm:9}, VEN:{serv:46,ind:39,agro:5,adm:10}, ECU:{serv:53,ind:31,agro:9,adm:7},
-  BOL:{serv:49,ind:26,agro:13,adm:12}, IRN:{serv:49,ind:37,agro:12,adm:2}, QAT:{serv:38,ind:59,agro:0,adm:3}
+  PRY:{serv:47,ind:33,agro:11,adm:9}, NZL:{serv:66,ind:21,agro:6,adm:7}
 };
 
-// Perfil setorial médio distinto por sub-região (fallback para países menores)
 const SETORES_REGIAO_DEFAULT = {
   'América do Sul':{serv:56,ind:25,agro:9,adm:10}, 'América do Norte':{serv:70,ind:21,agro:2,adm:7},
   'América Central':{serv:62,ind:22,agro:9,adm:7}, 'Caribe':{serv:68,ind:18,agro:5,adm:9},
@@ -699,6 +709,15 @@ const SUBREGIOES_ISO = {
   'Ásia Ocidental (Oriente Médio)': ['SAU','ARE','TUR','ISR','IRN','IRQ','QAT','KWT','OMN','JOR','LBN','BHR','SYR','YEM','AZE','GEO'],
   'Oceania': ['AUS','NZL','PNG','FJI']
 };
+
+const SUBREGIAO_PT = {
+  'South America':'América do Sul', 'North America':'América do Norte', 'Central America':'América Central', 'Caribbean':'Caribe',
+  'Western Europe':'Europa Ocidental', 'Eastern Europe':'Europa Oriental', 'Central Europe':'Europa Central', 'Northern Europe':'Europa Setentrional', 'Southern Europe':'Europa Meridional',
+  'Northern Africa':'Norte da África', 'Western Africa':'África Ocidental', 'Middle Africa':'África Central', 'Eastern Africa':'África Oriental', 'Southern Africa':'África Austral',
+  'Eastern Asia':'Ásia Oriental', 'South-Eastern Asia':'Sudeste Asiático', 'Southern Asia':'Ásia Meridional', 'Central Asia':'Ásia Central', 'Western Asia':'Ásia Ocidental (Oriente Médio)',
+  'Australia and New Zealand':'Oceania', 'Melanesia':'Oceania', 'Micronesia':'Oceania', 'Polynesia':'Oceania'
+};
+const REGIAO_PT = { Americas:'Américas', Europe:'Europa', Asia:'Ásia', Africa:'África', Oceania:'Oceania' };
 
 function inferirContinente(iso3, wbRegion, restRegion) {
   if (restRegion && REGIAO_PT[restRegion]) return REGIAO_PT[restRegion];
@@ -873,15 +892,6 @@ const CATEGORIAS_FILTRO = {
   rank: { label: 'Rankings econômicos e geopolíticos', opcoes: ['Maiores economias do mundo','Maiores populações',...Object.keys(SETS.rankings)] }
 };
 
-const SUBREGIAO_PT = {
-  'South America':'América do Sul', 'North America':'América do Norte', 'Central America':'América Central', 'Caribbean':'Caribe',
-  'Western Europe':'Europa Ocidental', 'Eastern Europe':'Europa Oriental', 'Central Europe':'Europa Central', 'Northern Europe':'Europa Setentrional', 'Southern Europe':'Europa Meridional',
-  'Northern Africa':'Norte da África', 'Western Africa':'África Ocidental', 'Middle Africa':'África Central', 'Eastern Africa':'África Oriental', 'Southern Africa':'África Austral',
-  'Eastern Asia':'Ásia Oriental', 'South-Eastern Asia':'Sudeste Asiático', 'Southern Asia':'Ásia Meridional', 'Central Asia':'Ásia Central', 'Western Asia':'Ásia Ocidental (Oriente Médio)',
-  'Australia and New Zealand':'Oceania', 'Melanesia':'Oceania', 'Micronesia':'Oceania', 'Polynesia':'Oceania'
-};
-const REGIAO_PT = { Americas:'Américas', Europe:'Europa', Asia:'Ásia', Africa:'África', Oceania:'Oceania' };
-
 let PAISES_MAP = {}, CCN3_TO_ISO3 = { ...FALLBACK_CCN3 }, PAISES = [], ratesUSD = null, PIB_MUNDIAL_SOMA = 1;
 let catAtiva = 'cont', filtroValor = 'Todos os países', isoAtivo = 'BRA', abaRx = 'econ', topN = 5;
 let svgMap = null, zoomBehavior = null, chartParceiros = null, chartHist = null, chartCmp = null;
@@ -922,7 +932,7 @@ function alternarModoApresentacao() {
     : `<svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect><line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line><line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line></svg><span>Modo Tela Cheia</span>`;
 }
 
-// 1. CARREGAMENTO GLOBAL
+// 1. CARREGAMENTO GLOBAL (COM CONTINGÊNCIA PARA NUNCA ZERAR PIB/RANKINGS)
 async function fetchWBGlobal(ind) {
   try {
     const r = await fetch(`https://api.worldbank.org/v2/country/all/indicator/${ind}?format=json&mrnev=1&per_page=350`);
@@ -972,7 +982,8 @@ async function carregarBaseGlobal(ignorarCache = false) {
       const raw = localStorage.getItem(CACHE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (parsed && Array.isArray(parsed.paises) && parsed.paises.length > 20 && (Date.now() - parsed.ts) < CACHE_TTL_MS) {
+        const comPib = (parsed?.paises || []).filter(p => p.pib > 0).length;
+        if (parsed && comPib > 30 && (Date.now() - parsed.ts) < CACHE_TTL_MS) {
           aplicarDadosGlobais(parsed.paises, parsed.ccnMap || {}, parsed.ts, 'Cache local (rápido)');
           return;
         }
@@ -984,14 +995,19 @@ async function carregarBaseGlobal(ignorarCache = false) {
     const restUrl = 'https://restcountries.com/v3.1/all?fields=cca3,ccn3,name,translations,flags,capital,region,subregion,currencies';
     const wbCountriesUrl = 'https://api.worldbank.org/v2/country?format=json&per_page=350';
 
-    const [resRest, resWbList, resFx, resPib, resPpc, resPc, resPop, resCresc, resInfla, resImp, resGini] = await Promise.allSettled([
+    // Lote 1 (essenciais)
+    const [resRest, resWbList, resFx, resPib, resPc, resPop] = await Promise.allSettled([
       fetch(restUrl).then(r => r.ok ? r.json() : null),
       fetch(wbCountriesUrl).then(r => r.ok ? r.json() : null),
       fetch('https://open.er-api.com/v6/latest/USD').then(r => r.ok ? r.json() : null),
       fetchWBGlobal('NY.GDP.MKTP.CD'),
-      fetchWBGlobal('NY.GDP.MKTP.PP.CD'),
       fetchWBGlobal('NY.GDP.PCAP.CD'),
-      fetchWBGlobal('SP.POP.TOTL'),
+      fetchWBGlobal('SP.POP.TOTL')
+    ]);
+
+    // Lote 2 (evita sobrecarga/rate-limit no Banco Mundial)
+    const [resPpc, resCresc, resInfla, resImp, resGini] = await Promise.allSettled([
+      fetchWBGlobal('NY.GDP.MKTP.PP.CD'),
       fetchWBGlobal('NY.GDP.MKTP.KD.ZG'),
       fetchWBGlobal('FP.CPI.TOTL.ZG'),
       fetchWBGlobal('GC.TAX.TOTL.GD.ZS'),
@@ -1021,6 +1037,7 @@ async function carregarBaseGlobal(ignorarCache = false) {
     fonteLista.forEach(c => {
       if (!c.cca3) return;
       const iso3 = c.cca3;
+      const fb = FALLBACK_MACRO[iso3] || {};
       const currObj = c.currencies ? Object.entries(c.currencies)[0] : null;
       const fbM = MOEDA_FALLBACK[iso3];
       const moeda = currObj ? currObj[0] : (fbM ? fbM[0] : 'USD');
@@ -1043,20 +1060,20 @@ async function carregarBaseGlobal(ignorarCache = false) {
         vocacao: VOCACAO_PAIS[iso3] || VOCACAO_REGIAO[regiaoGeo] || VOCACAO_REGIAO[cont] || 'Economia diversificada',
         setores,
         moeda, mNome, moedaBRL,
-        pib: wbPib[iso3]?.v ?? null, pibAno: wbPib[iso3]?.ano ?? '',
-        pibPpc: wbPpc[iso3]?.v ?? null, pibPpcAno: wbPpc[iso3]?.ano ?? '',
-        pibPc: wbPc[iso3]?.v ?? null, pibPcAno: wbPc[iso3]?.ano ?? '',
-        pop: wbPop[iso3]?.v ?? null, popAno: wbPop[iso3]?.ano ?? '',
-        cresc: wbCresc[iso3]?.v ?? null, crescAno: wbCresc[iso3]?.ano ?? '',
-        infla: wbInfla[iso3]?.v ?? null, inflaAno: wbInfla[iso3]?.ano ?? '',
-        imposto: wbImp[iso3]?.v ?? null, impostoAno: wbImp[iso3]?.ano ?? '',
-        gini: wbGini[iso3]?.v ?? null, giniAno: wbGini[iso3]?.ano ?? '',
+        pib: wbPib[iso3]?.v ?? fb.pib ?? null, pibAno: wbPib[iso3]?.ano ?? (fb.pib ? '2024' : ''),
+        pibPpc: wbPpc[iso3]?.v ?? fb.ppc ?? null, pibPpcAno: wbPpc[iso3]?.ano ?? (fb.ppc ? '2024' : ''),
+        pibPc: wbPc[iso3]?.v ?? fb.pc ?? null, pibPcAno: wbPc[iso3]?.ano ?? (fb.pc ? '2024' : ''),
+        pop: wbPop[iso3]?.v ?? fb.pop ?? null, popAno: wbPop[iso3]?.ano ?? (fb.pop ? '2024' : ''),
+        cresc: wbCresc[iso3]?.v ?? fb.cresc ?? null, crescAno: wbCresc[iso3]?.ano ?? (fb.cresc != null ? '2024' : ''),
+        infla: wbInfla[iso3]?.v ?? fb.infla ?? null, inflaAno: wbInfla[iso3]?.ano ?? (fb.infla != null ? '2024' : ''),
+        imposto: wbImp[iso3]?.v ?? fb.imp ?? null, impostoAno: wbImp[iso3]?.ano ?? (fb.imp != null ? '2024' : ''),
+        gini: wbGini[iso3]?.v ?? fb.gini ?? null, giniAno: wbGini[iso3]?.ano ?? (fb.gini != null ? '2023' : ''),
         idh: IDH_PNUD[iso3] ?? null, idhAno: IDH_PNUD[iso3] ? '2023' : ''
       });
     });
 
     const agora = Date.now();
-    if (listaFinal.length > 20) {
+    if (Object.keys(wbPib).length > 50) {
       try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: agora, paises: listaFinal, ccnMap })); } catch {}
     }
 
@@ -1185,7 +1202,6 @@ function atualizarResumoRegiao() {
   $('regLider').textContent = lider ? `${lider.nome} (${BD.compactUSD(lider.pib)})` : '—';
   $('regVocTxt').textContent = VOCACAO_REGIAO[filtroValor] || 'Composição ponderada pelo PIB dos países do recorte';
 
-  // Média PONDERADA PELO PIB dos setores do recorte
   let wTot = 0, ws = 0, wi = 0, wa = 0;
   ativos.forEach(p => {
     const w = p.pib || 1e9;
@@ -1198,7 +1214,6 @@ function atualizarResumoRegiao() {
   const adm = Math.max(1, 100 - (s + i + ag));
   renderPizzaVocacao('regiao', { serv: s, ind: i, agro: ag, adm });
 
-  // Lista clicável dos países incluídos no recorte
   $('listaPaisesRecorte').innerHTML = ordenados.map(p => `
     <button type="button" onclick="selecionarPais('${p.iso3}')"
       class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold border transition ${p.iso3 === isoAtivo ? 'din-btn border-transparent' : 'din-secondary-bg din-border din-text-main hover:border-[#16C784]'}">
@@ -1208,7 +1223,6 @@ function atualizarResumoRegiao() {
   `).join('');
 }
 
-// Gráfico Pizza (Rosca) + Barrinhas
 function renderPizzaVocacao(alvo, setores) {
   const s = setores || { serv: 55, ind: 25, agro: 10, adm: 10 };
   const itens = [
@@ -1263,7 +1277,7 @@ function buscarPais(termo) {
   if (achado) selecionarPais(achado.iso3);
 }
 
-// 3. MAPA-MÚNDI D3
+// 3. MAPA-MÚNDI D3 (CORRIGIDO: .style() + SEM appendChild NO HOVER)
 function fmtInd(p, k) {
   if (!p || p[k] == null) return 'N/D';
   if (k === 'pib' || k === 'pibPpc') return BD.compactUSD(p[k]);
@@ -1315,9 +1329,8 @@ async function iniciarMapaMundi() {
     .attr('d', path)
     .attr('data-ccn3', f => String(f.id).padStart(3, '0'))
     .attr('data-geo-name', f => f.properties?.name || 'Território')
-    .on('mouseenter', function() {
-      this.parentNode.appendChild(this);
-      d3.select(this).attr('stroke', '#16C784').attr('stroke-width', 2.2);
+    .on('mouseenter', function(ev) {
+      d3.select(this).style('stroke', '#16C784').style('stroke-width', '2.2px');
 
       const iso3 = CCN3_TO_ISO3[this.getAttribute('data-ccn3')];
       const p = PAISES_MAP[iso3];
@@ -1326,9 +1339,14 @@ async function iniciarMapaMundi() {
       $('tipShare').textContent = share;
       $('tipPib').textContent = p ? BD.compactUSD(p.pib) : 'N/D';
       $('tipPibPc').textContent = p ? BD.usd(p.pibPc, 0) : 'N/D';
+      tip.style.left = (ev.clientX + 14) + 'px';
+      tip.style.top = (ev.clientY + 14) + 'px';
       tip.classList.remove('hidden');
     })
-    .on('mousemove', ev => { tip.style.left = (ev.clientX + 14) + 'px'; tip.style.top = (ev.clientY + 14) + 'px'; })
+    .on('mousemove', ev => {
+      tip.style.left = (ev.clientX + 14) + 'px';
+      tip.style.top = (ev.clientY + 14) + 'px';
+    })
     .on('mouseleave', function() {
       tip.classList.add('hidden');
       pintarMapa();
@@ -1357,7 +1375,7 @@ function pintarMapa() {
     $('legMax').innerHTML = `<span class="w-3 h-3 rounded-sm border-2 border-[#16C784] inline-block"></span> Passe o mouse para destacar`;
 
     svgMap.selectAll('path')
-      .attr('fill', function() {
+      .style('fill', function() {
         const iso3 = CCN3_TO_ISO3[this.getAttribute('data-ccn3')];
         const p = PAISES_MAP[iso3];
         if (filtroAtivo) {
@@ -1366,13 +1384,13 @@ function pintarMapa() {
         }
         return iso3 === isoAtivo ? '#16C784' : baseNeutral;
       })
-      .attr('stroke', function() {
+      .style('stroke', function() {
         const iso3 = CCN3_TO_ISO3[this.getAttribute('data-ccn3')];
         return iso3 === isoAtivo ? (dark ? '#FFFFFF' : '#0B6E4F') : borda;
       })
-      .attr('stroke-width', function() {
+      .style('stroke-width', function() {
         const iso3 = CCN3_TO_ISO3[this.getAttribute('data-ccn3')];
-        return iso3 === isoAtivo ? 1.8 : 0.65;
+        return iso3 === isoAtivo ? '1.8px' : '0.65px';
       });
   } else {
     $('legBarra').classList.remove('hidden');
@@ -1389,19 +1407,19 @@ function pintarMapa() {
     }
 
     svgMap.selectAll('path')
-      .attr('fill', function() {
+      .style('fill', function() {
         const iso3 = CCN3_TO_ISO3[this.getAttribute('data-ccn3')];
         const p = PAISES_MAP[iso3];
         if (!p || !paisNoFiltro(p) || p[modo] == null) return baseNeutral;
         return escala(p[modo]);
       })
-      .attr('stroke', function() {
+      .style('stroke', function() {
         const iso3 = CCN3_TO_ISO3[this.getAttribute('data-ccn3')];
         return iso3 === isoAtivo ? (dark ? '#FFFFFF' : '#17191C') : borda;
       })
-      .attr('stroke-width', function() {
+      .style('stroke-width', function() {
         const iso3 = CCN3_TO_ISO3[this.getAttribute('data-ccn3')];
-        return iso3 === isoAtivo ? 2.0 : 0.65;
+        return iso3 === isoAtivo ? '2px' : '0.65px';
       });
   }
 }
@@ -1554,7 +1572,7 @@ function setAbaRx(a) {
   if (a === 'hist') carregarHistoricoReal();
 }
 
-// 5. HISTÓRICO REAL (INCLUINDO USD/BRL AUTOMÁTICO QUANDO O BRASIL ESTÁ SELECIONADO)
+// 5. HISTÓRICO REAL (INCLUINDO USD/BRL PARA O BRASIL)
 function atualizarControlesHist() {
   const isMoeda = $('histSerieTipo').value === 'moeda';
   $('histPeriodo').disabled = !isMoeda;
