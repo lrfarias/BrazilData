@@ -6,17 +6,36 @@
 <title>Impostos, População & IDH — BrasilEmDados</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
+<style>
+  .uf-path { transition: fill .2s ease, stroke-width .15s ease, opacity .15s ease; cursor: pointer; }
+  .uf-path:hover { opacity: .88; }
+</style>
 </head>
 <body class="min-h-screen font-sans flex flex-col">
 <div id="bd-header"></div>
+
+<!-- Tooltip flutuante do mapa -->
+<div id="mapTip" class="pointer-events-none fixed z-50 hidden px-3 py-2 rounded-lg text-xs shadow-lg border din-border din-card-bg">
+  <p id="tipNome" class="font-bold din-text-main"></p>
+  <p id="tipVal" class="din-green font-semibold mt-0.5"></p>
+  <p class="text-[10px] din-text-muted mt-0.5">Clique para ver o raio-x</p>
+</div>
+
 <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-  <div>
-    <a href="/economia.html" class="text-xs font-semibold din-text-muted hover:underline">← Economia e indicadores</a>
-    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight din-text-main mt-2">Impostos, população e IDH por estado</h1>
-    <p class="text-sm din-text-muted mt-1 max-w-2xl">Compare quanto cada estado produz, quantas pessoas vivem nele e quanto de tributo isso representa por habitante.</p>
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+    <div>
+      <a href="/economia.html" class="text-xs font-semibold din-text-muted hover:underline">← Economia e indicadores</a>
+      <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight din-text-main mt-2">Impostos, população e IDH por estado</h1>
+      <p class="text-sm din-text-muted mt-1 max-w-2xl">Compare quanto cada estado produz, quantas pessoas vivem nele e quanto de tributo isso representa por habitante.</p>
+    </div>
+    <label class="flex items-center gap-2 text-xs font-semibold din-text-muted">Ano base
+      <select id="ano" class="inp !w-auto" onchange="montar(+this.value)"></select>
+    </label>
   </div>
 
+  <!-- KPIs Nacionais -->
   <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
     <div class="din-card-bg border din-border rounded-lg p-4"><span class="text-xs din-text-muted">Arrecadação estimada do Brasil</span><p id="k1" class="text-xl font-bold din-red mt-1">—</p></div>
     <div class="din-card-bg border din-border rounded-lg p-4"><span class="text-xs din-text-muted">Média por habitante</span><p id="k2" class="text-xl font-bold din-text-main mt-1">—</p></div>
@@ -24,12 +43,105 @@
     <div class="din-card-bg border din-border rounded-lg p-4"><span class="text-xs din-text-muted">Menor tributo por habitante</span><p id="k4" class="text-xl font-bold din-text-main mt-1">—</p></div>
   </section>
 
+  <!-- Mapa Interativo + Raio-X do Estado -->
+  <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- Mapa -->
+    <div class="lg:col-span-7 din-card-bg border din-border rounded-lg p-5 flex flex-col">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+        <div>
+          <h2 class="text-base font-semibold din-text-main">Mapa interativo do Brasil</h2>
+          <p class="text-xs din-text-muted">Passe o mouse para identificar e clique em um estado para detalhar.</p>
+        </div>
+        <select id="mapMetrica" class="inp !w-auto text-xs font-semibold" onchange="pintarMapa()">
+          <option value="hab">Tributo por habitante</option>
+          <option value="arrec">Arrecadação estimada</option>
+          <option value="pib">PIB estadual</option>
+          <option value="pop">População total</option>
+          <option value="prod">Produtividade (%PIB / %Pop)</option>
+        </select>
+      </div>
+
+      <div id="mapWrap" class="relative flex-1 min-h-[380px] flex items-center justify-center">
+        <p id="mapLoading" class="text-xs din-text-muted">Carregando malha geográfica do IBGE…</p>
+        <svg id="mapaBr" viewBox="0 0 600 560" class="w-full max-h-[440px] hidden"></svg>
+      </div>
+
+      <!-- Legenda de intensidade -->
+      <div class="mt-3 pt-3 border-t din-border flex items-center justify-between gap-3 text-[11px] din-text-muted">
+        <span id="legMin">Menor</span>
+        <div class="flex-1 h-2 rounded-full max-w-xs" style="background: linear-gradient(90deg, rgba(22,199,132,0.15), #16C784);"></div>
+        <span id="legMax">Maior</span>
+      </div>
+    </div>
+
+    <!-- Painel de Detalhes (Raio-X) -->
+    <div class="lg:col-span-5 din-card-bg border din-border rounded-lg p-5 flex flex-col justify-between space-y-4">
+      <div id="painelEstado" class="space-y-4">
+        <div class="flex items-start justify-between gap-2 pb-3 border-b din-border">
+          <div>
+            <span id="stRegiao" class="text-[11px] font-semibold uppercase tracking-wider din-green">Selecione um estado</span>
+            <h3 id="stNome" class="text-xl font-extrabold din-text-main mt-0.5">—</h3>
+          </div>
+          <span id="stSigla" class="px-2.5 py-1 rounded-md din-secondary-bg border din-border text-sm font-extrabold din-text-main">--</span>
+        </div>
+
+        <!-- Métricas principais -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="din-secondary-bg rounded-lg p-3">
+            <span class="text-[11px] din-text-muted">Arrecadação estimada</span>
+            <p id="stArrec" class="text-base font-bold din-red mt-0.5">—</p>
+            <span id="stRankArrec" class="text-[10px] din-text-muted">—</span>
+          </div>
+          <div class="din-secondary-bg rounded-lg p-3">
+            <span class="text-[11px] din-text-muted">Tributo / habitante</span>
+            <p id="stHab" class="text-base font-bold din-text-main mt-0.5">—</p>
+            <span id="stVsMedia" class="text-[10px] font-semibold">—</span>
+          </div>
+          <div class="din-secondary-bg rounded-lg p-3">
+            <span class="text-[11px] din-text-muted">População total</span>
+            <p id="stPop" class="text-base font-bold din-text-main mt-0.5">—</p>
+            <span id="stPopPct" class="text-[10px] din-text-muted">—</span>
+          </div>
+          <div class="din-secondary-bg rounded-lg p-3">
+            <span class="text-[11px] din-text-muted">PIB estadual</span>
+            <p id="stPib" class="text-base font-bold din-green mt-0.5">—</p>
+            <span id="stPibPct" class="text-[10px] din-text-muted">—</span>
+          </div>
+        </div>
+
+        <!-- Métricas analíticas (para estudantes e analistas) -->
+        <div class="pt-2 border-t din-border space-y-2 text-xs">
+          <div class="flex justify-between">
+            <span class="din-text-muted">PIB per capita</span>
+            <strong id="stPibPc" class="din-text-main">—</strong>
+          </div>
+          <div class="flex justify-between">
+            <span class="din-text-muted">Arrecadação diária estimada</span>
+            <strong id="stDia" class="din-text-main">—</strong>
+          </div>
+          <div class="flex justify-between">
+            <span class="din-text-muted">Índice de produtividade (%PIB ÷ %Pop)</span>
+            <strong id="stProd" class="din-text-main">—</strong>
+          </div>
+          <div id="rowIdh" class="flex justify-between hidden">
+            <span class="din-text-muted">IDH</span>
+            <strong id="stIdh" class="din-green">—</strong>
+          </div>
+        </div>
+
+        <!-- Insight didático -->
+        <div class="din-secondary-bg border din-border rounded-lg p-3">
+          <p id="stInsight" class="text-xs din-text-muted leading-relaxed">Clique em qualquer estado no mapa ou na tabela abaixo para comparar seu peso econômico, demográfico e tributário.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tabela Ranking -->
   <section class="din-card-bg border din-border rounded-lg p-5">
     <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
       <h2 class="text-base font-semibold din-text-main">Ranking dos 27 estados</h2>
-      <label class="flex items-center gap-2 text-xs din-text-muted">Ano base
-        <select id="ano" class="inp !w-auto" onchange="montar(+this.value)"></select>
-      </label>
+      <span class="text-xs din-text-muted">Clique em uma linha para destacar no mapa</span>
     </div>
     <div class="overflow-x-auto max-h-[460px] overflow-y-auto">
       <table class="w-full text-left text-xs border-collapse">
@@ -39,6 +151,7 @@
     </div>
   </section>
 
+  <!-- Gráfico Top 10 -->
   <section class="din-card-bg border din-border rounded-lg p-5">
     <h2 class="text-base font-semibold din-text-main">Peso na economia e na população</h2>
     <p class="text-xs din-text-muted mb-3">Os 10 maiores PIBs. Barra verde maior que a azul: o estado produz mais do que o tamanho da sua população sugere.</p>
@@ -46,15 +159,41 @@
   </section>
 
   <p class="text-xs din-text-muted max-w-3xl leading-relaxed">
-    <strong class="din-text-main">Como ler.</strong> PIB e população vêm do IBGE (SIDRA). A arrecadação é uma estimativa de 33% do PIB, a carga tributária bruta média do país, e não um valor oficial por estado. Ela soma tributos federais, estaduais e municipais e não mostra quanto fica disponível para o estado gastar. A coluna de IDH aparece quando o banco tiver um indicador chamado "IDH" para o ano escolhido, e ela mostra o contexto social, não o retorno individual dos impostos pagos.
+    <strong class="din-text-main">Como ler.</strong> PIB e população vêm do IBGE (SIDRA). A arrecadação é uma estimativa de 33% do PIB, a carga tributária bruta média do país, e não um valor oficial por estado. Ela soma tributos federais, estaduais e municipais e não mostra quanto fica disponível para o estado gastar. O <em>Índice de Produtividade</em> divide a participação do estado no PIB pela sua participação na população (acima de 1,00x indica produção per capita superior à média nacional). A coluna de IDH aparece quando o banco tiver um indicador chamado "IDH" para o ano escolhido.
   </p>
 </main>
+
 <div id="bd-footer"></div>
 <script src="/layout.js"></script>
 <script>
 const $ = i => document.getElementById(i);
 const TAXA = 0.33;
 let TODOS = [], D = [], col = 'arrec', dir = -1, chart, idh = false;
+let mediaHabBR = 0, ufSel = 'SP', geoPronto = false;
+
+const IBGE_UF = {
+  '11':'RO','12':'AC','13':'AM','14':'RR','15':'PA','16':'AP','17':'TO',
+  '21':'MA','22':'PI','23':'CE','24':'RN','25':'PB','26':'PE','27':'AL','28':'SE','29':'BA',
+  '31':'MG','32':'ES','33':'RJ','35':'SP','41':'PR','42':'SC','43':'RS',
+  '50':'MS','51':'MT','52':'GO','53':'DF'
+};
+const REGIAO = {
+  RO:'Norte',AC:'Norte',AM:'Norte',RR:'Norte',PA:'Norte',AP:'Norte',TO:'Norte',
+  MA:'Nordeste',PI:'Nordeste',CE:'Nordeste',RN:'Nordeste',PB:'Nordeste',PE:'Nordeste',AL:'Nordeste',SE:'Nordeste',BA:'Nordeste',
+  MG:'Sudeste',ES:'Sudeste',RJ:'Sudeste',SP:'Sudeste',
+  PR:'Sul',SC:'Sul',RS:'Sul',
+  MS:'Centro-Oeste',MT:'Centro-Oeste',GO:'Centro-Oeste',DF:'Centro-Oeste'
+};
+
+function fmtMetrica(d, k) {
+  if (!d) return '—';
+  if (k === 'hab') return BD.brl(d.hab, 0) + ' / hab';
+  if (k === 'arrec') return BD.compact(d.arrec);
+  if (k === 'pib') return BD.compact(d.pib * 1000);
+  if (k === 'pop') return BD.num(d.pop, 0) + ' hab.';
+  if (k === 'prod') return BD.num(d.prod, 2) + 'x';
+  return '—';
+}
 
 function montar(ano) {
   const m = {};
@@ -65,14 +204,153 @@ function montar(ano) {
   });
   D = Object.values(m).filter(d => d.pib > 0 && d.pop > 0);
   const pT = D.reduce((a, d) => a + d.pib, 0), hT = D.reduce((a, d) => a + d.pop, 0);
-  D.forEach(d => { d.sp = d.pib / pT * 100; d.sh = d.pop / hT * 100; d.arrec = d.pib * 1000 * TAXA; d.hab = d.arrec / d.pop; });
+  mediaHabBR = (pT * 1000 * TAXA) / hT;
+
+  D.forEach(d => {
+    d.sp = d.pib / pT * 100;
+    d.sh = d.pop / hT * 100;
+    d.arrec = d.pib * 1000 * TAXA;
+    d.hab = d.arrec / d.pop;
+    d.pibPc = (d.pib * 1000) / d.pop;
+    d.prod = d.sp / d.sh;
+  });
+
+  // Rankings internos
+  [...D].sort((a, b) => b.arrec - a.arrec).forEach((d, i) => d.rkArrec = i + 1);
+  [...D].sort((a, b) => b.hab - a.hab).forEach((d, i) => d.rkHab = i + 1);
+
   idh = D.some(d => d.idh > 0);
   const hs = [...D].sort((a, b) => b.hab - a.hab), mx = hs[0], mn = hs[hs.length - 1];
   $('k1').textContent = BD.compact(pT * 1000 * TAXA);
-  $('k2').textContent = BD.brl(pT * 1000 * TAXA / hT, 0) + ' / ano';
+  $('k2').textContent = BD.brl(mediaHabBR, 0) + ' / ano';
   $('k3').textContent = mx.sigla + ' · ' + BD.brl(mx.hab, 0);
   $('k4').textContent = mn.sigla + ' · ' + BD.brl(mn.hab, 0);
-  tabela(); grafico();
+
+  if (!D.some(d => d.sigla === ufSel) && D.length) ufSel = D[0].sigla;
+  tabela();
+  grafico();
+  if (geoPronto) pintarMapa();
+  selecionarEstado(ufSel);
+}
+
+function selecionarEstado(sigla) {
+  const d = D.find(x => x.sigla === sigla);
+  if (!d) return;
+  ufSel = sigla;
+
+  $('stRegiao').textContent = `${REGIAO[sigla] || 'Brasil'} · #${d.rkHab} em tributo/hab`;
+  $('stNome').textContent = d.nome;
+  $('stSigla').textContent = d.sigla;
+  $('stArrec').textContent = BD.compact(d.arrec);
+  $('stRankArrec').textContent = `#${d.rkArrec}º maior do país`;
+  $('stHab').textContent = BD.brl(d.hab, 0);
+
+  const diff = ((d.hab - mediaHabBR) / mediaHabBR) * 100;
+  $('stVsMedia').innerHTML = `<span class="${diff >= 0 ? 'din-green' : 'din-red'}">${diff >= 0 ? '+' : ''}${BD.num(diff, 1)}% vs média BR</span>`;
+
+  $('stPop').textContent = BD.num(d.pop, 0);
+  $('stPopPct').textContent = `${BD.num(d.sh, 2)}% da população`;
+  $('stPib').textContent = BD.compact(d.pib * 1000);
+  $('stPibPct').textContent = `${BD.num(d.sp, 2)}% do PIB nacional`;
+
+  $('stPibPc').textContent = BD.brl(d.pibPc, 0);
+  $('stDia').textContent = BD.compact(d.arrec / 365) + ' / dia';
+  $('stProd').innerHTML = `<span class="${d.prod >= 1 ? 'din-green' : 'din-red'}">${BD.num(d.prod, 2)}x</span>`;
+
+  if (idh && d.idh) {
+    $('rowIdh').classList.remove('hidden');
+    $('stIdh').textContent = BD.num(d.idh, 3);
+  } else {
+    $('rowIdh').classList.add('hidden');
+  }
+
+  const pesoTxt = d.prod >= 1
+    ? `gera uma fatia do PIB <strong>${BD.num(d.prod, 2)}x maior</strong> do que seu peso populacional`
+    : `concentra <strong>${BD.num(d.sh, 1)}% da população</strong> para <strong>${BD.num(d.sp, 1)}% do PIB</strong>`;
+  $('stInsight').innerHTML = `<strong class="din-text-main">${d.nome}</strong> ${pesoTxt}, com carga tributária estimada em <strong>${BD.brl(d.hab, 0)}</strong> por habitante ao ano.`;
+
+  if (geoPronto) pintarMapa();
+  tabela();
+}
+
+async function iniciarMapa() {
+  const urls = [
+    'https://servicodados.ibge.gov.br/api/v3/malhas/paises/BR?formato=application/vnd.geo+json&qualidade=minima&intrarregiao=UF',
+    'https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson'
+  ];
+  let geo = null;
+  for (const u of urls) {
+    try {
+      const r = await fetch(u);
+      if (r.ok) { geo = await r.json(); break; }
+    } catch {}
+  }
+  if (!geo) {
+    $('mapLoading').textContent = 'Não foi possível carregar o mapa no momento.';
+    return;
+  }
+
+  const svg = d3.select('#mapaBr');
+  const proj = d3.geoIdentity().reflectY(true).fitExtent([[16, 16], [584, 544]], geo);
+  const path = d3.geoPath().projection(proj);
+  const tip = $('mapTip');
+
+  svg.selectAll('path')
+    .data(geo.features)
+    .join('path')
+    .attr('class', 'uf-path')
+    .attr('d', path)
+    .attr('data-uf', f => IBGE_UF[String(f.properties.codarea)] || f.properties.sigla || '')
+    .on('mouseenter', function(ev, f) {
+      const uf = this.getAttribute('data-uf');
+      const d = D.find(x => x.sigla === uf);
+      const met = $('mapMetrica').value;
+      $('tipNome').textContent = d ? `${d.nome} (${uf})` : uf;
+      $('tipVal').textContent = d ? fmtMetrica(d, met) : 'Sem dados';
+      tip.classList.remove('hidden');
+    })
+    .on('mousemove', ev => {
+      tip.style.left = (ev.clientX + 14) + 'px';
+      tip.style.top = (ev.clientY + 14) + 'px';
+    })
+    .on('mouseleave', () => tip.classList.add('hidden'))
+    .on('click', function() {
+      const uf = this.getAttribute('data-uf');
+      if (uf) selecionarEstado(uf);
+    });
+
+  $('mapLoading').classList.add('hidden');
+  $('mapaBr').classList.remove('hidden');
+  geoPronto = true;
+  if (D.length) pintarMapa();
+}
+
+function pintarMapa() {
+  if (!geoPronto || !D.length) return;
+  const k = $('mapMetrica').value;
+  const vals = D.map(d => d[k]);
+  const min = Math.min(...vals), max = Math.max(...vals);
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const baseBg = dark ? '#22262B' : '#E8F7F0';
+  const escala = d3.scaleLinear().domain([min, max]).range([baseBg, '#16C784']);
+  const borda = dark ? '#101214' : '#FFFFFF';
+  const bordaSel = dark ? '#F5F6F7' : '#17191C';
+
+  const dMin = D.find(d => d[k] === min), dMax = D.find(d => d[k] === max);
+  $('legMin').textContent = `${dMin.sigla}: ${fmtMetrica(dMin, k)}`;
+  $('legMax').textContent = `${dMax.sigla}: ${fmtMetrica(dMax, k)}`;
+
+  d3.select('#mapaBr').selectAll('path')
+    .attr('fill', function() {
+      const d = D.find(x => x.sigla === this.getAttribute('data-uf'));
+      return d ? escala(d[k]) : (dark ? '#2B3036' : '#E5E7EB');
+    })
+    .attr('stroke', function() {
+      return this.getAttribute('data-uf') === ufSel ? bordaSel : borda;
+    })
+    .attr('stroke-width', function() {
+      return this.getAttribute('data-uf') === ufSel ? 2.4 : 0.9;
+    });
 }
 
 function tabela() {
@@ -80,7 +358,8 @@ function tabela() {
   if (idh) cols.push(['idh', 'IDH']);
   $('thead').innerHTML = '<th class="py-2 px-2">#</th>' + cols.map(([k, t]) => `<th class="s py-2 px-2" onclick="ord('${k}')">${t} ↕</th>`).join('');
   const L = [...D].sort((a, b) => col === 'nome' ? dir * -1 * a.nome.localeCompare(b.nome) : dir * (a[col] - b[col]));
-  $('tbody').innerHTML = L.map((d, i) => `<tr><td class="py-2 px-2 din-text-muted">${i + 1}</td>
+  $('tbody').innerHTML = L.map((d, i) => `<tr onclick="selecionarEstado('${d.sigla}')" class="cursor-pointer hover:opacity-85 ${d.sigla === ufSel ? 'din-secondary-bg' : ''}">
+    <td class="py-2 px-2 din-text-muted">${i + 1}</td>
     <td class="py-2 px-2 font-semibold din-text-main">${d.nome} <span class="din-text-muted">(${d.sigla})</span></td>
     <td class="py-2 px-2 din-text-main">${BD.compact(d.pib * 1000)}</td>
     <td class="py-2 px-2 din-text-main">${BD.num(d.sp, 1)}%</td>
@@ -105,6 +384,7 @@ function grafico() {
 }
 
 (async () => {
+  iniciarMapa();
   try {
     TODOS = await BD.indicadores();
     const anos = [...new Set(TODOS.filter(i => /per capita/i.test(i.nome)).map(i => +i.anoReferencia))].sort((a, b) => b - a);
@@ -116,7 +396,10 @@ function grafico() {
     console.error(e);
   }
 })();
-window.addEventListener('tema', () => D.length && grafico());
+
+window.addEventListener('tema', () => {
+  if (D.length) { grafico(); pintarMapa(); }
+});
 </script>
 </body>
 </html>
