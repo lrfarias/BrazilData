@@ -381,12 +381,7 @@
             <button id="tabGrafSaz" type="button" onclick="setAbaGraf('saz')" class="px-3 py-1.5 rounded-md din-text-muted transition">Sazonalidade</button>
           </div>
 
-          <div id="ctrlTecnico" class="flex flex-wrap items-center gap-2.5 text-xs">
-            <div class="inline-flex din-secondary-bg p-0.5 rounded-lg border din-border text-[11px] font-semibold">
-              <button data-tipo="original" type="button" onclick="setTipoGrafico('original')" class="btn-tipo px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border transition">Original</button>
-              <button data-tipo="velas" type="button" onclick="setTipoGrafico('velas')" class="btn-tipo px-2.5 py-1 rounded-md din-text-muted transition">Velas</button>
-              <button data-tipo="limpo" type="button" onclick="setTipoGrafico('limpo')" class="btn-tipo px-2.5 py-1 rounded-md din-text-muted transition">Limpo</button>
-            </div>
+          <div id="ctrlTecnico" class="flex flex-wrap items-center gap-3 text-xs">
             <label class="inline-flex items-center gap-1.5 din-text-muted cursor-pointer select-none">
               <input id="chkMM20" type="checkbox" class="accent-[#F59E0B] cursor-pointer" onchange="desenharGrafico()">
               <span>MM20</span>
@@ -486,8 +481,8 @@
   </div>
 </footer>
 
-<script src="js/cambio/cambio-core.js?v=6"></script>
-<script src="js/cambio/cambio-graficos.js?v=6"></script>
+<script src="js/cambio/cambio-core.js?v=7"></script>
+<script src="js/cambio/cambio-graficos.js?v=7"></script>
 <script>
 (() => {
   let temaSalvo = 'light';
