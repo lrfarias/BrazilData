@@ -14,8 +14,8 @@
 </style>
 </head>
 <body class="min-h-screen font-sans flex flex-col">
-<!-- No simulador Selic -->
-<div id="bd-header" data-badge="BCB SGS" data-sub="Simulador de Renda Fixa & Juro Real"></div>
+<div id="bd-header" data-badge="IBGE SIDRA" data-sub="Inteligência Macroeconômica e Contas Regionais"></div>
+
 <!-- Tooltip do mapa -->
 <div id="mapTip" class="pointer-events-none fixed z-50 hidden px-3 py-2 rounded-lg text-xs shadow-lg border din-border din-card-bg">
   <p id="tipNome" class="font-bold din-text-main"></p>
@@ -533,7 +533,7 @@ async function iniciarMapa() {
   if (!geo) { $('mapLoading').textContent = 'Não foi possível carregar o mapa no momento.'; return; }
 
   const svg = d3.select('#mapaBr');
-  const proj = d3.geoMercator().fitExtent([[16, 16], [584, 544]], geo);
+  const proj = d3.geoIdentity().reflectY(true).fitExtent([[16, 16], [584, 544]], geo);
   const path = d3.geoPath().projection(proj);
   const tip = $('mapTip');
 
