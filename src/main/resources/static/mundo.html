@@ -130,6 +130,10 @@
               <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M7 14l4-4 4 4 5-5"></path></svg>
               Comparador Multi-País
             </a>
+            <button onclick="forcarAtualizacaoCache(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left">
+              <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+              Atualizar dados das APIs
+            </button>
             <button onclick="window.print(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left">
               <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
               Exportar Relatório (PDF)
@@ -170,7 +174,7 @@
     </div>
     <div class="flex items-center gap-2 din-text-muted">
       <span class="w-2 h-2 rounded-full bg-[#16C784] animate-pulse"></span>
-      <span id="statusSync">Sincronizando Banco Mundial, REST Countries e câmbio...</span>
+      <span id="statusSync">Sincronizando Banco Mundial e câmbio...</span>
     </div>
   </div>
 
@@ -495,6 +499,9 @@
 
 <script>
 const $ = i => document.getElementById(i);
+const CACHE_KEY = 'bd_mundo_cache_v1';
+const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 horas
+
 const BD = {
   brl: (v, d = 2) => v == null ? 'N/D' : v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: d, maximumFractionDigits: d }),
   usd: (v, d = 0) => v == null ? 'N/D' : v.toLocaleString('pt-BR', { style: 'currency', currency: 'USD', minimumFractionDigits: d, maximumFractionDigits: d }),
@@ -516,6 +523,18 @@ const BD = {
   cor: () => { const d = document.documentElement.getAttribute('data-theme') === 'dark'; return { tx: d ? '#F5F6F7' : '#17191C', mu: d ? '#9299A3' : '#737780', grid: d ? '#2B3036' : '#E5E7EB' }; }
 };
 
+// Fallback de mapeamento numérico ISO -> ISO3 (garante que o mapa nunca fique sem vínculo)
+const FALLBACK_CCN3 = {
+  '076':'BRA','840':'USA','156':'CHN','276':'DEU','392':'JPN','356':'IND','826':'GBR','250':'FRA',
+  '380':'ITA','124':'CAN','643':'RUS','410':'KOR','484':'MEX','036':'AUS','724':'ESP','360':'IDN',
+  '792':'TUR','528':'NLD','682':'SAU','756':'CHE','616':'POL','032':'ARG','752':'SWE','578':'NOR',
+  '784':'ARE','702':'SGP','704':'VNM','710':'ZAF','152':'CHL','170':'COL','604':'PER','398':'KAZ',
+  '818':'EGY','566':'NGA','231':'ETH','180':'COD','591':'PAN','214':'DOM','858':'URY','600':'PRY',
+  '554':'NZL','620':'PRT','056':'BEL','040':'AUT','372':'IRL','208':'DNK','246':'FIN','300':'GRC',
+  '203':'CZE','642':'ROU','348':'HUN','804':'UKR','376':'ISR','764':'THA','458':'MYS','608':'PHL',
+  '586':'PAK','050':'BGD','504':'MAR','012':'DZA','404':'KEN','862':'VEN','218':'ECU','068':'BOL'
+};
+
 // IDH Oficial (PNUD 2023/2024)
 const IDH_PNUD = {
   CHE:0.967, NOR:0.966, ISL:0.959, HKG:0.956, DNK:0.952, SWE:0.952, DEU:0.950, IRL:0.950, SGP:0.949, AUS:0.946, NLD:0.946,
@@ -527,7 +546,7 @@ const IDH_PNUD = {
   NGA:0.548, ETH:0.498, COD:0.481
 };
 
-// Vocação Econômica por País (principais economias) + Fallback por Região
+// Vocação Econômica por País e por Região
 const VOCACAO_PAIS = {
   BRA: 'Agronegócio, Energia, Mineração & Serviços',
   USA: 'Tecnologia, Serviços Financeiros, Energia & Indústria Avançada',
@@ -647,7 +666,6 @@ const SETS = {
   }
 };
 
-// Continentes e Regiões agora em abas separadas
 const CATEGORIAS_FILTRO = {
   cont: {
     label: 'Continentes',
@@ -679,7 +697,7 @@ const SUBREGIAO_PT = {
 const REGIAO_PT = { Americas:'Américas', Europe:'Europa', Asia:'Ásia', Africa:'África', Oceania:'Oceania' };
 
 let PAISES_MAP = {};
-let CCN3_TO_ISO3 = {};
+let CCN3_TO_ISO3 = { ...FALLBACK_CCN3 };
 let PAISES = [];
 let ratesUSD = null;
 let catAtiva = 'cont', filtroValor = 'Todos os países', isoAtivo = 'BRA', abaRx = 'econ', topN = 5;
@@ -718,7 +736,7 @@ function alternarModoApresentacao() {
     : `<svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect><line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line><line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line></svg><span>Modo Tela Cheia</span>`;
 }
 
-// 1. CARREGAMENTO GLOBAL (CORRIGIDO: <= 10 CAMPOS NO REST COUNTRIES)
+// 1. CARREGAMENTO GLOBAL BLINDADO + CACHE LOCAL (6h)
 async function fetchWBGlobal(ind) {
   try {
     const r = await fetch(`https://api.worldbank.org/v2/country/all/indicator/${ind}?format=json&mrnev=1&per_page=300`);
@@ -734,13 +752,54 @@ async function fetchWBGlobal(ind) {
   } catch { return {}; }
 }
 
-async function carregarBaseGlobal() {
+function aplicarDadosGlobais(paisesArr, ccnMap, ts, origem) {
+  PAISES_MAP = {};
+  paisesArr.forEach(p => { PAISES_MAP[p.iso3] = p; });
+  CCN3_TO_ISO3 = { ...FALLBACK_CCN3, ...ccnMap };
+  PAISES = [...paisesArr].sort((a, b) => a.nome.localeCompare(b.nome));
+
+  $('listaPaises').innerHTML = PAISES.map(p => `<option value="${p.nome}">`).join('');
+  preencherSelectsComparador();
+
+  const dataStr = new Date(ts).toLocaleString('pt-BR');
+  $('statusSync').textContent = `${PAISES.length} países carregados · ${origem}`;
+  $('dataAtualizacaoGlobal').textContent = `Última consulta às APIs: ${dataStr}`;
+
+  atualizarDescFiltro();
+  pintarMapa();
+  renderRanking();
+  renderComparadorMulti();
+  selecionarPais(PAISES_MAP[isoAtivo] ? isoAtivo : (PAISES_MAP['BRA'] ? 'BRA' : PAISES[0]?.iso3));
+}
+
+function forcarAtualizacaoCache() {
+  try { localStorage.removeItem(CACHE_KEY); } catch {}
+  $('statusSync').textContent = 'Atualizando dados das APIs...';
+  carregarBaseGlobal(true);
+}
+
+async function carregarBaseGlobal(ignorarCache = false) {
+  if (!ignorarCache) {
+    try {
+      const raw = localStorage.getItem(CACHE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && Array.isArray(parsed.paises) && parsed.paises.length > 20 && (Date.now() - parsed.ts) < CACHE_TTL_MS) {
+          aplicarDadosGlobais(parsed.paises, parsed.ccnMap || {}, parsed.ts, 'Cache local (rápido)');
+          return;
+        }
+      }
+    } catch {}
+  }
+
   try {
-    // Exatamente 10 campos (limite da API REST Countries v3.1)
-    const restUrl = 'https://restcountries.com/v3.1/all?fields=cca3,ccn3,name,translations,flags,capital,region,subregion,currencies,population';
-    const [rRest, rFx, wbPib, wbPpc, wbPc, wbPop, wbCresc, wbInfla, wbImp, wbGini] = await Promise.all([
-      fetch(restUrl).then(r => { if (!r.ok) throw new Error('REST ' + r.status); return r.json(); }),
-      fetch('https://open.er-api.com/v6/latest/USD').then(r => r.json()).catch(() => null),
+    const restUrl = 'https://restcountries.com/v3.1/all?fields=cca3,ccn3,name,translations,flags,capital,region,subregion,currencies';
+    const wbCountriesUrl = 'https://api.worldbank.org/v2/country?format=json&per_page=300';
+
+    const [resRest, resWbList, resFx, resPib, resPpc, resPc, resPop, resCresc, resInfla, resImp, resGini] = await Promise.allSettled([
+      fetch(restUrl).then(r => r.ok ? r.json() : null),
+      fetch(wbCountriesUrl).then(r => r.ok ? r.json() : null),
+      fetch('https://open.er-api.com/v6/latest/USD').then(r => r.ok ? r.json() : null),
       fetchWBGlobal('NY.GDP.MKTP.CD'),
       fetchWBGlobal('NY.GDP.MKTP.PP.CD'),
       fetchWBGlobal('NY.GDP.PCAP.CD'),
@@ -751,25 +810,48 @@ async function carregarBaseGlobal() {
       fetchWBGlobal('SI.POV.GINI')
     ]);
 
-    ratesUSD = rFx?.rates || null;
-    PAISES_MAP = {};
-    CCN3_TO_ISO3 = {};
+    const rRest = resRest.status === 'fulfilled' && Array.isArray(resRest.value) ? resRest.value : null;
+    const rWbList = resWbList.status === 'fulfilled' && Array.isArray(resWbList.value?.[1]) ? resWbList.value[1] : [];
+    ratesUSD = resFx.status === 'fulfilled' ? resFx.value?.rates : null;
 
-    rRest.forEach(c => {
+    const wbPib = resPib.status === 'fulfilled' ? resPib.value : {};
+    const wbPpc = resPpc.status === 'fulfilled' ? resPpc.value : {};
+    const wbPc = resPc.status === 'fulfilled' ? resPc.value : {};
+    const wbPop = resPop.status === 'fulfilled' ? resPop.value : {};
+    const wbCresc = resCresc.status === 'fulfilled' ? resCresc.value : {};
+    const wbInfla = resInfla.status === 'fulfilled' ? resInfla.value : {};
+    const wbImp = resImp.status === 'fulfilled' ? resImp.value : {};
+    const wbGini = resGini.status === 'fulfilled' ? resGini.value : {};
+
+    const fonteLista = rRest || rWbList.filter(c => c.region?.value !== 'Aggregates').map(c => ({
+      cca3: c.id,
+      ccn3: Object.keys(FALLBACK_CCN3).find(k => FALLBACK_CCN3[k] === c.id) || '',
+      name: { common: c.name },
+      capital: [c.capitalCity || '—'],
+      region: c.region?.value || 'Outros',
+      subregion: c.region?.value || 'Outros',
+      flags: { png: c.iso2Code ? `https://flagcdn.com/w80/${c.iso2Code.toLowerCase()}.png` : '' }
+    }));
+
+    const listaFinal = [];
+    const ccnMap = { ...FALLBACK_CCN3 };
+
+    fonteLista.forEach(c => {
       if (!c.cca3) return;
       const iso3 = c.cca3;
       const currObj = c.currencies ? Object.entries(c.currencies)[0] : null;
-      const moeda = currObj ? currObj[0] : 'USD';
-      const mNome = currObj ? currObj[1].name : '—';
+      const moeda = currObj ? currObj[0] : (iso3 === 'BRA' ? 'BRL' : 'USD');
+      const mNome = currObj ? currObj[1].name : moeda;
       const moedaBRL = (moeda === 'BRL') ? 1 : (ratesUSD && ratesUSD[moeda] && ratesUSD['BRL'] ? ratesUSD['BRL'] / ratesUSD[moeda] : null);
       const nomePT = c.translations?.por?.common || c.name?.common || iso3;
       const cont = REGIAO_PT[c.region] || c.region || 'Outros';
       const regiaoGeo = SUBREGIAO_PT[c.subregion] || cont;
+      const ccn3 = c.ccn3 ? String(c.ccn3).padStart(3, '0') : '';
 
-      const p = {
-        iso3,
-        ccn3: c.ccn3 ? String(c.ccn3).padStart(3, '0') : '',
-        nome: nomePT,
+      if (ccn3) ccnMap[ccn3] = iso3;
+
+      listaFinal.push({
+        iso3, ccn3, nome: nomePT,
         flag: c.flags?.png || '',
         cap: Array.isArray(c.capital) && c.capital[0] ? c.capital[0] : '—',
         cont, regiaoGeo,
@@ -778,31 +860,21 @@ async function carregarBaseGlobal() {
         pib: wbPib[iso3]?.v ?? null, pibAno: wbPib[iso3]?.ano ?? '',
         pibPpc: wbPpc[iso3]?.v ?? null, pibPpcAno: wbPpc[iso3]?.ano ?? '',
         pibPc: wbPc[iso3]?.v ?? null, pibPcAno: wbPc[iso3]?.ano ?? '',
-        pop: wbPop[iso3]?.v ?? c.population ?? null, popAno: wbPop[iso3]?.ano ?? '2024',
+        pop: wbPop[iso3]?.v ?? null, popAno: wbPop[iso3]?.ano ?? '',
         cresc: wbCresc[iso3]?.v ?? null, crescAno: wbCresc[iso3]?.ano ?? '',
         infla: wbInfla[iso3]?.v ?? null, inflaAno: wbInfla[iso3]?.ano ?? '',
         imposto: wbImp[iso3]?.v ?? null, impostoAno: wbImp[iso3]?.ano ?? '',
         gini: wbGini[iso3]?.v ?? null, giniAno: wbGini[iso3]?.ano ?? '',
         idh: IDH_PNUD[iso3] ?? null, idhAno: IDH_PNUD[iso3] ? '2023' : ''
-      };
-
-      PAISES_MAP[iso3] = p;
-      if (p.ccn3) CCN3_TO_ISO3[p.ccn3] = iso3;
+      });
     });
 
-    PAISES = Object.values(PAISES_MAP).sort((a, b) => a.nome.localeCompare(b.nome));
-    $('listaPaises').innerHTML = PAISES.map(p => `<option value="${p.nome}">`).join('');
-    preencherSelectsComparador();
+    const agora = Date.now();
+    if (listaFinal.length > 20) {
+      try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: agora, paises: listaFinal, ccnMap })); } catch {}
+    }
 
-    const agora = new Date().toLocaleString('pt-BR');
-    $('statusSync').textContent = `${PAISES.length} países sincronizados · Banco Mundial + Câmbio ao vivo`;
-    $('dataAtualizacaoGlobal').textContent = `Última consulta às APIs: ${agora}`;
-
-    atualizarDescFiltro();
-    pintarMapa();
-    renderRanking();
-    renderComparadorMulti();
-    selecionarPais('BRA');
+    aplicarDadosGlobais(listaFinal, ccnMap, agora, 'Banco Mundial + Câmbio ao vivo');
   } catch (e) {
     console.error('Erro na base global:', e);
     $('statusSync').textContent = 'Erro ao sincronizar base global. Recarregue a página.';
@@ -1062,7 +1134,7 @@ async function selecionarPais(iso3) {
   $('rxMoedaCod').textContent = p.moeda;
   $('rxMoedaBrl').textContent = p.moedaBRL != null ? BD.brl(p.moedaBRL, p.moedaBRL < 0.1 ? 4 : 2) : 'N/D';
   $('rxMoedaNome').textContent = p.mNome;
-  $('rxPopArea').textContent = `População: ${BD.compactPop(p.pop)} (${p.popAno})`;
+  $('rxPopArea').textContent = `População: ${BD.compactPop(p.pop)} (${p.popAno || 'ref.'})`;
   $('rxVocacao').textContent = p.vocacao;
 
   const subiu = p.cresc != null && p.cresc >= 0;
@@ -1299,7 +1371,9 @@ function preencherSelectsComparador() {
   $('cmp1').innerHTML = opts;
   $('cmp2').innerHTML = opts;
   $('cmp3').innerHTML = `<option value="">Nenhum (comparar apenas 2)</option>` + opts;
-  $('cmp1').value = 'BRA'; $('cmp2').value = 'USA'; $('cmp3').value = 'CHN';
+  if (PAISES_MAP['BRA']) $('cmp1').value = 'BRA';
+  if (PAISES_MAP['USA']) $('cmp2').value = 'USA';
+  if (PAISES_MAP['CHN']) $('cmp3').value = 'CHN';
 }
 
 function renderComparadorMulti() {
