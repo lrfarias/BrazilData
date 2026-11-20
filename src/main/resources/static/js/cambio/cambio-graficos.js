@@ -95,11 +95,12 @@ function renderizarTudoGraficos() {
 
 async function carregarGrafico() {
   const a = $('gMoedaA').value, b = $('gMoedaB').value;
-  let ini, fim = dataISO(0);
+  const hojeStr = dataISO(0);
+  let ini, fim = hojeStr;
 
   if (periodo === 'custom' && dataInicioCustom && dataFimCustom) {
     ini = dataInicioCustom;
-    fim = dataFimCustom;
+    fim = dataFimCustom > hojeStr ? hojeStr : dataFimCustom;
   } else if (periodo === 'tudo') {
     ini = '1999-01-04';
   } else {
@@ -107,16 +108,21 @@ async function carregarGrafico() {
     ini = dataISO(diasBusca);
   }
 
+  $('leituraGraf').textContent = 'Carregando série histórica...';
   const todosSyms = [...new Set([a, b, ...MACRO_PARES.map(m => m.c)])].filter(x => x !== 'USD');
 
   try {
-    const r = await fetch(`https://api.frankfurter.dev/v1/${ini}..${fim}?base=USD&symbols=${todosSyms.join(',')}`);
-    if (!r.ok) throw new Error('Frankfurter');
+    const url = `https://api.frankfurter.dev/v1/${ini}..${fim}?base=USD&symbols=${todosSyms.join(',')}`;
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(`Frankfurter HTTP ${r.status}`);
     const j = await r.json();
 
     let rates = j.rates || {};
+    const chaves = Object.keys(rates).sort();
+    if (!chaves.length) throw new Error('Sem dados para o intervalo selecionado');
+
     if (periodo === 3) {
-      const ultimas3 = Object.keys(rates).sort().slice(-3);
+      const ultimas3 = chaves.slice(-3);
       const filtrado = {};
       ultimas3.forEach(dt => { filtrado[dt] = rates[dt]; });
       rates = filtrado;
@@ -126,8 +132,9 @@ async function carregarGrafico() {
     desenharGrafico();
     desenharMacro();
     atualizarResumoIndicadores();
-  } catch {
-    $('leituraGraf').textContent = 'Não foi possível carregar o histórico para este par no momento.';
+  } catch (err) {
+    console.error('Erro no carregarGrafico:', err);
+    $('leituraGraf').textContent = `Não foi possível carregar o histórico (${err.message}).`;
   }
 }
 
