@@ -285,10 +285,11 @@
               <input id="dtInicio" type="date" class="inp text-xs py-1.5">
               <input id="dtFim" type="date" class="inp text-xs py-1.5">
             </div>
-            <button type="button" onclick="aplicarPeriodoCustom()"
-              class="w-full py-1.5 rounded-lg text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition">
+            <button id="btnAplicarDatas" type="button" onclick="aplicarPeriodoCustom()"
+              class="w-full py-1.5 rounded-lg text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
               Aplicar datas
             </button>
+            <p id="statusCustom" class="text-[11px] din-text-muted"></p>
           </div>
 
           <div>
@@ -403,8 +404,7 @@
             <h2 id="titGraf" class="text-base font-semibold din-text-main">Evolução cambial</h2>
             <p id="subGraf" class="text-xs din-text-muted">Dados oficiais de fechamento diário (Banco Central Europeu)</p>
           </div>
-          <div class="flex-1 min-h-[340px]"><canvas id="grafMoedas"></canvas></div>
-        </div>
+<div class="relative w-full h-[460px] lg:h-[560px]"><canvas id="grafMoedas"></canvas></div>        </div>
 
         <!-- ABA 2: TERMÔMETRO MACRO -->
         <div id="viewGrafMacro" class="hidden flex-1 flex flex-col space-y-3">
@@ -505,9 +505,7 @@
 })();
 
 </script>
-<script src="js/cambio/cambio-core.js?v=3"></script>
-<script src="js/cambio/cambio-graficos.js?v=3"></script>
-<script src="js/cambio/cambio-core.js?v=4"></script>
-<script src="js/cambio/cambio-graficos.js?v=4"></script>
+<script src="js/cambio/cambio-core.js?v=5"></script>
+<script src="js/cambio/cambio-graficos.js?v=5"></script>
 </body>
 </html>

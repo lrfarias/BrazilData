@@ -89,23 +89,49 @@ function setTipoGrafico(t) {
 }
 
 function aplicarPeriodoCustom() {
-  const ini = $('dtInicio')?.value;
-  const fim = $('dtFim')?.value;
+  const elIni = $('dtInicio');
+  const elFim = $('dtFim');
+  const elSt = $('statusCustom');
+  const ini = elIni?.value || '';
+  const fim = elFim?.value || '';
+
   if (!ini || !fim) {
-    $('leituraGraf').textContent = 'Preencha a data inicial e a data final antes de clicar em Aplicar datas.';
+    if (elSt) elSt.innerHTML = '<span class="din-red">Preencha a data inicial e a final.</span>';
     return;
   }
   if (ini >= fim) {
-    $('leituraGraf').textContent = 'A data inicial precisa ser anterior à data final.';
+    if (elSt) elSt.innerHTML = '<span class="din-red">A data inicial deve ser anterior à final.</span>';
     return;
   }
+
   dataInicioCustom = ini;
   dataFimCustom = fim;
   periodo = 'custom';
   atualizarBotoesPeriodo('');
+
+  if (elSt) elSt.textContent = `Buscando ${ini.split('-').reverse().join('/')} até ${fim.split('-').reverse().join('/')}...`;
   if ($('macroDias')) $('macroDias').textContent = labelPeriodo();
-  carregarGrafico();
+
+  carregarGrafico().then(() => {
+    if (elSt && ultimoHist) {
+      const qtd = Object.keys(ultimoHist.rates || {}).length;
+      elSt.innerHTML = `<span class="din-green">Período aplicado (${qtd} pregões).</span>`;
+    }
+  });
 }
+
+// Preenche os campos de data automaticamente ao abrir a página
+document.addEventListener('DOMContentLoaded', () => {
+  const hoje = dataISO(0);
+  if ($('dtInicio')) {
+    $('dtInicio').max = hoje;
+    if (!$('dtInicio').value) $('dtInicio').value = dataISO(90);
+  }
+  if ($('dtFim')) {
+    $('dtFim').max = hoje;
+    if (!$('dtFim').value) $('dtFim').value = hoje;
+  }
+});
 
 function setModo(m) {
   modo = m;
