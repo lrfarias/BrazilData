@@ -3,114 +3,428 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Conversor de Moedas — BrasilEmDados</title>
+<title>Moedas & Câmbio Global — BrasilEmDados</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 </head>
 <body class="min-h-screen font-sans flex flex-col">
 <div id="bd-header"></div>
+
 <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-  <div>
-    <a href="/economia.html" class="text-xs font-semibold din-text-muted hover:underline">← Economia e indicadores</a>
-    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight din-text-main mt-2">Conversor de moedas</h1>
-    <p class="text-sm din-text-muted mt-1 max-w-2xl">Converta entre real, dólar, euro e libra com a cotação PTAX de venda do Banco Central.</p>
+  <!-- Cabeçalho -->
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+    <div>
+      <a href="/economia.html" class="text-xs font-semibold din-text-muted hover:underline">← Economia e indicadores</a>
+      <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight din-text-main mt-2">Moedas e câmbio global</h1>
+      <p class="text-sm din-text-muted mt-1 max-w-2xl">Converta mais de 160 moedas do mundo com taxa cruzada em tempo real e compare o desempenho histórico entre pares globais.</p>
+    </div>
+    <div class="flex items-center gap-2 text-xs din-text-muted">
+      <span class="w-2 h-2 rounded-full bg-[#16C784] animate-pulse"></span>
+      <span id="statusLive">Carregando cotações...</span>
+    </div>
   </div>
 
-  <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-    <div class="lg:col-span-7 din-card-bg border din-border rounded-lg p-5 space-y-4">
-      <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
-        <label class="sm:col-span-4 text-xs font-semibold din-text-main">Valor
-          <input id="val" class="inp mt-1" inputmode="decimal" value="100" oninput="conv()"></label>
-        <label class="sm:col-span-3 text-xs font-semibold din-text-main">De
-          <select id="de" class="inp mt-1" onchange="conv()"></select></label>
-        <button onclick="troca()" class="sm:col-span-2 inp text-center font-bold" aria-label="Inverter moedas">⇄</button>
-        <label class="sm:col-span-3 text-xs font-semibold din-text-main">Para
-          <select id="para" class="inp mt-1" onchange="conv()"></select></label>
-      </div>
-      <div class="din-secondary-bg border din-border rounded-lg p-4">
-        <p class="text-xs din-text-muted">Resultado</p>
-        <p id="res" class="text-3xl font-extrabold din-green mt-1">—</p>
-        <p id="taxa" class="text-xs din-text-muted mt-2"></p>
-      </div>
-      <p id="aviso" class="text-xs din-text-muted">Buscando cotações no Banco Central…</p>
+  <!-- Ranking Top 5 Moedas Globais (FMI/BIS - Liquidez e Reserva) -->
+  <section class="space-y-2">
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <h2 class="text-xs font-semibold uppercase tracking-wider din-text-muted">Top 5 Moedas Globais (Reserva e Liquidez · em BRL)</h2>
+      <span class="text-[11px] din-text-muted">Ordem de relevância internacional (FMI/BIS)</span>
+    </div>
+    <div id="top5" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+      <!-- Preenchido via JS -->
+    </div>
+  </section>
+
+  <!-- Conversor Universal (~160 moedas) -->
+  <section class="din-card-bg border din-border rounded-lg p-5 space-y-4">
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <h2 class="text-base font-semibold din-text-main">Conversor universal</h2>
+      <span id="qtdMoedas" class="text-xs din-text-muted">—</span>
     </div>
 
-    <div class="lg:col-span-5 grid grid-cols-1 gap-3 content-start" id="cards"></div>
+    <div class="grid grid-cols-1 md:grid-cols-11 gap-3 items-end">
+      <div class="md:col-span-3">
+        <label class="block text-xs font-semibold din-text-main">Valor
+          <input id="convVal" class="inp mt-1 font-semibold" inputmode="decimal" value="100" oninput="converter()">
+        </label>
+      </div>
+      <div class="md:col-span-3">
+        <label class="block text-xs font-semibold din-text-main">De
+          <select id="convDe" class="inp mt-1" onchange="converter()"></select>
+        </label>
+      </div>
+      <div class="md:col-span-1 flex justify-center">
+        <button type="button" onclick="inverterConv()" title="Inverter moedas"
+          class="w-full md:w-10 h-10 rounded-lg din-secondary-bg border din-border din-text-main font-bold hover:border-[#16C784] transition">⇄</button>
+      </div>
+      <div class="md:col-span-4">
+        <label class="block text-xs font-semibold din-text-main">Para
+          <select id="convPara" class="inp mt-1" onchange="converter()"></select>
+        </label>
+      </div>
+    </div>
+
+    <div class="pt-3 border-t din-border flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
+      <div>
+        <p id="convRes" class="text-2xl sm:text-3xl font-extrabold din-green">—</p>
+        <p id="convTaxa" class="text-xs din-text-muted mt-1">—</p>
+      </div>
+      <p id="convInverso" class="text-xs din-text-muted">—</p>
+    </div>
   </section>
 
-  <section class="din-card-bg border din-border rounded-lg p-5">
-    <h2 class="text-base font-semibold din-text-main">Dólar nos últimos 30 dias</h2>
-    <p class="text-xs din-text-muted mb-3">Cotação de venda em reais, por dia útil. Fonte: Banco Central (SGS 1).</p>
-    <div class="h-[300px]"><canvas id="graf"></canvas></div>
+  <!-- Gráfico Comparativo Interativo -->
+  <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- Controles e Métricas -->
+    <div class="lg:col-span-4 space-y-4">
+      <div class="din-card-bg border din-border rounded-lg p-5 space-y-4">
+        <h2 class="text-base font-semibold din-text-main">Comparador histórico</h2>
+
+        <div class="grid grid-cols-2 gap-2">
+          <label class="text-xs font-semibold din-text-main">Moeda A
+            <select id="gMoedaA" class="inp mt-1" onchange="carregarGrafico()"></select>
+          </label>
+          <label class="text-xs font-semibold din-text-main">Moeda B
+            <select id="gMoedaB" class="inp mt-1" onchange="carregarGrafico()"></select>
+          </label>
+        </div>
+
+        <div>
+          <span class="block text-xs font-semibold din-text-main mb-1.5">Período</span>
+          <div class="grid grid-cols-3 gap-1.5 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+            <button id="p30" type="button" onclick="setPeriodo(30)" class="py-1.5 rounded-md din-text-muted transition">30d</button>
+            <button id="p90" type="button" onclick="setPeriodo(90)" class="py-1.5 rounded-md din-card-bg din-text-main border din-border transition">90d</button>
+            <button id="p365" type="button" onclick="setPeriodo(365)" class="py-1.5 rounded-md din-text-muted transition">1 ano</button>
+          </div>
+        </div>
+
+        <div>
+          <span class="block text-xs font-semibold din-text-main mb-1.5">Modo de visualização</span>
+          <div class="grid grid-cols-2 gap-1.5 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+            <button id="mPar" type="button" onclick="setModo('par')" class="py-1.5 rounded-md din-card-bg din-text-main border din-border transition">Par Direto (A/B)</button>
+            <button id="mBase" type="button" onclick="setModo('base100')" class="py-1.5 rounded-md din-text-muted transition">Base 100 (vs USD)</button>
+          </div>
+        </div>
+
+        <!-- Métricas de Mercado -->
+        <div class="pt-3 border-t din-border grid grid-cols-2 gap-3">
+          <div class="din-secondary-bg rounded-md p-2.5">
+            <span class="text-[11px] din-text-muted">Variação</span>
+            <p id="mVar" class="text-sm font-bold din-text-main mt-0.5">—</p>
+          </div>
+          <div class="din-secondary-bg rounded-md p-2.5">
+            <span class="text-[11px] din-text-muted">Volatilidade diária</span>
+            <p id="mVol" class="text-sm font-bold din-text-main mt-0.5">—</p>
+          </div>
+          <div class="din-secondary-bg rounded-md p-2.5">
+            <span class="text-[11px] din-text-muted">Máxima</span>
+            <p id="mMax" class="text-sm font-bold din-text-main mt-0.5">—</p>
+          </div>
+          <div class="din-secondary-bg rounded-md p-2.5">
+            <span class="text-[11px] din-text-muted">Mínima</span>
+            <p id="mMin" class="text-sm font-bold din-text-main mt-0.5">—</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leitura Didática -->
+      <div class="din-card-bg border din-border rounded-lg p-5 space-y-2">
+        <span class="text-xs font-semibold uppercase tracking-wider din-green">Leitura do cenário</span>
+        <p id="leituraGraf" class="text-xs din-text-main leading-relaxed">Carregando série histórica...</p>
+      </div>
+    </div>
+
+    <!-- Canvas do Gráfico -->
+    <div class="lg:col-span-8 din-card-bg border din-border rounded-lg p-5 flex flex-col">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+        <div>
+          <h2 id="titGraf" class="text-base font-semibold din-text-main">Evolução cambial</h2>
+          <p id="subGraf" class="text-xs din-text-muted">Dados oficiais de fechamento diário (Banco Central Europeu)</p>
+        </div>
+      </div>
+      <div class="flex-1 min-h-[340px]"><canvas id="grafMoedas"></canvas></div>
+    </div>
   </section>
 
-  <p class="text-xs din-text-muted max-w-3xl leading-relaxed">A PTAX é a média das cotações de referência do dia e serve de base para contratos. A cotação que você paga em casas de câmbio, bancos e cartões inclui spread e impostos, então costuma ser maior. Nos fins de semana e feriados vale a última cotação disponível.</p>
+  <!-- Bloco Didático -->
+  <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <details class="lg:col-span-6 din-card-bg border din-border rounded-lg p-4 text-xs din-text-muted">
+      <summary class="font-semibold din-text-main cursor-pointer select-none">Como ler câmbio, Base 100 e o Top 5 Global?</summary>
+      <div class="mt-3 space-y-2 leading-relaxed">
+        <p><strong class="din-text-main">Relevância vs. Moeda "mais cara":</strong> O Top 5 Global (USD, EUR, GBP, JPY, CNY) reflete liquidez e reservas internacionais (FMI/BIS). Moedas como o Dinar do Kuwait (KWD) valem mais por unidade nominal, mas isso é apenas uma questão de escala, não de força econômica.</p>
+        <p><strong class="din-text-main">Par Direto vs. Base 100:</strong> No <em>Par Direto</em>, você vê quantas unidades de B compra 1 unidade de A. Na <em>Base 100</em>, ambas as moedas começam em 100 no primeiro dia e são medidas contra o Dólar — ideal para ver qual moeda se valorizou mais no período.</p>
+        <p><strong class="din-text-main">Volatilidade diária:</strong> Desvio-padrão das variações percentuais diárias. Quanto maior o número, mais instável esteve o câmbio no período.</p>
+      </div>
+    </details>
+
+    <p class="lg:col-span-6 text-xs din-text-muted leading-relaxed">
+      <strong class="din-text-main">Fontes e metodologia.</strong> Cotações atuais obtidas via ExchangeRate-API (taxa cruzada sobre USD para mais de 160 moedas, atualizada automaticamente a cada 60s). Séries históricas oficiais fornecidas pela API Frankfurter (Banco Central Europeu). Valores de referência comercial, sem incluir IOF ou spread bancário. Conteúdo educativo.
+    </p>
+  </section>
 </main>
+
 <div id="bd-footer"></div>
 <script src="/layout.js"></script>
 <script>
 const $ = i => document.getElementById(i);
-const NOM = { BRL: 'Real', USD: 'Dólar', EUR: 'Euro', GBP: 'Libra' };
-const T = { BRL: { v: 1 } };
-let chart, hist = [];
+const nomeMoeda = new Intl.DisplayNames(['pt-BR'], { type: 'currency' });
+const labelMoeda = c => { try { return `${c} — ${nomeMoeda.of(c)}`; } catch { return c; } };
 
-const dstr = d => String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + '-' + d.getFullYear();
-const br = s => s.slice(0, 10).split('-').reverse().join('/');
+const TOP5 = [
+  { c: 'USD', n: 'Dólar Americano', pos: '#1' },
+  { c: 'EUR', n: 'Euro', pos: '#2' },
+  { c: 'GBP', n: 'Libra Esterlina', pos: '#3' },
+  { c: 'JPY', n: 'Iene Japonês', pos: '#4' },
+  { c: 'CNY', n: 'Yuan Chinês', pos: '#5' }
+];
 
-async function ptax(m) {
-  for (let i = 0; i < 8; i++) {
-    const d = new Date(); d.setDate(d.getDate() - i);
-    const u = `https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoMoedaDia(moeda=@moeda,dataCotacao=@dataCotacao)?@moeda='${m}'&@dataCotacao='${dstr(d)}'&$format=json`;
-    const r = await fetch(u); if (!r.ok) continue;
-    const j = (await r.json()).value || [];
-    if (j.length) { const b = j.find(x => /fecha/i.test(x.tipoBoletim)) || j[j.length - 1]; return { v: b.cotacaoVenda, d: br(b.dataHoraCotacao) }; }
+// Moedas com série histórica oficial no Banco Central Europeu (Frankfurter)
+const HIST_MOEDAS = ['USD','BRL','EUR','GBP','JPY','CNY','CHF','CAD','AUD','MXN','INR','KRW','ZAR','TRY','NZD','SEK','NOK','PLN'];
+
+let ratesUSD = {};
+let chart = null;
+let periodo = 90;
+let modo = 'par'; // 'par' | 'base100'
+let ultimoHist = null;
+
+function taxaCruzada(de, para) {
+  if (!ratesUSD[de] || !ratesUSD[para]) return 0;
+  return ratesUSD[para] / ratesUSD[de];
+}
+
+function renderTop5() {
+  $('top5').innerHTML = TOP5.map(m => {
+    const val = taxaCruzada(m.c, 'BRL');
+    const dec = m.c === 'JPY' ? 4 : 2;
+    return `<button type="button" onclick="selecionarPar('${m.c}','BRL')"
+      class="text-left din-card-bg border din-border rounded-lg p-3.5 hover:border-[#16C784] transition">
+      <div class="flex items-center justify-between text-[11px] din-text-muted">
+        <span class="font-bold din-text-main">${m.c}/BRL</span>
+        <span>${m.pos}</span>
+      </div>
+      <p class="text-lg font-extrabold din-green mt-1">${val ? BD.brl(val, dec) : '—'}</p>
+      <span class="block text-[11px] din-text-muted truncate">${m.n}</span>
+    </button>`;
+  }).join('');
+}
+
+function selecionarPar(a, b) {
+  $('convDe').value = a;
+  $('convPara').value = b;
+  converter();
+  if (HIST_MOEDAS.includes(a) && HIST_MOEDAS.includes(b)) {
+    $('gMoedaA').value = a;
+    $('gMoedaB').value = b;
+    carregarGrafico();
   }
-  throw new Error('sem cotação para ' + m);
 }
 
-function conv() {
-  const a = parseFloat(String($('val').value).replace(',', '.')) || 0, f = $('de').value, t = $('para').value;
-  if (!T[f] || !T[t]) { $('res').textContent = '—'; $('taxa').textContent = ''; return; }
-  const k = T[f].v / T[t].v;
-  $('res').textContent = BD.num(a * k, 2) + ' ' + t;
-  $('taxa').textContent = `1 ${f} = ${BD.num(k, 4)} ${t}`;
-}
-function troca() { const x = $('de').value; $('de').value = $('para').value; $('para').value = x; conv(); }
-
-function grafico() {
-  if (!hist.length) return;
-  const c = BD.cor(); if (chart) chart.destroy();
-  chart = new Chart($('graf'), {
-    type: 'line',
-    data: { labels: hist.map(h => h.d.slice(0, 5)), datasets: [{ label: 'USD/BRL', data: hist.map(h => h.v), borderColor: '#16C784', backgroundColor: '#16C78422', fill: true, tension: .25, pointRadius: 2 }] },
-    options: { maintainAspectRatio: false, plugins: { legend: { display: false } },
-      scales: { x: { ticks: { color: c.mu, maxTicksLimit: 8 }, grid: { display: false } }, y: { ticks: { color: c.mu, callback: v => 'R$ ' + v.toFixed(2) }, grid: { color: c.grid } } } }
-  });
+function converter() {
+  const val = parseFloat(String($('convVal').value).replace(',', '.')) || 0;
+  const de = $('convDe').value, para = $('convPara').value;
+  const tx = taxaCruzada(de, para);
+  if (!tx) return;
+  const res = val * tx;
+  const dec = tx < 0.1 ? 4 : 2;
+  $('convRes').textContent = `${BD.num(res, dec)} ${para}`;
+  $('convTaxa').textContent = `1 ${de} = ${BD.num(tx, 4)} ${para}`;
+  $('convInverso').textContent = `1 ${para} = ${BD.num(1 / tx, 4)} ${de}`;
 }
 
-(async () => {
-  const op = Object.keys(NOM).map(k => `<option value="${k}">${NOM[k]} (${k})</option>`).join('');
-  $('de').innerHTML = op; $('para').innerHTML = op; $('de').value = 'USD'; $('para').value = 'BRL';
+function inverterConv() {
+  const a = $('convDe').value;
+  $('convDe').value = $('convPara').value;
+  $('convPara').value = a;
+  converter();
+}
 
-  const ms = ['USD', 'EUR', 'GBP'];
-  const r = await Promise.allSettled(ms.map(ptax));
-  let datas = [];
-  r.forEach((x, i) => { if (x.status === 'fulfilled') { T[ms[i]] = x.value; datas.push(x.value.d); } });
-  $('cards').innerHTML = ms.map(m => `<div class="din-card-bg border din-border rounded-lg p-4 flex justify-between items-center">
-    <div><p class="text-sm font-semibold din-text-main">${NOM[m]} (${m})</p><p class="text-xs din-text-muted">${T[m] ? 'Cotação de ' + T[m].d : 'Indisponível agora'}</p></div>
-    <p class="text-xl font-bold din-green">${T[m] ? BD.brl(T[m].v, 4) : '—'}</p></div>`).join('');
-  $('aviso').textContent = datas.length ? 'Fonte: PTAX de venda, Banco Central do Brasil.' : 'Não foi possível buscar as cotações no Banco Central. Recarregue a página em instantes.';
-  conv();
+async function carregarTaxasAoVivo(inicial = false) {
+  try {
+    const r = await fetch('https://open.er-api.com/v6/latest/USD');
+    if (!r.ok) throw new Error('API Live');
+    const j = await r.json();
+    ratesUSD = j.rates;
+
+    if (inicial) {
+      const cods = Object.keys(ratesUSD).sort();
+      $('qtdMoedas').textContent = `${cods.length} moedas disponíveis`;
+      const opts = cods.map(c => `<option value="${c}">${labelMoeda(c)}</option>`).join('');
+      $('convDe').innerHTML = opts;
+      $('convPara').innerHTML = opts;
+      $('convDe').value = 'USD';
+      $('convPara').value = 'BRL';
+    }
+
+    renderTop5();
+    converter();
+    const hora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    $('statusLive').textContent = `Atualizado às ${hora} (auto 60s)`;
+  } catch {
+    $('statusLive').textContent = 'Erro ao atualizar cotações';
+  }
+}
+
+function setPeriodo(d) {
+  periodo = d;
+  const on = 'py-1.5 rounded-md din-card-bg din-text-main border din-border transition';
+  const off = 'py-1.5 rounded-md din-text-muted transition';
+  $('p30').className = d === 30 ? on : off;
+  $('p90').className = d === 90 ? on : off;
+  $('p365').className = d === 365 ? on : off;
+  carregarGrafico();
+}
+
+function setModo(m) {
+  modo = m;
+  const on = 'py-1.5 rounded-md din-card-bg din-text-main border din-border transition';
+  const off = 'py-1.5 rounded-md din-text-muted transition';
+  $('mPar').className = m === 'par' ? on : off;
+  $('mBase').className = m === 'base100' ? on : off;
+  if (ultimoHist) desenharGrafico();
+}
+
+function dataISO(diasAtras) {
+  const d = new Date();
+  d.setDate(d.getDate() - diasAtras);
+  return d.toISOString().slice(0, 10);
+}
+
+async function carregarGrafico() {
+  const a = $('gMoedaA').value, b = $('gMoedaB').value;
+  const ini = dataISO(periodo), fim = dataISO(0);
+  const syms = [...new Set([a, b])].filter(x => x !== 'USD');
+  const query = syms.length ? `?base=USD&symbols=${syms.join(',')}` : `?base=USD&symbols=EUR`;
 
   try {
-    const h = await fetch('https://api.bcb.gov.br/dados/serie/bcdata.sgs.1/dados/ultimos/30?formato=json');
-    if (!h.ok) throw new Error('SGS ' + h.status);
-    hist = (await h.json()).map(x => ({ d: x.data, v: parseFloat(x.valor) }));
-    grafico();
-  } catch (e) { console.error(e); }
+    const r = await fetch(`https://api.frankfurter.dev/v1/${ini}..${fim}${query}`);
+    if (!r.ok) throw new Error('Frankfurter');
+    const j = await r.json();
+    ultimoHist = { a, b, rates: j.rates };
+    desenharGrafico();
+  } catch {
+    $('leituraGraf').textContent = 'Não foi possível carregar o histórico para este par no momento.';
+  }
+}
+
+function calcVolatilidade(serie) {
+  const ret = [];
+  for (let i = 1; i < serie.length; i++) {
+    if (serie[i - 1] > 0) ret.push((serie[i] - serie[i - 1]) / serie[i - 1]);
+  }
+  if (ret.length < 2) return 0;
+  const media = ret.reduce((s, x) => s + x, 0) / ret.length;
+  const varc = ret.reduce((s, x) => s + Math.pow(x - media, 2), 0) / (ret.length - 1);
+  return Math.sqrt(varc) * 100;
+}
+
+function desenharGrafico() {
+  const { a, b, rates } = ultimoHist;
+  const datas = Object.keys(rates).sort();
+  const getUSD = (dt, cod) => cod === 'USD' ? 1 : rates[dt][cod];
+  const labels = datas.map(d => d.slice(8, 10) + '/' + d.slice(5, 7));
+  const c = BD.cor();
+
+  if (chart) chart.destroy();
+
+  if (modo === 'par') {
+    const serie = datas.map(dt => getUSD(dt, b) / getUSD(dt, a));
+    const ini = serie[0], fim = serie[serie.length - 1];
+    const variacao = ((fim - ini) / ini) * 100;
+    const max = Math.max(...serie), min = Math.min(...serie);
+    const vol = calcVolatilidade(serie);
+
+    $('titGraf').textContent = `Par direto: ${a}/${b} (${periodo} dias)`;
+    $('subGraf').textContent = `Quanto 1 ${a} comprou em ${b} ao longo do período`;
+    $('mVar').innerHTML = `<span class="${variacao >= 0 ? 'din-green' : 'din-red'}">${variacao >= 0 ? '+' : ''}${BD.num(variacao, 2)}%</span>`;
+    $('mVol').textContent = `${BD.num(vol, 2)}%`;
+    $('mMax').textContent = BD.num(max, 4);
+    $('mMin').textContent = BD.num(min, 4);
+
+    const dir = variacao >= 0 ? `se valorizou` : `se desvalorizou`;
+    $('leituraGraf').innerHTML = `Nos últimos <strong>${periodo} dias</strong>, o <strong>${a}</strong> ${dir} <strong>${BD.num(Math.abs(variacao), 2)}%</strong> frente ao <strong>${b}</strong> (oscilando entre ${BD.num(min, 4)} e ${BD.num(max, 4)}). A volatilidade diária foi de <strong>${BD.num(vol, 2)}%</strong>.`;
+
+    chart = new Chart($('grafMoedas'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: `${a}/${b}`,
+          data: serie,
+          borderColor: '#16C784',
+          backgroundColor: 'rgba(22,199,132,0.10)',
+          fill: true,
+          borderWidth: 2,
+          pointRadius: 0,
+          tension: .15
+        }]
+      },
+      options: opcoesGrafico(c, v => BD.num(v, 4))
+    });
+  } else {
+    // Base 100: força da moeda frente ao USD (quanto maior, mais a moeda valorizou contra o Dólar)
+    const invA = datas.map(dt => 1 / getUSD(dt, a));
+    const invB = datas.map(dt => 1 / getUSD(dt, b));
+    const baseA = invA.map(v => (v / invA[0]) * 100);
+    const baseB = invB.map(v => (v / invB[0]) * 100);
+
+    const varA = baseA[baseA.length - 1] - 100;
+    const varB = baseB[baseB.length - 1] - 100;
+    const volA = calcVolatilidade(baseA);
+
+    $('titGraf').textContent = `Desempenho relativo: ${a} vs ${b} (Base 100 · vs USD)`;
+    $('subGraf').textContent = `Ambas partem de 100 no dia inicial. Acima de 100 = valorização frente ao Dólar.`;
+    $('mVar').innerHTML = `${a}: <span class="${varA >= 0 ? 'din-green' : 'din-red'}">${varA >= 0 ? '+' : ''}${BD.num(varA, 1)}%</span>`;
+    $('mVol').textContent = `${BD.num(volA, 2)}% (${a})`;
+    $('mMax').textContent = BD.num(Math.max(...baseA, ...baseB), 1);
+    $('mMin').textContent = BD.num(Math.min(...baseA, ...baseB), 1);
+
+    const venc = varA >= varB ? a : b;
+    $('leituraGraf').innerHTML = `Comparando o desempenho frente ao Dólar em <strong>${periodo} dias</strong>, <strong>${venc}</strong> teve a melhor performance: <strong>${a}</strong> variou <strong>${varA >= 0 ? '+' : ''}${BD.num(varA, 2)}%</strong> e <strong>${b}</strong> variou <strong>${varB >= 0 ? '+' : ''}${BD.num(varB, 2)}%</strong>.`;
+
+    chart = new Chart($('grafMoedas'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: `${a} (Base 100)`, data: baseA, borderColor: '#16C784', borderWidth: 2, pointRadius: 0, tension: .15 },
+          { label: `${b} (Base 100)`, data: baseB, borderColor: '#2563EB', borderWidth: 2, pointRadius: 0, tension: .15 }
+        ]
+      },
+      options: opcoesGrafico(c, v => BD.num(v, 2))
+    });
+  }
+}
+
+function opcoesGrafico(c, fmt) {
+  return {
+    maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { labels: { color: c.tx, boxWidth: 12, font: { size: 11 } } },
+      tooltip: { callbacks: { label: x => ` ${x.dataset.label}: ${fmt(x.parsed.y)}` } }
+    },
+    scales: {
+      x: { ticks: { color: c.mu, maxTicksLimit: 8 }, grid: { display: false } },
+      y: { ticks: { color: c.mu, callback: v => fmt(v) }, grid: { color: c.grid } }
+    }
+  };
+}
+
+// Inicialização
+(() => {
+  const optsHist = HIST_MOEDAS.map(c => `<option value="${c}">${labelMoeda(c)}</option>`).join('');
+  $('gMoedaA').innerHTML = optsHist;
+  $('gMoedaB').innerHTML = optsHist;
+  $('gMoedaA').value = 'USD';
+  $('gMoedaB').value = 'BRL';
+
+  carregarTaxasAoVivo(true);
+  carregarGrafico();
+  setInterval(() => carregarTaxasAoVivo(false), 60000);
 })();
-window.addEventListener('tema', grafico);
+
+window.addEventListener('tema', () => { if (ultimoHist) desenharGrafico(); });
 </script>
 </body>
 </html>
