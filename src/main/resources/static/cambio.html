@@ -397,6 +397,7 @@
             </label>
             <button type="button" onclick="exportarCSV()" class="px-2.5 py-1 rounded-md font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition">↓ CSV</button>
           </div>
+        </div>
 
         <!-- ABA 1: EVOLUÇÃO DO PAR -->
         <div id="viewGrafEvol" class="flex-1 flex flex-col">
@@ -404,7 +405,10 @@
             <h2 id="titGraf" class="text-base font-semibold din-text-main">Evolução cambial</h2>
             <p id="subGraf" class="text-xs din-text-muted">Dados oficiais de fechamento diário (Banco Central Europeu)</p>
           </div>
-<div class="relative w-full h-[460px] lg:h-[560px]"><canvas id="grafMoedas"></canvas></div>        </div>
+          <div class="relative w-full h-[460px] lg:h-[560px]">
+            <canvas id="grafMoedas"></canvas>
+          </div>
+        </div>
 
         <!-- ABA 2: TERMÔMETRO MACRO -->
         <div id="viewGrafMacro" class="hidden flex-1 flex flex-col space-y-3">
@@ -412,7 +416,9 @@
             <h2 class="text-base font-semibold din-text-main">O Dólar subiu no mundo ou o Real caiu sozinho?</h2>
             <p class="text-xs din-text-muted">Variação acumulada de cada moeda frente ao Dólar (USD) no período de <strong id="macroDias" class="din-text-main">3 meses</strong>. Barras verdes = valorizou frente ao USD.</p>
           </div>
-          <div class="flex-1 min-h-[300px]"><canvas id="grafMacro"></canvas></div>
+          <div class="relative w-full h-[360px]">
+            <canvas id="grafMacro"></canvas>
+          </div>
           <p id="macroVeredito" class="text-xs din-secondary-bg border din-border rounded-lg p-3 din-text-main leading-relaxed">—</p>
         </div>
 
@@ -434,7 +440,9 @@
             <h2 class="text-base font-semibold din-text-main">Desempenho sazonal histórico (<span id="sazParLbl" class="din-green">USD/BRL</span>)</h2>
             <p class="text-xs din-text-muted">Comparação mês a mês entre 2021 e o ano atual para identificar padrões sazonais.</p>
           </div>
-          <div class="h-[220px]"><canvas id="grafSazonal"></canvas></div>
+          <div class="relative w-full h-[220px]">
+            <canvas id="grafSazonal"></canvas>
+          </div>
           <div class="overflow-x-auto border din-border rounded-lg">
             <table id="matrizSazonal" class="w-full text-xs border-collapse"></table>
           </div>
@@ -478,8 +486,8 @@
   </div>
 </footer>
 
-<script src="js/cambio/cambio-core.js"></script>
-<script src="js/cambio/cambio-graficos.js"></script>
+<script src="js/cambio/cambio-core.js?v=6"></script>
+<script src="js/cambio/cambio-graficos.js?v=6"></script>
 <script>
 (() => {
   let temaSalvo = 'light';
@@ -492,6 +500,10 @@
   $('gMoedaA').value = 'USD';
   $('gMoedaB').value = 'BRL';
 
+  const hoje = dataISO(0);
+  if ($('dtInicio')) { $('dtInicio').max = hoje; $('dtInicio').value = dataISO(90); }
+  if ($('dtFim')) { $('dtFim').max = hoje; $('dtFim').value = hoje; }
+
   carregarTaxasAoVivo(true);
   if (typeof atualizarTempoRealAwesome === 'function') atualizarTempoRealAwesome();
   carregarVariacoesDia();
@@ -503,9 +515,6 @@
     if (typeof atualizarTempoRealAwesome === 'function') atualizarTempoRealAwesome();
   }, 30000);
 })();
-
 </script>
-<script src="js/cambio/cambio-core.js?v=5"></script>
-<script src="js/cambio/cambio-graficos.js?v=5"></script>
 </body>
 </html>
