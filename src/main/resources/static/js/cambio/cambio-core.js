@@ -327,7 +327,6 @@ function renderRetrospectivo() {
     </div>`;
   }).join('');
 }
-
 async function carregarTaxasAoVivo(inicial = false) {
   try {
     const r = await fetch('https://open.er-api.com/v6/latest/USD');
@@ -348,11 +347,13 @@ async function carregarTaxasAoVivo(inicial = false) {
     renderTop5();
     converter();
     const hora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    $('statusLive').textContent = `Atualizado às ${hora} (auto 60s)`;
+    $('statusLive').textContent = `Atualizado às ${hora} (auto 30s)`;
   } catch {
     $('statusLive').textContent = 'Erro ao atualizar cotações';
   }
-  let cacheAwesome = {};
+}
+
+let cacheAwesome = {};
 
 async function atualizarTempoRealAwesome() {
   const pares = 'USD-BRL,EUR-BRL,GBP-BRL,JPY-BRL,CHF-BRL,CAD-BRL,AUD-BRL,CNY-BRL,BTC-BRL';
@@ -432,5 +433,4 @@ function atualizarPainelOhlcDia() {
   $('ohlcMaxDia').textContent = fmt(maxDia);
   $('ohlcMinDia').textContent = fmt(minDia);
   $('ohlcHora').textContent = (d.create_date || '').split(' ')[1] || 'Hoje';
-}
 }
