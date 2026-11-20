@@ -549,121 +549,196 @@
                 <span class="text-xs din-text-muted hidden sm:inline">04 módulos disponíveis</span>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-                
-                <!-- Card 01 -->
-                <div onclick="window.location.href='terminal-pib.html'" class="din-card-bg border din-border rounded-2xl p-5 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between">
-                            <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                                </svg>
-                            </div>
-                            <span class="text-[11px] font-medium din-text-muted">01 / 04</span>
-                        </div>
-                        <h3 class="text-sm font-bold din-text-main">PIB & Vocação Setorial</h3>
-                        <p class="text-xs din-text-muted leading-relaxed">
-                            Mapa de calor estadual, decomposição entre Agro, Indústria e Serviços, comparador direto e Consultor IA.
-                        </p>
-                    </div>
-                    <div class="pt-4 mt-4 border-t din-border flex items-center justify-between">
-                        <span class="text-[11px] din-text-muted">SIDRA 5938</span>
-                        <span class="din-green text-xs font-bold">Explorar →</span>
-                    </div>
-                </div>
+           <div class="relative">
+    <!-- Botões de seta (Esquerda / Direita) -->
+    <div class="flex items-center justify-end gap-2 mb-3">
+        <button type="button" onclick="moverCarrossel(-1)" aria-label="Anterior"
+            class="w-8 h-8 rounded-lg din-card-bg border din-border flex items-center justify-center din-text-main hover:border-[#16C784] transition cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
+            </svg>
+        </button>
+        <button type="button" onclick="moverCarrossel(1)" aria-label="Próximo"
+            class="w-8 h-8 rounded-lg din-card-bg border din-border flex items-center justify-center din-text-main hover:border-[#16C784] transition cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+            </svg>
+        </button>
+    </div>
 
-                <!-- Card 02 -->
-                <div onclick="window.location.href='imposto-idh.html'" class="din-card-bg border din-border rounded-2xl p-5 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between">
-                            <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                    <circle cx="12" cy="12" r="3"></circle>
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 2v4m0 12v4M2 12h4m12 0h4"></path>
-                                </svg>
-                            </div>
-                            <span class="text-[11px] font-medium din-text-muted">02 / 04</span>
-                        </div>
-                        <h3 class="text-sm font-bold din-text-main">Impostos, População & IDH</h3>
-                        <p class="text-xs din-text-muted leading-relaxed">
-                            Análise cruzada entre arrecadação tributária estadual, densidade demográfica e retorno em qualidade de vida.
-                        </p>
-                    </div>
-                    <div class="pt-4 mt-4 border-t din-border flex items-center justify-between">
-                        <span class="text-[11px] din-text-muted">Sociofiscal</span>
-                        <span class="din-green text-xs font-bold">Acessar →</span>
-                    </div>
-                </div>
+    <!-- Trilho da Roleta (Arrastável) -->
+    <div id="carrosselFerramentas"
+        class="flex gap-5 overflow-x-auto scroll-smooth select-none cursor-grab active:cursor-grabbing pb-2"
+        style="scrollbar-width: none; -ms-overflow-style: none;">
 
-                <!-- Card 03 -->
-                <div onclick="window.location.href='cambio.html'" class="din-card-bg border din-border rounded-2xl p-5 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between">
-                            <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
-                                </svg>
-                            </div>
-                            <span class="text-[11px] font-medium din-text-muted">03 / 04</span>
-                        </div>
-                        <h3 class="text-sm font-bold din-text-main">Conversor de Moedas</h3>
-                        <p class="text-xs din-text-muted leading-relaxed">
-                            Cotações cambiais e conversão instantânea do Real e dos indicadores estaduais para Dólar, Euro e Libra.
-                        </p>
+        <!-- Card 01 -->
+        <div data-href="terminal-pib.html"
+            class="card-roleta shrink-0 w-[85%] sm:w-[47%] lg:w-[calc(25%-15px)] din-card-bg border din-border rounded-2xl p-5 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
                     </div>
-                    <div class="pt-4 mt-4 border-t din-border flex items-center justify-between">
-                        <span class="text-[11px] din-text-muted">Câmbio PTAX</span>
-                        <span class="din-green text-xs font-bold">Converter →</span>
-                    </div>
+                    <span class="text-[11px] font-medium din-text-muted">01 / 07</span>
                 </div>
-
-                <!-- Card 04 -->
-                <div onclick="window.location.href='simulador-selic.html'" class="din-card-bg border din-border rounded-2xl p-5 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between">
-                            <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
-                            <span class="text-[11px] font-medium din-text-muted">04 / 04</span>
-                        </div>
-                        <h3 class="text-sm font-bold din-text-main">Simulador Selic & Juros</h3>
-                        <p class="text-xs din-text-muted leading-relaxed">
-                            Simule rendimentos em renda fixa, juros compostos e o impacto da inflação (IPCA) e da Selic no longo prazo.
-                        </p>
-                    </div>
-                    <div class="pt-4 mt-4 border-t din-border flex items-center justify-between">
-                        <span class="text-[11px] din-text-muted">Política Monetária</span>
-                        <span class="din-green text-xs font-bold">Simular →</span>
-                    </div>
-                </div>
-
+                <h3 class="text-sm font-bold din-text-main">PIB & Vocação Setorial</h3>
+                <p class="text-xs din-text-muted leading-relaxed">
+                    Mapa de calor estadual, decomposição entre Agro, Indústria e Serviços, comparador direto e Consultor IA.
+                </p>
             </div>
-            <a href="economia.html#mapa-mundi" class="din-card-bg border din-border rounded-xl p-5 shadow-sm hover:border-[#16C784] transition flex flex-col justify-between gap-4 group">
-  <div class="space-y-3">
-    <div class="flex items-center justify-between gap-2">
-      <div class="w-9 h-9 rounded-lg bg-[#16C784]/15 flex items-center justify-center din-green">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="9"></circle>
-          <path d="M3.6 9h16.8"></path>
-          <path d="M3.6 15h16.8"></path>
-          <path d="M12 3a14.5 14.5 0 0 1 0 18"></path>
-          <path d="M12 3a14.5 14.5 0 0 0 0 18"></path>
-        </svg>
-      </div>
-      <span class="text-[11px] font-mono din-text-muted">05 / 05</span>
-    </div>
+            <div class="pt-4 mt-4 border-t din-border flex items-center justify-between">
+                <span class="text-[11px] din-text-muted">SIDRA 5938</span>
+                <span class="din-green text-xs font-bold">Explorar →</span>
+            </div>
+        </div>
 
-    <div>
-      <h3 class="text-sm font-bold din-text-main group-hover:din-green transition">Mapa-Múndi & Indicadores Globais</h3>
-      <p class="text-xs din-text-muted mt-1 leading-relaxed">
-        Visualize dados internacionais, comparação entre países e conexões macroeconômicas globais com o Brasil.
-      </p>
-    </div>
-  </div>
+        <!-- Card 02 -->
+        <div data-href="imposto-idh.html"
+            class="card-roleta shrink-0 w-[85%] sm:w-[47%] lg:w-[calc(25%-15px)] din-card-bg border din-border rounded-2xl p-5 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 2v4m0 12v4M2 12h4m12 0h4"></path>
+                        </svg>
+                    </div>
+                    <span class="text-[11px] font-medium din-text-muted">02 / 07</span>
+                </div>
+                <h3 class="text-sm font-bold din-text-main">Impostos, População & IDH</h3>
+                <p class="text-xs din-text-muted leading-relaxed">
+                    Análise cruzada entre arrecadação tributária estadual, densidade demográfica e retorno em qualidade de vida.
+                </p>
+            </div>
+            <div class="pt-4 mt-4 border-t din-border flex items-center justify-between">
+                <span class="text-[11px] din-text-muted">Sociofiscal</span>
+                <span class="din-green text-xs font-bold">Acessar →</span>
+            </div>
+        </div>
 
+        <!-- Card 03 -->
+        <div data-href="cambio.html"
+            class="card-roleta shrink-0 w-[85%] sm:w-[47%] lg:w-[calc(25%-15px)] din-card-bg border din-border rounded-2xl p-5 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                        </svg>
+                    </div>
+                    <span class="text-[11px] font-medium din-text-muted">03 / 07</span>
+                </div>
+                <h3 class="text-sm font-bold din-text-main">Conversor de Moedas</h3>
+                <p class="text-xs din-text-muted leading-relaxed">
+                    Cotações cambiais e conversão instantânea do Real e dos indicadores estaduais para Dólar, Euro e Libra.
+                </p>
+            </div>
+            <div class="pt-4 mt-4 border-t din-border flex items-center justify-between">
+                <span class="text-[11px] din-text-muted">Câmbio PTAX</span>
+                <span class="din-green text-xs font-bold">Converter →</span>
+            </div>
+        </div>
+
+        <!-- Card 04 -->
+        <div data-href="simulador-selic.html"
+            class="card-roleta shrink-0 w-[85%] sm:w-[47%] lg:w-[calc(25%-15px)] din-card-bg border din-border rounded-2xl p-5 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <span class="text-[11px] font-medium din-text-muted">04 / 07</span>
+                </div>
+                <h3 class="text-sm font-bold din-text-main">Simulador Selic & Juros</h3>
+                <p class="text-xs din-text-muted leading-relaxed">
+                    Simule rendimentos em renda fixa, juros compostos e o impacto da inflação (IPCA) e da Selic no longo prazo.
+                </p>
+            </div>
+            <div class="pt-4 mt-4 border-t din-border flex items-center justify-between">
+                <span class="text-[11px] din-text-muted">Política Monetária</span>
+                <span class="din-green text-xs font-bold">Simular →</span>
+            </div>
+        </div>
+
+        <!-- Card 05 (Mapa-Múndi) -->
+        <div data-href="economia.html#mapa-mundi"
+            class="card-roleta shrink-0 w-[85%] sm:w-[47%] lg:w-[calc(25%-15px)] din-card-bg border din-border rounded-2xl p-5 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M3.6 9h16.8"></path>
+                            <path d="M3.6 15h16.8"></path>
+                            <path d="M12 3a14.5 14.5 0 0 1 0 18"></path>
+                            <path d="M12 3a14.5 14.5 0 0 0 0 18"></path>
+                        </svg>
+                    </div>
+                    <span class="text-[11px] font-medium din-text-muted">05 / 07</span>
+                </div>
+                <h3 class="text-sm font-bold din-text-main">Mapa-Múndi & Indicadores Globais</h3>
+                <p class="text-xs din-text-muted leading-relaxed">
+                    Visualize dados internacionais, comparação entre países e conexões macroeconômicas globais com o Brasil.
+                </p>
+            </div>
+            <div class="pt-4 mt-4 border-t din-border flex items-center justify-between">
+                <span class="text-[11px] din-text-muted">Global</span>
+                <span class="din-green text-xs font-bold">Explorar →</span>
+            </div>
+        </div>
+
+        <!-- Card 06 (Reservado para módulo futuro) -->
+        <div data-href="economia.html"
+            class="card-roleta shrink-0 w-[85%] sm:w-[47%] lg:w-[calc(25%-15px)] din-card-bg border din-border rounded-2xl p-5 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M7 14l4-4 4 3 5-6"></path>
+                        </svg>
+                    </div>
+                    <span class="text-[11px] font-medium din-text-muted">06 / 07</span>
+                </div>
+                <h3 class="text-sm font-bold din-text-main">Inflação & Poder de Compra</h3>
+                <p class="text-xs din-text-muted leading-relaxed">
+                    Acompanhe a evolução histórica do IPCA, INPC e a perda ou ganho real do poder de compra ao longo do tempo.
+                </p>
+            </div>
+            <div class="pt-4 mt-4 border-t din-border flex items-center justify-between">
+                <span class="text-[11px] din-text-muted">Em breve</span>
+                <span class="din-green text-xs font-bold">Explorar →</span>
+            </div>
+        </div>
+
+        <!-- Card 07 (Reservado para módulo futuro) -->
+        <div data-href="economia.html"
+            class="card-roleta shrink-0 w-[85%] sm:w-[47%] lg:w-[calc(25%-15px)] din-card-bg border din-border rounded-2xl p-5 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <span class="text-[11px] font-medium din-text-muted">07 / 07</span>
+                </div>
+                <h3 class="text-sm font-bold din-text-main">Contas Públicas & Dívida</h3>
+                <p class="text-xs din-text-muted leading-relaxed">
+                    Indicadores fiscais, relação dívida/PIB, resultado primário e equilíbrio orçamentário da União e estados.
+                </p>
+            </div>
+            <div class="pt-4 mt-4 border-t din-border flex items-center justify-between">
+                <span class="text-[11px] din-text-muted">Em breve</span>
+                <span class="din-green text-xs font-bold">Explorar →</span>
+            </div>
+        </div>
+
+    </div>
+</div>
   <div class="pt-3 border-t din-border flex items-center justify-between text-xs">
     <span class="din-text-muted">Global</span>
     <span class="font-bold din-green">Explorar →</span>
@@ -983,5 +1058,53 @@ const anoMaisRecente = anosCompletos.length > 0 ? Math.max(...anosCompletos) : 2
             carregarDadosBancoHome();
         };
     </script>
+    <style>
+  #carrosselFerramentas::-webkit-scrollbar { display: none; }
+</style>
+
+<script>
+  const trilho = document.getElementById('carrosselFerramentas');
+
+  function moverCarrossel(direcao) {
+    if (!trilho) return;
+    const card = trilho.querySelector('.card-roleta');
+    const passo = card ? card.offsetWidth + 20 : 300;
+    trilho.scrollBy({ left: direcao * passo, behavior: 'smooth' });
+  }
+
+  if (trilho) {
+    let pressionado = false, arrastou = false, inicioX = 0, scrollInicial = 0;
+
+    trilho.addEventListener('mousedown', (e) => {
+      pressionado = true;
+      arrastou = false;
+      inicioX = e.pageX - trilho.offsetLeft;
+      scrollInicial = trilho.scrollLeft;
+      trilho.style.scrollBehavior = 'auto';
+    });
+
+    window.addEventListener('mouseup', () => {
+      pressionado = false;
+      trilho.style.scrollBehavior = 'smooth';
+    });
+
+    trilho.addEventListener('mousemove', (e) => {
+      if (!pressionado) return;
+      e.preventDefault();
+      const x = e.pageX - trilho.offsetLeft;
+      const deslocamento = x - inicioX;
+      if (Math.abs(deslocamento) > 6) arrastou = true;
+      trilho.scrollLeft = scrollInicial - deslocamento;
+    });
+
+    trilho.querySelectorAll('.card-roleta').forEach((card) => {
+      card.addEventListener('click', () => {
+        if (arrastou) return;
+        const destino = card.getAttribute('data-href');
+        if (destino) window.location.href = destino;
+      });
+    });
+  }
+</script>
 </body>
 </html>
