@@ -8,72 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
-    <style>
-        :root {
-            /* Light — Paleta Claro (Padrão) */
-            --bg-main: #FFFFFF;
-            --card-bg: #F7F8FA;
-            --bg-secondary: #F0F2F5;
-            --text-main: #17191C;
-            --text-muted: #737780;
-            --border-col: #E5E7EB;
-            --accent-green: #16C784;
-            --accent-red: #EA3943;
-            --icon-box-bg: rgba(22, 199, 132, 0.12);
-        }
-
-        [data-theme="dark"] {
-            /* Dark — Paleta Escuro */
-            --bg-main: #101214;
-            --card-bg: #191C20;
-            --bg-secondary: #22262B;
-            --text-main: #F5F6F7;
-            --text-muted: #9299A3;
-            --border-col: #2B3036;
-            --accent-green: #16C784;
-            --accent-red: #EA3943;
-            --icon-box-bg: rgba(22, 199, 132, 0.15);
-        }
-
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            transition: background-color 0.2s ease, color 0.2s ease;
-        }
-
-        /* Classes Utilitárias Dinâmicas */
-        .din-bg-main { background-color: var(--bg-main); }
-        .din-card-bg { background-color: var(--card-bg); }
-        .din-secondary-bg { background-color: var(--bg-secondary); }
-        .din-text-main { color: var(--text-main); }
-        .din-text-muted { color: var(--text-muted); }
-        .din-border { border-color: var(--border-col); }
-        .din-green { color: var(--accent-green); }
-        .din-red { color: var(--accent-red); }
-        
-        /* Quadradinho do ícone padronizado em verde suave */
-        .din-icon-box {
-            background-color: var(--icon-box-bg);
-            color: var(--accent-green);
-        }
-
-        .din-btn {
-            background-color: var(--accent-green);
-            color: #FFFFFF;
-        }
-        .din-btn:hover { opacity: 0.9; }
-
-        .card-hover {
-            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-        .card-hover:hover {
-            transform: translateY(-2px);
-            border-color: var(--accent-green);
-        }
-
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    </style>
+    <link rel="stylesheet" href="css/theme.css">
 </head>
 <body class="min-h-screen font-sans flex flex-col justify-between">
 <script src="config.js"></script>
