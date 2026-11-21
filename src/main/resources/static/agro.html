@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agronegócio Brasileiro, Safras & Produção — BrasilEmDados</title>
+<meta name="description" content="Acompanhe a produção agrícola, valor da safra, área colhida e produtividade por estado (soja, milho, café, cana, arroz, algodão e feijão) com dados oficiais do IBGE PAM.">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
+<link rel="stylesheet" href="css/theme.css">
+</head>
+<body class="min-h-screen font-sans flex flex-col justify-between">
+<div>
+  <!-- Cabeçalho Institucional -->
+  <header class="sticky top-0 z-50 border-b din-border din-bg-main/95 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="flex items-center justify-between h-16 gap-4">
+        <div class="flex items-center gap-3">
+          <a href="index.html" class="flex items-center gap-3 group">
+            <div class="w-10 h-10 rounded-lg din-secondary-bg border din-border flex items-center justify-center shadow-sm overflow-hidden group-hover:border-[#16C784] transition-colors duration-200">
+              <img src="download.png" alt="BrasilEmDados" class="w-8 h-8 object-contain transition-transform duration-200 group-hover:scale-110">
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-lg font-extrabold tracking-tight din-text-main">BrasilEmDados</span>
+                <span class="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono uppercase px-2 py-0.5 rounded din-secondary-bg border din-border din-text-muted">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span> IBGE PAM · AGRO
+                </span>
+              </div>
+              <p class="text-[11px] din-text-muted hidden xl:block">Produção Agrícola, Safras & Destaque por Estado</p>
+            </div>
+          </a>
+        </div>
+
+        <nav class="hidden md:flex items-center gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+          <a href="index.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Início</a>
+          <a href="glossario.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Glossário</a>
+          <a href="economia.html" class="px-3.5 py-1.5 rounded-md din-card-bg din-text-main shadow-sm border din-border transition">Economia</a>
+          <a href="sobre.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Sobre</a>
+          <a href="contato.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Contato</a>
+        </nav>
+
+        <div class="flex items-center gap-2.5 relative">
+          <button onclick="alternarModoApresentacao()" id="btnModoApresentacao" class="hidden lg:inline-flex items-center gap-1.5 din-secondary-bg hover:opacity-80 border din-border din-text-main text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer">
+            <svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line>
+              <line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line>
+            </svg>
+            <span>Modo Tela Cheia</span>
+          </button>
+
+          <button id="menuDropdownBtn" onclick="toggleDropdownMenu()" title="Preferências e Ferramentas" class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center hover:border-[#16C784] transition cursor-pointer">
+            <svg class="w-4 h-4 din-text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line>
+              <line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line>
+              <line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line>
+              <line x1="17" y1="16" x2="23" y2="16"></line>
+            </svg>
+          </button>
+
+          <div id="dropdownMenu" class="hidden absolute right-0 top-11 w-64 rounded-xl din-card-bg border din-border shadow-2xl py-1.5 z-50">
+            <div class="px-4 py-1.5 border-b din-border">
+              <p class="text-[10px] font-bold uppercase tracking-wider din-text-muted">Ferramentas do Terminal</p>
+            </div>
+            <a href="economia.html" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+              <svg class="w-4 h-4 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+              Voltar ao Hub Economia
+            </a>
+            <button onclick="exportarCSV(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left cursor-pointer">
+              <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              Exportar Safra (CSV)
+            </button>
+            <button onclick="window.print(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left cursor-pointer">
+              <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              Exportar Relatório (PDF)
+            </button>
+            <div class="my-1 border-t din-border"></div>
+            <div class="flex items-center justify-between px-4 py-2.5 text-xs font-medium din-text-main cursor-pointer select-none" onclick="alternarDarkLight()">
+              <div class="flex items-center gap-3">
+                <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                <span>Modo Escuro (Dark)</span>
+              </div>
+              <div id="switchBg" class="w-10 h-5 rounded-full relative transition-colors duration-200 p-0.5 flex items-center" style="background-color: var(--border-col);">
+                <div id="switchBall" class="w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-200"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="flex md:hidden items-center gap-5 h-10 overflow-x-auto no-scrollbar text-xs font-semibold border-t din-border">
+        <a href="index.html" class="din-text-muted hover:din-text-main h-full flex items-center">Início</a>
+        <a href="glossario.html" class="din-text-muted hover:din-text-main h-full flex items-center">Glossário</a>
+        <a href="economia.html" class="din-green border-b-2 border-[#16C784] h-full flex items-center">Economia</a>
+        <a href="sobre.html" class="din-text-muted hover:din-text-main h-full flex items-center">Sobre</a>
+        <a href="contato.html" class="din-text-muted hover:din-text-main h-full flex items-center">Contato</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Breadcrumb + Status + ABNT -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex flex-wrap items-center justify-between gap-2 text-xs ocultar-em-presentation">
+    <div class="flex items-center gap-2 din-text-muted">
+      <a href="economia.html" class="hover:din-green font-semibold inline-flex items-center gap-1 transition">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        Economia e indicadores
+      </a>
+      <span>/</span>
+      <span class="din-text-main font-bold">Agronegócio Brasileiro & Safras</span>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2">
+      <span id="statusAgro" class="inline-flex items-center gap-1.5 text-[11px] din-text-muted">
+        <span class="w-2 h-2 rounded-full bg-[#16C784] animate-pulse"></span>
+        <span>Consultando IBGE PAM (Tabela 5457)...</span>
+      </span>
+      <button type="button" onclick="citarAgroABNT(this)" class="px-2.5 py-1 rounded-md text-[11px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
+        Citar (ABNT)
+      </button>
+    </div>
+  </div>
+
+  <!-- Tooltip do Mapa -->
+  <div id="mapTip" class="pointer-events-none fixed z-50 hidden px-3 py-2 rounded-lg text-xs shadow-lg border din-border din-card-bg">
+    <p id="tipNome" class="font-bold din-text-main"></p>
+    <p id="tipVal" class="din-green font-semibold mt-0.5"></p>
+    <p id="tipSub" class="text-[10px] din-text-muted mt-0.5">Clique para ver os detalhes do estado</p>
+  </div>
+
+  <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-5 space-y-6">
+
+    <!-- 1. SELETOR DE CULTURA AGRÍCOLA (IBGE PAM) -->
+    <section class="din-card-bg border din-border rounded-xl p-4 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-4 ocultar-em-presentation">
+      <div class="space-y-1.5">
+        <span class="block text-[11px] font-semibold uppercase tracking-wider din-text-muted">Cultura agrícola (IBGE PAM)</span>
+        <div id="btnsCultura" class="flex flex-wrap gap-1.5"></div>
+      </div>
+
+      <div class="text-xs din-text-muted lg:text-right">
+        <span id="lblAnoSafra" class="font-bold din-text-main block">Ano de referência: —</span>
+        <span class="text-[11px]">Pesquisa Agrícola Municipal · Tabela SIDRA 5457</span>
+      </div>
+    </section>
+
+    <!-- 2. KPIs NACIONAIS DA CULTURA -->
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 ocultar-em-presentation">
+      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
+        <span class="text-xs din-text-muted uppercase font-semibold">Produção Nacional</span>
+        <p id="kProdTotal" class="text-xl font-bold din-green mt-1">—</p>
+        <span class="text-[11px] din-text-muted">Quantidade produzida (IBGE PAM)</span>
+      </div>
+      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
+        <span class="text-xs din-text-muted uppercase font-semibold">Valor da Produção</span>
+        <p id="kValorTotal" class="text-xl font-bold din-text-main mt-1">—</p>
+        <span class="text-[11px] din-text-muted">Valor bruto estimado na lavoura</span>
+      </div>
+      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
+        <span class="text-xs din-text-muted uppercase font-semibold">Área Colhida</span>
+        <p id="kAreaTotal" class="text-xl font-bold din-text-main mt-1">—</p>
+        <span class="text-[11px] din-text-muted">Soma das unidades da federação</span>
+      </div>
+      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
+        <span class="text-xs din-text-muted uppercase font-semibold">Estado Líder</span>
+        <p id="kLiderAgro" class="text-xl font-bold din-green mt-1">—</p>
+        <span id="kLiderShare" class="text-[11px] din-text-muted">Maior produtor na cultura</span>
+      </div>
+    </section>
+
+    <!-- 3. MAPA ESTADUAL + RAIO-X DO ESTADO NA CULTURA -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- Mapa -->
+      <div class="lg:col-span-7 din-card-bg border din-border rounded-xl p-5 shadow-sm flex flex-col">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+          <div>
+            <h1 id="titMapaAgro" class="text-lg font-bold din-text-main">Mapa da Produção — Soja em grão</h1>
+            <p class="text-xs din-text-muted">Tonalidade mais escura indica maior destaque estadual na cultura selecionada.</p>
+          </div>
+          <select id="selMetricaAgro" class="inp !w-auto text-xs font-semibold" onchange="atualizarVisualizacaoAgro()">
+            <option value="prod" selected>Produção (toneladas)</option>
+            <option value="valor">Valor da produção (R$)</option>
+            <option value="area">Área colhida (ha)</option>
+            <option value="rend">Rendimento médio (kg/ha)</option>
+          </select>
+        </div>
+
+        <div class="relative flex-1 min-h-[380px] flex items-center justify-center">
+          <p id="mapLoading" class="text-xs din-text-muted">Carregando malha do Brasil…</p>
+          <svg id="mapaAgro" viewBox="0 0 600 560" class="w-full max-h-[450px] hidden"></svg>
+        </div>
+
+        <div class="mt-3 pt-3 border-t din-border flex flex-wrap items-center justify-between gap-3 text-[11px] din-text-muted">
+          <span id="legMinAgro" class="font-medium">Menor</span>
+          <div class="flex items-center gap-2 flex-1 max-w-[260px]">
+            <span class="text-[10px] shrink-0">Menor</span>
+            <div class="flex-1 h-2.5 rounded-full border din-border"
+                 style="background: linear-gradient(90deg, #74E3B4 0%, #16C784 50%, #046C4E 100%);"></div>
+            <span class="text-[10px] shrink-0 font-semibold din-text-main">Destaque</span>
+          </div>
+          <span id="legMaxAgro" class="font-semibold din-green">Destaque</span>
+        </div>
+      </div>
+
+      <!-- Raio-X do Estado + Gráfico dos Top Estados -->
+      <div class="lg:col-span-5 flex flex-col gap-6">
+        <div class="din-card-bg border din-border rounded-xl p-5 shadow-sm space-y-4">
+          <div class="flex items-start justify-between gap-2 pb-3 border-b din-border">
+            <div>
+              <span class="text-[10px] font-bold uppercase tracking-wider din-green">Estado Inspecionado</span>
+              <h2 id="rxUfNome" class="text-xl font-extrabold din-text-main mt-0.5">Mato Grosso (MT)</h2>
+            </div>
+            <span id="rxUfBadge" class="px-2.5 py-1 rounded-md din-secondary-bg border din-border text-xs font-extrabold din-green">MT</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5 text-xs">
+            <div class="din-secondary-bg border din-border rounded-lg p-3">
+              <span class="text-[11px] din-text-muted block">Produção</span>
+              <strong id="rxProd" class="text-sm font-extrabold din-green mt-0.5 block">—</strong>
+              <span id="rxShareProd" class="text-[10px] din-text-muted">—</span>
+            </div>
+            <div class="din-secondary-bg border din-border rounded-lg p-3">
+              <span class="text-[11px] din-text-muted block">Valor da produção</span>
+              <strong id="rxValor" class="text-sm font-extrabold din-text-main mt-0.5 block">—</strong>
+              <span id="rxShareValor" class="text-[10px] din-text-muted">—</span>
+            </div>
+            <div class="din-secondary-bg border din-border rounded-lg p-3">
+              <span class="text-[11px] din-text-muted block">Área colhida</span>
+              <strong id="rxArea" class="text-sm font-extrabold din-text-main mt-0.5 block">—</strong>
+              <span class="text-[10px] din-text-muted">hectares</span>
+            </div>
+            <div class="din-secondary-bg border din-border rounded-lg p-3">
+              <span class="text-[11px] din-text-muted block">Rendimento</span>
+              <strong id="rxRend" class="text-sm font-extrabold din-green mt-0.5 block">—</strong>
+              <span class="text-[10px] din-text-muted">kg por hectare</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="din-card-bg border din-border rounded-xl p-5 shadow-sm space-y-3 flex-1 flex flex-col justify-between">
+          <div class="flex items-center justify-between gap-2">
+            <div>
+              <h3 class="text-sm font-bold din-text-main">Top 8 Estados Produtores</h3>
+              <p class="text-[11px] din-text-muted">Clique em um estado no ranking ou mapa para inspecionar</p>
+            </div>
+            <button type="button" onclick="baixarGrafAgroPNG()" class="px-2.5 py-1 rounded-md text-[11px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ PNG</button>
+          </div>
+          <div class="relative h-[220px]">
+            <canvas id="grafTopAgro"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. RANKING ESTADUAL COMPLETO -->
+    <section class="din-card-bg border din-border rounded-xl p-5 shadow-sm space-y-3">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-base font-bold din-text-main">Ranking Estadual por Cultura</h2>
+          <p class="text-xs din-text-muted">Valores oficiais da Pesquisa Agrícola Municipal (IBGE · Tabela SIDRA 5457).</p>
+        </div>
+        <button type="button" onclick="exportarCSV()" class="px-3 py-1.5 rounded-lg text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ Exportar CSV</button>
+      </div>
+
+      <div class="overflow-x-auto max-h-[380px] overflow-y-auto">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead class="sticky top-0 din-card-bg">
+            <tr class="din-text-muted border-b din-border uppercase">
+              <th class="py-2.5 px-2">#</th>
+              <th class="py-2.5 px-2">Estado</th>
+              <th class="py-2.5 px-2">Produção</th>
+              <th class="py-2.5 px-2">% Brasil</th>
+              <th class="py-2.5 px-2">Valor da Produção</th>
+              <th class="py-2.5 px-2">Área Colhida</th>
+              <th class="py-2.5 px-2">Rendimento</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyAgro" class="divide-y din-border">
+            <tr><td colspan="7" class="py-4 text-center din-text-muted">Carregando dados do IBGE PAM...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t din-border text-[11px] din-text-muted">
+        <span class="inline-flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+          <span>Fonte oficial: <strong class="din-text-main">IBGE</strong> • Pesquisa Agrícola Municipal (PAM · Tabela SIDRA 5457)</span>
+        </span>
+        <button type="button" onclick="citarAgroABNT(this)" class="underline hover:din-green transition cursor-pointer">Copiar citação ABNT</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Rodapé Institucional -->
+<footer class="border-t din-border din-card-bg py-6 text-xs din-text-muted mt-8 ocultar-em-presentation">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+    <div class="flex items-center gap-2">
+      <span class="font-bold din-text-main">BrasilEmDados</span>
+      <span>•</span>
+      <span>Terminal de Inteligência Econômica e Setorial</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <a href="index.html" class="hover:din-text-main transition">Início</a>
+      <a href="economia.html" class="hover:din-text-main transition">Economia</a>
+      <a href="glossario.html" class="hover:din-text-main transition">Glossário</a>
+      <a href="sobre.html" class="hover:din-text-main transition">Sobre</a>
+      <a href="contato.html" class="hover:din-text-main transition">Contato</a>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/chart-utils.js?v=1"></script>
+<script>
+const $ = id => document.getElementById(id);
+const fmtNum = (v, d = 0) => Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
+const fmtMoeda = v => {
+  const n = Number(v || 0);
+  if (n >= 1e9) return 'R$ ' + fmtNum(n / 1e9, 2) + ' bi';
+  if (n >= 1e6) return 'R$ ' + fmtNum(n / 1e6, 1) + ' mi';
+  return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+};
+const fmtTon = t => {
+  const n = Number(t || 0);
+  if (n >= 1e6) return fmtNum(n / 1e6, 2) + ' mi t';
+  if (n >= 1e3) return fmtNum(n / 1e3, 1) + ' mil t';
+  return fmtNum(n, 0) + ' t';
+};
+
+// Códigos oficiais de produto na Tabela SIDRA 5457 (IBGE PAM)
+const CULTURAS = [
+  { id: '40124', nome: 'Soja em grão' },
+  { id: '40122', nome: 'Milho em grão' },
+  { id: '40092', nome: 'Café em grão' },
+  { id: '40096', nome: 'Cana-de-açúcar' },
+  { id: '40076', nome: 'Arroz em casca' },
+  { id: '40075', nome: 'Algodão herbáceo' },
+  { id: '40106', nome: 'Feijão em grão' }
+];
+
+const IBGE_UF = {
+  '11':'RO','12':'AC','13':'AM','14':'RR','15':'PA','16':'AP','17':'TO',
+  '21':'MA','22':'PI','23':'CE','24':'RN','25':'PB','26':'PE','27':'AL','28':'SE','29':'BA',
+  '31':'MG','32':'ES','33':'RJ','35':'SP','41':'PR','42':'SC','43':'RS',
+  '50':'MS','51':'MT','52':'GO','53':'DF'
+};
+
+let culturaSel = CULTURAS[0];
+let anoSafra = '';
+let dadosUf = []; // [{ sigla, nome, area, prod, valor, rend, shareProd, shareValor }]
+let ufInspecionada = 'MT';
+let geoPronto = false;
+let chartAgro = null;
+
+// Cabeçalho e Tema
+function toggleDropdownMenu() { $('dropdownMenu').classList.toggle('hidden'); }
+window.addEventListener('click', e => {
+  const btn = $('menuDropdownBtn'), menu = $('dropdownMenu');
+  if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) menu.classList.add('hidden');
+});
+
+function alternarDarkLight() {
+  const novo = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  aplicarTema(novo);
+  try { localStorage.setItem('brasil_em_dados_tema', novo); } catch {}
+}
+
+function aplicarTema(tema) {
+  const html = document.documentElement, bg = $('switchBg'), ball = $('switchBall');
+  if (tema === 'dark') {
+    html.setAttribute('data-theme', 'dark');
+    if (bg && ball) { bg.style.backgroundColor = '#16C784'; ball.classList.add('translate-x-5'); }
+  } else {
+    html.removeAttribute('data-theme');
+    if (bg && ball) { bg.style.backgroundColor = '#E5E7EB'; ball.classList.remove('translate-x-5'); }
+  }
+  if (dadosUf.length) atualizarVisualizacaoAgro();
+}
+
+function alternarModoApresentacao() {
+  document.body.classList.toggle('modo-apresentacao');
+  const ativo = document.body.classList.contains('modo-apresentacao');
+  $('btnModoApresentacao').innerHTML = ativo
+    ? '<span>✕ Sair da Tela Cheia</span>'
+    : `<svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect><line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line><line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line></svg><span>Modo Tela Cheia</span>`;
+}
+
+// Escala tonal: verde médio-claro (#74E3B4) -> verde marca (#16C784) -> esmeralda escuro (#046C4E)
+function interpolarVerde(t) {
+  const s = Math.pow(Math.max(0, Math.min(1, t)), 0.72);
+  const c0 = [116, 227, 180], c1 = [22, 199, 132], c2 = [4, 108, 78];
+  let r, g, b;
+  if (s <= 0.5) {
+    const k = s / 0.5;
+    r = Math.round(c0[0] + (c1[0] - c0[0]) * k);
+    g = Math.round(c0[1] + (c1[1] - c0[1]) * k);
+    b = Math.round(c0[2] + (c1[2] - c0[2]) * k);
+  } else {
+    const k = (s - 0.5) / 0.5;
+    r = Math.round(c1[0] + (c2[0] - c1[0]) * k);
+    g = Math.round(c1[1] + (c2[1] - c1[1]) * k);
+    b = Math.round(c1[2] + (c2[2] - c1[2]) * k);
+  }
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+function fmtMetricaAgro(d, k) {
+  if (!d) return '—';
+  if (k === 'prod') return fmtTon(d.prod);
+  if (k === 'valor') return fmtMoeda(d.valor);
+  if (k === 'area') return fmtNum(d.area, 0) + ' ha';
+  if (k === 'rend') return fmtNum(d.rend, 0) + ' kg/ha';
+  return '—';
+}
+
+function renderBotoesCultura() {
+  $('btnsCultura').innerHTML = CULTURAS.map(c => {
+    const on = c.id === culturaSel.id;
+    return `<button type="button" onclick="selecionarCultura('${c.id}')"
+      class="px-3 py-1.5 rounded-md text-xs font-semibold border transition cursor-pointer ${on ? 'din-btn border-transparent shadow-sm' : 'din-secondary-bg din-border din-text-muted hover:din-text-main'}">${c.nome}</button>`;
+  }).join('');
+}
+
+async function selecionarCultura(id) {
+  culturaSel = CULTURAS.find(c => c.id === id) || CULTURAS[0];
+  renderBotoesCultura();
+  $('titMapaAgro').textContent = `Mapa da Produção — ${culturaSel.nome}`;
+  await carregarDadosCultura();
+}
+
+// IBGE SIDRA 5457: v/216 = Área colhida (ha), v/214 = Quantidade produzida (t), v/215 = Valor da produção (mil R$)
+async function carregarDadosCultura() {
+  $('statusAgro').innerHTML = `<span class="w-2 h-2 rounded-full bg-[#16C784] animate-pulse"></span><span>Carregando ${culturaSel.nome} (IBGE PAM)...</span>`;
+  const url = `https://apisidra.ibge.gov.br/values/t/5457/n3/all/v/216,214,215/p/last%201/c782/${culturaSel.id}?formato=json`;
+
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('SIDRA ' + r.status);
+    const json = await r.json();
+    const linhas = json.slice(1);
+    if (!linhas.length) throw new Error('Sem dados');
+
+    anoSafra = linhas[0].D3N || '';
+    $('lblAnoSafra').textContent = `Ano de referência: ${anoSafra}`;
+
+    const porUf = {};
+    linhas.forEach(row => {
+      const codUf = String(row.D1C || '').slice(0, 2);
+      const sigla = IBGE_UF[codUf];
+      if (!sigla) return;
+      const nome = String(row.D1N || sigla).replace(/\s*\([A-Z]{2}\)\s*$/, '').trim();
+      const varCod = String(row.D2C || '');
+      const valNum = parseFloat(String(row.V || '').replace(',', '.'));
+      if (Number.isNaN(valNum)) return;
+
+      if (!porUf[sigla]) porUf[sigla] = { sigla, nome, area: 0, prod: 0, valor: 0 };
+      if (varCod === '216') porUf[sigla].area = valNum;
+      else if (varCod === '214') porUf[sigla].prod = valNum;
+      else if (varCod === '215') porUf[sigla].valor = valNum * 1000; // mil R$ -> R$
+    });
+
+    const lista = Object.values(porUf).filter(d => d.prod > 0 || d.valor > 0);
+    const totProd = lista.reduce((a, d) => a + d.prod, 0) || 1;
+    const totValor = lista.reduce((a, d) => a + d.valor, 0) || 1;
+    const totArea = lista.reduce((a, d) => a + d.area, 0);
+
+    lista.forEach(d => {
+      d.shareProd = (d.prod / totProd) * 100;
+      d.shareValor = (d.valor / totValor) * 100;
+      d.rend = d.area > 0 ? (d.prod * 1000) / d.area : 0;
+    });
+
+    dadosUf = lista.sort((a, b) => b.prod - a.prod);
+
+    // KPIs
+    $('kProdTotal').textContent = fmtTon(totProd);
+    $('kValorTotal').textContent = fmtMoeda(totValor);
+    $('kAreaTotal').textContent = fmtNum(totArea, 0) + ' ha';
+
+    if (dadosUf.length) {
+      const lider = dadosUf[0];
+      $('kLiderAgro').textContent = `${lider.sigla} · ${fmtTon(lider.prod)}`;
+      $('kLiderShare').textContent = `${lider.nome} (${fmtNum(lider.shareProd, 1)}% do Brasil)`;
+      if (!dadosUf.some(x => x.sigla === ufInspecionada)) ufInspecionada = lider.sigla;
+    }
+
+    $('statusAgro').innerHTML = `<span class="w-2 h-2 rounded-full bg-[#16C784]"></span><span>IBGE PAM (${anoSafra}) · ${culturaSel.nome}</span>`;
+    atualizarVisualizacaoAgro();
+  } catch (e) {
+    console.error(e);
+    $('statusAgro').innerHTML = `<span class="w-2 h-2 rounded-full bg-[#EA3943]"></span><span>IBGE PAM indisponível no momento.</span>`;
+  }
+}
+
+function atualizarVisualizacaoAgro() {
+  if (!dadosUf.length) return;
+  const k = $('selMetricaAgro').value;
+  const ordenados = [...dadosUf].sort((a, b) => b[k] - a[k]);
+  const dMin = ordenados[ordenados.length - 1];
+  const dMax = ordenados[0];
+
+  $('legMinAgro').textContent = `${dMin.sigla}: ${fmtMetricaAgro(dMin, k)}`;
+  $('legMaxAgro').textContent = `Destaque · ${dMax.sigla}: ${fmtMetricaAgro(dMax, k)}`;
+
+  pintarMapaAgro(k, dMin[k], dMax[k]);
+  pintarRaioXAgro();
+  desenharTopAgro(k, ordenados);
+  renderizarTabelaAgro(ordenados);
+}
+
+function pintarRaioXAgro() {
+  const d = dadosUf.find(x => x.sigla === ufInspecionada) || dadosUf[0];
+  if (!d) return;
+  $('rxUfNome').textContent = `${d.nome} (${d.sigla})`;
+  $('rxUfBadge').textContent = d.sigla;
+  $('rxProd').textContent = fmtTon(d.prod);
+  $('rxShareProd').textContent = `${fmtNum(d.shareProd, 1)}% da produção nacional`;
+  $('rxValor').textContent = fmtMoeda(d.valor);
+  $('rxShareValor').textContent = `${fmtNum(d.shareValor, 1)}% do valor nacional`;
+  $('rxArea').textContent = fmtNum(d.area, 0) + ' ha';
+  $('rxRend').textContent = fmtNum(d.rend, 0) + ' kg/ha';
+}
+
+function desenharTopAgro(k, ordenados) {
+  const top8 = ordenados.slice(0, 8);
+  const c = window.BDChart ? BDChart.getCoresTema() : { tx: '#17191C', mu: '#737780', grid: '#E5E7EB' };
+
+  if (chartAgro) chartAgro.destroy();
+  chartAgro = new Chart($('grafTopAgro'), {
+    type: 'bar',
+    data: {
+      labels: top8.map(x => x.sigla),
+      datasets: [{
+        label: culturaSel.nome,
+        data: top8.map(x => Number(x[k].toFixed(2))),
+        backgroundColor: top8.map((_, idx) => interpolarVerde(1 - idx / Math.max(1, top8.length - 1))),
+        borderRadius: 5
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      onClick: (_, els) => {
+        if (els.length && top8[els[0].index]) {
+          ufInspecionada = top8[els[0].index].sigla;
+          atualizarVisualizacaoAgro();
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ${top8[ctx.dataIndex].nome}: ${fmtMetricaAgro(top8[ctx.dataIndex], k)}`
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { color: c.mu, maxTicksLimit: 5 }, grid: { color: c.grid } },
+        y: { ticks: { color: c.tx, font: { weight: 'bold' } }, grid: { display: false } }
+      }
+    }
+  });
+}
+
+function renderizarTabelaAgro(ordenados) {
+  $('tbodyAgro').innerHTML = ordenados.map((d, idx) => {
+    const sel = d.sigla === ufInspecionada;
+    return `<tr onclick="ufInspecionada='${d.sigla}'; atualizarVisualizacaoAgro();"
+      class="cursor-pointer transition hover:opacity-85 ${sel ? 'din-secondary-bg' : ''}">
+      <td class="py-2.5 px-2 font-bold din-green">${idx + 1}º</td>
+      <td class="py-2.5 px-2 font-semibold din-text-main">${d.nome} <span class="din-text-muted">(${d.sigla})</span></td>
+      <td class="py-2.5 px-2 font-bold din-green">${fmtTon(d.prod)}</td>
+      <td class="py-2.5 px-2 din-text-main">${fmtNum(d.shareProd, 1)}%</td>
+      <td class="py-2.5 px-2 din-text-main">${fmtMoeda(d.valor)}</td>
+      <td class="py-2.5 px-2 din-text-main">${fmtNum(d.area, 0)} ha</td>
+      <td class="py-2.5 px-2 din-text-main">${fmtNum(d.rend, 0)} kg/ha</td>
+    </tr>`;
+  }).join('');
+}
+
+async function iniciarMapaAgro() {
+  const urls = [
+    'https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson',
+    'https://servicodados.ibge.gov.br/api/v3/malhas/paises/BR?formato=application/vnd.geo+json&qualidade=minima&intrarregiao=UF'
+  ];
+  let geo = null;
+  for (const u of urls) {
+    try { const r = await fetch(u); if (r.ok) { geo = await r.json(); break; } } catch {}
+  }
+  if (!geo) { $('mapLoading').textContent = 'Não foi possível carregar a malha do Brasil.'; return; }
+
+  const svg = d3.select('#mapaAgro');
+  const proj = d3.geoIdentity().reflectY(true).fitExtent([[16, 16], [584, 544]], geo);
+  const path = d3.geoPath().projection(proj);
+  const tip = $('mapTip');
+
+  svg.selectAll('path')
+    .data(geo.features)
+    .join('path')
+    .attr('d', path)
+    .attr('data-uf', f => f.properties.sigla || IBGE_UF[String(f.properties.codarea)] || '')
+    .on('mouseenter', function() {
+      const uf = this.getAttribute('data-uf');
+      const d = dadosUf.find(x => x.sigla === uf);
+      const k = $('selMetricaAgro').value;
+      $('tipNome').textContent = d ? `${d.nome} (${uf})` : uf;
+      $('tipVal').textContent = d ? fmtMetricaAgro(d, k) : 'Sem produção registrada';
+      $('tipSub').textContent = d ? `${fmtNum(d.shareProd, 1)}% da produção nacional` : 'Clique para inspecionar';
+      tip.classList.remove('hidden');
+    })
+    .on('mousemove', ev => { tip.style.left = (ev.clientX + 14) + 'px'; tip.style.top = (ev.clientY + 14) + 'px'; })
+    .on('mouseleave', () => tip.classList.add('hidden'))
+    .on('click', function() {
+      const uf = this.getAttribute('data-uf');
+      if (!uf) return;
+      ufInspecionada = uf;
+      atualizarVisualizacaoAgro();
+    });
+
+  $('mapLoading').classList.add('hidden');
+  $('mapaAgro').classList.remove('hidden');
+  geoPronto = true;
+  if (dadosUf.length) atualizarVisualizacaoAgro();
+}
+
+function pintarMapaAgro(k, minVal, maxVal) {
+  if (!geoPronto || !dadosUf.length) return;
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const semDado = dark ? '#16191D' : '#E5E7EB';
+  const borda = dark ? '#101214' : '#FFFFFF';
+  const bordaSel = dark ? '#F5F6F7' : '#17191C';
+
+  d3.select('#mapaAgro').selectAll('path')
+    .attr('fill', function() {
+      const d = dadosUf.find(x => x.sigla === this.getAttribute('data-uf'));
+      if (!d || maxVal <= minVal) return d ? '#046C4E' : semDado;
+      return interpolarVerde((d[k] - minVal) / (maxVal - minVal));
+    })
+    .attr('fill-opacity', function() {
+      const d = dadosUf.find(x => x.sigla === this.getAttribute('data-uf'));
+      return d ? 0.94 : 0.45;
+    })
+    .attr('stroke', function() {
+      return this.getAttribute('data-uf') === ufInspecionada ? bordaSel : borda;
+    })
+    .attr('stroke-width', function() {
+      return this.getAttribute('data-uf') === ufInspecionada ? 2.6 : 1.0;
+    });
+}
+
+// Exportações
+function baixarGrafAgroPNG() {
+  if (!window.BDChart) return;
+  const sel = $('selMetricaAgro');
+  const metTxt = sel ? sel.options[sel.selectedIndex].text : 'Produção';
+  BDChart.baixarPNG('grafTopAgro', {
+    titulo: `Top 8 Estados — ${culturaSel.nome} (${metTxt})`,
+    subtitulo: `Ano de referência: ${anoSafra || 'IBGE PAM'}`,
+    fonte: 'IBGE — Pesquisa Agrícola Municipal (PAM · Tabela SIDRA 5457)',
+    nomeArquivo: `brasilemdados-agro-${culturaSel.nome.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+  });
+}
+
+function exportarCSV() {
+  if (!dadosUf.length) return;
+  const cab = ['Rank', 'Estado', 'Sigla', 'Ano', 'Cultura', 'Producao_t', 'Part_Producao_%', 'Valor_Producao_R$', 'Area_Colhida_ha', 'Rendimento_kg_ha'];
+  const linhas = dadosUf.map((d, i) => [i + 1, d.nome, d.sigla, anoSafra, culturaSel.nome, d.prod, d.shareProd.toFixed(2), Math.round(d.valor), d.area, Math.round(d.rend)].join(';'));
+  const blob = new Blob(['\uFEFF' + [cab.join(';'), ...linhas].join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `brasilemdados_agro_${culturaSel.id}_${anoSafra || 'pam'}.csv`;
+  a.click();
+}
+
+function citarAgroABNT(btn) {
+  if (!window.BDChart) return;
+  BDChart.copiarABNT({
+    titulo: `Produção Agrícola Estadual — ${culturaSel.nome} (${anoSafra || 'IBGE PAM'})`,
+    fonteOficial: 'IBGE',
+    serie: 'Pesquisa Agrícola Municipal · SIDRA 5457'
+  }, btn);
+}
+
+// Inicialização
+(async () => {
+  let temaSalvo = 'light';
+  try { temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light'; } catch {}
+  aplicarTema(temaSalvo);
+  renderBotoesCultura();
+  iniciarMapaAgro();
+  await carregarDadosCultura();
+})();
+</script>
+</body>
+</html>
