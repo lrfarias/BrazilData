@@ -1,5 +1,6 @@
 package br.com.BrasilEmDados.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -19,9 +20,10 @@ public class B3ProxyService {
 
     private static final Duration TTL_COTACAO = Duration.ofSeconds(60);
     private static final Duration TTL_HISTORICO = Duration.ofMinutes(10);
-
     private static final Set<String> RANGES_VALIDOS = Set.of("1d", "5d", "1mo", "3mo", "6mo", "1y", "2y", "5y");
-    private static final Set<String> INTERVALS_VALIDOS = Set.of("5m", "15m", "30m", "1h", "1d", "1wk", "1mo");
+
+    @Value("${brasilemdados.b3.token:}")
+    private String token;
 
     private final HttpClient httpClient = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(10))
@@ -47,51 +49,32 @@ public class B3ProxyService {
     public String buscarHistorico(String tickerRaw, String range, String interval) {
         String simbolo = limparSimbolo(tickerRaw);
         String r = (range != null && RANGES_VALIDOS.contains(range)) ? range : "3mo";
-        String i = (interval != null && INTERVALS_VALIDOS.contains(interval)) ? interval : "1d";
-
         Duration ttl = ("1d".equals(r) || "5d".equals(r)) ? TTL_COTACAO : TTL_HISTORICO;
-        String chave = "b3:" + simbolo + ":" + r + ":" + i;
+        String chave = "b3:" + simbolo + ":" + r;
 
         CacheEntry existente = cache.get(chave);
-        if (existente != null && Instant.now().isBefore(existente.expiresAt())) {
+        Instant agora = Instant.now();
+        if (existente != null && agora.isBefore(existente.expiresAt())) {
             return existente.payload();
         }
 
-        // 1. Tenta Brapi (cotação/resumo B3)
+        // 1. Brapi (com token se configurado, ou teste público)
         try {
-            String urlBrapi = "https://brapi.dev/api/quote/" + URLEncoder.encode(simbolo, StandardCharsets.UTF_8)
-                    + "?range=" + r + "&interval=" + i;
-            String body = requisitarGet(urlBrapi, "application/json");
+            StringBuilder url = new StringBuilder("https://brapi.dev/api/quote/")
+                    .append(URLEncoder.encode(simbolo, StandardCharsets.UTF_8))
+                    .append("?range=").append(r).append("&interval=1d");
+            if (token != null && !token.isBlank()) {
+                url.append("&token=").append(URLEncoder.encode(token.trim(), StandardCharsets.UTF_8));
+            }
+            String body = requisitarGet(url.toString(), "application/json");
             if (body != null && body.contains("\"regularMarketPrice\"")) {
-                cache.put(chave, new CacheEntry(body, Instant.now().plus(ttl)));
+                cache.put(chave, new CacheEntry(body, agora.plus(ttl)));
                 return body;
             }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            return fallbackOuErro(existente, simbolo);
         } catch (Exception ignored) {
-            // segue para a próxima fonte
         }
 
-        // 2. Tenta Yahoo Finance chart v8 com headers de navegador
-        try {
-            String tickerYahoo = "^BVSP".equals(simbolo) ? "^BVSP" : simbolo + ".SA";
-            String urlYahoo = "https://query1.finance.yahoo.com/v8/finance/chart/"
-                    + URLEncoder.encode(tickerYahoo, StandardCharsets.UTF_8)
-                    + "?range=" + r + "&interval=" + i + "&includePrePost=false";
-            String body = requisitarGet(urlYahoo, "application/json");
-            if (body != null && body.contains("\"chart\"")) {
-                cache.put(chave, new CacheEntry(body, Instant.now().plus(ttl)));
-                return body;
-            }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            return fallbackOuErro(existente, simbolo);
-        } catch (Exception ignored) {
-            // segue para a próxima fonte
-        }
-
-        // 3. Tenta Stooq CSV histórico diário
+        // 2. Stooq CSV
         try {
             String stooqCode = "^BVSP".equals(simbolo) ? "^ibov" : simbolo.toLowerCase() + ".sa";
             String urlStooq = "https://stooq.com/q/d/l/?s=" + URLEncoder.encode(stooqCode, StandardCharsets.UTF_8)
@@ -99,33 +82,24 @@ public class B3ProxyService {
             String csv = requisitarGet(urlStooq, "text/csv,*/*");
             if (csv != null && csv.contains("Date,Open,High,Low,Close")) {
                 String payload = "{\"csv\":" + jsonEscape(csv) + "}";
-                cache.put(chave, new CacheEntry(payload, Instant.now().plus(ttl)));
+                cache.put(chave, new CacheEntry(payload, agora.plus(ttl)));
                 return payload;
             }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
         } catch (Exception ignored) {
-            // nenhuma fonte restante
         }
 
-        return fallbackOuErro(existente, simbolo);
-    }
-
-    private String fallbackOuErro(CacheEntry existente, String simbolo) {
         if (existente != null) {
             return existente.payload();
         }
-        throw new RuntimeException("Nenhuma fonte externa retornou dados reais para " + simbolo);
+        throw new RuntimeException("Fonte de cotações B3 indisponível ou exigindo token.");
     }
 
     private String requisitarGet(String url, String accept) throws Exception {
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(url))
-                .timeout(Duration.ofSeconds(12))
+                .timeout(Duration.ofSeconds(10))
                 .header("Accept", accept)
-                .header("Accept-Language", "pt-BR,pt;q=0.9,en;q=0.8")
-                .header("User-Agent",
-                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
+                .header("User-Agent", "BrasilEmDados/1.0")
                 .GET()
                 .build();
 
