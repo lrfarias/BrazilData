@@ -175,7 +175,7 @@
       <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
         <span class="text-xs din-text-muted uppercase font-semibold">Maior tributo / hab.</span>
         <p id="k3" class="text-xl font-bold din-text-main mt-1">—</p>
-        <span class="text-[11px] din-text-muted">Líder no recorte selecionado</span>
+        <span class="text-[11px] din-text-muted">Destaque no recorte selecionado</span>
       </div>
       <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
         <span class="text-xs din-text-muted uppercase font-semibold">IDH médio (filtro)</span>
@@ -184,15 +184,15 @@
       </div>
     </section>
 
-    <!-- Mapa + Raio-X com Abas -->
+    <!-- Mapa + Raio-X (Região / Estado) com 4 Abas -->
     <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
       <div class="lg:col-span-7 din-card-bg border din-border rounded-lg p-5 shadow-sm flex flex-col">
         <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
           <div>
             <h2 class="text-base font-semibold din-text-main">Mapa interativo do Brasil</h2>
-            <p id="mapSub" class="text-xs din-text-muted">Passe o mouse para ver o nome e clique para abrir o raio-x.</p>
+            <p id="mapSub" class="text-xs din-text-muted">Filtre por região para ver os destaques ou clique em um estado para inspecionar.</p>
           </div>
-          <select id="mapMetrica" class="inp !w-auto text-xs font-semibold" onchange="pintarMapa()">
+          <select id="mapMetrica" class="inp !w-auto text-xs font-semibold" onchange="alterarMetricaMapa()">
             <option value="hab">Tributo por habitante</option>
             <option value="idh">IDH (Desenvolvimento Humano)</option>
             <option value="arrec">Arrecadação estimada</option>
@@ -207,39 +207,53 @@
           <svg id="mapaBr" viewBox="0 0 600 560" class="w-full max-h-[450px] hidden"></svg>
         </div>
 
-        <div class="mt-3 pt-3 border-t din-border flex items-center justify-between gap-3 text-[11px] din-text-muted">
-          <span id="legMin">Menor</span>
-          <div class="flex-1 h-2 rounded-full max-w-xs" style="background: linear-gradient(90deg, rgba(22,199,132,0.15), #16C784);"></div>
-          <span id="legMax">Maior</span>
+        <!-- Legenda Tonal Dinâmica (Verde médio-claro -> Verde esmeralda escuro para o destaque) -->
+        <div class="mt-3 pt-3 border-t din-border flex flex-wrap items-center justify-between gap-3 text-[11px] din-text-muted">
+          <span id="legMin" class="font-medium">Menor</span>
+          <div class="flex items-center gap-2 flex-1 max-w-[260px]">
+            <span class="text-[10px] shrink-0">Menor</span>
+            <div class="flex-1 h-2.5 rounded-full border din-border"
+                 style="background: linear-gradient(90deg, #74E3B4 0%, #16C784 50%, #046C4E 100%);"></div>
+            <span class="text-[10px] shrink-0 font-semibold din-text-main">Destaque</span>
+          </div>
+          <span id="legMax" class="font-semibold din-green">Destaque</span>
         </div>
       </div>
 
-      <!-- Raio-X do Estado -->
+      <!-- Raio-X da Região ou Estado -->
       <div class="lg:col-span-5 din-card-bg border din-border rounded-lg p-5 shadow-sm flex flex-col space-y-4">
         <div class="flex items-start justify-between gap-2">
           <div>
-            <span id="stRegiao" class="text-[11px] font-semibold uppercase tracking-wider din-green">—</span>
+            <div class="flex flex-wrap items-center gap-2">
+              <span id="stRegiao" class="text-[11px] font-semibold uppercase tracking-wider din-green">—</span>
+              <button id="btnVoltarRegiao" type="button" onclick="voltarParaRegiao()"
+                class="hidden text-[10px] font-semibold px-2 py-0.5 rounded din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
+                ← Ver Região
+              </button>
+            </div>
             <h3 id="stNome" class="text-xl font-extrabold din-text-main mt-0.5">—</h3>
           </div>
-          <span id="stSigla" class="px-2.5 py-1 rounded-md din-secondary-bg border din-border text-sm font-extrabold din-green">--</span>
+          <span id="stSigla" class="px-2.5 py-1 rounded-md din-secondary-bg border din-border text-sm font-extrabold din-green shrink-0">--</span>
         </div>
 
-        <div class="grid grid-cols-3 gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+        <!-- 4 Abas do Painel Lateral -->
+        <div class="grid grid-cols-4 gap-1 din-secondary-bg p-1 rounded-lg border din-border text-[11px] font-semibold">
           <button id="tabResumo" type="button" onclick="setAba('resumo')" class="py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer">Resumo</button>
-          <button id="tabEvolucao" type="button" onclick="setAba('evolucao')" class="py-1.5 rounded-md din-text-muted transition cursor-pointer">Evolução</button>
-          <button id="tabComparar" type="button" onclick="setAba('comparar')" class="py-1.5 rounded-md din-text-muted transition cursor-pointer">Comparar</button>
+          <button id="tabDestaques" type="button" onclick="setAba('destaques')" class="py-1.5 rounded-md din-text-muted hover:din-text-main transition cursor-pointer">Destaques</button>
+          <button id="tabEvolucao" type="button" onclick="setAba('evolucao')" class="py-1.5 rounded-md din-text-muted hover:din-text-main transition cursor-pointer">Evolução</button>
+          <button id="tabComparar" type="button" onclick="setAba('comparar')" class="py-1.5 rounded-md din-text-muted hover:din-text-main transition cursor-pointer">Comparar</button>
         </div>
 
         <!-- ABA 1: RESUMO + PIZZA VOCAÇÃO -->
         <div id="viewResumo" class="space-y-4 flex-1 flex flex-col justify-between">
           <div class="grid grid-cols-2 gap-2.5">
             <div class="din-secondary-bg rounded-lg p-3">
-              <span class="text-[11px] din-text-muted">Arrecadação est.</span>
+              <span id="lblStArrec" class="text-[11px] din-text-muted">Arrecadação est.</span>
               <p id="stArrec" class="text-base font-bold din-red mt-0.5">—</p>
               <span id="stRankArrec" class="text-[10px] din-text-muted">—</span>
             </div>
             <div class="din-secondary-bg rounded-lg p-3">
-              <span class="text-[11px] din-text-muted">Tributo / hab.</span>
+              <span id="lblStHab" class="text-[11px] din-text-muted">Tributo / hab.</span>
               <p id="stHab" class="text-base font-bold din-text-main mt-0.5">—</p>
               <span id="stVsMedia" class="text-[10px] font-semibold">—</span>
             </div>
@@ -249,7 +263,7 @@
               <span id="stPopPct" class="text-[10px] din-text-muted">—</span>
             </div>
             <div class="din-secondary-bg rounded-lg p-3">
-              <span class="text-[11px] din-text-muted">PIB estadual</span>
+              <span id="lblStPib" class="text-[11px] din-text-muted">PIB consolidado</span>
               <p id="stPib" class="text-base font-bold din-green mt-0.5">—</p>
               <span id="stPibPct" class="text-[10px] din-text-muted">—</span>
             </div>
@@ -265,7 +279,7 @@
               <strong id="stProd" class="din-text-main">—</strong>
             </div>
             <div>
-              <span id="lblIdh" class="block text-[10px] din-text-muted">IDH (#—)</span>
+              <span id="lblIdh" class="block text-[10px] din-text-muted">IDH</span>
               <strong id="stIdh" class="din-green">—</strong>
               <span id="stIdhFaixa" class="block text-[9px] din-text-muted">—</span>
             </div>
@@ -283,10 +297,19 @@
           </div>
         </div>
 
-        <!-- ABA 2: EVOLUÇÃO -->
+        <!-- ABA 2: DESTAQUES DO RECORTE (COM TONALIDADE EXATA DO MAPA) -->
+        <div id="viewDestaques" class="hidden space-y-3 flex-1 flex flex-col">
+          <div class="flex items-center justify-between gap-2 text-xs">
+            <span id="subDestaques" class="din-text-muted">Destaques no recorte selecionado</span>
+            <span class="text-[10px] din-text-muted shrink-0">Clique no estado</span>
+          </div>
+          <div id="listaDestaques" class="space-y-2 max-h-[345px] overflow-y-auto pr-1 flex-1"></div>
+        </div>
+
+        <!-- ABA 3: EVOLUÇÃO -->
         <div id="viewEvolucao" class="hidden space-y-3 flex-1 flex flex-col">
           <div class="flex items-center justify-between gap-2 text-xs">
-            <span class="din-text-muted">Evolução do PIB e arrecadação</span>
+            <span id="lblEvolTit" class="din-text-muted">Evolução do PIB e arrecadação</span>
             <div class="flex items-center gap-2">
               <strong id="histCresc" class="din-green">—</strong>
               <button type="button" onclick="baixarHistUfPNG()" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ PNG</button>
@@ -296,14 +319,14 @@
           <p id="histNota" class="text-[11px] din-text-muted leading-relaxed"></p>
         </div>
 
-        <!-- ABA 3: COMPARAR -->
+        <!-- ABA 4: COMPARAR -->
         <div id="viewComparar" class="hidden space-y-3 flex-1 flex flex-col">
           <div class="grid grid-cols-2 gap-2">
             <label class="text-[11px] font-semibold din-text-muted">Estado A
               <select id="selCompA" class="inp mt-1 text-xs" onchange="ufSel=this.value; selecionarEstado(ufSel)"></select>
             </label>
             <label class="text-[11px] font-semibold din-text-muted">Estado B (ou clique no mapa)
-              <select id="selCompB" class="inp mt-1 text-xs" onchange="ufComp=this.value; renderComparar()"></select>
+              <select id="selCompB" class="inp mt-1 text-xs" onchange="ufComp=this.value; renderComparar(); pintarMapa()"></select>
             </label>
           </div>
           <div id="compBody" class="divide-y din-border text-xs flex-1"></div>
@@ -336,7 +359,7 @@
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 id="titGrafInf" class="text-base font-semibold din-text-main">Capacidade tributária × Desenvolvimento Humano (IDH)</h2>
-          <p id="subGrafInf" class="text-xs din-text-muted">Cada ponto é um estado. Linhas tracejadas marcam as médias do Brasil; o ponto azul destaca o estado selecionado.</p>
+          <p id="subGrafInf" class="text-xs din-text-muted">Cada ponto é um estado. Linhas tracejadas marcam as médias do Brasil; clique em um ponto para inspecionar.</p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
           <div class="inline-flex din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
@@ -412,18 +435,63 @@ const BD = {
 
 let TAXA = 0.33, anoAtual = null;
 let TODOS = [], D_ALL = [], D = [], col = 'arrec', dir = -1;
-let mediaHabBR = 0, mediaIdhBR = 0, ufSel = 'SP', ufComp = 'RJ', regiaoSel = 'Todas', abaRx = 'resumo', abaInf = 'scatter', geoPronto = false;
+let mediaHabBR = 0, mediaIdhBR = 0, pibTotalBR = 0, popTotalBR = 0;
+let ufSel = 'SP', ufComp = 'RJ', regiaoSel = 'Todas', modoSel = 'regiao'; // 'regiao' | 'estado'
+let abaRx = 'resumo', abaInf = 'scatter', geoPronto = false;
 let chartBar = null, chartPie = null, chartHist = null, chartScatter = null;
+
+// Escala tonal: verde médio-claro (#74E3B4) -> verde marca (#16C784) -> esmeralda escuro (#046C4E) para o destaque
+function interpolarCorVerde(t) {
+  const clamped = Math.max(0, Math.min(1, t));
+  const s = Math.pow(clamped, 0.72);
+  const c0 = [116, 227, 180]; // #74E3B4 (menor destaque - visível, sem lavar para o branco)
+  const c1 = [22, 199, 132];  // #16C784 (intermediário)
+  const c2 = [4, 108, 78];    // #046C4E (maior destaque - escuro marcante)
+
+  let r, g, b;
+  if (s <= 0.5) {
+    const k = s / 0.5;
+    r = Math.round(c0[0] + (c1[0] - c0[0]) * k);
+    g = Math.round(c0[1] + (c1[1] - c0[1]) * k);
+    b = Math.round(c0[2] + (c1[2] - c0[2]) * k);
+  } else {
+    const k = (s - 0.5) / 0.5;
+    r = Math.round(c1[0] + (c2[0] - c1[0]) * k);
+    g = Math.round(c1[1] + (c2[1] - c1[1]) * k);
+    b = Math.round(c1[2] + (c2[2] - c1[2]) * k);
+  }
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+function limitesMetricaRecorte() {
+  const k = $('mapMetrica').value;
+  if (!D.length) return { k, min: 0, max: 1, dMin: null, dMax: null };
+  let dMin = D[0], dMax = D[0];
+  D.forEach(d => {
+    if (d[k] < dMin[k]) dMin = d;
+    if (d[k] > dMax[k]) dMax = d;
+  });
+  return { k, min: dMin[k], max: dMax[k], dMin, dMax };
+}
+
+function corTonalEstado(d) {
+  if (!d) return '#74E3B4';
+  const { k, min, max } = limitesMetricaRecorte();
+  if (max <= min) return '#046C4E';
+  return interpolarCorVerde((d[k] - min) / (max - min));
+}
 
 // Exportação PNG e Citação ABNT
 function baixarHistUfPNG() {
   if (!window.BDChart) return;
-  const nome = $('stNome')?.textContent || ufSel;
+  const alvo = modoSel === 'regiao'
+    ? (regiaoSel === 'Todas' ? 'Brasil' : `Região ${regiaoSel}`)
+    : `${$('stNome')?.textContent || ufSel} (${ufSel})`;
   BDChart.baixarPNG('grafHist', {
-    titulo: `Evolução do PIB e Arrecadação Estimada — ${nome} (${ufSel})`,
+    titulo: `Evolução do PIB e Arrecadação Estimada — ${alvo}`,
     subtitulo: `Carga tributária simulada: ${BD.num(TAXA * 100, 1)}% do PIB`,
     fonte: 'IBGE — Contas Regionais (SIDRA 5938) • Estimativa tributária BrasilEmDados',
-    nomeArquivo: `brasilemdados-evolucao-${ufSel.toLowerCase()}`
+    nomeArquivo: `brasilemdados-evolucao-${alvo.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
   });
 }
 
@@ -451,7 +519,7 @@ function citarImpostoABNT(btn) {
   if (!window.BDChart) return;
   const recorte = regiaoSel === 'Todas' ? 'Brasil' : `Região ${regiaoSel}`;
   BDChart.copiarABNT({
-    titulo: `Impostos Estimados, População e IDH Estadual (${recorte}, ${anoAtual || 2021})`,
+    titulo: `Impostos Estimados, População e IDH (${recorte}, ${anoAtual || 2021})`,
     fonteOficial: 'IBGE e PNUD/Ipea/FJP',
     serie: 'SIDRA 5938 e Radar IDHM 2021'
   }, btn);
@@ -535,8 +603,11 @@ function aplicarTema(tema) {
   }
   if (D.length) {
     pintarMapa();
-    if (abaRx === 'resumo') renderPizzaVocacao(ufSel);
-    if (abaRx === 'evolucao') renderEvolucao(ufSel);
+    if (abaRx === 'resumo') {
+      if (modoSel === 'regiao') exibirDetalhesRegiao();
+      else renderPizzaVocacao(ufSel);
+    }
+    if (abaRx === 'evolucao') renderEvolucao();
     if (abaInf === 'scatter') graficoScatter();
     else graficoBar();
   }
@@ -566,11 +637,29 @@ function renderBotoesRegiao() {
   $('btnsRegiao').innerHTML = REGIOES.map(r => {
     const ativo = r === regiaoSel;
     return `<button type="button" onclick="setRegiao('${r}')"
-      class="px-2.5 py-1 rounded-md text-xs font-semibold border transition cursor-pointer ${ativo ? 'din-btn border-transparent' : 'din-secondary-bg din-border din-text-muted hover:din-text-main'}">${r === 'Todas' ? 'Brasil' : r}</button>`;
+      class="px-2.5 py-1 rounded-md text-xs font-semibold border transition cursor-pointer ${ativo ? 'din-btn border-transparent shadow-sm' : 'din-secondary-bg din-border din-text-muted hover:din-text-main'}">${r === 'Todas' ? 'Brasil' : r}</button>`;
   }).join('');
 }
 
-function setRegiao(r) { regiaoSel = r; renderBotoesRegiao(); aplicarFiltros(); }
+function setRegiao(r) {
+  regiaoSel = r;
+  modoSel = 'regiao';
+  renderBotoesRegiao();
+  aplicarFiltros();
+}
+
+function voltarParaRegiao() {
+  modoSel = 'regiao';
+  atualizarPainelLateral();
+  if (geoPronto) pintarMapa();
+  tabela();
+  if (abaInf === 'scatter') graficoScatter();
+}
+
+function alterarMetricaMapa() {
+  pintarMapa();
+  renderDestaques();
+}
 
 function mudarTaxa(pct) {
   TAXA = pct / 100;
@@ -589,12 +678,13 @@ function montar(ano) {
   });
 
   D_ALL = Object.values(m).filter(d => d.pib > 0 && d.pop > 0);
-  const pT = D_ALL.reduce((a, d) => a + d.pib, 0), hT = D_ALL.reduce((a, d) => a + d.pop, 0);
-  mediaHabBR = (pT * 1000 * TAXA) / hT;
+  pibTotalBR = D_ALL.reduce((a, d) => a + d.pib, 0);
+  popTotalBR = D_ALL.reduce((a, d) => a + d.pop, 0);
+  mediaHabBR = (pibTotalBR * 1000 * TAXA) / (popTotalBR || 1);
 
   D_ALL.forEach(d => {
-    d.sp = d.pib / pT * 100;
-    d.sh = d.pop / hT * 100;
+    d.sp = d.pib / pibTotalBR * 100;
+    d.sh = d.pop / popTotalBR * 100;
     d.arrec = d.pib * 1000 * TAXA;
     d.hab = d.arrec / d.pop;
     d.pibPc = (d.pib * 1000) / d.pop;
@@ -633,29 +723,48 @@ function aplicarFiltros() {
   $('titTabela').textContent = regiaoSel === 'Todas' ? `Ranking dos ${D.length} estados (${anoAtual})` : `Estados da região ${regiaoSel} (${D.length})`;
 
   if (!D.some(d => d.sigla === ufSel)) ufSel = D[0].sigla;
+
+  atualizarPainelLateral();
+  renderDestaques();
   tabela();
   if (geoPronto) pintarMapa();
-  selecionarEstado(ufSel);
+  if (abaInf === 'scatter') graficoScatter();
+  else graficoBar();
+}
+
+function atualizarPainelLateral() {
+  if (modoSel === 'regiao') exibirDetalhesRegiao();
+  else exibirDetalhesEstado(ufSel);
+
+  if (abaRx === 'destaques') renderDestaques();
+  if (abaRx === 'evolucao') renderEvolucao();
+  if (abaRx === 'comparar') renderComparar();
 }
 
 function setAba(a) {
   abaRx = a;
   const on = 'py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer';
-  const off = 'py-1.5 rounded-md din-text-muted transition cursor-pointer';
+  const off = 'py-1.5 rounded-md din-text-muted hover:din-text-main transition cursor-pointer';
   $('tabResumo').className = a === 'resumo' ? on : off;
+  $('tabDestaques').className = a === 'destaques' ? on : off;
   $('tabEvolucao').className = a === 'evolucao' ? on : off;
   $('tabComparar').className = a === 'comparar' ? on : off;
 
   $('viewResumo').classList.toggle('hidden', a !== 'resumo');
+  $('viewDestaques').classList.toggle('hidden', a !== 'destaques');
   $('viewEvolucao').classList.toggle('hidden', a !== 'evolucao');
   $('viewComparar').classList.toggle('hidden', a !== 'comparar');
 
   $('mapSub').textContent = a === 'comparar'
     ? 'Modo comparação ativo: clique em um estado no mapa para comparar como Estado B.'
-    : 'Passe o mouse para ver o nome e clique para abrir o raio-x.';
+    : 'Filtre por região para ver os destaques ou clique em um estado para inspecionar.';
 
-  if (a === 'resumo') renderPizzaVocacao(ufSel);
-  if (a === 'evolucao') renderEvolucao(ufSel);
+  if (a === 'resumo') {
+    if (modoSel === 'regiao') exibirDetalhesRegiao();
+    else renderPizzaVocacao(ufSel);
+  }
+  if (a === 'destaques') renderDestaques();
+  if (a === 'evolucao') renderEvolucao();
   if (a === 'comparar') renderComparar();
   if (geoPronto) pintarMapa();
 }
@@ -672,7 +781,7 @@ function setAbaInf(a) {
 
   if (a === 'scatter') {
     $('titGrafInf').textContent = 'Capacidade tributária × Desenvolvimento Humano (IDH)';
-    $('subGrafInf').textContent = 'Cada ponto é um estado. Linhas tracejadas marcam as médias do Brasil; o ponto azul destaca o estado selecionado.';
+    $('subGrafInf').textContent = 'Cada ponto é um estado. Linhas tracejadas marcam as médias do Brasil; clique em um ponto para inspecionar.';
     graficoScatter();
   } else {
     $('titGrafInf').textContent = 'Peso na economia e na população';
@@ -685,22 +794,119 @@ function selecionarEstado(sigla) {
   const d = D_ALL.find(x => x.sigla === sigla);
   if (!d) return;
   ufSel = sigla;
+  modoSel = 'estado';
+
+  // Se clicou em um estado fora da região filtrada, abre o Brasil todo
+  if (regiaoSel !== 'Todas' && d.regiao !== regiaoSel) {
+    regiaoSel = 'Todas';
+    renderBotoesRegiao();
+    aplicarFiltros();
+    return;
+  }
+
   if (ufComp === ufSel) ufComp = (D_ALL.find(x => x.sigla !== ufSel) || d).sigla;
+
+  atualizarPainelLateral();
+  renderDestaques();
+  if (abaInf === 'scatter') graficoScatter();
+  else graficoBar();
+  if (geoPronto) pintarMapa();
+  tabela();
+}
+
+function exibirDetalhesRegiao() {
+  if (!D.length) return;
+  const isBrasil = regiaoSel === 'Todas';
+  const pibReg = D.reduce((a, d) => a + d.pib, 0);
+  const popReg = D.reduce((a, d) => a + d.pop, 0);
+  const arrecReg = pibReg * 1000 * TAXA;
+  const habReg = arrecReg / (popReg || 1);
+  const pibPcReg = (pibReg * 1000) / (popReg || 1);
+  const spReg = (pibReg / (pibTotalBR || 1)) * 100;
+  const shReg = (popReg / (popTotalBR || 1)) * 100;
+  const prodReg = spReg / (shReg || 1);
+  const idhReg = D.reduce((a, d) => a + d.idh, 0) / D.length;
+  const diffHab = ((habReg - mediaHabBR) / (mediaHabBR || 1)) * 100;
+
+  $('btnVoltarRegiao').classList.add('hidden');
+  $('stRegiao').textContent = isBrasil ? 'Consolidado Nacional' : 'Região Selecionada';
+  $('stNome').textContent = isBrasil ? 'Brasil (Consolidado)' : `Região ${regiaoSel}`;
+  $('stSigla').textContent = isBrasil ? '27 UFs' : `${D.length} UFs`;
+
+  $('lblStArrec').textContent = isBrasil ? 'Arrecadação nacional est.' : 'Arrecadação regional est.';
+  $('stArrec').textContent = BD.compact(arrecReg);
+  $('stRankArrec').textContent = isBrasil ? `Carga simulada: ${BD.num(TAXA * 100, 1)}%` : `${BD.num(spReg, 1)}% do total nacional`;
+
+  $('lblStHab').textContent = 'Tributo médio / hab.';
+  $('stHab').textContent = BD.brl(habReg, 0);
+  $('stVsMedia').innerHTML = isBrasil
+    ? '<span class="din-text-muted">Média nacional</span>'
+    : `<span class="${diffHab >= 0 ? 'din-green' : 'din-red'}">${diffHab >= 0 ? '+' : ''}${BD.num(diffHab, 1)}% vs BR</span>`;
+
+  $('stPop').textContent = BD.num(popReg, 0);
+  $('stPopPct').textContent = `${BD.num(shReg, 1)}% da pop. BR`;
+
+  $('lblStPib').textContent = isBrasil ? 'PIB nacional' : 'PIB regional';
+  $('stPib').textContent = BD.compact(pibReg * 1000);
+  $('stPibPct').textContent = `${BD.num(spReg, 1)}% do PIB BR`;
+
+  $('stPibPc').textContent = BD.brl(pibPcReg, 0);
+  $('stProd').innerHTML = `<span class="${prodReg >= 1 ? 'din-green' : 'din-red'}">${BD.num(prodReg, 2)}x</span>`;
+
+  $('lblIdh').textContent = 'IDH médio';
+  $('stIdh').textContent = BD.num(idhReg, 3);
+  $('stIdhFaixa').textContent = faixaIDH(idhReg);
+
+  // Vocação ponderada pelo PIB de cada estado do recorte
+  let agro = 0, ind = 0, serv = 0, adm = 0;
+  const pesoTotal = pibReg || 1;
+  D.forEach(d => {
+    const comp = COMPOSICAO_SETORIAL_UF[d.sigla] || { agro: 10, ind: 20, serv: 50, adm: 20 };
+    const w = d.pib / pesoTotal;
+    agro += comp.agro * w;
+    ind += comp.ind * w;
+    serv += comp.serv * w;
+    adm += comp.adm * w;
+  });
+
+  const s = Math.round(serv), i = Math.round(ind), a = Math.round(agro);
+  desenharPizzaVocacao({
+    serv: s,
+    ind: i,
+    agro: a,
+    adm: Math.max(0, 100 - s - i - a),
+    vocacao: isBrasil ? 'Média ponderada BR' : `Ponderada · ${regiaoSel}`
+  });
+}
+
+function exibirDetalhesEstado(sigla) {
+  const d = D_ALL.find(x => x.sigla === sigla);
+  if (!d) return;
+
+  const btnV = $('btnVoltarRegiao');
+  btnV.textContent = regiaoSel === 'Todas' ? '← Ver Brasil' : `← Ver ${regiaoSel}`;
+  btnV.classList.remove('hidden');
 
   $('stRegiao').textContent = `${d.regiao} · #${d.rkHab}º em tributo/hab`;
   $('stNome').textContent = d.nome;
   $('stSigla').textContent = d.sigla;
+
+  $('lblStArrec').textContent = 'Arrecadação est.';
   $('stArrec').textContent = BD.compact(d.arrec);
   $('stRankArrec').textContent = `#${d.rkArrec}º do país`;
-  $('stHab').textContent = BD.brl(d.hab, 0);
 
+  $('lblStHab').textContent = 'Tributo / hab.';
+  $('stHab').textContent = BD.brl(d.hab, 0);
   const diff = ((d.hab - mediaHabBR) / mediaHabBR) * 100;
   $('stVsMedia').innerHTML = `<span class="${diff >= 0 ? 'din-green' : 'din-red'}">${diff >= 0 ? '+' : ''}${BD.num(diff, 1)}% vs BR</span>`;
 
   $('stPop').textContent = BD.num(d.pop, 0);
   $('stPopPct').textContent = `${BD.num(d.sh, 1)}% da pop. BR`;
+
+  $('lblStPib').textContent = 'PIB estadual';
   $('stPib').textContent = BD.compact(d.pib * 1000);
   $('stPibPct').textContent = `${BD.num(d.sp, 1)}% do PIB BR`;
+
   $('stPibPc').textContent = BD.brl(d.pibPc, 0);
   $('stProd').innerHTML = `<span class="${d.prod >= 1 ? 'din-green' : 'din-red'}">${BD.num(d.prod, 2)}x</span>`;
 
@@ -711,17 +917,15 @@ function selecionarEstado(sigla) {
   $('selCompA').value = ufSel;
   $('selCompB').value = ufComp;
 
-  if (abaRx === 'resumo') renderPizzaVocacao(ufSel);
-  if (abaRx === 'evolucao') renderEvolucao(ufSel);
-  if (abaRx === 'comparar') renderComparar();
-  if (abaInf === 'scatter') graficoScatter();
-  else graficoBar();
-  if (geoPronto) pintarMapa();
-  tabela();
+  renderPizzaVocacao(sigla);
 }
 
 function renderPizzaVocacao(sigla) {
   const comp = COMPOSICAO_SETORIAL_UF[sigla] || { agro: 10, ind: 20, serv: 50, adm: 20, vocacao: 'Diversificada' };
+  desenharPizzaVocacao(comp);
+}
+
+function desenharPizzaVocacao(comp) {
   $('stVocacaoTag').textContent = comp.vocacao;
 
   const itens = [
@@ -752,18 +956,61 @@ function renderPizzaVocacao(sigla) {
   });
 }
 
-function renderEvolucao(sigla) {
+function renderDestaques() {
+  if (!D.length) return;
+  const selMet = $('mapMetrica');
+  const k = selMet.value;
+  const nomeMet = selMet.options[selMet.selectedIndex].text;
+  const ordenados = [...D].sort((a, b) => b[k] - a[k]);
+  const recorteTxt = regiaoSel === 'Todas' ? 'Brasil' : regiaoSel;
+
+  $('subDestaques').textContent = `${recorteTxt} · ${nomeMet}`;
+
+  $('listaDestaques').innerHTML = ordenados.map((d, idx) => {
+    const cor = corTonalEstado(d);
+    const isSel = modoSel === 'estado' && d.sigla === ufSel;
+    return `
+      <div onclick="selecionarEstado('${d.sigla}')"
+        class="p-2.5 rounded-lg border cursor-pointer transition flex items-center justify-between gap-3 ${isSel ? 'border-[#16C784] din-card-bg shadow-sm' : 'din-secondary-bg din-border hover:border-[#16C784]'}">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <span class="w-3.5 h-3.5 rounded-sm shrink-0 border border-black/15" style="background:${cor}"></span>
+          <div class="min-w-0">
+            <p class="text-xs font-bold din-text-main truncate">${idx + 1}º ${d.nome} <span class="din-text-muted font-normal">(${d.sigla})</span></p>
+            <p class="text-[10px] din-text-muted truncate">IDH ${BD.num(d.idh, 3)} · Arrec.: ${BD.compact(d.arrec)}</p>
+          </div>
+        </div>
+        <div class="text-right shrink-0">
+          <p class="text-xs font-extrabold din-green">${fmtMetrica(d, k)}</p>
+          <p class="text-[10px] din-text-muted">${BD.num(d.sp, 1)}% do PIB BR</p>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderEvolucao() {
   const porAno = {};
-  TODOS.filter(i => i.estado && i.estado.sigla === sigla).forEach(i => {
-    const a = +i.anoReferencia, n = (i.nome || '').toLowerCase();
-    if (n === 'pib estadual') porAno[a] = (+i.valor || 0) * 1000;
+  const isRegiao = modoSel === 'regiao';
+  const alvoLabel = isRegiao
+    ? (regiaoSel === 'Todas' ? 'Brasil' : `Região ${regiaoSel}`)
+    : `${(D_ALL.find(x => x.sigla === ufSel)?.nome || ufSel)} (${ufSel})`;
+
+  TODOS.filter(i => i.estado && (i.nome || '').toLowerCase() === 'pib estadual').forEach(i => {
+    const sigla = i.estado.sigla;
+    const inclui = isRegiao
+      ? (regiaoSel === 'Todas' || REGIAO[sigla] === regiaoSel)
+      : (sigla === ufSel);
+    if (!inclui) return;
+    const a = +i.anoReferencia;
+    porAno[a] = (porAno[a] || 0) + (+i.valor || 0) * 1000;
   });
+
   const anos = Object.keys(porAno).map(Number).sort((a, b) => a - b);
+  $('lblEvolTit').textContent = `Histórico — ${alvoLabel}`;
   if (chartHist) chartHist.destroy();
 
   if (anos.length < 2) {
     $('histCresc').textContent = 'Série única';
-    $('histNota').textContent = 'O banco possui apenas 1 ano de referência para este estado no momento.';
+    $('histNota').textContent = 'O banco possui apenas 1 ano de referência para este recorte no momento.';
     return;
   }
 
@@ -771,7 +1018,7 @@ function renderEvolucao(sigla) {
   const arrecs = pibs.map(v => v * TAXA);
   const cresc = ((pibs[pibs.length - 1] - pibs[0]) / pibs[0]) * 100;
   $('histCresc').textContent = `${cresc >= 0 ? '+' : ''}${BD.num(cresc, 1)}% (${anos[0]}–${anos[anos.length - 1]})`;
-  $('histNota').textContent = `Crescimento nominal do PIB de ${sigla} entre ${anos[0]} e ${anos[anos.length - 1]}, com arrecadação recalculada para ${BD.num(TAXA * 100, 1)}%.`;
+  $('histNota').textContent = `Crescimento nominal consolidado de ${alvoLabel} entre ${anos[0]} e ${anos[anos.length - 1]}, com arrecadação recalculada para ${BD.num(TAXA * 100, 1)}%.`;
 
   const baseOpts = window.BDChart
     ? BDChart.opcoesBase({ fmtY: v => BD.compact(v) })
@@ -782,8 +1029,8 @@ function renderEvolucao(sigla) {
     data: {
       labels: anos,
       datasets: [
-        { label: 'PIB estadual', data: pibs, borderColor: '#16C784', borderWidth: 2, tension: .2, pointRadius: 3 },
-        { label: 'Arrecadação est.', data: arrecs, borderColor: '#EA3943', borderWidth: 2, borderDash: [4, 3], tension: .2, pointRadius: 2 }
+        { label: isRegiao ? 'PIB consolidado' : 'PIB estadual', data: pibs, borderColor: '#046C4E', backgroundColor: 'rgba(22,199,132,0.12)', fill: true, borderWidth: 2.5, tension: .2, pointRadius: 3.5, pointBackgroundColor: '#16C784' },
+        { label: 'Arrecadação est.', data: arrecs, borderColor: '#EA3943', borderWidth: 2, borderDash: [4, 3], tension: .2, pointRadius: 2.5 }
       ]
     },
     options: baseOpts
@@ -793,6 +1040,8 @@ function renderEvolucao(sigla) {
 function renderComparar() {
   const a = D_ALL.find(x => x.sigla === ufSel), b = D_ALL.find(x => x.sigla === ufComp);
   if (!a || !b) return;
+  $('selCompA').value = ufSel;
+  $('selCompB').value = ufComp;
   const linhas = [
     ['PIB estadual', a.pib * 1000, b.pib * 1000, v => BD.compact(v)],
     ['PIB per capita', a.pibPc, b.pibPc, v => BD.brl(v, 0)],
@@ -830,7 +1079,7 @@ async function iniciarMapa() {
   svg.selectAll('path')
     .data(geo.features)
     .join('path')
-    .attr('class', 'uf-path')
+    .attr('class', 'uf-path cursor-pointer transition-opacity')
     .attr('d', path)
     .attr('data-uf', f => f.properties.sigla || IBGE_UF[String(f.properties.codarea)] || '')
     .on('mouseenter', function() {
@@ -861,33 +1110,37 @@ async function iniciarMapa() {
 
 function pintarMapa() {
   if (!geoPronto || !D.length) return;
-  const k = $('mapMetrica').value;
-  const vals = D.map(d => d[k]);
-  const min = Math.min(...vals), max = Math.max(...vals);
+  const { k, dMin, dMax } = limitesMetricaRecorte();
   const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-  const escala = d3.scaleLinear().domain([min, max]).range([dark ? '#22262B' : '#E8F7F0', '#16C784']);
-  const apagado = dark ? '#16191D' : '#F0F2F5';
+  const apagado = dark ? '#16191D' : '#E5E7EB';
   const borda = dark ? '#101214' : '#FFFFFF';
   const bordaSel = dark ? '#F5F6F7' : '#17191C';
 
-  const dMin = D.find(d => d[k] === min), dMax = D.find(d => d[k] === max);
-  $('legMin').textContent = `${dMin.sigla}: ${fmtMetrica(dMin, k)}`;
-  $('legMax').textContent = `${dMax.sigla}: ${fmtMetrica(dMax, k)}`;
+  if (dMin && dMax) {
+    $('legMin').textContent = `${dMin.sigla}: ${fmtMetrica(dMin, k)}`;
+    $('legMax').textContent = `Destaque · ${dMax.sigla}: ${fmtMetrica(dMax, k)}`;
+  }
 
   d3.select('#mapaBr').selectAll('path')
     .attr('fill', function() {
       const d = D.find(x => x.sigla === this.getAttribute('data-uf'));
-      return d ? escala(d[k]) : apagado;
+      return d ? corTonalEstado(d) : apagado;
+    })
+    .attr('fill-opacity', function() {
+      const d = D.find(x => x.sigla === this.getAttribute('data-uf'));
+      return d ? 0.94 : 0.45;
     })
     .attr('stroke', function() {
       const uf = this.getAttribute('data-uf');
-      if (uf === ufSel) return bordaSel;
+      if (modoSel === 'estado' && uf === ufSel) return bordaSel;
       if (abaRx === 'comparar' && uf === ufComp) return '#2563EB';
       return borda;
     })
     .attr('stroke-width', function() {
       const uf = this.getAttribute('data-uf');
-      return (uf === ufSel || (abaRx === 'comparar' && uf === ufComp)) ? 2.4 : 0.9;
+      if (modoSel === 'estado' && uf === ufSel) return 2.6;
+      if (abaRx === 'comparar' && uf === ufComp) return 2.4;
+      return 1.0;
     });
 }
 
@@ -895,7 +1148,7 @@ function tabela() {
   const cols = [['nome', 'Estado'], ['pib', 'PIB'], ['sp', '% PIB'], ['sh', '% Pop.'], ['arrec', 'Arrecadação est.'], ['hab', 'Por hab.'], ['idh', 'IDH']];
   $('thead').innerHTML = '<th class="py-2 px-2">#</th>' + cols.map(([k, t]) => `<th class="s py-2 px-2" onclick="ord('${k}')">${t} ↕</th>`).join('');
   const L = [...D].sort((a, b) => col === 'nome' ? dir * -1 * a.nome.localeCompare(b.nome) : dir * (a[col] - b[col]));
-  $('tbody').innerHTML = L.map((d, i) => `<tr onclick="selecionarEstado('${d.sigla}')" class="cursor-pointer hover:opacity-85 ${d.sigla === ufSel ? 'din-secondary-bg' : ''}">
+  $('tbody').innerHTML = L.map((d, i) => `<tr onclick="selecionarEstado('${d.sigla}')" class="cursor-pointer hover:opacity-85 ${modoSel === 'estado' && d.sigla === ufSel ? 'din-secondary-bg' : ''}">
     <td class="py-2 px-2 din-text-muted">${i + 1}</td>
     <td class="py-2 px-2 font-semibold din-text-main">${d.nome} <span class="din-text-muted">(${d.sigla})</span></td>
     <td class="py-2 px-2 din-text-main">${BD.compact(d.pib * 1000)}</td>
@@ -930,35 +1183,38 @@ const refLinesPlugin = {
 function graficoScatter() {
   if (!D.length) return;
   const c = BD.cor();
-  const outros = D.filter(d => d.sigla !== ufSel).map(d => ({ x: Math.round(d.hab), y: d.idh, uf: d.sigla, nome: d.nome }));
-  const selObj = D.find(d => d.sigla === ufSel);
+  const destacarUf = modoSel === 'estado';
+  const outros = D.filter(d => !destacarUf || d.sigla !== ufSel).map(d => ({ x: Math.round(d.hab), y: d.idh, uf: d.sigla, nome: d.nome }));
+  const selObj = destacarUf ? D.find(d => d.sigla === ufSel) : null;
   const selecionado = selObj ? [{ x: Math.round(selObj.hab), y: selObj.idh, uf: selObj.sigla, nome: selObj.nome }] : [];
+
+  const datasets = [
+    {
+      label: regiaoSel === 'Todas' ? 'Estados do Brasil' : `Estados da região ${regiaoSel}`,
+      data: outros,
+      backgroundColor: 'rgba(22,199,132,0.8)',
+      borderColor: '#046C4E',
+      pointRadius: 6,
+      pointHoverRadius: 8
+    }
+  ];
+  if (selObj) {
+    datasets.push({
+      label: `${selObj.nome} (${selObj.sigla})`,
+      data: selecionado,
+      backgroundColor: '#2563EB',
+      borderColor: '#FFFFFF',
+      borderWidth: 2,
+      pointRadius: 9,
+      pointHoverRadius: 11
+    });
+  }
 
   if (chartScatter) chartScatter.destroy();
   chartScatter = new Chart($('grafScatter'), {
     type: 'scatter',
     plugins: [refLinesPlugin],
-    data: {
-      datasets: [
-        {
-          label: 'Demais estados',
-          data: outros,
-          backgroundColor: 'rgba(22,199,132,0.75)',
-          borderColor: '#16C784',
-          pointRadius: 6,
-          pointHoverRadius: 8
-        },
-        {
-          label: selObj ? `${selObj.nome} (${selObj.sigla})` : 'Selecionado',
-          data: selecionado,
-          backgroundColor: '#2563EB',
-          borderColor: '#FFFFFF',
-          borderWidth: 2,
-          pointRadius: 9,
-          pointHoverRadius: 11
-        }
-      ]
-    },
+    data: { datasets },
     options: {
       responsive: true,
       maintainAspectRatio: false,
@@ -1004,6 +1260,11 @@ function graficoScatter() {
           ? 'gera tributo por habitante acima da média nacional, mas ainda apresenta IDH abaixo da média'
           : 'está abaixo da média nacional tanto em tributo por habitante quanto em IDH';
     $('leituraScatter').innerHTML = `<strong class="din-text-main">${selObj.nome} (${selObj.sigla})</strong> ${quad} — IDH <strong class="din-green">${BD.num(selObj.idh, 3)}</strong> (média BR: ${BD.num(mediaIdhBR, 3)}) e tributo/hab. de <strong class="din-text-main">${BD.brl(selObj.hab, 0)}</strong> (média BR: ${BD.brl(mediaHabBR, 0)}).`;
+  } else {
+    const liderHab = [...D].sort((a, b) => b.hab - a.hab)[0];
+    const liderIdh = [...D].sort((a, b) => b.idh - a.idh)[0];
+    const nomeRec = regiaoSel === 'Todas' ? 'No Brasil' : `Na região ${regiaoSel}`;
+    $('leituraScatter').innerHTML = `<strong class="din-text-main">${nomeRec}</strong>, o maior tributo estimado por habitante está em <strong class="din-text-main">${liderHab.nome} (${liderHab.sigla})</strong> (${BD.brl(liderHab.hab, 0)}/ano) e o maior IDH em <strong class="din-green">${liderIdh.nome} (${liderIdh.sigla})</strong> (${BD.num(liderIdh.idh, 3)}). Clique em qualquer ponto ou estado no mapa para abrir o raio-x individual.`;
   }
 }
 
