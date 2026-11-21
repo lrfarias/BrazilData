@@ -336,8 +336,7 @@
   </div>
 </footer>
 
-<script src="/js/chart-utils.js?v=1"></script>
-<script>
+<script src="/js/chart-utils.js?v=1"></script><script>
 const $ = id => document.getElementById(id);
 const fmtNum = (v, d = 2) => Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
 const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
@@ -378,7 +377,7 @@ function aplicarTema(tema) {
     if (bg && ball) { bg.style.backgroundColor = '#E5E7EB'; ball.classList.remove('translate-x-5'); }
   }
   recalcularTrajetoria();
-  if (serieDbgg.length) desenharHistorico();
+  if (serieDbgg.length || seriePrim.length) desenharHistorico();
 }
 
 function alternarModoApresentacao() {
@@ -389,29 +388,57 @@ function alternarModoApresentacao() {
     : `<svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect><line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line><line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line></svg><span>Modo Tela Cheia</span>`;
 }
 
-// Busca no proxy Spring Boot (/api/bcb/serie/...) com fallback automático para a API oficial do BCB
-async function buscarSgs(codigo, ultimos = 216, inverterSinal = false) {
+// Janela dentro do limite de 10 anos exigido pelo BCB (dd/MM/yyyy)
+function janelaDatasBcb(meses = 116) {
+  const fim = new Date();
+  const ini = new Date(fim.getFullYear(), fim.getMonth() - Math.min(meses, 118), 1);
+  const fmt = d => `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+  return { dataInicial: fmt(ini), dataFinal: fmt(fim) };
+}
+
+async function fetchJsonComTimeout(url, ms = 10000) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), ms);
+  try {
+    const r = await fetch(url, { signal: ctrl.signal });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return await r.json();
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function normalizarSgs(json, inverterSinal = false) {
+  if (!Array.isArray(json)) return [];
+  return json.map(item => {
+    const partes = String(item.data || '').split('/');
+    if (partes.length !== 3) return null;
+    const [dd, mm, yyyy] = partes;
+    const raw = parseFloat(String(item.valor).replace(',', '.'));
+    if (Number.isNaN(raw)) return null;
+    return {
+      ym: `${yyyy}-${mm}`,
+      label: `${MESES[Number(mm) - 1]}/${yyyy.slice(2)}`,
+      data: item.data,
+      v: inverterSinal ? -raw : raw
+    };
+  }).filter(Boolean);
+}
+
+// Busca no proxy Spring Boot -> BCB direto com dataInicial/dataFinal (<= 10 anos) -> BCB ultimos
+async function buscarSgs(codigo, meses = 116, inverterSinal = false) {
+  const { dataInicial, dataFinal } = janelaDatasBcb(meses);
+  const lim = Math.min(meses, 118);
   const urls = [
-    `/api/bcb/serie/${codigo}?ultimos=${ultimos}`,
-    `https://api.bcb.gov.br/dados/serie/bcdata.sgs.${codigo}/dados/ultimos/${ultimos}?formato=json`
+    `/api/bcb/serie/${codigo}?dataInicial=${encodeURIComponent(dataInicial)}&dataFinal=${encodeURIComponent(dataFinal)}`,
+    `https://api.bcb.gov.br/dados/serie/bcdata.sgs.${codigo}/dados?formato=json&dataInicial=${encodeURIComponent(dataInicial)}&dataFinal=${encodeURIComponent(dataFinal)}`,
+    `https://api.bcb.gov.br/dados/serie/bcdata.sgs.${codigo}/dados/ultimos/${lim}?formato=json`
   ];
   for (const url of urls) {
     try {
-      const r = await fetch(url);
-      if (!r.ok) continue;
-      const json = await r.json();
-      if (Array.isArray(json) && json.length > 0) {
-        return json.map(item => {
-          const [dd, mm, yyyy] = String(item.data).split('/');
-          const raw = parseFloat(String(item.valor).replace(',', '.'));
-          return {
-            ym: `${yyyy}-${mm}`,
-            label: `${MESES[Number(mm) - 1]}/${yyyy.slice(2)}`,
-            data: item.data,
-            v: inverterSinal ? -raw : raw
-          };
-        }).filter(x => !Number.isNaN(x.v));
-      }
+      const json = await fetchJsonComTimeout(url, 9000);
+      const dados = normalizarSgs(json, inverterSinal);
+      if (dados.length > 0) return dados;
     } catch {}
   }
   throw new Error(`Erro na série SGS ${codigo}`);
@@ -575,10 +602,16 @@ function desenharHistorico() {
 }
 
 function desenharDividas() {
-  if (!serieDbgg.length) return;
+  if (!serieDbgg.length && !serieDlsp.length) return;
+  const principal = serieDbgg.length ? serieDbgg : serieDlsp;
   const mapDlsp = Object.fromEntries(serieDlsp.map(x => [x.ym, x.v]));
-  let base = serieDbgg.map(x => ({ label: x.label, dbgg: x.v, dlsp: mapDlsp[x.ym] ?? null }));
+  const mapDbgg = Object.fromEntries(serieDbgg.map(x => [x.ym, x.v]));
+  let base = principal.map(x => ({ label: x.label, dbgg: mapDbgg[x.ym] ?? null, dlsp: mapDlsp[x.ym] ?? null }));
   if (horizonteMeses < base.length) base = base.slice(-horizonteMeses);
+
+  const datasets = [];
+  if (serieDbgg.length) datasets.push({ label: 'Dívida Bruta — DBGG (% PIB)', data: base.map(x => x.dbgg), borderColor: '#EA3943', backgroundColor: 'rgba(234,57,67,0.08)', fill: true, borderWidth: 2.2, pointRadius: 0, tension: 0.2 });
+  if (serieDlsp.length) datasets.push({ label: 'Dívida Líquida — DLSP (% PIB)', data: base.map(x => x.dlsp), borderColor: '#2563EB', borderWidth: 2.2, pointRadius: 0, tension: 0.2 });
 
   if (chartDividas) chartDividas.destroy();
   const opts = window.BDChart
@@ -587,28 +620,29 @@ function desenharDividas() {
 
   chartDividas = new Chart($('grafDividas'), {
     type: 'line',
-    data: {
-      labels: base.map(x => x.label),
-      datasets: [
-        { label: 'Dívida Bruta — DBGG (% PIB)', data: base.map(x => x.dbgg), borderColor: '#EA3943', backgroundColor: 'rgba(234,57,67,0.08)', fill: true, borderWidth: 2.2, pointRadius: 0, tension: 0.2 },
-        { label: 'Dívida Líquida — DLSP (% PIB)', data: base.map(x => x.dlsp), borderColor: '#2563EB', borderWidth: 2.2, pointRadius: 0, tension: 0.2 }
-      ]
-    },
+    data: { labels: base.map(x => x.label), datasets },
     options: opts
   });
 }
 
 function desenharResultados() {
-  if (!seriePrim.length) return;
+  if (!seriePrim.length && !serieJuros.length) return;
+  const principal = seriePrim.length ? seriePrim : serieJuros;
+  const mapPrim = Object.fromEntries(seriePrim.map(x => [x.ym, x.v]));
   const mapJuros = Object.fromEntries(serieJuros.map(x => [x.ym, x.v]));
   const mapNom = Object.fromEntries(serieNom.map(x => [x.ym, x.v]));
-  let base = seriePrim.map(x => ({
+  let base = principal.map(x => ({
     label: x.label,
-    prim: x.v,
+    prim: mapPrim[x.ym] ?? null,
     juros: mapJuros[x.ym] ?? null,
     nom: mapNom[x.ym] ?? null
   }));
   if (horizonteMeses < base.length) base = base.slice(-horizonteMeses);
+
+  const datasets = [];
+  if (seriePrim.length) datasets.push({ label: 'Resultado Primário 12m (% PIB)', data: base.map(x => x.prim), borderColor: '#16C784', backgroundColor: 'rgba(22,199,132,0.08)', fill: true, borderWidth: 2.2, pointRadius: 0, tension: 0.2 });
+  if (serieJuros.length) datasets.push({ label: 'Juros Nominais 12m (% PIB)', data: base.map(x => x.juros), borderColor: '#F59E0B', borderWidth: 2, pointRadius: 0, tension: 0.2 });
+  if (serieNom.length) datasets.push({ label: 'Resultado Nominal 12m (% PIB)', data: base.map(x => x.nom), borderColor: '#EA3943', borderDash: [4, 3], borderWidth: 2, pointRadius: 0, tension: 0.2 });
 
   if (chartResultado) chartResultado.destroy();
   const opts = window.BDChart
@@ -617,14 +651,7 @@ function desenharResultados() {
 
   chartResultado = new Chart($('grafResultado'), {
     type: 'line',
-    data: {
-      labels: base.map(x => x.label),
-      datasets: [
-        { label: 'Resultado Primário 12m (% PIB)', data: base.map(x => x.prim), borderColor: '#16C784', backgroundColor: 'rgba(22,199,132,0.08)', fill: true, borderWidth: 2.2, pointRadius: 0, tension: 0.2 },
-        { label: 'Juros Nominais 12m (% PIB)', data: base.map(x => x.juros), borderColor: '#F59E0B', borderWidth: 2, pointRadius: 0, tension: 0.2 },
-        { label: 'Resultado Nominal 12m (% PIB)', data: base.map(x => x.nom), borderColor: '#EA3943', borderDash: [4, 3], borderWidth: 2, pointRadius: 0, tension: 0.2 }
-      ]
-    },
+    data: { labels: base.map(x => x.label), datasets },
     options: opts
   });
 }
@@ -681,54 +708,63 @@ function citarFiscalABNT(btn) {
   }, btn);
 }
 
-// Inicialização
+// Inicialização resiliente (<= 10 anos + Promise.allSettled)
 (async () => {
   let temaSalvo = 'light';
   try { temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light'; } catch {}
   aplicarTema(temaSalvo);
   recalcularTrajetoria();
 
-  try {
-    const [dbgg, dlsp, prim, juros, nom] = await Promise.all([
-      buscarSgs(13762, 216, false),
-      buscarSgs(4513, 216, false),
-      buscarSgs(5793, 216, true),
-      buscarSgs(5760, 216, false),
-      buscarSgs(5727, 216, true)
-    ]);
+  const [rDbgg, rDlsp, rPrim, rJuros, rNom] = await Promise.allSettled([
+    buscarSgs(13762, 116, false),
+    buscarSgs(4513, 116, false),
+    buscarSgs(5793, 116, true),
+    buscarSgs(5760, 116, false),
+    buscarSgs(5727, 116, true)
+  ]);
 
-    serieDbgg = dbgg;
-    serieDlsp = dlsp;
-    seriePrim = prim;
-    serieJuros = juros;
-    serieNom = nom;
+  if (rDbgg.status === 'fulfilled') serieDbgg = rDbgg.value;
+  if (rDlsp.status === 'fulfilled') serieDlsp = rDlsp.value;
+  if (rPrim.status === 'fulfilled') seriePrim = rPrim.value;
+  if (rJuros.status === 'fulfilled') serieJuros = rJuros.value;
+  if (rNom.status === 'fulfilled') serieNom = rNom.value;
 
-    const uDbgg = serieDbgg[serieDbgg.length - 1];
-    const uDlsp = serieDlsp[serieDlsp.length - 1];
-    const uPrim = seriePrim[seriePrim.length - 1];
-    const uJuros = serieJuros[serieJuros.length - 1];
+  let refLabel = '';
 
-    $('kDbgg').textContent = `${fmtNum(uDbgg.v, 1)}% do PIB`;
-    $('kDbggRef').textContent = `BCB SGS 13762 • Ref. ${uDbgg.label}`;
+  if (serieDbgg.length) {
+    const u = serieDbgg[serieDbgg.length - 1];
+    $('kDbgg').textContent = `${fmtNum(u.v, 1)}% do PIB`;
+    $('kDbggRef').textContent = `BCB SGS 13762 • Ref. ${u.label}`;
+    refOficial.d0 = u.v;
+    refLabel = u.label;
+  }
 
-    $('kDlsp').textContent = `${fmtNum(uDlsp.v, 1)}% do PIB`;
-    $('kDlspRef').textContent = `BCB SGS 4513 • Ref. ${uDlsp.label}`;
+  if (serieDlsp.length) {
+    const u = serieDlsp[serieDlsp.length - 1];
+    $('kDlsp').textContent = `${fmtNum(u.v, 1)}% do PIB`;
+    $('kDlspRef').textContent = `BCB SGS 4513 • Ref. ${u.label}`;
+    if (!refLabel) refLabel = u.label;
+  }
 
-    $('kPrim').textContent = `${uPrim.v >= 0 ? '+' : ''}${fmtNum(uPrim.v, 2)}% do PIB`;
-    $('kPrim').className = `text-xl font-bold mt-1 ${uPrim.v >= 0 ? 'din-green' : 'din-red'}`;
-    $('kPrimRef').textContent = `BCB SGS 5793 • ${uPrim.v >= 0 ? 'Superávit' : 'Déficit'} (${uPrim.label})`;
+  if (seriePrim.length) {
+    const u = seriePrim[seriePrim.length - 1];
+    $('kPrim').textContent = `${u.v >= 0 ? '+' : ''}${fmtNum(u.v, 2)}% do PIB`;
+    $('kPrim').className = `text-xl font-bold mt-1 ${u.v >= 0 ? 'din-green' : 'din-red'}`;
+    $('kPrimRef').textContent = `BCB SGS 5793 • ${u.v >= 0 ? 'Superávit' : 'Déficit'} (${u.label})`;
+    refOficial.prim = u.v;
+  }
 
-    $('kJuros').textContent = `${fmtNum(uJuros.v, 2)}% do PIB`;
-    $('kJurosRef').textContent = `BCB SGS 5760 • Ref. ${uJuros.label}`;
+  if (serieJuros.length) {
+    const u = serieJuros[serieJuros.length - 1];
+    $('kJuros').textContent = `${fmtNum(u.v, 2)}% do PIB`;
+    $('kJurosRef').textContent = `BCB SGS 5760 • Ref. ${u.label}`;
+  }
 
-    // Preenche o simulador com o ponto de partida real do Banco Central
-    refOficial = { d0: uDbgg.v, prim: uPrim.v };
+  if (serieDbgg.length || serieDlsp.length || seriePrim.length) {
     aplicarCenario('base');
-
-    $('statusFiscal').innerHTML = `<span class="w-2 h-2 rounded-full bg-[#16C784]"></span><span>Estatísticas fiscais oficiais BCB (${uDbgg.label})</span>`;
+    $('statusFiscal').innerHTML = `<span class="w-2 h-2 rounded-full bg-[#16C784]"></span><span>Estatísticas fiscais oficiais BCB (${refLabel || 'atualizado'})</span>`;
     desenharHistorico();
-  } catch (err) {
-    console.error(err);
+  } else {
     $('statusFiscal').innerHTML = `<span class="w-2 h-2 rounded-full bg-[#EA3943]"></span><span>Banco Central indisponível no momento. Simulador ativo em modo referência.</span>`;
   }
 })();
