@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sobre o BrasilEmDados — Metodologia e Fontes Oficiais</title>
-<meta name="description" content="Conheça a proposta do BrasilEmDados, os 08 módulos econômicos ativos e as fontes oficiais utilizadas (IBGE, Banco Central do Brasil, Tesouro Nacional, PNUD/Ipea e Banco Mundial).">
+<title>BrasilEmDados — Sobre o Projeto, Metodologia & Fontes</title>
+<meta name="description" content="Conheça o BrasilEmDados, os 08 módulos econômicos ativos, a arquitetura em Spring Boot e PostgreSQL e as fontes oficiais (IBGE, Banco Central, Tesouro, PNUD/Ipea e Banco Mundial).">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
 <link rel="stylesheet" href="css/theme.css">
@@ -44,7 +44,7 @@
 
         <div class="flex items-center gap-2.5 relative">
           <a href="economia.html" class="hidden sm:inline-flex items-center gap-1.5 din-btn text-xs font-semibold px-3.5 py-2 rounded-lg transition shadow-sm">
-            <span>Abrir Economia</span>
+            <span>Acessar Módulos</span>
           </a>
 
           <button id="menuDropdownBtn" onclick="toggleDropdownMenu()" title="Preferências e Ferramentas" class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center hover:border-[#16C784] transition cursor-pointer">
@@ -109,20 +109,79 @@
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-10 space-y-8">
-    <section class="max-w-3xl space-y-3">
-      <span class="text-[11px] font-bold uppercase tracking-wider din-green">Sobre o Projeto</span>
-      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight din-text-main">BrasilEmDados</h1>
-      <p class="text-sm sm:text-base din-text-muted leading-relaxed">
-        O BrasilEmDados é um terminal web educativo e analítico voltado à consulta, visualização e simulação de indicadores macroeconômicos, regionais, fiscais e setoriais do Brasil e do mundo, com foco em clareza metodológica e dados públicos.
-      </p>
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-10 space-y-10">
+
+    <!-- 1. Hero + Telemetria do Banco -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div class="lg:col-span-7 space-y-4">
+        <span class="text-[11px] font-bold uppercase tracking-wider din-green">Sobre o Projeto</span>
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight din-text-main leading-tight">
+          Dados econômicos oficiais em painéis claros e auditáveis.
+        </h1>
+        <p class="text-sm sm:text-base din-text-muted leading-relaxed">
+          O <strong>BrasilEmDados</strong> reúne indicadores regionais, fiscais, monetários, globais e agrícolas em uma interface única, combinando dados armazenados em <strong class="din-text-main">PostgreSQL</strong> (via backend em <strong class="din-text-main">Spring Boot</strong>) com consultas diretas a bases públicas oficiais.
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs">
+          <div class="din-card-bg border din-border rounded-xl p-3.5">
+            <strong class="din-green block">01. Fontes Oficiais</strong>
+            <span class="din-text-muted mt-0.5 block">IBGE, Banco Central, Tesouro, PNUD/Ipea e Banco Mundial.</span>
+          </div>
+          <div class="din-card-bg border din-border rounded-xl p-3.5">
+            <strong class="din-green block">02. Leitura Direta</strong>
+            <span class="din-text-muted mt-0.5 block">Mapas, séries históricas, simuladores e exportação PNG/CSV/ABNT.</span>
+          </div>
+          <div class="din-card-bg border din-border rounded-xl p-3.5">
+            <strong class="din-green block">03. Uso Educativo</strong>
+            <span class="din-text-muted mt-0.5 block">Parâmetros transparentes sem recomendação financeira.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-5 din-card-bg border din-border rounded-2xl p-6 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b din-border pb-3">
+          <div>
+            <h2 class="text-sm font-bold din-text-main">Telemetria do Banco</h2>
+            <p class="text-[11px] din-text-muted font-mono">/api/indicadores</p>
+          </div>
+          <span id="statusBadgeApi" class="text-[10px] font-mono font-bold uppercase px-2.5 py-1 rounded din-secondary-bg border din-border din-green">
+            Verificando...
+          </span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div class="din-secondary-bg border din-border rounded-xl p-3">
+            <span class="din-text-muted block text-[11px]">Registros</span>
+            <strong id="telemetriaTotalRegistros" class="text-base font-extrabold din-text-main mt-0.5 block">--</strong>
+          </div>
+          <div class="din-secondary-bg border din-border rounded-xl p-3">
+            <span class="din-text-muted block text-[11px]">Abrangência</span>
+            <strong id="telemetriaTotalUfs" class="text-base font-extrabold din-green mt-0.5 block">27 UFs</strong>
+          </div>
+          <div class="din-secondary-bg border din-border rounded-xl p-3">
+            <span class="din-text-muted block text-[11px]">Anos na Base</span>
+            <strong id="telemetriaFaixaAnos" class="text-sm font-bold din-text-main mt-0.5 block">--</strong>
+          </div>
+          <div class="din-secondary-bg border din-border rounded-xl p-3">
+            <span class="din-text-muted block text-[11px]">Latência</span>
+            <strong id="telemetriaLatencia" class="text-sm font-mono font-bold din-green mt-0.5 block">-- ms</strong>
+          </div>
+        </div>
+
+        <div class="pt-1 flex items-center justify-between gap-2 text-xs">
+          <button type="button" onclick="testarConexaoBackend()" class="din-btn px-4 py-2 rounded-xl font-bold transition cursor-pointer">
+            Testar Conexão
+          </button>
+          <a href="/api/indicadores" target="_blank" class="din-green font-bold hover:underline">Ver JSON →</a>
+        </div>
+      </div>
     </section>
 
-    <!-- 8 Módulos Ativos -->
+    <!-- 2. Arquitetura em 08 Módulos Ativos -->
     <section class="din-card-bg border din-border rounded-2xl p-6 shadow-sm space-y-4">
       <div class="flex items-center justify-between">
-        <h2 class="text-base font-bold din-text-main">Arquitetura em 08 Módulos</h2>
-        <span class="text-xs din-text-muted">Hub Economia</span>
+        <h2 class="text-base font-bold din-text-main">08 Módulos Ativos no Hub Econômico</h2>
+        <a href="economia.html" class="text-xs font-bold din-green hover:underline">Ir para Economia →</a>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
         <a href="terminal-pib.html" class="din-secondary-bg border din-border rounded-xl p-3.5 hover:border-[#16C784] transition">
@@ -160,22 +219,90 @@
       </div>
     </section>
 
-    <!-- Fontes Oficiais e Aviso -->
-    <section class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
-      <div class="din-card-bg border din-border rounded-2xl p-6 shadow-sm space-y-2.5">
-        <h2 class="text-sm font-bold din-text-main">Fontes de Dados</h2>
-        <p class="din-text-muted leading-relaxed">
-          Os painéis integram bases públicas e oficiais, incluindo <strong class="din-text-main">IBGE</strong> (Contas Regionais, IPCA e Pesquisa Agrícola Municipal — PAM), <strong class="din-text-main">Banco Central do Brasil</strong> (SGS — séries de juros, inflação e estatísticas fiscais), <strong class="din-text-main">PNUD / Ipea</strong>, <strong class="din-text-main">Banco Mundial</strong> e serviços públicos de câmbio.
-        </p>
+    <!-- 3. Fontes Oficiais -->
+    <section class="din-card-bg border din-border rounded-2xl p-6 shadow-sm space-y-4">
+      <div>
+        <h2 class="text-lg font-extrabold din-text-main">Fontes Oficiais e Referências</h2>
+        <p class="text-xs din-text-muted mt-0.5">Bases utilizadas nos módulos do terminal.</p>
       </div>
 
-      <div class="din-card-bg border din-border rounded-2xl p-6 shadow-sm space-y-2.5">
-        <h2 class="text-sm font-bold din-text-main">Finalidade Educativa e Simuladores</h2>
-        <p class="din-text-muted leading-relaxed">
-          As ferramentas de simulação (juros, correção monetária e trajetória fiscal de 10 anos) operam com parâmetros configuráveis para fins educativos e analíticos. As informações não constituem recomendação de investimento ou aconselhamento financeiro.
-        </p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="border-b din-border din-text-muted uppercase">
+              <th class="py-2.5 px-3">Área</th>
+              <th class="py-2.5 px-3">Fonte</th>
+              <th class="py-2.5 px-3">Referência</th>
+              <th class="py-2.5 px-3">Uso no Terminal</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y din-border">
+            <tr>
+              <td class="py-2.5 px-3 font-bold din-text-main">PIB Estadual e População</td>
+              <td class="py-2.5 px-3 din-text-muted">IBGE</td>
+              <td class="py-2.5 px-3 font-mono din-green">SIDRA 5938 / 6579</td>
+              <td class="py-2.5 px-3 din-text-muted">PIB estadual, per capita e vocação setorial.</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 px-3 font-bold din-text-main">Impostos & IDH</td>
+              <td class="py-2.5 px-3 din-text-muted">IBGE, Tesouro, PNUD/Ipea</td>
+              <td class="py-2.5 px-3 font-mono din-green">SIDRA / IDHM</td>
+              <td class="py-2.5 px-3 din-text-muted">Carga tributária, população e desenvolvimento humano.</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 px-3 font-bold din-text-main">Inflação & Juros</td>
+              <td class="py-2.5 px-3 din-text-muted">Banco Central & IBGE</td>
+              <td class="py-2.5 px-3 font-mono din-green">SGS / SIDRA 1737 & 7060</td>
+              <td class="py-2.5 px-3 din-text-muted">IPCA, IGP-M, salário mínimo, Selic e renda fixa.</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 px-3 font-bold din-text-main">Contas Públicas</td>
+              <td class="py-2.5 px-3 din-text-muted">Banco Central & Tesouro</td>
+              <td class="py-2.5 px-3 font-mono din-green">SGS 13762, 4513, 5793, 5760</td>
+              <td class="py-2.5 px-3 din-text-muted">DBGG/PIB, DLSP/PIB, resultado primário e simulador 10 anos.</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 px-3 font-bold din-text-main">Câmbio & Panorama Global</td>
+              <td class="py-2.5 px-3 din-text-muted">Banco Mundial, BCE & Câmbio</td>
+              <td class="py-2.5 px-3 font-mono din-green">WDI / Frankfurter</td>
+              <td class="py-2.5 px-3 din-text-muted">Conversão de moedas, séries históricas e indicadores globais.</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 px-3 font-bold din-text-main">Agronegócio</td>
+              <td class="py-2.5 px-3 din-text-muted">IBGE (PAM)</td>
+              <td class="py-2.5 px-3 font-mono din-green">SIDRA 5457</td>
+              <td class="py-2.5 px-3 din-text-muted">Produção, valor, área colhida e rendimento por estado.</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
+
+    <!-- 4. FAQ Essencial -->
+    <section class="space-y-3">
+      <h2 class="text-lg font-extrabold din-text-main">Perguntas Frequentes</h2>
+
+      <div class="din-card-bg border din-border rounded-2xl p-5">
+        <button type="button" onclick="toggleFaq(1)" class="w-full flex items-center justify-between text-left font-bold text-sm din-text-main cursor-pointer">
+          <span>Por que os dados estaduais do PIB têm defasagem em relação ao ano corrente?</span>
+          <span id="iconeFaq1" class="din-green font-mono text-lg">+</span>
+        </button>
+        <div id="conteudoFaq1" class="hidden pt-3 mt-3 border-t din-border text-xs din-text-muted leading-relaxed">
+          As Contas Regionais do IBGE consolidam informações anuais completas por unidade da federação e costumam ser divulgadas com defasagem de cerca de dois anos após o ano de referência.
+        </div>
+      </div>
+
+      <div class="din-card-bg border din-border rounded-2xl p-5">
+        <button type="button" onclick="toggleFaq(2)" class="w-full flex items-center justify-between text-left font-bold text-sm din-text-main cursor-pointer">
+          <span>Os simuladores (Selic, inflação e trajetória da dívida) fazem previsão de mercado?</span>
+          <span id="iconeFaq2" class="din-green font-mono text-lg">+</span>
+        </button>
+        <div id="conteudoFaq2" class="hidden pt-3 mt-3 border-t din-border text-xs din-text-muted leading-relaxed">
+          Não. São simulações paramétricas e educativas baseadas nas premissas que você escolhe nos controles — servem para testar cenários e entender relações matemáticas, não como recomendação financeira.
+        </div>
+      </div>
+    </section>
+
   </main>
 </div>
 
@@ -220,10 +347,55 @@ function aplicarTema(tema) {
     if (bg && ball) { bg.style.backgroundColor = '#E5E7EB'; ball.classList.remove('translate-x-5'); }
   }
 }
+function toggleFaq(num) {
+  const div = document.getElementById('conteudoFaq' + num);
+  const icone = document.getElementById('iconeFaq' + num);
+  const abrir = div.classList.contains('hidden');
+  div.classList.toggle('hidden', !abrir);
+  icone.innerText = abrir ? '−' : '+';
+}
+async function testarConexaoBackend() {
+  const badge = document.getElementById('statusBadgeApi');
+  const elReg = document.getElementById('telemetriaTotalRegistros');
+  const elUfs = document.getElementById('telemetriaTotalUfs');
+  const elAnos = document.getElementById('telemetriaFaixaAnos');
+  const elLat = document.getElementById('telemetriaLatencia');
+
+  badge.innerText = 'Consultando...';
+  const t0 = performance.now();
+  try {
+    const resp = await fetch('/api/indicadores');
+    const dados = await resp.json();
+    const ms = Math.max(1, Math.round(performance.now() - t0));
+    elLat.innerText = `${ms} ms`;
+
+    if (Array.isArray(dados) && dados.length > 0) {
+      badge.innerText = '● ONLINE';
+      badge.className = 'text-[10px] font-mono font-bold uppercase px-2.5 py-1 rounded din-secondary-bg border din-border din-green';
+      elReg.innerText = `${dados.length}`;
+      const ufs = new Set(dados.map(d => d.estado && d.estado.sigla).filter(Boolean));
+      elUfs.innerText = `${ufs.size || 27} UFs`;
+      const anos = dados.map(d => Number(d.anoReferencia)).filter(a => a > 0);
+      if (anos.length) {
+        const minA = Math.min(...anos), maxA = Math.max(...anos);
+        elAnos.innerText = minA === maxA ? `${maxA}` : `${minA} – ${maxA}`;
+      }
+    } else {
+      badge.innerText = '● SEM DADOS';
+      elReg.innerText = '0';
+    }
+  } catch {
+    badge.innerText = '● OFFLINE';
+    badge.className = 'text-[10px] font-mono font-bold uppercase px-2.5 py-1 rounded din-secondary-bg border din-border din-text-muted';
+    elReg.innerText = '—';
+    elLat.innerText = '—';
+  }
+}
 window.onload = () => {
   let temaSalvo = 'light';
   try { temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light'; } catch {}
   aplicarTema(temaSalvo === 'dark' ? 'dark' : 'light');
+  testarConexaoBackend();
 };
 </script>
 </body>

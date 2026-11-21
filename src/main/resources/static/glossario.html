@@ -3,11 +3,55 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Glossário Econômico & Fiscal — BrasilEmDados</title>
-<meta name="description" content="Consulte definições claras e objetivas de PIB, IDH, IPCA, IGP-M, DBGG, DLSP, Resultado Primário, Selic, Juro Real, Câmbio e Produção Agrícola (IBGE PAM).">
+<title>BrasilEmDados — Glossário Econômico & Metodológico</title>
+<meta name="description" content="Consulte o significado, leitura na prática e base de cálculo de PIB, VAB, IDH, IPCA, IGP-M, DBGG, DLSP, Resultado Primário, Selic, Juro Real, Câmbio e Agronegócio.">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
 <link rel="stylesheet" href="css/theme.css">
+<style>
+  :root {
+    --bg-main: #FFFFFF;
+    --card-bg: #F7F8FA;
+    --bg-secondary: #F0F2F5;
+    --text-main: #17191C;
+    --text-muted: #737780;
+    --border-col: #E5E7EB;
+    --accent-green: #16C784;
+    --accent-red: #EA3943;
+    --icon-box-bg: rgba(22, 199, 132, 0.12);
+  }
+  [data-theme="dark"] {
+    --bg-main: #101214;
+    --card-bg: #191C20;
+    --bg-secondary: #22262B;
+    --text-main: #F5F6F7;
+    --text-muted: #9299A3;
+    --border-col: #2B3036;
+    --accent-green: #16C784;
+    --accent-red: #EA3943;
+    --icon-box-bg: rgba(22, 199, 132, 0.15);
+  }
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .din-bg-main { background-color: var(--bg-main); }
+  .din-card-bg { background-color: var(--card-bg); }
+  .din-secondary-bg { background-color: var(--bg-secondary); }
+  .din-text-main { color: var(--text-main); }
+  .din-text-muted { color: var(--text-muted); }
+  .din-border { border-color: var(--border-col); }
+  .din-green { color: var(--accent-green); }
+  .din-red { color: var(--accent-red); }
+  .din-icon-box { background-color: var(--icon-box-bg); color: var(--accent-green); }
+  .din-btn { background-color: var(--accent-green); color: #FFFFFF; }
+  .din-btn:hover { opacity: 0.9; }
+  .card-hover { transition: transform 0.2s ease, border-color 0.2s ease; }
+  .card-hover:hover { transform: translateY(-2px); border-color: var(--accent-green); }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
 </head>
 <body class="min-h-screen font-sans flex flex-col justify-between">
 <script src="config.js"></script>
@@ -29,7 +73,7 @@
                   <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span> Glossário
                 </span>
               </div>
-              <p class="text-[11px] din-text-muted hidden xl:block">Conceitos Macroeconômicos, Fiscais e Setoriais</p>
+              <p class="text-[11px] din-text-muted hidden xl:block">Dicionário Econômico, Fiscal, Monetário e Setorial</p>
             </div>
           </a>
         </div>
@@ -44,7 +88,10 @@
 
         <div class="flex items-center gap-2.5 relative">
           <a href="economia.html" class="hidden sm:inline-flex items-center gap-1.5 din-btn text-xs font-semibold px-3.5 py-2 rounded-lg transition shadow-sm">
-            <span>Ver Módulos</span>
+            <span>Acessar Módulos</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+            </svg>
           </a>
 
           <button id="menuDropdownBtn" onclick="toggleDropdownMenu()" title="Preferências e Ferramentas" class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center hover:border-[#16C784] transition cursor-pointer">
@@ -109,29 +156,92 @@
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-10 space-y-8">
-    <section class="max-w-3xl space-y-3">
-      <span class="text-[11px] font-bold uppercase tracking-wider din-green">Referência Conceitual</span>
-      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight din-text-main">Glossário Econômico</h1>
+  <!-- 1. Cabeçalho + Busca + Filtro por Categoria -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-10 pb-6">
+    <div class="max-w-3xl space-y-3">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full din-icon-box text-xs font-bold">
+        <span>Educação Econômica & Transparência Metodológica</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight din-text-main">
+        Glossário de Indicadores
+      </h1>
       <p class="text-sm sm:text-base din-text-muted leading-relaxed">
-        Entenda os principais termos utilizados nos painéis de Contas Regionais, Inflação, Contas Públicas, Câmbio, Juros e Agronegócio do BrasilEmDados.
+        Veja o significado simples, como interpretar na prática e a base de cálculo de cada indicador usado nos painéis do <strong>BrasilEmDados</strong>.
       </p>
-    </section>
+    </div>
 
-    <!-- Busca e Filtro por Categoria -->
-    <section class="din-card-bg border din-border rounded-2xl p-4 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-      <div id="btnsCat" class="flex flex-wrap gap-1.5"></div>
-      <input id="inpBuscaTermo" type="text" placeholder="Buscar termo, sigla ou indicador (ex.: DBGG, IPCA, PIB)..."
-        oninput="renderizarTermos()" class="inp md:!w-80 text-xs">
-    </section>
+    <div class="mt-8 din-card-bg border din-border rounded-2xl p-4 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+      <div class="relative flex-1">
+        <svg class="w-4 h-4 din-text-muted absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <input id="inputBuscaGlossario" type="text" oninput="filtrarGlossario()"
+          placeholder="Buscar termo, sigla ou ideia (ex.: PIB, IPCA, IGP-M, DBGG, Selic, Safra)..."
+          class="w-full din-secondary-bg border din-border rounded-xl pl-10 pr-4 py-2 text-xs sm:text-sm din-text-main focus:outline-none focus:border-[#16C784] transition" />
+      </div>
 
-    <!-- Grade de Termos -->
-    <section id="gridTermos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></section>
+      <div id="btnsCat" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs font-bold"></div>
+    </div>
+
+    <div class="flex items-center justify-between pt-6 pb-2">
+      <span id="contadorTermos" class="text-xs font-bold din-text-main"></span>
+      <span class="text-xs din-text-muted">Fontes: IBGE • Banco Central • PNUD / Ipea • Tesouro</span>
+    </div>
+  </section>
+
+  <!-- 2. Grade de Termos -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 pb-10">
+    <div id="gridGlossario" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
   </main>
+
+  <!-- 3. Fórmulas Essenciais -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 pb-12">
+    <div class="din-card-bg border din-border rounded-2xl p-6 shadow-sm space-y-5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b din-border pb-4">
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider din-green">Transparência Matemática</span>
+          <h2 class="text-lg font-extrabold din-text-main mt-0.5">Fórmulas centrais por trás dos painéis</h2>
+        </div>
+        <span class="text-xs font-mono din-text-muted">Metodologia Aplicada</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+        <div class="din-secondary-bg border din-border rounded-xl p-4 space-y-2">
+          <span class="font-bold din-text-main block">1. PIB sob a Ótica da Oferta (IBGE)</span>
+          <code class="block font-mono text-[11px] din-green p-2 rounded border din-border din-card-bg">
+            PIB = VAB (Agro + Ind + Serv) + Impostos Líquidos
+          </code>
+          <p class="din-text-muted leading-relaxed">
+            Soma o valor adicionado pelos setores produtivos do estado mais os impostos líquidos sobre produtos.
+          </p>
+        </div>
+
+        <div class="din-secondary-bg border din-border rounded-xl p-4 space-y-2">
+          <span class="font-bold din-text-main block">2. Juro Real & Poder de Compra</span>
+          <code class="block font-mono text-[11px] din-green p-2 rounded border din-border din-card-bg">
+            Real = [(1 + Taxa) ÷ (1 + Inflação)] − 1
+          </code>
+          <p class="din-text-muted leading-relaxed">
+            Desconta a composição da inflação (IPCA) para mostrar quanto o dinheiro realmente ganhou ou perdeu em poder de compra.
+          </p>
+        </div>
+
+        <div class="din-secondary-bg border din-border rounded-xl p-4 space-y-2">
+          <span class="font-bold din-text-main block">3. Dinâmica da Dívida / PIB (10 anos)</span>
+          <code class="block font-mono text-[11px] din-green p-2 rounded border din-border din-card-bg">
+            d(t) = d(t-1) × [(1 + r) ÷ (1 + g)] − s
+          </code>
+          <p class="din-text-muted leading-relaxed">
+            Relaciona o juro real (r), o crescimento real do PIB (g) e o resultado primário (s) para testar a trajetória da dívida.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
 
 <!-- Rodapé Institucional -->
-<footer class="border-t din-border din-card-bg py-6 text-xs din-text-muted mt-8">
+<footer class="border-t din-border din-card-bg py-6 text-xs din-text-muted">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
     <div class="flex items-center gap-2">
       <span class="font-bold din-text-main">BrasilEmDados</span>
@@ -150,99 +260,115 @@
 <script>
 const $ = id => document.getElementById(id);
 
+const CATEGORIAS = [
+  { key: 'todos', label: 'Todos' },
+  { key: 'pib', label: 'PIB & Setores' },
+  { key: 'fiscal', label: 'Contas Públicas & IDH' },
+  { key: 'monetario', label: 'Inflação & Juros' },
+  { key: 'cambio', label: 'Câmbio & Global' },
+  { key: 'agro', label: 'Agronegócio' }
+];
+
 const TERMOS = [
   {
-    cat: 'Contas Nacionais',
-    sigla: 'PIB',
-    titulo: 'Produto Interno Bruto',
-    desc: 'Soma de todos os bens e serviços finais produzidos em um país, estado ou região durante um período, evitando dupla contagem.',
-    modulo: 'terminal-pib.html',
-    moduloNome: 'Contas Regionais & PIB'
+    id: '01', cat: 'pib', catNome: 'PIB & Setores',
+    titulo: 'PIB (Produto Interno Bruto)', sigla: 'IBGE SIDRA 5938',
+    definicao: 'Soma de todos os bens e serviços finais produzidos em um país, estado ou região em determinado período.',
+    naPratica: 'Mostra o tamanho da atividade econômica. Conta apenas o produto final para não somar o mesmo insumo duas vezes.',
+    formula: 'PIB = Consumo + Investimento + Gastos Públicos + (Exportações − Importações)',
+    link: 'terminal-pib.html', linkTexto: 'Ver no Terminal PIB'
   },
   {
-    cat: 'Contas Nacionais',
-    sigla: 'VA',
-    titulo: 'Valor Adicionado',
-    desc: 'Valor que cada setor econômico (agropecuária, indústria, serviços e administração pública) agrega ao produto final antes dos impostos líquidos sobre produtos.',
-    modulo: 'terminal-pib.html',
-    moduloNome: 'Contas Regionais & PIB'
+    id: '02', cat: 'pib', catNome: 'PIB & Setores',
+    titulo: 'PIB per Capita', sigla: 'Renda Produtiva Média',
+    definicao: 'Divisão do PIB pelo número de habitantes daquela localidade no mesmo período.',
+    naPratica: 'Indica a riqueza média gerada por pessoa, mas não substitui indicadores de distribuição de renda ou qualidade de vida.',
+    formula: 'PIB per Capita = PIB Total ÷ População Residente',
+    link: 'terminal-pib.html', linkTexto: 'Comparar Estados'
   },
   {
-    cat: 'Social & Tributário',
-    sigla: 'IDH',
-    titulo: 'Índice de Desenvolvimento Humano',
-    desc: 'Indicador composto que resume três dimensões básicas do desenvolvimento humano: longevidade (saúde), educação e padrão de vida (renda).',
-    modulo: 'imposto-idh.html',
-    moduloNome: 'Impostos, População & IDH'
+    id: '03', cat: 'pib', catNome: 'PIB & Setores',
+    titulo: 'VAB (Valor Adicionado Bruto) & Vocação', sigla: 'Contas Regionais',
+    definicao: 'Valor que cada setor (Agropecuária, Indústria, Serviços e Administração Pública) agrega aos insumos antes dos impostos líquidos.',
+    naPratica: 'Ajuda a identificar o motor de cada estado — como serviços e finanças em SP, minério e agro em MG ou commodities agrícolas no MT.',
+    formula: 'VAB = Valor Bruto da Produção − Consumo Intermediário',
+    link: 'terminal-pib.html', linkTexto: 'Ver Vocação Setorial'
   },
   {
-    cat: 'Inflação & Preços',
-    sigla: 'IPCA',
-    titulo: 'Índice Nacional de Preços ao Consumidor Amplo',
-    desc: 'Mede a variação de preços de uma cesta de consumo das famílias urbanas (IBGE) e serve de referência oficial para a meta de inflação do Banco Central.',
-    modulo: 'inflacao.html',
-    moduloNome: 'Inflação & Poder de Compra'
+    id: '04', cat: 'fiscal', catNome: 'Contas Públicas & IDH',
+    titulo: 'DBGG (Dívida Bruta do Governo Geral)', sigla: 'BCB SGS 13762',
+    definicao: 'Total de obrigações financeiras do Governo Federal, estados e municípios junto ao setor privado, setor público financeiro e exterior, sem abater ativos.',
+    naPratica: 'É a referência mais acompanhada para avaliar o endividamento do setor público em proporção do PIB.',
+    formula: 'DBGG / PIB (%) = (Dívida Bruta do Governo Geral ÷ PIB) × 100',
+    link: 'contas-publicas.html', linkTexto: 'Ver Dívida Bruta'
   },
   {
-    cat: 'Inflação & Preços',
-    sigla: 'IGP-M',
-    titulo: 'Índice Geral de Preços — Mercado',
-    desc: 'Calculado pela FGV, reúne preços no atacado/produtor (IPA), ao consumidor (IPC) e construção civil (INCC). Costuma reagir mais rápido ao câmbio e commodities.',
-    modulo: 'inflacao.html',
-    moduloNome: 'Inflação & Poder de Compra'
+    id: '05', cat: 'fiscal', catNome: 'Contas Públicas & IDH',
+    titulo: 'DLSP (Dívida Líquida do Setor Público)', sigla: 'BCB SGS 4513',
+    definicao: 'Balanço entre as dívidas e os ativos financeiros do setor público consolidado (como reservas cambiais), medido em % do PIB.',
+    naPratica: 'Quando o país acumula reservas internacionais, a DLSP tende a ficar abaixo da DBGG; variações cambiais também afetam essa conta.',
+    formula: 'DLSP = Passivos Financeiros − Ativos Financeiros do Setor Público',
+    link: 'contas-publicas.html', linkTexto: 'Ver DBGG vs. DLSP'
   },
   {
-    cat: 'Contas Públicas',
-    sigla: 'DBGG',
-    titulo: 'Dívida Bruta do Governo Geral',
-    desc: 'Soma dos débitos de responsabilidade do Governo Federal, dos governos estaduais e dos governos municipais junto ao setor privado, setor público financeiro e resto do mundo.',
-    modulo: 'contas-publicas.html',
-    moduloNome: 'Contas Públicas & Dívida'
+    id: '06', cat: 'fiscal', catNome: 'Contas Públicas & IDH',
+    titulo: 'Resultado Primário e Resultado Nominal', sigla: 'BCB SGS 5793 / 5760',
+    definicao: 'O resultado primário compara receitas e despesas não financeiras (fora os juros da dívida). O resultado nominal inclui os juros.',
+    naPratica: 'Superávit primário (+) ajuda a conter a dívida; déficit primário (-) pressiona o endividamento, especialmente quando os juros nominais são altos.',
+    formula: 'Resultado Nominal ≈ Resultado Primário − Juros Nominais',
+    link: 'contas-publicas.html', linkTexto: 'Simular Trajetória Fiscal'
   },
   {
-    cat: 'Contas Públicas',
-    sigla: 'DLSP',
-    titulo: 'Dívida Líquida do Setor Público',
-    desc: 'Balanço entre as dívidas e os haveres/ativos financeiros do setor público consolidado (como reservas internacionais), expresso em proporção do PIB.',
-    modulo: 'contas-publicas.html',
-    moduloNome: 'Contas Públicas & Dívida'
+    id: '07', cat: 'fiscal', catNome: 'Contas Públicas & IDH',
+    titulo: 'Carga Tributária & IDH', sigla: 'Sociofiscal / PNUD',
+    definicao: 'A carga tributária mede o peso dos impostos na economia; o IDH resume longevidade, educação e renda em um índice de 0 a 1.',
+    naPratica: 'Cruzar tributos com IDH permite avaliar como a arrecadação se traduz em condições de vida entre regiões.',
+    formula: 'Carga Tributária (%) = (Tributos Arrecadados ÷ PIB) × 100',
+    link: 'imposto-idh.html', linkTexto: 'Cruzar Impostos & IDH'
   },
   {
-    cat: 'Contas Públicas',
-    sigla: 'NFSP',
-    titulo: 'Resultado Primário e Resultado Nominal',
-    desc: 'O resultado primário compara receitas e despesas não financeiras (exclui juros da dívida); superávit indica economia para abater dívida, e déficit indica o oposto. O nominal inclui os juros.',
-    modulo: 'contas-publicas.html',
-    moduloNome: 'Contas Públicas & Dívida'
+    id: '08', cat: 'monetario', catNome: 'Inflação & Juros',
+    titulo: 'IPCA (Inflação Oficial)', sigla: 'IBGE / BCB SGS 433',
+    definicao: 'Mede a variação mensal de preços de uma cesta de consumo das famílias urbanas (1 a 40 salários mínimos) e baliza a meta de inflação.',
+    naPratica: 'Mostra quanto o custo de vida subiu no mês ou em 12 meses e serve de base para corrigir valores e calcular ganho real.',
+    formula: 'Acumulado (%) = [∏(1 + taxa_mensal/100) − 1] × 100',
+    link: 'inflacao.html', linkTexto: 'Abrir Correção & IPCA'
   },
   {
-    cat: 'Juros & Câmbio',
-    sigla: 'SELIC',
-    titulo: 'Taxa Básica de Juros & Juro Real',
-    desc: 'A Selic meta é o instrumento central de política monetária do Banco Central. O juro real desconta a inflação (IPCA) para mostrar o ganho efetivo acima da perda de poder de compra.',
-    modulo: 'simulador-selic.html',
-    moduloNome: 'Simulador Selic & Juros'
+    id: '09', cat: 'monetario', catNome: 'Inflação & Juros',
+    titulo: 'IGP-M (Índice Geral de Preços — Mercado)', sigla: 'FGV / BCB SGS 189',
+    definicao: 'Composto por preços ao produtor/atacado (60%), consumidor (30%) e construção civil (10%).',
+    naPratica: 'Por ter forte peso no atacado e em commodities, costuma oscilar mais que o IPCA em movimentos bruscos de câmbio.',
+    formula: 'IGP-M = 0,60 × IPA + 0,30 × IPC + 0,10 × INCC',
+    link: 'inflacao.html', linkTexto: 'Comparar IPCA × IGP-M'
   },
   {
-    cat: 'Juros & Câmbio',
-    sigla: 'SPREAD',
-    titulo: 'Taxa Comercial vs. Spread e IOF',
-    desc: 'A taxa comercial é a referência interbancária da moeda. Na prática, operações de câmbio podem incluir IOF e spread cobrado pelo intermediário financeiro.',
-    modulo: 'cambio.html',
-    moduloNome: 'Conversor de Moedas'
+    id: '10', cat: 'monetario', catNome: 'Inflação & Juros',
+    titulo: 'Taxa Selic & Juro Real', sigla: 'COPOM / BCB SGS',
+    definicao: 'A Selic é a taxa básica de juros da economia. O juro real é o rendimento que sobra após descontar a inflação.',
+    naPratica: 'Se um título rende acima da inflação (IPCA), o poder de compra cresce; se rende abaixo, há perda real.',
+    formula: 'Juro Real = [(1 + Juro Nominal) ÷ (1 + Inflação)] − 1',
+    link: 'simulador-selic.html', linkTexto: 'Simular Selic & Renda Fixa'
   },
   {
-    cat: 'Agronegócio',
-    sigla: 'PAM',
-    titulo: 'Pesquisa Agrícola Municipal & Rendimento',
-    desc: 'Levantamento anual do IBGE (SIDRA 5457) sobre área colhida, quantidade produzida e valor da produção das lavouras. O rendimento médio relaciona produção e área colhida (kg/ha).',
-    modulo: 'agro.html',
-    moduloNome: 'Agronegócio Brasileiro'
+    id: '11', cat: 'cambio', catNome: 'Câmbio & Global',
+    titulo: 'Taxa de Câmbio, Spread e IOF', sigla: 'Moedas & Global',
+    definicao: 'Preço de uma moeda em termos de outra. Em operações reais, o custo final pode incluir IOF e spread cobrado pela instituição.',
+    naPratica: 'Afeta importações, viagens, inflação de bens transacionáveis e receita de exportadores.',
+    formula: 'Valor na Moeda Destino = Valor na Origem × Taxa de Câmbio',
+    link: 'cambio.html', linkTexto: 'Abrir Conversor Cambial'
+  },
+  {
+    id: '12', cat: 'agro', catNome: 'Agronegócio',
+    titulo: 'Safra, Área Colhida & Rendimento Médio', sigla: 'IBGE PAM (SIDRA 5457)',
+    definicao: 'A produção mede o volume colhido (toneladas), a área colhida indica a extensão efetivamente colhida (ha) e o rendimento mede a produtividade por hectare.',
+    naPratica: 'Permite comparar se o crescimento de uma cultura veio de expansão de área ou de maior produtividade na lavoura.',
+    formula: 'Rendimento Médio (kg/ha) = (Produção em kg) ÷ (Área Colhida em ha)',
+    link: 'agro.html', linkTexto: 'Explorar Agronegócio'
   }
 ];
 
-const CATS = ['Todos', 'Contas Nacionais', 'Inflação & Preços', 'Contas Públicas', 'Juros & Câmbio', 'Social & Tributário', 'Agronegócio'];
-let catSel = 'Todos';
+let catAtual = 'todos';
 
 function toggleDropdownMenu() { $('dropdownMenu').classList.toggle('hidden'); }
 window.addEventListener('click', e => {
@@ -267,40 +393,84 @@ function aplicarTema(tema) {
   }
 }
 
-function renderCats() {
-  $('btnsCat').innerHTML = CATS.map(c => {
-    const on = c === catSel;
-    return `<button type="button" onclick="catSel='${c}'; renderCats(); renderizarTermos();"
-      class="px-3 py-1 rounded-md text-xs font-semibold border transition cursor-pointer ${on ? 'din-btn border-transparent' : 'din-secondary-bg din-border din-text-muted hover:din-text-main'}">${c}</button>`;
+function renderBotoesCategoria() {
+  $('btnsCat').innerHTML = CATEGORIAS.map(c => {
+    const qtd = c.key === 'todos' ? TERMOS.length : TERMOS.filter(t => t.cat === c.key).length;
+    const on = c.key === catAtual;
+    return `<button type="button" onclick="selecionarCategoria('${c.key}')"
+      class="px-3.5 py-2 rounded-xl text-xs transition shrink-0 cursor-pointer ${on ? 'din-btn' : 'din-secondary-bg border din-border din-text-muted hover:din-text-main'}">${c.label} (${qtd})</button>`;
   }).join('');
 }
 
-function renderizarTermos() {
-  const q = ($('inpBuscaTermo').value || '').trim().toLowerCase();
-  const lista = TERMOS.filter(t => {
-    const okCat = catSel === 'Todos' || t.cat === catSel;
-    const okBusca = !q || t.titulo.toLowerCase().includes(q) || t.sigla.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q);
+function selecionarCategoria(cat) {
+  catAtual = cat;
+  renderBotoesCategoria();
+  filtrarGlossario();
+}
+
+function filtrarGlossario() {
+  const q = ($('inputBuscaGlossario').value || '').trim().toLowerCase();
+  const lista = TERMOS.filter(item => {
+    const okCat = catAtual === 'todos' || item.cat === catAtual;
+    const okBusca = !q
+      || item.titulo.toLowerCase().includes(q)
+      || item.sigla.toLowerCase().includes(q)
+      || item.definicao.toLowerCase().includes(q)
+      || item.naPratica.toLowerCase().includes(q);
     return okCat && okBusca;
   });
 
+  $('contadorTermos').textContent = `Exibindo ${lista.length} ${lista.length === 1 ? 'conceito' : 'conceitos'}`;
+
   if (!lista.length) {
-    $('gridTermos').innerHTML = `<p class="text-xs din-text-muted col-span-full py-8 text-center">Nenhum termo encontrado para "${q}".</p>`;
+    $('gridGlossario').innerHTML = `
+      <div class="md:col-span-2 din-card-bg border din-border rounded-2xl p-8 text-center space-y-2">
+        <p class="text-sm font-bold din-text-main">Nenhum termo encontrado para "${q}"</p>
+        <p class="text-xs din-text-muted">Tente buscar por PIB, DBGG, DLSP, IPCA, IGP-M, Selic, Câmbio ou Safra.</p>
+      </div>`;
     return;
   }
 
-  $('gridTermos').innerHTML = lista.map(t => `
-    <article class="din-card-bg border din-border rounded-2xl p-5 shadow-sm flex flex-col justify-between space-y-4">
-      <div class="space-y-2.5">
-        <div class="flex items-center justify-between gap-2">
-          <span class="text-[10px] font-bold uppercase tracking-wider din-green">${t.cat}</span>
-          <span class="text-[11px] font-mono font-bold px-2 py-0.5 rounded din-secondary-bg border din-border din-text-main">${t.sigla}</span>
+  $('gridGlossario').innerHTML = lista.map(item => `
+    <article class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover">
+      <div class="space-y-4">
+        <div class="flex items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl din-icon-box flex items-center justify-center font-mono text-xs font-extrabold shrink-0">
+              ${item.id}
+            </div>
+            <div>
+              <span class="text-[10px] font-bold uppercase tracking-wider din-green block">${item.catNome}</span>
+              <h2 class="text-base sm:text-lg font-bold din-text-main leading-snug">${item.titulo}</h2>
+            </div>
+          </div>
+          <span class="text-[11px] font-mono px-2.5 py-1 rounded din-secondary-bg border din-border din-text-muted shrink-0">
+            ${item.sigla}
+          </span>
         </div>
-        <h2 class="text-base font-bold din-text-main">${t.titulo}</h2>
-        <p class="text-xs din-text-muted leading-relaxed">${t.desc}</p>
+
+        <p class="text-xs sm:text-sm din-text-muted leading-relaxed">${item.definicao}</p>
+
+        <div class="din-secondary-bg border din-border rounded-xl p-3.5 space-y-2 text-xs">
+          <div>
+            <span class="font-bold din-text-main uppercase tracking-wider text-[10px] block">Como ler na prática:</span>
+            <p class="din-text-muted mt-0.5 leading-relaxed">${item.naPratica}</p>
+          </div>
+          <div class="pt-2 border-t din-border">
+            <span class="font-bold din-text-main uppercase tracking-wider text-[10px] block">Base / Fórmula:</span>
+            <code class="font-mono text-[11px] din-green block mt-0.5">${item.formula}</code>
+          </div>
+        </div>
       </div>
-      <div class="pt-3 border-t din-border flex items-center justify-between text-xs">
-        <span class="din-text-muted">Aplicado em:</span>
-        <a href="${t.modulo}" class="din-green font-semibold hover:underline">${t.moduloNome} →</a>
+
+      <div class="pt-4 mt-5 border-t din-border flex items-center justify-between">
+        <span class="text-xs din-text-muted">Aplicação no terminal</span>
+        <a href="${item.link}" class="din-green text-xs font-bold inline-flex items-center gap-1.5 hover:opacity-80 transition">
+          <span>${item.linkTexto}</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+          </svg>
+        </a>
       </div>
     </article>`).join('');
 }
@@ -309,8 +479,8 @@ window.onload = () => {
   let temaSalvo = 'light';
   try { temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light'; } catch {}
   aplicarTema(temaSalvo === 'dark' ? 'dark' : 'light');
-  renderCats();
-  renderizarTermos();
+  renderBotoesCategoria();
+  filtrarGlossario();
 };
 </script>
 </body>
