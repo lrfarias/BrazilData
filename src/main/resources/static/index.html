@@ -300,12 +300,12 @@
 
                         <!-- Contador Dinâmico de Impostos -->
                         <div class="din-secondary-bg border din-border rounded-xl p-4">
-                            <span class="text-[11px] font-semibold uppercase tracking-wider din-text-muted block">Tributos Arrecadados no Brasil (Acumulado no Ano)</span>
+                            <span class="text-[11px] font-semibold uppercase tracking-wider din-text-muted block">Tributos Arrecadados no Brasil (Projeção Linear no Ano)</span>
                             <p id="contadorImpostoAoVivo" class="text-xl sm:text-2xl font-mono font-extrabold din-red mt-1 tracking-tight">
                                 R$ 0.000.000.000,00
                             </p>
                             <div class="flex items-center justify-between text-[11px] din-text-muted mt-2 pt-2 border-t din-border">
-                                <span>Ritmo médio: <strong class="din-text-main">~R$ 95.400 / segundo</strong></span>
+                                <span>Ritmo estimado: <strong id="ritmoPorSegundo" class="din-text-main">~R$ 114.155 / segundo</strong></span>
                                 <span id="impostoDesdeQueAbriu" class="din-green font-mono font-bold">+R$ 0 nesta visita</span>
                             </div>
                         </div>
@@ -903,12 +903,21 @@
         }
 
         function iniciarImpostometroAoVivo() {
-            const metaAnualTributos = 3010000000000;
-            const porSegundo = metaAnualTributos / (365 * 24 * 3600);
+            const metaAnualTributos = 3600000000000; // Projeção anual de referência: ~R$ 3,60 trilhões
+            const agoraInit = new Date();
+            const anoAtual = agoraInit.getFullYear();
+            const inicioAno = new Date(anoAtual, 0, 1);
+            const fimAno = new Date(anoAtual + 1, 0, 1);
+            const segundosTotaisAno = (fimAno - inicioAno) / 1000;
+            const porSegundo = metaAnualTributos / segundosTotaisAno;
+
+            const elRitmo = document.getElementById('ritmoPorSegundo');
+            if (elRitmo) {
+                elRitmo.innerText = '~R$ ' + Math.round(porSegundo).toLocaleString('pt-BR') + ' / segundo';
+            }
 
             setInterval(() => {
                 const agora = new Date();
-                const inicioAno = new Date(agora.getFullYear(), 0, 1);
                 const segundosNoAno = (agora - inicioAno) / 1000;
                 const acumuladoAno = segundosNoAno * porSegundo;
 
