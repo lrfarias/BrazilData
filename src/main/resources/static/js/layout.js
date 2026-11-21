@@ -31,9 +31,6 @@ th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}`;
   } else if (/contas-publicas|divida|fiscal|tesouro/.test(ctxStr)) {
     autoBadge = 'TESOURO · BCB';
     autoSub = 'Contas Públicas, Dívida/PIB & Trajetória Fiscal';
-  } else if (/bovespa|bolsa|b3|acoes/.test(ctxStr)) {
-    autoBadge = 'B3 · MERCADO';
-    autoSub = 'Ibovespa e Principais Ações Brasileiras';
   } else if (/agro|safra|pam/.test(ctxStr)) {
     autoBadge = 'IBGE PAM · AGRO';
     autoSub = 'Produção Agrícola, Safras e Vocação Regional';
@@ -76,15 +73,14 @@ th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}`;
     ['mundo', '05. Mapa-Múndi & Global'],
     ['inflacao', '06. Inflação & Poder de Compra'],
     ['contas-publicas', '07. Contas Públicas & Dívida'],
-    ['bovespa', '08. Bolsa de Valores (B3)'],
-    ['agro', '09. Agronegócio Brasileiro']
+    ['agro', '08. Agronegócio Brasileiro']
   ];
 
   const path = location.pathname.toLowerCase().replace(/\.html$/, '').replace(/\/$/, '') || '/';
   const isAtivo = (slug, label) => {
     if (slug === 'index' && (path === '/' || path === '/index')) return true;
     if (path === '/' + slug) return true;
-    if (label === 'Economia' && /economia|terminal-pib|imposto|simulador|selic|moeda|cambio|mundo|infla|contas-publicas|bovespa|agro/.test(path)) return true;
+    if (label === 'Economia' && /economia|terminal-pib|imposto|simulador|selic|moeda|cambio|mundo|infla|contas-publicas|agro/.test(path)) return true;
     return false;
   };
   const links = f => nav.map(([s, t]) => `<a href="${rota(s)}" class="${f(isAtivo(s, t))}">${t}</a>`).join('');
@@ -95,7 +91,6 @@ th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}`;
 
   const hdr = `<header class="sticky top-0 z-50 border-b din-border din-card-bg">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
-    <!-- Esquerda: Logo + Marca + Selo + Subtítulo -->
     <a href="${rota('index')}" class="flex items-center gap-3 min-w-0 group">
       <div class="w-10 h-10 shrink-0 rounded-lg din-secondary-bg border din-border flex items-center justify-center shadow-sm overflow-hidden group-hover:border-[#16C784] transition-colors duration-200">
         <img src="${logoSrc}" alt="BrasilEmDados" class="w-8 h-8 object-contain transition-transform duration-200 group-hover:scale-110">
@@ -111,12 +106,10 @@ th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}`;
       </div>
     </a>
 
-    <!-- Centro: Navegação -->
     <nav class="hidden lg:flex gap-1 din-secondary-bg p-1 rounded-xl border din-border text-xs font-semibold">
       ${links(on => 'px-4 py-1.5 rounded-lg transition ' + (on ? 'din-card-bg din-text-main border din-border shadow-sm' : 'din-text-muted hover:din-text-main'))}
     </nav>
 
-    <!-- Direita: Base (quando existir) + Modo Tela Cheia + Menu Ferramentas -->
     <div class="flex items-center gap-2">
       <div id="bd-base-slot" class="hidden items-center gap-1.5 px-3 h-9 rounded-lg din-secondary-bg border din-border text-xs">
         <span class="din-text-muted font-medium">Base:</span>
@@ -194,7 +187,6 @@ th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}`;
   const elFtr = document.getElementById('bd-footer');
   if (elFtr) elFtr.innerHTML = ftr;
 
-  // Se a página possuir <select id="ano">, encaixa automaticamente no "Base: 2021 v" do cabeçalho
   const selAno = document.getElementById('ano');
   const slot = document.getElementById('bd-base-slot');
   if (selAno && slot) {
@@ -206,7 +198,6 @@ th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}`;
     if (pai && pai.tagName === 'LABEL') pai.classList.add('hidden');
   }
 
-  // Tema claro/escuro com switch
   const K = 'brasil_em_dados_tema', H = document.documentElement;
   const syncToggle = dark => {
     const tr = document.getElementById('bdToggleTrack'), dot = document.getElementById('bdToggleDot');
@@ -231,14 +222,12 @@ th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}`;
     };
   }
 
-  // Menu Ferramentas
   const btnM = document.getElementById('bdMenuBtn'), menu = document.getElementById('bdMenu');
   if (btnM && menu) {
     btnM.onclick = e => { e.stopPropagation(); menu.classList.toggle('hidden'); };
     document.addEventListener('click', e => { if (!menu.contains(e.target) && e.target !== btnM) menu.classList.add('hidden'); });
   }
 
-  // Modo Tela Cheia
   const btnF = document.getElementById('bdFull'), txtF = document.getElementById('bdFullTxt');
   if (btnF && txtF) {
     btnF.onclick = () => {
@@ -249,6 +238,39 @@ th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}`;
       txtF.textContent = document.fullscreenElement ? 'Sair Tela Cheia' : 'Modo Tela Cheia';
     });
   }
+
+  // Tooltips rápidos do Glossário: basta usar data-glossario="SIGLA" em qualquer span/título
+  const DICIONARIO = {
+    PIB: 'Soma de todos os bens e serviços finais produzidos em um território em um período.',
+    VAB: 'Valor que cada setor (Agro, Indústria, Serviços) agrega aos insumos antes dos impostos.',
+    IDH: 'Índice de Desenvolvimento Humano (0 a 1): combina saúde, educação e renda.',
+    IPCA: 'Inflação oficial do Brasil (IBGE), referência para a meta do Banco Central.',
+    'IGP-M': 'Índice da FGV com peso de 60% no atacado, sensível ao câmbio e commodities.',
+    DBGG: 'Dívida Bruta do Governo Geral em % do PIB, sem descontar ativos financeiros.',
+    DLSP: 'Dívida Líquida do Setor Público: desconta ativos como reservas internacionais.',
+    SELIC: 'Taxa básica de juros definida pelo Copom/Banco Central.',
+    SPREAD: 'Diferença cobrada pelo intermediário sobre a taxa comercial de câmbio.',
+    PTAX: 'Taxa de referência do Dólar calculada diariamente pelo Banco Central.',
+    PAM: 'Pesquisa Agrícola Municipal do IBGE (produção, área colhida e rendimento).'
+  };
+
+  document.querySelectorAll('[data-glossario]').forEach(el => {
+    const chave = (el.dataset.glossario || '').toUpperCase();
+    const texto = DICIONARIO[chave];
+    if (!texto || el.dataset.tooltipInit) return;
+    el.dataset.tooltipInit = '1';
+    const wrap = document.createElement('span');
+    wrap.className = 'relative inline-flex items-center ml-1 group align-middle';
+    wrap.innerHTML = `
+      <a href="${rota('glossario')}" title="${texto}"
+        class="w-4 h-4 rounded-full din-secondary-bg border din-border text-[10px] font-bold din-text-muted hover:din-green hover:border-[#16C784] inline-flex items-center justify-center transition">?</a>
+      <span class="pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 p-2.5 rounded-xl din-card-bg border din-border shadow-xl text-[11px] font-normal din-text-main leading-snug z-50">
+        <strong class="din-green block mb-0.5">${chave}</strong>
+        ${texto}
+        <span class="block mt-1 text-[10px] din-text-muted">Clique para abrir no Glossário →</span>
+      </span>`;
+    el.appendChild(wrap);
+  });
 
   window.BD = {
     rota,
