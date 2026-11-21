@@ -6,9 +6,9 @@
     <title>BrasilEmDados — Contas Regionais, PIB & Vocação Setorial</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Leaflet CSS & JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Leaflet CSS & JS (jsDelivr) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
@@ -206,7 +206,7 @@
                         <span>Maior</span>
                     </div>
 
-                    <div id="map" class="border din-border"></div>
+                    <div id="map" class="w-full h-[460px] rounded-lg border din-border din-secondary-bg" style="min-height: 460px;"></div>
                 </div>
 
                 <!-- Card Híbrido: Tabela Ordenável vs Gráfico de Pizza -->
@@ -474,6 +474,17 @@
             "AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG",
             "PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"
         ];
+
+        const IBGE_UF_MAP = {
+            '11':['RO','Rondônia'],'12':['AC','Acre'],'13':['AM','Amazonas'],'14':['RR','Roraima'],
+            '15':['PA','Pará'],'16':['AP','Amapá'],'17':['TO','Tocantins'],'21':['MA','Maranhão'],
+            '22':['PI','Piauí'],'23':['CE','Ceará'],'24':['RN','Rio Grande do Norte'],'25':['PB','Paraíba'],
+            '26':['PE','Pernambuco'],'27':['AL','Alagoas'],'28':['SE','Sergipe'],'29':['BA','Bahia'],
+            '31':['MG','Minas Gerais'],'32':['ES','Espírito Santo'],'33':['RJ','Rio de Janeiro'],
+            '35':['SP','São Paulo'],'41':['PR','Paraná'],'42':['SC','Santa Catarina'],
+            '43':['RS','Rio Grande do Sul'],'50':['MS','Mato Grosso do Sul'],'51':['MT','Mato Grosso'],
+            '52':['GO','Goiás'],'53':['DF','Distrito Federal']
+        };
 
         const COMPOSICAO_SETORIAL_UF = {
             SP: { agro: 2,  ind: 22, serv: 67, adm: 9,  vocacao: 'Polo Financeiro, Serviços e Tecnologia' },
@@ -934,15 +945,48 @@
         }
 
         async function iniciarMapa() {
+            const elMap = document.getElementById('map');
+            if (typeof L === 'undefined') {
+                elMap.innerHTML = '<p class="p-6 text-xs din-red">Biblioteca do mapa (Leaflet) não carregou.</p>';
+                return;
+            }
+
             const map = L.map('map', { zoomControl: true }).setView([-14.8, -52.0], 4);
-            const geojsonUrl = 'https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson';
-            const resp = await fetch(geojsonUrl);
-            const geojsonData = await resp.json();
+            const urls = [
+                'https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson',
+                'https://servicodados.ibge.gov.br/api/v3/malhas/paises/BR?formato=application/vnd.geo+json&qualidade=minima&intrarregiao=UF'
+            ];
+
+            let geojsonData = null;
+            for (const url of urls) {
+                try {
+                    const resp = await fetch(url);
+                    if (resp.ok) {
+                        geojsonData = await resp.json();
+                        break;
+                    }
+                } catch (err) {
+                    console.warn('Falha ao carregar malha de:', url, err);
+                }
+            }
+
+            if (!geojsonData || !geojsonData.features) {
+                elMap.innerHTML = '<p class="p-6 text-xs din-red">Não foi possível carregar a malha geográfica do Brasil.</p>';
+                return;
+            }
+
+            geojsonData.features.forEach(f => {
+                const p = f.properties || (f.properties = {});
+                if (!p.sigla && p.codarea && IBGE_UF_MAP[String(p.codarea)]) {
+                    p.sigla = IBGE_UF_MAP[String(p.codarea)][0];
+                    p.name = IBGE_UF_MAP[String(p.codarea)][1];
+                }
+            });
 
             geojsonLayer = L.geoJson(geojsonData, {
                 style: estiloMapa,
                 onEachFeature: function (feature, layer) {
-                    const nome = feature.properties.name;
+                    const nome = feature.properties.name || feature.properties.sigla;
                     const sigla = feature.properties.sigla;
 
                     layer.bindTooltip(montarHtmlTooltip(sigla, nome), {
@@ -966,6 +1010,9 @@
                     });
                 }
             }).addTo(map);
+
+            map.fitBounds(geojsonLayer.getBounds(), { padding: [12, 12] });
+            setTimeout(() => map.invalidateSize(), 150);
         }
 
         function exibirDetalhesEstado(sigla, nomeOpcional) {
