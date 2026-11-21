@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contas Públicas, Dívida & Trajetória Fiscal — BrasilEmDados</title>
+<meta name="description" content="Acompanhe a Dívida Bruta (DBGG/PIB), Dívida Líquida (DLSP/PIB), Resultado Primário e Juros Nominais oficiais do Banco Central e simule a trajetória da dívida pública em 10 anos.">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
+<link rel="stylesheet" href="css/theme.css">
+</head>
+<body class="min-h-screen font-sans flex flex-col justify-between">
+<div>
+  <!-- Cabeçalho Institucional -->
+  <header class="sticky top-0 z-50 border-b din-border din-bg-main/95 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="flex items-center justify-between h-16 gap-4">
+        <div class="flex items-center gap-3">
+          <a href="index.html" class="flex items-center gap-3 group">
+            <div class="w-10 h-10 rounded-lg din-secondary-bg border din-border flex items-center justify-center shadow-sm overflow-hidden group-hover:border-[#16C784] transition-colors duration-200">
+              <img src="download.png" alt="BrasilEmDados" class="w-8 h-8 object-contain transition-transform duration-200 group-hover:scale-110">
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-lg font-extrabold tracking-tight din-text-main">BrasilEmDados</span>
+                <span class="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono uppercase px-2 py-0.5 rounded din-secondary-bg border din-border din-text-muted">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span> BCB · FISCAL
+                </span>
+              </div>
+              <p class="text-[11px] din-text-muted hidden xl:block">Contas Públicas, Dívida/PIB & Trajetória Fiscal</p>
+            </div>
+          </a>
+        </div>
+
+        <nav class="hidden md:flex items-center gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+          <a href="index.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Início</a>
+          <a href="glossario.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Glossário</a>
+          <a href="economia.html" class="px-3.5 py-1.5 rounded-md din-card-bg din-text-main shadow-sm border din-border transition">Economia</a>
+          <a href="sobre.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Sobre</a>
+          <a href="contato.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Contato</a>
+        </nav>
+
+        <div class="flex items-center gap-2.5 relative">
+          <button onclick="alternarModoApresentacao()" id="btnModoApresentacao" class="hidden lg:inline-flex items-center gap-1.5 din-secondary-bg hover:opacity-80 border din-border din-text-main text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer">
+            <svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line>
+              <line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line>
+            </svg>
+            <span>Modo Tela Cheia</span>
+          </button>
+
+          <button id="menuDropdownBtn" onclick="toggleDropdownMenu()" title="Preferências e Ferramentas" class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center hover:border-[#16C784] transition cursor-pointer">
+            <svg class="w-4 h-4 din-text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line>
+              <line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line>
+              <line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line>
+              <line x1="17" y1="16" x2="23" y2="16"></line>
+            </svg>
+          </button>
+
+          <div id="dropdownMenu" class="hidden absolute right-0 top-11 w-64 rounded-xl din-card-bg border din-border shadow-2xl py-1.5 z-50">
+            <div class="px-4 py-1.5 border-b din-border">
+              <p class="text-[10px] font-bold uppercase tracking-wider din-text-muted">Ferramentas do Terminal</p>
+            </div>
+            <a href="economia.html" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+              <svg class="w-4 h-4 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+              Voltar ao Hub Economia
+            </a>
+            <button onclick="exportarCSV(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left cursor-pointer">
+              <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              Exportar Simulação (CSV)
+            </button>
+            <button onclick="window.print(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left cursor-pointer">
+              <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              Exportar Relatório (PDF)
+            </button>
+            <div class="my-1 border-t din-border"></div>
+            <div class="flex items-center justify-between px-4 py-2.5 text-xs font-medium din-text-main cursor-pointer select-none" onclick="alternarDarkLight()">
+              <div class="flex items-center gap-3">
+                <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                <span>Modo Escuro (Dark)</span>
+              </div>
+              <div id="switchBg" class="w-10 h-5 rounded-full relative transition-colors duration-200 p-0.5 flex items-center" style="background-color: var(--border-col);">
+                <div id="switchBall" class="w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-200"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="flex md:hidden items-center gap-5 h-10 overflow-x-auto no-scrollbar text-xs font-semibold border-t din-border">
+        <a href="index.html" class="din-text-muted hover:din-text-main h-full flex items-center">Início</a>
+        <a href="glossario.html" class="din-text-muted hover:din-text-main h-full flex items-center">Glossário</a>
+        <a href="economia.html" class="din-green border-b-2 border-[#16C784] h-full flex items-center">Economia</a>
+        <a href="sobre.html" class="din-text-muted hover:din-text-main h-full flex items-center">Sobre</a>
+        <a href="contato.html" class="din-text-muted hover:din-text-main h-full flex items-center">Contato</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Breadcrumb + Status Oficial -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex flex-wrap items-center justify-between gap-2 text-xs ocultar-em-presentation">
+    <div class="flex items-center gap-2 din-text-muted">
+      <a href="economia.html" class="hover:din-green font-semibold inline-flex items-center gap-1 transition">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        Economia e indicadores
+      </a>
+      <span>/</span>
+      <span class="din-text-main font-bold">Contas Públicas, Dívida & Trajetória Fiscal</span>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2">
+      <span id="statusFiscal" class="inline-flex items-center gap-1.5 text-[11px] din-text-muted">
+        <span class="w-2 h-2 rounded-full bg-[#16C784] animate-pulse"></span>
+        <span>Sincronizando estatísticas fiscais do Banco Central...</span>
+      </span>
+      <button type="button" onclick="citarFiscalABNT(this)" class="px-2.5 py-1 rounded-md text-[11px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
+        Citar (ABNT)
+      </button>
+    </div>
+  </div>
+
+  <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-5 space-y-6">
+
+    <!-- 1. KPIs FISCAIS OFICIAIS (BCB SGS) -->
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 ocultar-em-presentation">
+      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
+        <span class="text-xs din-text-muted uppercase font-semibold">Dívida Bruta (DBGG / PIB)</span>
+        <p id="kDbgg" class="text-xl font-bold din-red mt-1">—</p>
+        <span id="kDbggRef" class="text-[11px] din-text-muted">BCB Oficial (SGS 13762)</span>
+      </div>
+      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
+        <span class="text-xs din-text-muted uppercase font-semibold">Dívida Líquida (DLSP / PIB)</span>
+        <p id="kDlsp" class="text-xl font-bold din-text-main mt-1">—</p>
+        <span id="kDlspRef" class="text-[11px] din-text-muted">BCB Oficial (SGS 4513)</span>
+      </div>
+      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
+        <span class="text-xs din-text-muted uppercase font-semibold">Resultado Primário (12m)</span>
+        <p id="kPrim" class="text-xl font-bold din-text-main mt-1">—</p>
+        <span id="kPrimRef" class="text-[11px] din-text-muted">BCB Oficial (SGS 5793)</span>
+      </div>
+      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
+        <span class="text-xs din-text-muted uppercase font-semibold">Juros Nominais (12m)</span>
+        <p id="kJuros" class="text-xl font-bold din-red mt-1">—</p>
+        <span id="kJurosRef" class="text-[11px] din-text-muted">BCB Oficial (SGS 5760)</span>
+      </div>
+    </section>
+
+    <!-- 2. SIMULADOR DE TRAJETÓRIA DA DÍVIDA/PIB EM 10 ANOS -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- Controles do Simulador -->
+      <div class="lg:col-span-4 din-card-bg border din-border rounded-lg p-5 shadow-sm space-y-4 h-fit">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <span class="text-[11px] font-semibold uppercase tracking-wider din-green">Simulação Paramétrica</span>
+            <h1 class="text-lg font-extrabold din-text-main mt-0.5">Trajetória Dívida / PIB</h1>
+          </div>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded din-secondary-bg border din-border din-text-muted shrink-0">10 anos</span>
+        </div>
+
+        <p class="text-xs din-text-muted">Ajuste juro real, crescimento do PIB e resultado primário para testar se a curva estabiliza ou acelera.</p>
+
+        <!-- Cenários Prontos -->
+        <div class="grid grid-cols-3 gap-1.5 text-[11px] font-semibold">
+          <button id="prBase" type="button" onclick="aplicarCenario('base')" class="py-1.5 px-2 rounded-md din-card-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">Referência</button>
+          <button id="prAjuste" type="button" onclick="aplicarCenario('ajuste')" class="py-1.5 px-2 rounded-md din-secondary-bg border din-border din-text-muted hover:din-text-main transition cursor-pointer">Ajuste Fiscal</button>
+          <button id="prStress" type="button" onclick="aplicarCenario('stress')" class="py-1.5 px-2 rounded-md din-secondary-bg border din-border din-text-muted hover:din-text-main transition cursor-pointer">Estresse</button>
+        </div>
+
+        <div class="space-y-4 pt-1 text-xs">
+          <div>
+            <div class="flex justify-between mb-1">
+              <span class="din-text-muted">Dívida Bruta inicial (% PIB):</span>
+              <strong id="lblD0" class="din-text-main">78,0%</strong>
+            </div>
+            <input id="slD0" type="range" min="40" max="120" step="0.5" value="78" oninput="recalcularTrajetoria()"
+              class="w-full accent-[#16C784] cursor-pointer">
+          </div>
+
+          <div>
+            <div class="flex justify-between mb-1">
+              <span class="din-text-muted">Juro real médio da dívida (% a.a.):</span>
+              <strong id="lblJuro" class="din-red">6,5% a.a.</strong>
+            </div>
+            <input id="slJuro" type="range" min="1" max="12" step="0.25" value="6.5" oninput="recalcularTrajetoria()"
+              class="w-full accent-[#EA3943] cursor-pointer">
+          </div>
+
+          <div>
+            <div class="flex justify-between mb-1">
+              <span class="din-text-muted">Crescimento real do PIB (% a.a.):</span>
+              <strong id="lblPib" class="din-green">2,2% a.a.</strong>
+            </div>
+            <input id="slPib" type="range" min="-2" max="6" step="0.25" value="2.2" oninput="recalcularTrajetoria()"
+              class="w-full accent-[#16C784] cursor-pointer">
+          </div>
+
+          <div>
+            <div class="flex justify-between mb-1">
+              <span class="din-text-muted">Resultado primário (% do PIB):</span>
+              <strong id="lblPrim" class="din-text-main">-0,5%</strong>
+            </div>
+            <input id="slPrim" type="range" min="-3" max="4" step="0.25" value="-0.5" oninput="recalcularTrajetoria()"
+              class="w-full accent-[#16C784] cursor-pointer">
+            <div class="flex justify-between text-[10px] din-text-muted mt-0.5">
+              <span>Déficit (-3%)</span><span>Zero (0%)</span><span>Superávit (+4%)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Diagnóstico Resumido -->
+        <div class="pt-3 border-t din-border space-y-2.5">
+          <div class="din-secondary-bg border din-border rounded-lg p-3 flex items-center justify-between">
+            <div>
+              <span class="text-[11px] din-text-muted block">Dívida / PIB em 10 anos</span>
+              <strong id="resD10" class="text-xl font-extrabold din-red">—</strong>
+            </div>
+            <span id="badgeStatusCurva" class="text-[11px] font-bold px-2.5 py-1 rounded-md din-card-bg border din-border">—</span>
+          </div>
+
+          <div class="din-secondary-bg border din-border rounded-lg p-3">
+            <span class="text-[11px] din-text-muted block">Superávit primário mínimo para estabilizar</span>
+            <strong id="resPrimEstab" class="text-base font-extrabold din-green mt-0.5 block">—</strong>
+            <span id="resGapFiscal" class="text-[10px] din-text-muted block mt-0.5">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráfico de Projeção de 10 Anos -->
+      <div class="lg:col-span-8 din-card-bg border din-border rounded-lg p-5 shadow-sm flex flex-col space-y-4">
+        <div class="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h2 class="text-base font-bold din-text-main">Projeção da Dívida Bruta / PIB (Horizonte de 10 Anos)</h2>
+            <p class="text-xs din-text-muted">Simulação educativa baseada na equação dinâmica de sustentabilidade da dívida pública.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="exportarCSV()" class="px-2.5 py-1 rounded-md text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ CSV</button>
+            <button type="button" onclick="baixarSimuladorPNG()" class="px-2.5 py-1 rounded-md text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ PNG</button>
+          </div>
+        </div>
+
+        <p id="leituraFiscal" class="text-xs din-secondary-bg border din-border rounded-lg p-3 din-text-main leading-relaxed">—</p>
+
+        <div class="relative flex-1 w-full min-h-[300px] sm:min-h-[340px]">
+          <canvas id="grafTrajetoria"></canvas>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t din-border text-[11px] din-text-muted">
+          <span class="inline-flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+            <span>Simulação paramétrica • Ponto inicial oficial: <strong class="din-text-main">Banco Central do Brasil (DBGG · SGS 13762)</strong></span>
+          </span>
+          <button type="button" onclick="citarFiscalABNT(this)" class="underline hover:din-green transition cursor-pointer">Copiar citação ABNT</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. SÉRIES HISTÓRICAS OFICIAIS DO BANCO CENTRAL (2 ABAS) -->
+    <section class="din-card-bg border din-border rounded-lg p-5 shadow-sm space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="inline-flex din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold flex-wrap gap-0.5">
+          <button id="abaDividas" type="button" onclick="setAbaHist('dividas')" class="px-3 py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer">Dívida Bruta vs. Líquida (% PIB)</button>
+          <button id="abaResultado" type="button" onclick="setAbaHist('resultado')" class="px-3 py-1.5 rounded-md din-text-muted hover:din-text-main transition cursor-pointer">Primário, Juros & Nominal (12m)</button>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="inline-flex din-secondary-bg p-0.5 rounded-lg border din-border text-[11px] font-semibold">
+            <button id="h3a" type="button" onclick="setHorizonte(36)" class="px-2.5 py-1 rounded-md din-text-muted cursor-pointer">3a</button>
+            <button id="h5a" type="button" onclick="setHorizonte(60)" class="px-2.5 py-1 rounded-md din-text-muted cursor-pointer">5a</button>
+            <button id="h10a" type="button" onclick="setHorizonte(120)" class="px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border cursor-pointer">10a</button>
+            <button id="hTudo" type="button" onclick="setHorizonte(999)" class="px-2.5 py-1 rounded-md din-text-muted cursor-pointer">Tudo</button>
+          </div>
+          <button type="button" onclick="baixarHistoricoPNG()" class="px-2.5 py-1 rounded-md text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ PNG</button>
+        </div>
+      </div>
+
+      <!-- ABA 1: DBGG vs DLSP -->
+      <div id="viewDividas" class="space-y-3">
+        <p class="text-xs din-text-muted">Evolução mensal oficial da Dívida Bruta do Governo Geral (DBGG, série 13762) e da Dívida Líquida do Setor Público (DLSP, série 4513) em proporção do PIB.</p>
+        <div class="relative w-full h-[320px] sm:h-[360px]"><canvas id="grafDividas"></canvas></div>
+      </div>
+
+      <!-- ABA 2: PRIMÁRIO, JUROS E NOMINAL -->
+      <div id="viewResultado" class="hidden space-y-3">
+        <p class="text-xs din-text-muted">Fluxo acumulado em 12 meses (% do PIB) do Setor Público Consolidado. <strong>Sinal intuitivo:</strong> acima de 0% = superávit; abaixo de 0% = déficit (séries 5793, 5760 e 5727).</p>
+        <div class="relative w-full h-[320px] sm:h-[360px]"><canvas id="grafResultado"></canvas></div>
+      </div>
+
+      <!-- Selo de Fonte Oficial -->
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t din-border text-[11px] din-text-muted">
+        <span class="inline-flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+          <span>Fonte oficial: <strong class="din-text-main">Banco Central do Brasil (Estatísticas Fiscais / SGS)</strong> • Séries 13762, 4513, 5793, 5760 e 5727</span>
+        </span>
+        <button type="button" onclick="citarFiscalABNT(this)" class="underline hover:din-green transition cursor-pointer">Copiar citação ABNT</button>
+      </div>
+    </section>
+
+    <!-- 4. METODOLOGIA & NOTAS FISCAIS -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start ocultar-em-presentation">
+      <details class="lg:col-span-6 din-card-bg border din-border rounded-lg p-4 text-xs din-text-muted">
+        <summary class="font-semibold din-text-main cursor-pointer select-none">Notas metodológicas: DBGG vs. DLSP, sinal da NFSP e equação da dívida</summary>
+        <div class="mt-3 space-y-2 leading-relaxed">
+          <p><strong class="din-text-main">DBGG vs. DLSP:</strong> A <em>Dívida Bruta do Governo Geral</em> (DBGG) soma o passivo total do Governo Federal, Estados e Municípios sem abater reservas internacionais. A <em>Dívida Líquida</em> (DLSP) desconta os ativos financeiros do setor público (como reservas cambiais em dólar).</p>
+          <p><strong class="din-text-main">Convenção de sinal (NFSP):</strong> O Banco Central divulga as séries 5793 (Primário) e 5727 (Nominal) como Necessidade de Financiamento (NFSP), onde valor positivo representa déficit. Aqui o sinal é invertido para facilitar a leitura: <strong>positivo = superávit</strong> e <strong>negativo = déficit</strong>.</p>
+          <p><strong class="din-text-main">Dinâmica da Dívida/PIB:</strong> No simulador de 10 anos, cada ano evolui por <code class="px-1 rounded din-secondary-bg din-text-main">d(t) = d(t-1) × (1 + r) / (1 + g) - s</code>. Para estabilizar a dívida (<code class="px-1 rounded din-secondary-bg din-text-main">d(t) = d(0)</code>), o superávit primário exigido é <code class="px-1 rounded din-secondary-bg din-text-main">s* = d(0) × (r - g) / (1 + g)</code>.</p>
+        </div>
+      </details>
+
+      <p class="lg:col-span-6 text-xs din-text-muted leading-relaxed">
+        <strong class="din-text-main">Abrangência e transparência.</strong> Os gráficos históricos exibem dados oficiais apurados pelo Departamento de Estatísticas do Banco Central do Brasil (critério "abaixo da linha") para o Setor Público Consolidado (União, Estados, Municípios e Estatais não-financeiras, exceto Petrobras e Eletrobras). O painel superior de 10 anos é uma simulação educativa paramétrica para estudo de sustentabilidade fiscal.
+      </p>
+    </section>
+  </main>
+</div>
+
+<!-- Rodapé Institucional -->
+<footer class="border-t din-border din-card-bg py-6 text-xs din-text-muted mt-8 ocultar-em-presentation">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+    <div class="flex items-center gap-2">
+      <span class="font-bold din-text-main">BrasilEmDados</span>
+      <span>•</span>
+      <span>Terminal de Inteligência Econômica e Setorial</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <a href="index.html" class="hover:din-text-main transition">Início</a>
+      <a href="economia.html" class="hover:din-text-main transition">Economia</a>
+      <a href="glossario.html" class="hover:din-text-main transition">Glossário</a>
+      <a href="sobre.html" class="hover:din-text-main transition">Sobre</a>
+      <a href="contato.html" class="hover:din-text-main transition">Contato</a>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/chart-utils.js?v=1"></script>
+<script>
+const $ = id => document.getElementById(id);
+const fmtNum = (v, d = 2) => Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
+const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
+let serieDbgg = [];  // SGS 13762
+let serieDlsp = [];  // SGS 4513
+let seriePrim = [];  // SGS 5793 (invertido: + superávit, - déficit)
+let serieJuros = []; // SGS 5760 (positivo = gasto com juros % PIB)
+let serieNom = [];   // SGS 5727 (invertido: + superávit, - déficit)
+
+let refOficial = { d0: 78.0, prim: -0.5 };
+let ultimaProjecao = null;
+let abaHist = 'dividas';
+let horizonteMeses = 120;
+
+let chartTrajetoria = null, chartDividas = null, chartResultado = null;
+
+// Cabeçalho e Tema
+function toggleDropdownMenu() { $('dropdownMenu').classList.toggle('hidden'); }
+window.addEventListener('click', e => {
+  const btn = $('menuDropdownBtn'), menu = $('dropdownMenu');
+  if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) menu.classList.add('hidden');
+});
+
+function alternarDarkLight() {
+  const novo = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  aplicarTema(novo);
+  try { localStorage.setItem('brasil_em_dados_tema', novo); } catch {}
+}
+
+function aplicarTema(tema) {
+  const html = document.documentElement, bg = $('switchBg'), ball = $('switchBall');
+  if (tema === 'dark') {
+    html.setAttribute('data-theme', 'dark');
+    if (bg && ball) { bg.style.backgroundColor = '#16C784'; ball.classList.add('translate-x-5'); }
+  } else {
+    html.removeAttribute('data-theme');
+    if (bg && ball) { bg.style.backgroundColor = '#E5E7EB'; ball.classList.remove('translate-x-5'); }
+  }
+  recalcularTrajetoria();
+  if (serieDbgg.length) desenharHistorico();
+}
+
+function alternarModoApresentacao() {
+  document.body.classList.toggle('modo-apresentacao');
+  const ativo = document.body.classList.contains('modo-apresentacao');
+  $('btnModoApresentacao').innerHTML = ativo
+    ? '<span>✕ Sair da Tela Cheia</span>'
+    : `<svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect><line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line><line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line></svg><span>Modo Tela Cheia</span>`;
+}
+
+// Busca no proxy Spring Boot (/api/bcb/serie/...) com fallback automático para a API oficial do BCB
+async function buscarSgs(codigo, ultimos = 216, inverterSinal = false) {
+  const urls = [
+    `/api/bcb/serie/${codigo}?ultimos=${ultimos}`,
+    `https://api.bcb.gov.br/dados/serie/bcdata.sgs.${codigo}/dados/ultimos/${ultimos}?formato=json`
+  ];
+  for (const url of urls) {
+    try {
+      const r = await fetch(url);
+      if (!r.ok) continue;
+      const json = await r.json();
+      if (Array.isArray(json) && json.length > 0) {
+        return json.map(item => {
+          const [dd, mm, yyyy] = String(item.data).split('/');
+          const raw = parseFloat(String(item.valor).replace(',', '.'));
+          return {
+            ym: `${yyyy}-${mm}`,
+            label: `${MESES[Number(mm) - 1]}/${yyyy.slice(2)}`,
+            data: item.data,
+            v: inverterSinal ? -raw : raw
+          };
+        }).filter(x => !Number.isNaN(x.v));
+      }
+    } catch {}
+  }
+  throw new Error(`Erro na série SGS ${codigo}`);
+}
+
+// Presets do Simulador de Trajetória
+function aplicarCenario(tipo) {
+  const on = 'py-1.5 px-2 rounded-md din-card-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer';
+  const off = 'py-1.5 px-2 rounded-md din-secondary-bg border din-border din-text-muted hover:din-text-main transition cursor-pointer';
+  $('prBase').className = tipo === 'base' ? on : off;
+  $('prAjuste').className = tipo === 'ajuste' ? on : off;
+  $('prStress').className = tipo === 'stress' ? on : off;
+
+  $('slD0').value = Math.min(120, Math.max(40, Math.round(refOficial.d0 * 2) / 2));
+
+  if (tipo === 'base') {
+    $('slJuro').value = 6.5;
+    $('slPib').value = 2.25;
+    $('slPrim').value = Math.max(-3, Math.min(4, Math.round(refOficial.prim * 4) / 4));
+  } else if (tipo === 'ajuste') {
+    $('slJuro').value = 4.5;
+    $('slPib').value = 2.75;
+    $('slPrim').value = 1.75;
+  } else if (tipo === 'stress') {
+    $('slJuro').value = 8.5;
+    $('slPib').value = 1.0;
+    $('slPrim').value = -1.5;
+  }
+  recalcularTrajetoria();
+}
+
+// Cálculo da Dinâmica da Dívida / PIB em 10 Anos
+function recalcularTrajetoria() {
+  const d0 = parseFloat($('slD0').value) || 78;
+  const rPct = parseFloat($('slJuro').value) || 0;
+  const gPct = parseFloat($('slPib').value) || 0;
+  const sPct = parseFloat($('slPrim').value) || 0;
+
+  $('lblD0').textContent = `${fmtNum(d0, 1)}%`;
+  $('lblJuro').textContent = `${fmtNum(rPct, 2)}% a.a.`;
+  $('lblPib').textContent = `${gPct >= 0 ? '+' : ''}${fmtNum(gPct, 2)}% a.a.`;
+  $('lblPib').className = gPct >= 0 ? 'din-green' : 'din-red';
+  $('lblPrim').textContent = `${sPct >= 0 ? '+' : ''}${fmtNum(sPct, 2)}%`;
+  $('lblPrim').className = sPct >= 0 ? 'din-green' : 'din-red';
+
+  const r = rPct / 100;
+  const g = gPct / 100;
+  const anoBase = new Date().getFullYear();
+
+  const anos = [];
+  const curvaSim = [];
+  const curvaEstab = [];
+
+  let dAtual = d0;
+  for (let t = 0; t <= 10; t++) {
+    anos.push(String(anoBase + t));
+    curvaSim.push(Number(dAtual.toFixed(2)));
+    curvaEstab.push(Number(d0.toFixed(2)));
+    dAtual = Math.max(0, dAtual * ((1 + r) / (1 + g)) - sPct);
+  }
+
+  const d10 = curvaSim[curvaSim.length - 1];
+  const deltaPP = d10 - d0;
+  const primEstab = d0 * ((r - g) / (1 + g));
+  const gapFiscal = primEstab - sPct;
+
+  let statusTxt, statusCls, corLinha, bgLinha;
+  if (deltaPP <= 0.5) {
+    statusTxt = 'Trajetória estável / queda';
+    statusCls = 'text-[11px] font-bold px-2.5 py-1 rounded-md bg-[#16C784]/15 din-green border border-[#16C784]/40';
+    corLinha = '#16C784';
+    bgLinha = 'rgba(22,199,132,0.10)';
+  } else if (deltaPP <= 12) {
+    statusTxt = 'Alta moderada';
+    statusCls = 'text-[11px] font-bold px-2.5 py-1 rounded-md bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/40';
+    corLinha = '#F59E0B';
+    bgLinha = 'rgba(245,158,11,0.10)';
+  } else {
+    statusTxt = 'Trajetória explosiva';
+    statusCls = 'text-[11px] font-bold px-2.5 py-1 rounded-md bg-[#EA3943]/15 din-red border border-[#EA3943]/40';
+    corLinha = '#EA3943';
+    bgLinha = 'rgba(234,57,67,0.10)';
+  }
+
+  $('resD10').textContent = `${fmtNum(d10, 1)}% do PIB`;
+  $('resD10').className = `text-xl font-extrabold ${deltaPP <= 0.5 ? 'din-green' : deltaPP <= 12 ? 'text-[#F59E0B]' : 'din-red'}`;
+  $('badgeStatusCurva').textContent = statusTxt;
+  $('badgeStatusCurva').className = statusCls;
+
+  $('resPrimEstab').textContent = `${primEstab >= 0 ? '+' : ''}${fmtNum(primEstab, 2)}% do PIB / ano`;
+  $('resGapFiscal').textContent = gapFiscal > 0.05
+    ? `Faltam +${fmtNum(gapFiscal, 2)} p.p. de esforço fiscal em relação ao cenário simulado.`
+    : `O cenário atual supera em ${fmtNum(Math.abs(gapFiscal), 2)} p.p. o mínimo necessário para estabilizar.`;
+
+  $('leituraFiscal').innerHTML = `Partindo de <strong>${fmtNum(d0, 1)}% do PIB</strong>, com juro real de <strong>${fmtNum(rPct, 2)}%</strong>, crescimento do PIB de <strong>${fmtNum(gPct, 2)}%</strong> e resultado primário de <strong>${sPct >= 0 ? '+' : ''}${fmtNum(sPct, 2)}%</strong>, a dívida alcança <strong class="${deltaPP <= 0.5 ? 'din-green' : 'din-red'}">${fmtNum(d10, 1)}% do PIB em ${anoBase + 10}</strong> (${deltaPP >= 0 ? '+' : ''}${fmtNum(deltaPP, 1)} p.p.). Para travar a curva no patamar inicial, seria necessário um resultado primário de <strong>${primEstab >= 0 ? '+' : ''}${fmtNum(primEstab, 2)}% do PIB</strong>.`;
+
+  ultimaProjecao = { anos, curvaSim, d0, rPct, gPct, sPct, primEstab };
+
+  if (chartTrajetoria) chartTrajetoria.destroy();
+  const opts = window.BDChart
+    ? BDChart.opcoesBase({ fmtY: v => `${fmtNum(v, 1)}%` })
+    : { responsive: true, maintainAspectRatio: false };
+
+  chartTrajetoria = new Chart($('grafTrajetoria'), {
+    type: 'line',
+    data: {
+      labels: anos,
+      datasets: [
+        {
+          label: 'Dívida Bruta / PIB projetada (%)',
+          data: curvaSim,
+          borderColor: corLinha,
+          backgroundColor: bgLinha,
+          fill: true,
+          borderWidth: 2.6,
+          pointRadius: 3.5,
+          pointBackgroundColor: corLinha,
+          tension: 0.2
+        },
+        {
+          label: `Patamar inicial (${fmtNum(d0, 1)}% do PIB)`,
+          data: curvaEstab,
+          borderColor: '#9299A3',
+          borderDash: [6, 4],
+          borderWidth: 1.5,
+          pointRadius: 0
+        }
+      ]
+    },
+    options: opts
+  });
+}
+
+// Painel Histórico Oficial (2 Abas)
+function setAbaHist(aba) {
+  abaHist = aba;
+  const on = 'px-3 py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer';
+  const off = 'px-3 py-1.5 rounded-md din-text-muted hover:din-text-main transition cursor-pointer';
+  $('abaDividas').className = aba === 'dividas' ? on : off;
+  $('abaResultado').className = aba === 'resultado' ? on : off;
+
+  $('viewDividas').classList.toggle('hidden', aba !== 'dividas');
+  $('viewResultado').classList.toggle('hidden', aba !== 'resultado');
+  desenharHistorico();
+}
+
+function setHorizonte(meses) {
+  horizonteMeses = meses;
+  const on = 'px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border cursor-pointer';
+  const off = 'px-2.5 py-1 rounded-md din-text-muted cursor-pointer';
+  $('h3a').className = meses === 36 ? on : off;
+  $('h5a').className = meses === 60 ? on : off;
+  $('h10a').className = meses === 120 ? on : off;
+  $('hTudo').className = meses === 999 ? on : off;
+  desenharHistorico();
+}
+
+function desenharHistorico() {
+  if (abaHist === 'dividas') desenharDividas();
+  else desenharResultados();
+}
+
+function desenharDividas() {
+  if (!serieDbgg.length) return;
+  const mapDlsp = Object.fromEntries(serieDlsp.map(x => [x.ym, x.v]));
+  let base = serieDbgg.map(x => ({ label: x.label, dbgg: x.v, dlsp: mapDlsp[x.ym] ?? null }));
+  if (horizonteMeses < base.length) base = base.slice(-horizonteMeses);
+
+  if (chartDividas) chartDividas.destroy();
+  const opts = window.BDChart
+    ? BDChart.opcoesBase({ fmtY: v => `${fmtNum(v, 1)}%` })
+    : { responsive: true, maintainAspectRatio: false };
+
+  chartDividas = new Chart($('grafDividas'), {
+    type: 'line',
+    data: {
+      labels: base.map(x => x.label),
+      datasets: [
+        { label: 'Dívida Bruta — DBGG (% PIB)', data: base.map(x => x.dbgg), borderColor: '#EA3943', backgroundColor: 'rgba(234,57,67,0.08)', fill: true, borderWidth: 2.2, pointRadius: 0, tension: 0.2 },
+        { label: 'Dívida Líquida — DLSP (% PIB)', data: base.map(x => x.dlsp), borderColor: '#2563EB', borderWidth: 2.2, pointRadius: 0, tension: 0.2 }
+      ]
+    },
+    options: opts
+  });
+}
+
+function desenharResultados() {
+  if (!seriePrim.length) return;
+  const mapJuros = Object.fromEntries(serieJuros.map(x => [x.ym, x.v]));
+  const mapNom = Object.fromEntries(serieNom.map(x => [x.ym, x.v]));
+  let base = seriePrim.map(x => ({
+    label: x.label,
+    prim: x.v,
+    juros: mapJuros[x.ym] ?? null,
+    nom: mapNom[x.ym] ?? null
+  }));
+  if (horizonteMeses < base.length) base = base.slice(-horizonteMeses);
+
+  if (chartResultado) chartResultado.destroy();
+  const opts = window.BDChart
+    ? BDChart.opcoesBase({ fmtY: v => `${fmtNum(v, 1)}%` })
+    : { responsive: true, maintainAspectRatio: false };
+
+  chartResultado = new Chart($('grafResultado'), {
+    type: 'line',
+    data: {
+      labels: base.map(x => x.label),
+      datasets: [
+        { label: 'Resultado Primário 12m (% PIB)', data: base.map(x => x.prim), borderColor: '#16C784', backgroundColor: 'rgba(22,199,132,0.08)', fill: true, borderWidth: 2.2, pointRadius: 0, tension: 0.2 },
+        { label: 'Juros Nominais 12m (% PIB)', data: base.map(x => x.juros), borderColor: '#F59E0B', borderWidth: 2, pointRadius: 0, tension: 0.2 },
+        { label: 'Resultado Nominal 12m (% PIB)', data: base.map(x => x.nom), borderColor: '#EA3943', borderDash: [4, 3], borderWidth: 2, pointRadius: 0, tension: 0.2 }
+      ]
+    },
+    options: opts
+  });
+}
+
+// Exportações PNG, CSV e ABNT
+function baixarSimuladorPNG() {
+  if (!window.BDChart || !ultimaProjecao) return;
+  const { d0, rPct, gPct, sPct } = ultimaProjecao;
+  BDChart.baixarPNG('grafTrajetoria', {
+    titulo: 'Simulação de Trajetória da Dívida Bruta / PIB (10 Anos)',
+    subtitulo: `DBGG inicial: ${fmtNum(d0, 1)}% • Juro real: ${fmtNum(rPct, 2)}% • PIB: ${fmtNum(gPct, 2)}% • Primário: ${sPct >= 0 ? '+' : ''}${fmtNum(sPct, 2)}%`,
+    fonte: 'Simulação BrasilEmDados • Ponto inicial oficial: Banco Central do Brasil (SGS 13762)',
+    nomeArquivo: 'brasilemdados-simulacao-divida-pib'
+  });
+}
+
+function baixarHistoricoPNG() {
+  if (!window.BDChart) return;
+  if (abaHist === 'dividas') {
+    BDChart.baixarPNG('grafDividas', {
+      titulo: 'Dívida Bruta (DBGG) vs. Dívida Líquida (DLSP) em % do PIB',
+      subtitulo: 'Séries mensais oficiais do Setor Público Brasileiro',
+      fonte: 'Banco Central do Brasil (SGS 13762 e 4513)',
+      nomeArquivo: 'brasilemdados-dbgg-vs-dlsp'
+    });
+  } else {
+    BDChart.baixarPNG('grafResultado', {
+      titulo: 'Resultado Primário, Juros Nominais e Resultado Nominal (12m · % PIB)',
+      subtitulo: 'Setor Público Consolidado (positivo = superávit, negativo = déficit)',
+      fonte: 'Banco Central do Brasil (SGS 5793, 5760 e 5727)',
+      nomeArquivo: 'brasilemdados-resultado-fiscal-12m'
+    });
+  }
+}
+
+function exportarCSV() {
+  if (!ultimaProjecao) return;
+  const { anos, curvaSim, rPct, gPct, sPct } = ultimaProjecao;
+  const cab = ['Ano', 'Divida_Bruta_PIB_%', 'Juro_Real_%', 'Cresc_PIB_%', 'Resultado_Primario_%_PIB'];
+  const linhas = anos.map((a, i) => [a, curvaSim[i].toFixed(2), rPct.toFixed(2), gPct.toFixed(2), sPct.toFixed(2)].join(';'));
+  const blob = new Blob(['\uFEFF' + [cab.join(';'), ...linhas].join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'brasilemdados_trajetoria_divida_10a.csv';
+  link.click();
+}
+
+function citarFiscalABNT(btn) {
+  if (!window.BDChart) return;
+  BDChart.copiarABNT({
+    titulo: 'Contas Públicas, Dívida Bruta (DBGG/PIB), Dívida Líquida (DLSP/PIB) e Resultado Fiscal',
+    fonteOficial: 'Banco Central do Brasil',
+    serie: 'SGS 13762, 4513, 5793, 5760 e 5727'
+  }, btn);
+}
+
+// Inicialização
+(async () => {
+  let temaSalvo = 'light';
+  try { temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light'; } catch {}
+  aplicarTema(temaSalvo);
+  recalcularTrajetoria();
+
+  try {
+    const [dbgg, dlsp, prim, juros, nom] = await Promise.all([
+      buscarSgs(13762, 216, false),
+      buscarSgs(4513, 216, false),
+      buscarSgs(5793, 216, true),
+      buscarSgs(5760, 216, false),
+      buscarSgs(5727, 216, true)
+    ]);
+
+    serieDbgg = dbgg;
+    serieDlsp = dlsp;
+    seriePrim = prim;
+    serieJuros = juros;
+    serieNom = nom;
+
+    const uDbgg = serieDbgg[serieDbgg.length - 1];
+    const uDlsp = serieDlsp[serieDlsp.length - 1];
+    const uPrim = seriePrim[seriePrim.length - 1];
+    const uJuros = serieJuros[serieJuros.length - 1];
+
+    $('kDbgg').textContent = `${fmtNum(uDbgg.v, 1)}% do PIB`;
+    $('kDbggRef').textContent = `BCB SGS 13762 • Ref. ${uDbgg.label}`;
+
+    $('kDlsp').textContent = `${fmtNum(uDlsp.v, 1)}% do PIB`;
+    $('kDlspRef').textContent = `BCB SGS 4513 • Ref. ${uDlsp.label}`;
+
+    $('kPrim').textContent = `${uPrim.v >= 0 ? '+' : ''}${fmtNum(uPrim.v, 2)}% do PIB`;
+    $('kPrim').className = `text-xl font-bold mt-1 ${uPrim.v >= 0 ? 'din-green' : 'din-red'}`;
+    $('kPrimRef').textContent = `BCB SGS 5793 • ${uPrim.v >= 0 ? 'Superávit' : 'Déficit'} (${uPrim.label})`;
+
+    $('kJuros').textContent = `${fmtNum(uJuros.v, 2)}% do PIB`;
+    $('kJurosRef').textContent = `BCB SGS 5760 • Ref. ${uJuros.label}`;
+
+    // Preenche o simulador com o ponto de partida real do Banco Central
+    refOficial = { d0: uDbgg.v, prim: uPrim.v };
+    aplicarCenario('base');
+
+    $('statusFiscal').innerHTML = `<span class="w-2 h-2 rounded-full bg-[#16C784]"></span><span>Estatísticas fiscais oficiais BCB (${uDbgg.label})</span>`;
+    desenharHistorico();
+  } catch (err) {
+    console.error(err);
+    $('statusFiscal').innerHTML = `<span class="w-2 h-2 rounded-full bg-[#EA3943]"></span><span>Banco Central indisponível no momento. Simulador ativo em modo referência.</span>`;
+  }
+})();
+</script>
+</body>
+</html>

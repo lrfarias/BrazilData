@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BrasilEmDados — Economia e Indicadores</title>
+    <meta name="description" content="Hub econômico do BrasilEmDados: PIB estadual, impostos e IDH, câmbio global, simulador Selic, panorama mundial, inflação oficial (IPCA/IGP-M) e contas públicas.">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
@@ -87,24 +88,32 @@
                             </div>
 
                             <a href="terminal-pib.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
-                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
+                                <span class="w-2 h-2 rounded-full bg-[#16C784] shrink-0"></span>
                                 01. Contas Regionais & PIB
                             </a>
                             <a href="imposto-idh.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
-                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
+                                <span class="w-2 h-2 rounded-full bg-[#16C784] shrink-0"></span>
                                 02. Impostos, População & IDH
                             </a>
                             <a href="cambio.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
-                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
+                                <span class="w-2 h-2 rounded-full bg-[#16C784] shrink-0"></span>
                                 03. Conversor de Moedas
                             </a>
                             <a href="simulador-selic.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
-                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
+                                <span class="w-2 h-2 rounded-full bg-[#16C784] shrink-0"></span>
                                 04. Simulador Selic & Juros
                             </a>
                             <a href="mundo.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
-                                <span class="w-2 h-2 rounded-full bg-[#16C784]"></span>
+                                <span class="w-2 h-2 rounded-full bg-[#16C784] shrink-0"></span>
                                 05. Mapa-Múndi & Global
+                            </a>
+                            <a href="inflacao.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+                                <span class="w-2 h-2 rounded-full bg-[#16C784] shrink-0"></span>
+                                06. Inflação & Poder de Compra
+                            </a>
+                            <a href="contas-publicas.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+                                <span class="w-2 h-2 rounded-full bg-[#16C784] shrink-0"></span>
+                                07. Contas Públicas & Dívida
                             </a>
 
                             <div class="my-1 border-t din-border"></div>
@@ -145,17 +154,17 @@
                     Economia e indicadores
                 </h1>
                 <p class="text-sm sm:text-base din-text-muted leading-relaxed">
-                    Explore dados econômicos, acompanhe a arrecadação tributária brasileira, consulte indicadores regionais e utilize ferramentas para conversão e simulação financeira em um só lugar.
+                    Explore dados econômicos oficiais, acompanhe a arrecadação tributária brasileira, consulte indicadores regionais e utilize ferramentas de inflação, contas públicas, câmbio e simulação financeira em um só lugar.
                 </p>
             </div>
 
             <div class="flex items-center justify-between pt-8 pb-2">
                 <h2 class="text-sm font-bold din-text-main">Explore as ferramentas</h2>
-                <span class="text-xs din-text-muted">07 módulos</span>
+                <span class="text-xs din-text-muted">07 módulos ativos</span>
             </div>
         </section>
 
-        <!-- Grade Padronizada em Quadradinhos (Cards) -->
+        <!-- Grade Padronizada em Cards -->
         <main class="max-w-7xl mx-auto px-4 sm:px-6 pb-8 grid grid-cols-1 md:grid-cols-2 gap-6">
 
             <!-- MÓDULO 01 -->
@@ -175,7 +184,7 @@
                             Contas Regionais, PIB & Vocação Setorial
                         </h3>
                         <p class="text-xs sm:text-sm din-text-muted mt-2 leading-relaxed">
-                            O terminal principal de produção econômica estadual. Inspecione o mapa interativo do Brasil, compare o volume do PIB e PIB per capita entre estados, analise a participação do Top 5 nacional e projete cenários futuros.
+                            O terminal principal de produção econômica estadual. Inspecione o mapa interativo do Brasil por estado ou região, compare PIB e PIB per capita, analise a participação do Top 5 nacional e projete cenários futuros.
                         </p>
                     </div>
 
@@ -184,22 +193,22 @@
                         <ul class="space-y-1.5 din-text-muted">
                             <li class="flex items-center gap-2">
                                 <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
-                                Mapa de calor estadual por volume de PIB e renda per capita.
+                                Mapa interativo com filtro por região, destaques tonais e calor por PIB / per capita.
                             </li>
                             <li class="flex items-center gap-2">
                                 <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
-                                Decomposição real do Valor Adicionado (Agro, Indústria, Serviços e Adm. Pública).
+                                Decomposição do Valor Adicionado (Agro, Indústria, Serviços e Adm. Pública).
                             </li>
                             <li class="flex items-center gap-2">
                                 <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
-                                Simulador "E se...?" de crescimento + Consultor Econômico IA integrado ao PostgreSQL.
+                                Simulador "E se...?", evolução histórica e exportação de gráficos (PNG) e citação ABNT.
                             </li>
                         </ul>
                     </div>
                 </div>
 
                 <div class="pt-5 mt-5 border-t din-border flex items-center justify-between">
-                    <span class="text-xs din-text-muted">Dados e estatísticas (SIDRA 5938)</span>
+                    <span class="text-xs din-text-muted">Fonte oficial: IBGE (SIDRA 5938)</span>
                     <a href="terminal-pib.html" class="din-green text-xs font-bold inline-flex items-center gap-1.5 hover:opacity-80 transition">
                         <span>Explorar dados</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -227,7 +236,7 @@
                             Carga Tributária, Demografia & IDH
                         </h3>
                         <p class="text-xs sm:text-sm din-text-muted mt-2 leading-relaxed">
-                            Análise cruzada entre quanto cada estado arrecada em impostos, o tamanho da sua população e o retorno efetivo em qualidade de vida medido pelo Índice de Desenvolvimento Humano (IDH).
+                            Análise cruzada entre quanto cada estado ou região arrecada em impostos, o tamanho da sua população e o retorno em qualidade de vida medido pelo Índice de Desenvolvimento Humano (IDH).
                         </p>
                     </div>
 
@@ -236,22 +245,22 @@
                         <ul class="space-y-1.5 din-text-muted">
                             <li class="flex items-center gap-2">
                                 <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
-                                Mapa interativo do Brasil com camadas de IDH Estadual, População e Impostos.
+                                Mapa interativo por região com camadas de IDH, População, Produtividade e Impostos.
                             </li>
                             <li class="flex items-center gap-2">
                                 <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
-                                Gráfico de dispersão: Arrecadação per capita vs. IDH (retorno social dos tributos).
+                                Gráfico de dispersão: Tributo por habitante × IDH com quadrantes de média nacional.
                             </li>
                             <li class="flex items-center gap-2">
                                 <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
-                                Evolução demográfica e pirâmide de densidade populacional das 27 UFs.
+                                Simulador de carga tributária (EUA, Brasil, OCDE, França) e exportação CSV/PNG/ABNT.
                             </li>
                         </ul>
                     </div>
                 </div>
 
                 <div class="pt-5 mt-5 border-t din-border flex items-center justify-between">
-                    <span class="text-xs din-text-muted">Arrecadação tributária e IDH</span>
+                    <span class="text-xs din-text-muted">IBGE (SIDRA) & PNUD / Ipea</span>
                     <a href="imposto-idh.html" class="din-green text-xs font-bold inline-flex items-center gap-1.5 hover:opacity-80 transition">
                         <span>Acessar ferramenta</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -278,7 +287,7 @@
                             Conversor de Moedas & Paridade Cambial
                         </h3>
                         <p class="text-xs sm:text-sm din-text-muted mt-2 leading-relaxed">
-                            Ferramenta de conversão monetária instantânea e acompanhamento da taxa de câmbio comercial. Converta valores em Reais (BRL) para Dólar (USD), Euro (EUR), Libra (GBP), Iene (JPY) e Yuan (CNY).
+                            Ferramenta de conversão monetária instantânea para mais de 160 moedas, auditoria de spread bancário e acompanhamento histórico do câmbio comercial frente ao Dólar, Euro, Libra, Iene e Yuan.
                         </p>
                     </div>
 
@@ -287,22 +296,22 @@
                         <ul class="space-y-1.5 din-text-muted">
                             <li class="flex items-center gap-2">
                                 <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
-                                Calculadora bidirecional rápida com cotações atualizadas via API.
+                                Cotações em tempo real (a cada 30s), simulador de IOF/spread e auditor de taxa bancária.
                             </li>
                             <li class="flex items-center gap-2">
                                 <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
-                                Conversão automática do PIB Estadual e PIB per capita brasileiro para Dólares (USD).
+                                Termômetro macro ("O Dólar subiu no mundo ou o Real caiu?") e matriz de sazonalidade.
                             </li>
                             <li class="flex items-center gap-2">
                                 <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
-                                Gráfico histórico de oscilação cambial e comparativo de poder de compra.
+                                Gráficos históricos (3d a Tudo / Base 100 / MM20) com exportação CSV, PNG e ABNT.
                             </li>
                         </ul>
                     </div>
                 </div>
 
                 <div class="pt-5 mt-5 border-t din-border flex items-center justify-between">
-                    <span class="text-xs din-text-muted">Câmbio e conversões</span>
+                    <span class="text-xs din-text-muted">BCE (Frankfurter) & AwesomeAPI</span>
                     <a href="cambio.html" class="din-green text-xs font-bold inline-flex items-center gap-1.5 hover:opacity-80 transition">
                         <span>Converter valores</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -326,10 +335,10 @@
 
                     <div>
                         <h3 class="text-lg font-bold din-text-main">
-                            Simulador Selic, Juros Reais & Inflação
+                            Simulador Selic, Renda Fixa & Juro Real
                         </h3>
                         <p class="text-xs sm:text-sm din-text-muted mt-2 leading-relaxed">
-                            Painel de acompanhamento da política monetária do Banco Central do Brasil. Simule o rendimento de capital, o custo do crédito e o efeito dos juros compostos descontando a inflação (IPCA).
+                            Painel de acompanhamento da política monetária do Banco Central do Brasil. Simule aportes, planeje metas reais, compare IR regressivo e veja o rendimento real descontando o IPCA.
                         </p>
                     </div>
 
@@ -338,22 +347,22 @@
                         <ul class="space-y-1.5 din-text-muted">
                             <li class="flex items-center gap-2">
                                 <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
-                                Simulador interativo da Taxa Selic vs. IPCA (cálculo de Juro Real ex-ante e ex-post).
+                                Taxas oficiais ao vivo do Banco Central (Selic, CDI e IPCA 12m) + teste de estresse.
                             </li>
                             <li class="flex items-center gap-2">
                                 <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
-                                Projeção de rendimento em Renda Fixa (Tesouro Selic, CDB/CDI vs. Poupança).
+                                Comparativo líquido de Tesouro IPCA+, CDB, LCI/LCA, Tesouro Selic e Poupança.
                             </li>
                             <li class="flex items-center gap-2">
                                 <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
-                                Histórico da curva de juros básica e impacto no custo da dívida pública.
+                                Ponto de inflexão dos juros, renda perpétua real e histórico oficial de 5 anos do BC.
                             </li>
                         </ul>
                     </div>
                 </div>
 
                 <div class="pt-5 mt-5 border-t din-border flex items-center justify-between">
-                    <span class="text-xs din-text-muted">Juros e investimentos</span>
+                    <span class="text-xs din-text-muted">Fonte oficial: Banco Central (SGS)</span>
                     <a href="simulador-selic.html" class="din-green text-xs font-bold inline-flex items-center gap-1.5 hover:opacity-80 transition">
                         <span>Simular investimentos</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -391,11 +400,11 @@
                         <ul class="space-y-1.5 din-text-muted">
                             <li class="flex items-center gap-2">
                                 <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
-                                Mapa-múndi com zoom, busca por país, camadas de PIB, IDH, impostos e filtros por bloco.
+                                Mapa-múndi com zoom, busca por país, camadas de PIB, IDH, Gini e filtros por bloco.
                             </li>
                             <li class="flex items-center gap-2">
                                 <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
-                                Raio-X completo por país com histórico de moeda, PIB e população (5d a 2 anos).
+                                Raio-X por país com comércio exterior, parceiros comerciais e séries históricas reais.
                             </li>
                             <li class="flex items-center gap-2">
                                 <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
@@ -406,7 +415,7 @@
                 </div>
 
                 <div class="pt-5 mt-5 border-t din-border flex items-center justify-between">
-                    <span class="text-xs din-text-muted">Economia global e blocos</span>
+                    <span class="text-xs din-text-muted">Banco Mundial, PNUD & BCE</span>
                     <a href="mundo.html" class="din-green text-xs font-bold inline-flex items-center gap-1.5 hover:opacity-80 transition">
                         <span>Explorar mapa global</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -417,7 +426,7 @@
             </div>
 
             <!-- MÓDULO 06: Inflação & Poder de Compra -->
-            <div id="modulo-inflacao" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover">
+            <div id="modulo-inflacao" onclick="window.location.href='inflacao.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
                 <div class="space-y-4">
                     <div class="flex items-center justify-between gap-4">
                         <div class="w-11 h-11 rounded-xl din-icon-box flex items-center justify-center shrink-0">
@@ -428,41 +437,47 @@
                         <span class="text-xs font-medium din-text-muted">06 / 07</span>
                     </div>
 
-                    <div class="flex items-center justify-between gap-2">
+                    <div>
                         <h3 class="text-lg font-bold din-text-main">
-                            Inflação & Poder de Compra
+                            Inflação Oficial & Poder de Compra
                         </h3>
-                        <span id="badgeIpca12m" class="text-xs font-mono font-bold din-green">IPCA ref.: 4,50%</span>
+                        <p class="text-xs sm:text-sm din-text-muted mt-2 leading-relaxed">
+                            Painel completo de inflação brasileira integrado ao Banco Central e ao IBGE. Corrija valores históricos mês a mês, visualize a erosão do dinheiro parado e compare a evolução do Salário Mínimo contra o IPCA.
+                        </p>
                     </div>
 
-                    <p class="text-xs sm:text-sm din-text-muted leading-relaxed">
-                        Acompanhe a variação acumulada do IPCA e do INPC e simule a perda ou ganho real do poder de compra ao longo do tempo.
-                    </p>
-
-                    <div class="grid grid-cols-2 gap-3 pt-1 text-xs">
-                        <div class="din-secondary-bg border din-border rounded-xl p-3">
-                            <span class="text-[10px] uppercase tracking-wider font-bold din-text-muted block">Valor Inicial (R$)</span>
-                            <input id="infValorInicial" type="number" value="1000" min="0" step="50"
-                                oninput="calcularPoderCompra()"
-                                class="w-full bg-transparent font-bold din-text-main text-sm focus:outline-none mt-1">
-                        </div>
-                        <div class="din-secondary-bg border din-border rounded-xl p-3">
-                            <span class="text-[10px] uppercase tracking-wider font-bold din-text-muted block">Inflação Acum. (%)</span>
-                            <input id="infTaxaAcum" type="number" value="4.50" step="0.10"
-                                oninput="calcularPoderCompra()"
-                                class="w-full bg-transparent font-bold din-text-main text-sm focus:outline-none mt-1">
-                        </div>
+                    <div class="din-secondary-bg border din-border rounded-xl p-3.5 space-y-2 text-xs">
+                        <p class="font-bold din-text-main uppercase tracking-wider text-[10px]">Funcionalidades deste painel:</p>
+                        <ul class="space-y-1.5 din-text-muted">
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
+                                Calculadora real de correção monetária (IPCA e IGP-M) com gráfico de poder de compra.
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
+                                Comparativo histórico IPCA × IGP-M (12m) e Salário Mínimo × Inflação em Base 100.
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
+                                Inflação oficial por grupo de despesas (Alimentação, Habitação, Transporte · IBGE 7060).
+                            </li>
+                        </ul>
                     </div>
                 </div>
 
-                <div class="pt-5 mt-5 border-t din-border flex items-center justify-between text-xs">
-                    <span class="din-text-muted">Poder de compra equivalente</span>
-                    <strong id="infResultadoEquiv" class="din-green font-bold text-sm">R$ 956,94</strong>
+                <div class="pt-5 mt-5 border-t din-border flex items-center justify-between">
+                    <span class="text-xs din-text-muted">Banco Central (SGS) & IBGE</span>
+                    <a href="inflacao.html" class="din-green text-xs font-bold inline-flex items-center gap-1.5 hover:opacity-80 transition">
+                        <span>Abrir painel de inflação</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </a>
                 </div>
             </div>
 
             <!-- MÓDULO 07: Contas Públicas & Dívida -->
-            <div id="modulo-contas-publicas" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover">
+            <div id="modulo-contas-publicas" onclick="window.location.href='contas-publicas.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
                 <div class="space-y-4">
                     <div class="flex items-center justify-between gap-4">
                         <div class="w-11 h-11 rounded-xl din-icon-box flex items-center justify-center shrink-0">
@@ -473,36 +488,42 @@
                         <span class="text-xs font-medium din-text-muted">07 / 07</span>
                     </div>
 
-                    <div class="flex items-center justify-between gap-2">
+                    <div>
                         <h3 class="text-lg font-bold din-text-main">
-                            Contas Públicas & Dívida
+                            Contas Públicas, Dívida & Trajetória Fiscal
                         </h3>
-                        <span id="badgeDividaPib" class="text-xs font-mono font-bold din-text-main">Dívida/PIB: 77,5%</span>
+                        <p class="text-xs sm:text-sm din-text-muted mt-2 leading-relaxed">
+                            Acompanhe as séries fiscais oficiais do Governo Geral (Dívida Bruta/PIB, Dívida Líquida e Resultado Primário) e simule em tempo real a sustentabilidade da dívida pública nos próximos 10 anos.
+                        </p>
                     </div>
 
-                    <p class="text-xs sm:text-sm din-text-muted leading-relaxed">
-                        Avalie o peso da dívida pública frente ao PIB e o efeito da taxa de juros média sobre a dinâmica fiscal.
-                    </p>
-
-                    <div class="grid grid-cols-2 gap-3 pt-1 text-xs">
-                        <div class="din-secondary-bg border din-border rounded-xl p-3">
-                            <span class="text-[10px] uppercase tracking-wider font-bold din-text-muted block">Dívida / PIB (%)</span>
-                            <input id="fiscDividaPib" type="number" value="77.5" step="0.5"
-                                oninput="simularDinamicaFiscal()"
-                                class="w-full bg-transparent font-bold din-text-main text-sm focus:outline-none mt-1">
-                        </div>
-                        <div class="din-secondary-bg border din-border rounded-xl p-3">
-                            <span class="text-[10px] uppercase tracking-wider font-bold din-text-muted block">Juros Real - Cresc. (p.p.)</span>
-                            <input id="fiscSpreadReal" type="number" value="4.0" step="0.25"
-                                oninput="simularDinamicaFiscal()"
-                                class="w-full bg-transparent font-bold din-text-main text-sm focus:outline-none mt-1">
-                        </div>
+                    <div class="din-secondary-bg border din-border rounded-xl p-3.5 space-y-2 text-xs">
+                        <p class="font-bold din-text-main uppercase tracking-wider text-[10px]">Funcionalidades deste painel:</p>
+                        <ul class="space-y-1.5 din-text-muted">
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
+                                Séries históricas oficiais de DBGG/PIB, DLSP/PIB e Resultado Primário (BCB SGS).
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
+                                Simulador interativo de trajetória da Dívida/PIB em 10 anos (juro real × PIB × primário).
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
+                                Cálculo do superávit primário de estabilização e exportação PNG/CSV/ABNT.
+                            </li>
+                        </ul>
                     </div>
                 </div>
 
-                <div class="pt-5 mt-5 border-t din-border flex items-center justify-between text-xs">
-                    <span class="din-text-muted">Estabilização primária</span>
-                    <strong id="fiscResultadoPrimario" class="din-red font-bold text-sm">+3,10% do PIB</strong>
+                <div class="pt-5 mt-5 border-t din-border flex items-center justify-between">
+                    <span class="text-xs din-text-muted">Banco Central (SGS) & Tesouro</span>
+                    <a href="contas-publicas.html" class="din-green text-xs font-bold inline-flex items-center gap-1.5 hover:opacity-80 transition">
+                        <span>Analisar contas públicas</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </a>
                 </div>
             </div>
 
@@ -521,7 +542,7 @@
                 <div>
                     <h4 class="text-xs font-bold din-text-main">Informação econômica em um só lugar</h4>
                     <p class="text-xs din-text-muted mt-0.5">
-                        O BrasilEmDados reúne ferramentas e indicadores oficiais (IBGE, Banco Central e Tesouro Nacional) para facilitar a consulta, análise e compreensão da economia brasileira.
+                        O BrasilEmDados reúne ferramentas e indicadores oficiais (IBGE, Banco Central, Tesouro Nacional e Banco Mundial) para facilitar a consulta, análise e compreensão da economia brasileira.
                     </p>
                 </div>
             </div>
@@ -585,58 +606,9 @@
             }
         }
 
-        function fmtBrl(v) {
-            return Number(v || 0).toLocaleString('pt-BR', {
-                style: 'currency',
-                currency: 'BRL',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
-        }
-
-        function fmtNum(v, d = 2) {
-            return Number(v || 0).toLocaleString('pt-BR', {
-                minimumFractionDigits: d,
-                maximumFractionDigits: d
-            });
-        }
-
-        function calcularPoderCompra() {
-            const inicial = parseFloat(document.getElementById('infValorInicial')?.value) || 0;
-            const inflacaoPct = parseFloat(document.getElementById('infTaxaAcum')?.value) || 0;
-            const elRes = document.getElementById('infResultadoEquiv');
-            const elBadge = document.getElementById('badgeIpca12m');
-
-            if (elBadge) elBadge.textContent = `IPCA ref.: ${fmtNum(inflacaoPct, 2)}%`;
-
-            const fator = 1 + (inflacaoPct / 100);
-            const equivalente = fator > 0 ? inicial / fator : inicial;
-            if (elRes) elRes.textContent = fmtBrl(equivalente);
-        }
-
-        function simularDinamicaFiscal() {
-            const dividaPib = parseFloat(document.getElementById('fiscDividaPib')?.value) || 0;
-            const rMenosG = parseFloat(document.getElementById('fiscSpreadReal')?.value) || 0;
-            const elRes = document.getElementById('fiscResultadoPrimario');
-            const elBadge = document.getElementById('badgeDividaPib');
-
-            if (elBadge) elBadge.textContent = `Dívida/PIB: ${fmtNum(dividaPib, 1)}%`;
-
-            const primarioNecessario = (rMenosG / 100) * dividaPib;
-            if (elRes) {
-                const sinal = primarioNecessario >= 0 ? '+' : '';
-                elRes.textContent = `${sinal}${fmtNum(primarioNecessario, 2)}% do PIB`;
-                elRes.className = primarioNecessario > 3
-                    ? 'din-red font-bold text-sm'
-                    : 'din-green font-bold text-sm';
-            }
-        }
-
         window.onload = () => {
             const temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light';
             aplicarTema(temaSalvo === 'dark' ? 'dark' : 'light');
-            calcularPoderCompra();
-            simularDinamicaFiscal();
         };
     </script>
 </body>
