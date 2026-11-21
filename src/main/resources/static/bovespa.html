@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bolsa de Valores (B3), Ibovespa & Ações — BrasilEmDados</title>
+<meta name="description" content="Acompanhe o Ibovespa e as principais ações da B3 (PETR4, VALE3, CMIN3, EMBR3, ITUB4, BBAS3, WEGE3) com abertura, fechamento, máxima, mínima, volume, gráficos e fonte.">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
+<link rel="stylesheet" href="css/theme.css">
+</head>
+<body class="min-h-screen font-sans flex flex-col justify-between">
+<div>
+  <!-- Cabeçalho Institucional -->
+  <header class="sticky top-0 z-50 border-b din-border din-bg-main/95 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="flex items-center justify-between h-16 gap-4">
+        <div class="flex items-center gap-3">
+          <a href="index.html" class="flex items-center gap-3 group">
+            <div class="w-10 h-10 rounded-lg din-secondary-bg border din-border flex items-center justify-center shadow-sm overflow-hidden group-hover:border-[#16C784] transition-colors duration-200">
+              <img src="download.png" alt="BrasilEmDados" class="w-8 h-8 object-contain transition-transform duration-200 group-hover:scale-110">
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-lg font-extrabold tracking-tight din-text-main">BrasilEmDados</span>
+                <span class="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono uppercase px-2 py-0.5 rounded din-secondary-bg border din-border din-text-muted">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span> B3 · BOLSA
+                </span>
+              </div>
+              <p class="text-[11px] din-text-muted hidden xl:block">Ibovespa & Principais Ações Brasileiras (B3)</p>
+            </div>
+          </a>
+        </div>
+
+        <nav class="hidden md:flex items-center gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+          <a href="index.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Início</a>
+          <a href="glossario.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Glossário</a>
+          <a href="economia.html" class="px-3.5 py-1.5 rounded-md din-card-bg din-text-main shadow-sm border din-border transition">Economia</a>
+          <a href="sobre.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Sobre</a>
+          <a href="contato.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Contato</a>
+        </nav>
+
+        <div class="flex items-center gap-2.5 relative">
+          <button onclick="alternarModoApresentacao()" id="btnModoApresentacao" class="hidden lg:inline-flex items-center gap-1.5 din-secondary-bg hover:opacity-80 border din-border din-text-main text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer">
+            <svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line>
+              <line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line>
+            </svg>
+            <span>Modo Tela Cheia</span>
+          </button>
+
+          <button id="menuDropdownBtn" onclick="toggleDropdownMenu()" title="Preferências e Ferramentas" class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center hover:border-[#16C784] transition cursor-pointer">
+            <svg class="w-4 h-4 din-text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line>
+              <line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line>
+              <line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line>
+              <line x1="17" y1="16" x2="23" y2="16"></line>
+            </svg>
+          </button>
+
+          <div id="dropdownMenu" class="hidden absolute right-0 top-11 w-64 rounded-xl din-card-bg border din-border shadow-2xl py-1.5 z-50">
+            <div class="px-4 py-1.5 border-b din-border">
+              <p class="text-[10px] font-bold uppercase tracking-wider din-text-muted">Ferramentas do Terminal</p>
+            </div>
+            <a href="economia.html" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+              <svg class="w-4 h-4 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+              Voltar ao Hub Economia
+            </a>
+            <button onclick="carregarTudo(true); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left cursor-pointer">
+              <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+              Atualizar cotações agora
+            </button>
+            <button onclick="exportarCSV(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left cursor-pointer">
+              <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              Exportar Série (CSV)
+            </button>
+            <button onclick="window.print(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left cursor-pointer">
+              <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              Exportar Relatório (PDF)
+            </button>
+            <div class="my-1 border-t din-border"></div>
+            <div class="flex items-center justify-between px-4 py-2.5 text-xs font-medium din-text-main cursor-pointer select-none" onclick="alternarDarkLight()">
+              <div class="flex items-center gap-3">
+                <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                <span>Modo Escuro (Dark)</span>
+              </div>
+              <div id="switchBg" class="w-10 h-5 rounded-full relative transition-colors duration-200 p-0.5 flex items-center" style="background-color: var(--border-col);">
+                <div id="switchBall" class="w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-200"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="flex md:hidden items-center gap-5 h-10 overflow-x-auto no-scrollbar text-xs font-semibold border-t din-border">
+        <a href="index.html" class="din-text-muted hover:din-text-main h-full flex items-center">Início</a>
+        <a href="glossario.html" class="din-text-muted hover:din-text-main h-full flex items-center">Glossário</a>
+        <a href="economia.html" class="din-green border-b-2 border-[#16C784] h-full flex items-center">Economia</a>
+        <a href="sobre.html" class="din-text-muted hover:din-text-main h-full flex items-center">Sobre</a>
+        <a href="contato.html" class="din-text-muted hover:din-text-main h-full flex items-center">Contato</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Breadcrumb + Status + ABNT -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex flex-wrap items-center justify-between gap-2 text-xs ocultar-em-presentation">
+    <div class="flex items-center gap-2 din-text-muted">
+      <a href="economia.html" class="hover:din-green font-semibold inline-flex items-center gap-1 transition">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        Economia e indicadores
+      </a>
+      <span>/</span>
+      <span class="din-text-main font-bold">Bolsa de Valores (B3) & Ações</span>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2">
+      <span id="statusB3" class="inline-flex items-center gap-1.5 text-[11px] din-text-muted">
+        <span class="w-2 h-2 rounded-full bg-[#16C784] animate-pulse"></span>
+        <span>Carregando cotações da B3...</span>
+      </span>
+      <button type="button" onclick="citarB3ABNT(this)" class="px-2.5 py-1 rounded-md text-[11px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
+        Citar (ABNT)
+      </button>
+    </div>
+  </div>
+
+  <!-- Fita de Cotações Rápidas -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-3 ocultar-em-presentation">
+    <div class="din-card-bg border din-border rounded-lg px-3 py-2 flex items-center gap-4 overflow-x-auto no-scrollbar text-xs">
+      <span class="inline-flex items-center gap-1.5 font-bold uppercase tracking-wider text-[10px] din-green shrink-0">
+        <span class="w-2 h-2 rounded-full bg-[#16C784]"></span> B3 · PREGÃO
+      </span>
+      <div id="fitaB3" class="flex items-center gap-5 shrink-0 din-text-muted">Carregando ativos...</div>
+    </div>
+  </div>
+
+  <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-5 space-y-6">
+
+    <!-- 1. DESTAQUE DO IBOVESPA + RESUMO DO PREGÃO -->
+    <section class="din-card-bg border din-border rounded-xl p-5 shadow-sm space-y-4">
+      <div class="flex flex-wrap items-start justify-between gap-4 pb-3 border-b din-border">
+        <div>
+          <span class="text-[10px] font-bold uppercase tracking-wider din-green">Índice de Referência da Bolsa Brasileira</span>
+          <div class="flex flex-wrap items-baseline gap-3 mt-1">
+            <h1 class="text-xl sm:text-2xl font-extrabold din-text-main">Ibovespa (^BVSP)</h1>
+            <span id="ibovPontos" class="text-2xl sm:text-3xl font-black din-text-main">—</span>
+            <span id="ibovVar" class="text-xs font-bold px-2 py-0.5 rounded din-secondary-bg">—</span>
+          </div>
+          <p class="text-xs din-text-muted mt-1">Reúne as ações de maior liquidez e negociação da B3 (Brasil, Bolsa, Balcão).</p>
+        </div>
+
+        <button type="button" onclick="selecionarAtivo('^BVSP')"
+          class="px-3 py-1.5 rounded-lg text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
+          Ver gráfico do Ibovespa
+        </button>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+        <div class="din-secondary-bg border din-border rounded-lg p-3">
+          <span class="text-[11px] din-text-muted block">Abertura (pregão)</span>
+          <strong id="ibovAbertura" class="text-sm font-extrabold din-text-main mt-0.5 block">—</strong>
+          <span class="text-[10px] din-text-muted">Primeiro negócio do dia</span>
+        </div>
+        <div class="din-secondary-bg border din-border rounded-lg p-3">
+          <span class="text-[11px] din-text-muted block">Fechamento anterior</span>
+          <strong id="ibovFechAnt" class="text-sm font-extrabold din-text-main mt-0.5 block">—</strong>
+          <span class="text-[10px] din-text-muted">Base da variação diária</span>
+        </div>
+        <div class="din-secondary-bg border din-border rounded-lg p-3">
+          <span class="text-[11px] din-text-muted block">Máxima / Mínima do dia</span>
+          <strong id="ibovFaixa" class="text-sm font-extrabold din-text-main mt-0.5 block">—</strong>
+          <span class="text-[10px] din-text-muted">Amplitude intradiária</span>
+        </div>
+        <div class="din-secondary-bg border din-border rounded-lg p-3">
+          <span class="text-[11px] din-text-muted block">Volume negociado</span>
+          <strong id="ibovVolume" class="text-sm font-extrabold din-green mt-0.5 block">—</strong>
+          <span class="text-[10px] din-text-muted">Contratos / títulos</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. PRINCIPAL ATIVO SELECIONADO (RAIO-X + GRÁFICO HISTÓRICO) -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- Raio-X Abertura / Fechamento / Didática -->
+      <div class="lg:col-span-4 din-card-bg border din-border rounded-xl p-5 shadow-sm space-y-4 h-fit">
+        <div class="flex items-start justify-between gap-2 pb-3 border-b din-border">
+          <div>
+            <span id="rxSetor" class="text-[10px] font-bold uppercase tracking-wider din-green">Petróleo & Gás</span>
+            <h2 id="rxTitulo" class="text-xl font-extrabold din-text-main mt-0.5">PETR4</h2>
+            <p id="rxEmpresa" class="text-xs din-text-muted">Petrobras PN</p>
+          </div>
+          <div class="text-right">
+            <p id="rxPreco" class="text-xl font-black din-text-main">—</p>
+            <span id="rxVar" class="text-xs font-bold din-green">—</span>
+          </div>
+        </div>
+
+        <!-- Abertura, Fechamento Anterior, Máxima, Mínima, Volume -->
+        <div class="grid grid-cols-2 gap-2.5 text-xs">
+          <div class="din-secondary-bg border din-border rounded-lg p-3">
+            <span class="text-[11px] din-text-muted block">Abertura</span>
+            <strong id="rxAbertura" class="text-sm font-extrabold din-text-main mt-0.5 block">—</strong>
+            <span class="text-[10px] din-text-muted">Preço na abertura</span>
+          </div>
+          <div class="din-secondary-bg border din-border rounded-lg p-3">
+            <span class="text-[11px] din-text-muted block">Fechamento anterior</span>
+            <strong id="rxFechAnt" class="text-sm font-extrabold din-text-main mt-0.5 block">—</strong>
+            <span class="text-[10px] din-text-muted">Encerramento prévio</span>
+          </div>
+          <div class="din-secondary-bg border din-border rounded-lg p-3">
+            <span class="text-[11px] din-text-muted block">Máxima do dia</span>
+            <strong id="rxMaxDia" class="text-sm font-extrabold din-green mt-0.5 block">—</strong>
+            <span class="text-[10px] din-text-muted">Topo intradiário</span>
+          </div>
+          <div class="din-secondary-bg border din-border rounded-lg p-3">
+            <span class="text-[11px] din-text-muted block">Mínima do dia</span>
+            <strong id="rxMinDia" class="text-sm font-extrabold din-red mt-0.5 block">—</strong>
+            <span class="text-[10px] din-text-muted">Piso intradiário</span>
+          </div>
+        </div>
+
+        <div class="din-secondary-bg border din-border rounded-lg p-3 flex items-center justify-between text-xs">
+          <div>
+            <span class="din-text-muted block">Volume negociado no dia</span>
+            <strong id="rxVolume" class="text-sm font-extrabold din-text-main mt-0.5 block">—</strong>
+          </div>
+          <span class="text-[10px] font-semibold px-2 py-1 rounded din-card-bg border din-border din-text-muted">B3</span>
+        </div>
+
+        <!-- Leitura Didática Rápida -->
+        <div class="pt-2 border-t din-border space-y-1.5 text-xs">
+          <span class="text-[10px] font-bold uppercase tracking-wider din-green block">Como ler esses números</span>
+          <p id="rxDidatica" class="din-text-muted leading-relaxed">
+            Compare a <strong>Abertura</strong> com o <strong>Fechamento anterior</strong> para ver se o papel abriu em alta (gap de alta) ou queda, e veja onde o preço atual está entre a <strong>Mínima</strong> e a <strong>Máxima</strong>.
+          </p>
+        </div>
+      </div>
+
+      <!-- Gráfico Histórico + Controles -->
+      <div class="lg:col-span-8 din-card-bg border din-border rounded-xl p-5 shadow-sm flex flex-col space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 id="titGrafB3" class="text-base font-bold din-text-main">Histórico de Cotação — PETR4</h2>
+            <p id="subGrafB3" class="text-xs din-text-muted">Fechamento diário na B3 com opção de Média Móvel de 20 pregões (MM20).</p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="inline-flex din-secondary-bg p-0.5 rounded-lg border din-border text-[11px] font-semibold">
+              <button id="mPreco" type="button" onclick="setModoGraf('preco')" class="px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border cursor-pointer">Cotação</button>
+              <button id="mPerf" type="button" onclick="setModoGraf('perf')" class="px-2.5 py-1 rounded-md din-text-muted cursor-pointer">% vs. Ibov</button>
+            </div>
+            <label class="inline-flex items-center gap-1 text-xs din-text-muted cursor-pointer select-none">
+              <input id="chkMM20" type="checkbox" checked class="accent-[#F59E0B] cursor-pointer" onchange="desenharGraficoB3()">
+              <span>MM20</span>
+            </label>
+            <button type="button" onclick="exportarCSV()" class="px-2.5 py-1 rounded-md text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ CSV</button>
+            <button type="button" onclick="baixarGraficoB3PNG()" class="px-2.5 py-1 rounded-md text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ PNG</button>
+          </div>
+        </div>
+
+        <!-- Seletor de Período -->
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="inline-flex din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold flex-wrap gap-0.5">
+            <button data-rng="5d" type="button" onclick="setRangeB3('5d')" class="btn-rng px-2.5 py-1 rounded-md din-text-muted cursor-pointer">5d</button>
+            <button data-rng="1mo" type="button" onclick="setRangeB3('1mo')" class="btn-rng px-2.5 py-1 rounded-md din-text-muted cursor-pointer">1m</button>
+            <button data-rng="3mo" type="button" onclick="setRangeB3('3mo')" class="btn-rng px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border cursor-pointer">3m</button>
+            <button data-rng="6mo" type="button" onclick="setRangeB3('6mo')" class="btn-rng px-2.5 py-1 rounded-md din-text-muted cursor-pointer">6m</button>
+            <button data-rng="1y" type="button" onclick="setRangeB3('1y')" class="btn-rng px-2.5 py-1 rounded-md din-text-muted cursor-pointer">1 ano</button>
+            <button data-rng="5y" type="button" onclick="setRangeB3('5y')" class="btn-rng px-2.5 py-1 rounded-md din-text-muted cursor-pointer">5 anos</button>
+          </div>
+
+          <div id="statsPeriodoB3" class="flex flex-wrap gap-3 text-xs din-text-muted">
+            <span>Período: <strong id="stPerVar" class="din-text-main">—</strong></span>
+            <span>Máx: <strong id="stPerMax" class="din-text-main">—</strong></span>
+            <span>Mín: <strong id="stPerMin" class="din-text-main">—</strong></span>
+          </div>
+        </div>
+
+        <div class="relative flex-1 w-full min-h-[300px] sm:min-h-[340px]">
+          <canvas id="grafB3"></canvas>
+        </div>
+
+        <!-- Selo de Fonte Oficial -->
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t din-border text-[11px] din-text-muted">
+          <span class="inline-flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+            <span>Fonte: <strong class="din-text-main">Bolsa de Valores do Brasil (B3)</strong> • Feed de pregão via proxy/cache BrasilEmDados</span>
+          </span>
+          <button type="button" onclick="citarB3ABNT(this)" class="underline hover:din-green transition cursor-pointer">Copiar citação ABNT</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. GRADE DAS PRINCIPAIS AÇÕES DA B3 -->
+    <section class="din-card-bg border din-border rounded-xl p-5 shadow-sm space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-base sm:text-lg font-extrabold din-text-main">Principais Ações Brasileiras na B3</h2>
+          <p class="text-xs din-text-muted">Clique em qualquer ação para abrir o gráfico histórico e os detalhes de abertura, fechamento e volume.</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <input id="inpBuscaAcao" type="text" placeholder="Buscar ticker ou empresa (ex: PETR4, Vale)..."
+            oninput="renderizarGradeAcoes()" class="inp !w-60 text-xs py-1.5">
+          <div class="inline-flex din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+            <button id="fltTodas" type="button" onclick="setFiltroAcao('todas')" class="px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border cursor-pointer">Todas</button>
+            <button id="fltAltas" type="button" onclick="setFiltroAcao('altas')" class="px-2.5 py-1 rounded-md din-text-muted cursor-pointer">↑ Altas</button>
+            <button id="fltBaixas" type="button" onclick="setFiltroAcao('baixas')" class="px-2.5 py-1 rounded-md din-text-muted cursor-pointer">↓ Baixas</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filtro por Setor -->
+      <div id="btnsSetor" class="flex flex-wrap gap-1.5"></div>
+
+      <!-- Cards das Ações -->
+      <div id="gridAcoes" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
+        <p class="text-xs din-text-muted col-span-full py-6 text-center">Carregando cotações das ações da B3...</p>
+      </div>
+    </section>
+
+    <!-- 4. GUIA DIDÁTICO PARA QUEM ESTÁ COMEÇANDO NA BOLSA -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start ocultar-em-presentation">
+      <details class="lg:col-span-6 din-card-bg border din-border rounded-lg p-4 text-xs din-text-muted">
+        <summary class="font-semibold din-text-main cursor-pointer select-none">Guia rápido: Abertura, Fechamento, MM20 e PN/ON (ex.: PETR4)</summary>
+        <div class="mt-3 space-y-2 leading-relaxed">
+          <p><strong class="din-text-main">Abertura vs. Fechamento anterior:</strong> O <em>Fechamento anterior</em> é o último negócio do pregão passado; a <em>Abertura</em> é o primeiro negócio do pregão atual. A diferença percentual entre o preço atual e o fechamento anterior mostra a variação do dia.</p>
+          <p><strong class="din-text-main">Final 3 vs. Final 4 na B3:</strong> Ações terminadas em <strong>3</strong> (como <code>VALE3</code>, <code>EMBR3</code>, <code>CMIN3</code>, <code>WEGE3</code>) são ordinárias (ON, com direito a voto). Terminadas em <strong>4</strong> (como <code>PETR4</code>, <code>ITUB4</code>) são preferenciais (PN, geralmente com prioridade no recebimento de dividendos).</p>
+          <p><strong class="din-text-main">Média Móvel de 20 pregões (MM20):</strong> Calcula a média dos últimos 20 fechamentos diários para suavizar oscilações de curto prazo e mostrar se o preço está acima ou abaixo da média recente.</p>
+        </div>
+      </details>
+
+      <p class="lg:col-span-6 text-xs din-text-muted leading-relaxed">
+        <strong class="din-text-main">Aviso educativo e transparência.</strong> Os dados exibidos referem-se ao mercado de ações brasileiro (B3), consultados via backend com cache para estabilidade. Conteúdo estritamente informativo e educativo — não constitui recomendação de compra ou venda de ativos.
+      </p>
+    </section>
+  </main>
+</div>
+
+<!-- Rodapé Institucional -->
+<footer class="border-t din-border din-card-bg py-6 text-xs din-text-muted mt-8 ocultar-em-presentation">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+    <div class="flex items-center gap-2">
+      <span class="font-bold din-text-main">BrasilEmDados</span>
+      <span>•</span>
+      <span>Terminal de Inteligência Econômica e Setorial</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <a href="index.html" class="hover:din-text-main transition">Início</a>
+      <a href="economia.html" class="hover:din-text-main transition">Economia</a>
+      <a href="glossario.html" class="hover:din-text-main transition">Glossário</a>
+      <a href="sobre.html" class="hover:din-text-main transition">Sobre</a>
+      <a href="contato.html" class="hover:din-text-main transition">Contato</a>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/chart-utils.js?v=1"></script>
+<script>
+const $ = id => document.getElementById(id);
+const fmtBRL = v => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmtPts = v => Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' pts';
+const fmtNum = (v, d = 2) => Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
+const fmtVol = v => {
+  const n = Number(v || 0);
+  if (n >= 1e9) return fmtNum(n / 1e9, 2) + ' bi';
+  if (n >= 1e6) return fmtNum(n / 1e6, 2) + ' mi';
+  if (n >= 1e3) return fmtNum(n / 1e3, 1) + ' mil';
+  return fmtNum(n, 0);
+};
+
+const ATIVOS_B3 = [
+  { ticker: 'PETR4', nome: 'Petrobras PN', setor: 'Petróleo & Gás' },
+  { ticker: 'VALE3', nome: 'Vale ON', setor: 'Mineração & Aço' },
+  { ticker: 'CMIN3', nome: 'CSN Mineração ON', setor: 'Mineração & Aço' },
+  { ticker: 'EMBR3', nome: 'Embraer ON', setor: 'Indústria & Aeroespacial' },
+  { ticker: 'ITUB4', nome: 'Itaú Unibanco PN', setor: 'Financeiro' },
+  { ticker: 'BBAS3', nome: 'Banco do Brasil ON', setor: 'Financeiro' },
+  { ticker: 'WEGE3', nome: 'WEG ON', setor: 'Indústria & Aeroespacial' },
+  { ticker: 'B3SA3', nome: 'B3 ON', setor: 'Financeiro' },
+  { ticker: 'PRIO3', nome: 'PRIO ON', setor: 'Petróleo & Gás' },
+  { ticker: 'ABEV3', nome: 'Ambev ON', setor: 'Consumo & Varejo' },
+  { ticker: 'ELET3', nome: 'Eletrobras ON', setor: 'Energia Elétrica' },
+  { ticker: 'MGLU3', nome: 'Magazine Luiza ON', setor: 'Consumo & Varejo' }
+];
+
+const SETORES = ['Todos', 'Petróleo & Gás', 'Mineração & Aço', 'Financeiro', 'Indústria & Aeroespacial', 'Consumo & Varejo', 'Energia Elétrica'];
+
+let cotacoesResumo = {}; // ticker -> { preco, fechAnt, abertura, maxDia, minDia, volume, varPct, ehIndice }
+let serieAtivo = [];     // [{ dataLabel, close, mm20, perfVsIbov }]
+let serieIbovBase = {};  // dataLabel -> close do Ibovespa (para comparação %)
+let ativoSelecionado = 'PETR4';
+let rangeAtual = '3mo';
+let modoGraf = 'preco';  // 'preco' | 'perf'
+let setorSel = 'Todos';
+let filtroAcao = 'todas';
+let chartB3 = null;
+
+// Cabeçalho e Tema
+function toggleDropdownMenu() { $('dropdownMenu').classList.toggle('hidden'); }
+window.addEventListener('click', e => {
+  const btn = $('menuDropdownBtn'), menu = $('dropdownMenu');
+  if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) menu.classList.add('hidden');
+});
+
+function alternarDarkLight() {
+  const novo = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  aplicarTema(novo);
+  try { localStorage.setItem('brasil_em_dados_tema', novo); } catch {}
+}
+
+function aplicarTema(tema) {
+  const html = document.documentElement, bg = $('switchBg'), ball = $('switchBall');
+  if (tema === 'dark') {
+    html.setAttribute('data-theme', 'dark');
+    if (bg && ball) { bg.style.backgroundColor = '#16C784'; ball.classList.add('translate-x-5'); }
+  } else {
+    html.removeAttribute('data-theme');
+    if (bg && ball) { bg.style.backgroundColor = '#E5E7EB'; ball.classList.remove('translate-x-5'); }
+  }
+  if (serieAtivo.length) desenharGraficoB3();
+}
+
+function alternarModoApresentacao() {
+  document.body.classList.toggle('modo-apresentacao');
+  const ativo = document.body.classList.contains('modo-apresentacao');
+  $('btnModoApresentacao').innerHTML = ativo
+    ? '<span>✕ Sair da Tela Cheia</span>'
+    : `<svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect><line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line><line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line></svg><span>Modo Tela Cheia</span>`;
+}
+
+// Formata ticker para chamada externa direta caso o backend local não esteja rodando
+function simboloExterno(ticker) {
+  const t = ticker.toUpperCase();
+  if (t.startsWith('^') || t.endsWith('.SA')) return t;
+  return t + '.SA';
+}
+
+async function fetchChart(ticker, range = '5d', interval = '1d') {
+  const urls = [
+    `/api/b3/chart/${encodeURIComponent(ticker)}?range=${range}&interval=${interval}`,
+    `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(simboloExterno(ticker))}?range=${range}&interval=${interval}&includePrePost=false`
+  ];
+  for (const url of urls) {
+    try {
+      const r = await fetch(url);
+      if (!r.ok) continue;
+      const j = await r.json();
+      const res = j?.chart?.result?.[0];
+      if (res) return res;
+    } catch {}
+  }
+  throw new Error('Falha ao consultar ' + ticker);
+}
+
+function extrairResumo(res, ehIndice = false) {
+  const meta = res.meta || {};
+  const ts = res.timestamp || [];
+  const q = res.indicators?.quote?.[0] || {};
+  const closes = q.close || [];
+  const opens = q.open || [];
+  const highs = q.high || [];
+  const lows = q.low || [];
+  const vols = q.volume || [];
+
+  // Último candle válido
+  let idxUlt = closes.length - 1;
+  while (idxUlt >= 0 && (closes[idxUlt] === null || closes[idxUlt] === undefined)) idxUlt--;
+
+  const preco = Number(meta.regularMarketPrice ?? (idxUlt >= 0 ? closes[idxUlt] : 0)) || 0;
+  const fechAnt = Number(meta.chartPreviousClose ?? meta.previousClose ?? (idxUlt > 0 ? closes[idxUlt - 1] : preco)) || preco;
+  const abertura = Number(meta.regularMarketOpen ?? (idxUlt >= 0 ? opens[idxUlt] : preco)) || preco;
+  const maxDia = Number(meta.regularMarketDayHigh ?? (idxUlt >= 0 ? highs[idxUlt] : preco)) || preco;
+  const minDia = Number(meta.regularMarketDayLow ?? (idxUlt >= 0 ? lows[idxUlt] : preco)) || preco;
+  const volume = Number(meta.regularMarketVolume ?? (idxUlt >= 0 ? vols[idxUlt] : 0)) || 0;
+  const varPct = fechAnt > 0 ? ((preco - fechAnt) / fechAnt) * 100 : 0;
+
+  const pontos = [];
+  for (let i = 0; i < ts.length; i++) {
+    const c = closes[i];
+    if (c === null || c === undefined || Number.isNaN(Number(c))) continue;
+    const dt = new Date(ts[i] * 1000);
+    const label = dt.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: rangeAtual === '1y' || rangeAtual === '5y' ? '2-digit' : undefined });
+    pontos.push({
+      dataLabel: label,
+      close: Number(c),
+      open: opens[i] != null ? Number(opens[i]) : Number(c),
+      high: highs[i] != null ? Number(highs[i]) : Number(c),
+      low: lows[i] != null ? Number(lows[i]) : Number(c),
+      volume: vols[i] != null ? Number(vols[i]) : 0
+    });
+  }
+
+  return { preco, fechAnt, abertura, maxDia, minDia, volume, varPct, ehIndice, pontos };
+}
+
+function fmtValorAtivo(v, ehIndice) {
+  return ehIndice ? fmtPts(v) : fmtBRL(v);
+}
+
+function pintarIbovespa() {
+  const ib = cotacoesResumo['^BVSP'];
+  if (!ib) return;
+
+  const subiu = ib.varPct >= 0;
+  $('ibovPontos').textContent = fmtPts(ib.preco);
+  $('ibovVar').textContent = `${subiu ? '▲ +' : '▼ '}${fmtNum(ib.varPct, 2)}%`;
+  $('ibovVar').className = `text-xs font-bold px-2.5 py-1 rounded-md border din-border ${subiu ? 'bg-[#16C784]/15 din-green' : 'bg-[#EA3943]/15 din-red'}`;
+
+  $('ibovAbertura').textContent = fmtPts(ib.abertura);
+  $('ibovFechAnt').textContent = fmtPts(ib.fechAnt);
+  $('ibovFaixa').textContent = `${fmtNum(ib.maxDia, 0)} / ${fmtNum(ib.minDia, 0)}`;
+  $('ibovVolume').textContent = fmtVol(ib.volume);
+}
+
+function pintarFita() {
+  const lista = ['^BVSP', ...ATIVOS_B3.map(a => a.ticker)];
+  const itens = lista.map(t => {
+    const d = cotacoesResumo[t];
+    if (!d) return '';
+    const subiu = d.varPct >= 0;
+    const label = t === '^BVSP' ? 'IBOV' : t;
+    const val = d.ehIndice ? fmtNum(d.preco, 0) : fmtBRL(d.preco);
+    return `<button type="button" onclick="selecionarAtivo('${t}')" class="inline-flex items-center gap-1.5 hover:din-green transition cursor-pointer">
+      <strong class="din-text-main">${label}</strong>
+      <span>${val}</span>
+      <span class="font-bold ${subiu ? 'din-green' : 'din-red'}">${subiu ? '+' : ''}${fmtNum(d.varPct, 2)}%</span>
+    </button>`;
+  }).filter(Boolean);
+
+  if (itens.length) $('fitaB3').innerHTML = itens.join('<span class="din-text-muted/40">|</span>');
+}
+
+function renderBotoesSetor() {
+  $('btnsSetor').innerHTML = SETORES.map(s => {
+    const ativo = s === setorSel;
+    return `<button type="button" onclick="setSetor('${s}')"
+      class="px-3 py-1 rounded-md text-xs font-semibold border transition cursor-pointer ${ativo ? 'din-btn border-transparent' : 'din-secondary-bg din-border din-text-muted hover:din-text-main'}">${s}</button>`;
+  }).join('');
+}
+
+function setSetor(s) {
+  setorSel = s;
+  renderBotoesSetor();
+  renderizarGradeAcoes();
+}
+
+function setFiltroAcao(f) {
+  filtroAcao = f;
+  const on = 'px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border cursor-pointer';
+  const off = 'px-2.5 py-1 rounded-md din-text-muted cursor-pointer';
+  $('fltTodas').className = f === 'todas' ? on : off;
+  $('fltAltas').className = f === 'altas' ? on : off;
+  $('fltBaixas').className = f === 'baixas' ? on : off;
+  renderizarGradeAcoes();
+}
+
+function renderizarGradeAcoes() {
+  const busca = ($('inpBuscaAcao').value || '').trim().toLowerCase();
+  let lista = ATIVOS_B3.filter(a => {
+    const okSetor = setorSel === 'Todos' || a.setor === setorSel;
+    const okBusca = !busca || a.ticker.toLowerCase().includes(busca) || a.nome.toLowerCase().includes(busca);
+    const cot = cotacoesResumo[a.ticker];
+    const okVar = filtroAcao === 'todas'
+      || (filtroAcao === 'altas' && cot && cot.varPct >= 0)
+      || (filtroAcao === 'baixas' && cot && cot.varPct < 0);
+    return okSetor && okBusca && okVar;
+  });
+
+  if (filtroAcao === 'altas') lista = [...lista].sort((a, b) => (cotacoesResumo[b.ticker]?.varPct ?? -999) - (cotacoesResumo[a.ticker]?.varPct ?? -999));
+  if (filtroAcao === 'baixas') lista = [...lista].sort((a, b) => (cotacoesResumo[a.ticker]?.varPct ?? 999) - (cotacoesResumo[b.ticker]?.varPct ?? 999));
+
+  if (!lista.length) {
+    $('gridAcoes').innerHTML = `<p class="text-xs din-text-muted col-span-full py-6 text-center">Nenhuma ação encontrada com esse filtro.</p>`;
+    return;
+  }
+
+  $('gridAcoes').innerHTML = lista.map(a => {
+    const d = cotacoesResumo[a.ticker];
+    const sel = ativoSelecionado === a.ticker;
+    const subiu = d ? d.varPct >= 0 : true;
+    return `
+      <div onclick="selecionarAtivo('${a.ticker}')"
+        class="p-4 rounded-xl border cursor-pointer transition space-y-3 ${sel ? 'border-[#16C784] din-secondary-bg shadow-sm' : 'din-card-bg din-border hover:border-[#16C784]'}">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <div class="flex items-center gap-2">
+              <strong class="text-sm font-extrabold din-text-main">${a.ticker}</strong>
+              <span class="text-[10px] px-1.5 py-0.5 rounded din-secondary-bg border din-border din-text-muted">${a.setor.split(' ')[0]}</span>
+            </div>
+            <p class="text-[11px] din-text-muted mt-0.5 truncate">${a.nome}</p>
+          </div>
+          <span class="text-xs font-bold ${d ? (subiu ? 'din-green' : 'din-red') : 'din-text-muted'}">
+            ${d ? `${subiu ? '+' : ''}${fmtNum(d.varPct, 2)}%` : '—'}
+          </span>
+        </div>
+
+        <div class="flex items-baseline justify-between pt-1">
+          <span class="text-lg font-black din-text-main">${d ? fmtBRL(d.preco) : 'Carregando...'}</span>
+          <span class="text-[10px] din-text-muted">Vol: ${d ? fmtVol(d.volume) : '—'}</span>
+        </div>
+
+        <div class="pt-2 border-t din-border grid grid-cols-2 gap-2 text-[11px]">
+          <div>
+            <span class="din-text-muted block text-[10px]">Abertura</span>
+            <strong class="din-text-main">${d ? fmtBRL(d.abertura) : '—'}</strong>
+          </div>
+          <div class="text-right">
+            <span class="din-text-muted block text-[10px]">Fech. anterior</span>
+            <strong class="din-text-main">${d ? fmtBRL(d.fechAnt) : '—'}</strong>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function pintarRaioX(ticker) {
+  const isIbov = ticker === '^BVSP';
+  const metaAcao = ATIVOS_B3.find(x => x.ticker === ticker);
+  const d = cotacoesResumo[ticker];
+
+  $('rxSetor').textContent = isIbov ? 'Índice de Mercado' : (metaAcao?.setor || 'Ação B3');
+  $('rxTitulo').textContent = isIbov ? 'Ibovespa (^BVSP)' : ticker;
+  $('rxEmpresa').textContent = isIbov ? 'Índice B3' : (metaAcao?.nome || ticker);
+
+  if (!d) return;
+  const subiu = d.varPct >= 0;
+  $('rxPreco').textContent = fmtValorAtivo(d.preco, isIbov);
+  $('rxVar').textContent = `${subiu ? '▲ +' : '▼ '}${fmtNum(d.varPct, 2)}% no dia`;
+  $('rxVar').className = `text-xs font-bold ${subiu ? 'din-green' : 'din-red'}`;
+
+  $('rxAbertura').textContent = fmtValorAtivo(d.abertura, isIbov);
+  $('rxFechAnt').textContent = fmtValorAtivo(d.fechAnt, isIbov);
+  $('rxMaxDia').textContent = fmtValorAtivo(d.maxDia, isIbov);
+  $('rxMinDia').textContent = fmtValorAtivo(d.minDia, isIbov);
+  $('rxVolume').textContent = fmtVol(d.volume);
+
+  const gapPct = d.fechAnt > 0 ? ((d.abertura - d.fechAnt) / d.fechAnt) * 100 : 0;
+  const gapDesc = Math.abs(gapPct) < 0.05
+    ? 'abriu próximo ao fechamento anterior'
+    : (gapPct > 0 ? `abriu em alta de +${fmtNum(gapPct, 2)}% frente ao fechamento anterior` : `abriu em queda de ${fmtNum(gapPct, 2)}% frente ao fechamento anterior`);
+
+  $('rxDidatica').innerHTML = `<strong>${isIbov ? 'O Ibovespa' : ticker}</strong> ${gapDesc}. A faixa entre a mínima (${fmtValorAtivo(d.minDia, isIbov)}) e a máxima (${fmtValorAtivo(d.maxDia, isIbov)}) mostra a oscilação do pregão.`;
+}
+
+async function selecionarAtivo(ticker) {
+  ativoSelecionado = ticker;
+  renderizarGradeAcoes();
+  pintarRaioX(ticker);
+  await carregarSerieHistorica(ticker, rangeAtual);
+}
+
+function setRangeB3(rng) {
+  rangeAtual = rng;
+  document.querySelectorAll('.btn-rng').forEach(b => {
+    const on = b.dataset.rng === rng;
+    b.className = `btn-rng px-2.5 py-1 rounded-md cursor-pointer ${on ? 'din-card-bg din-text-main border din-border' : 'din-text-muted'}`;
+  });
+  carregarSerieHistorica(ativoSelecionado, rangeAtual);
+}
+
+function setModoGraf(m) {
+  modoGraf = m;
+  const on = 'px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border cursor-pointer';
+  const off = 'px-2.5 py-1 rounded-md din-text-muted cursor-pointer';
+  $('mPreco').className = m === 'preco' ? on : off;
+  $('mPerf').className = m === 'perf' ? on : off;
+  desenharGraficoB3();
+}
+
+async function carregarSerieHistorica(ticker, rng) {
+  const isIbov = ticker === '^BVSP';
+  $('titGrafB3').textContent = `Histórico — ${isIbov ? 'Ibovespa (^BVSP)' : ticker}`;
+
+  try {
+    const res = await fetchChart(ticker, rng, '1d');
+    const info = extrairResumo(res, isIbov);
+    cotacoesResumo[ticker] = info;
+    pintarRaioX(ticker);
+    if (isIbov) pintarIbovespa();
+    renderizarGradeAcoes();
+
+    // Carrega Ibovespa no mesmo período para comparar desempenho % caso o usuário troque para "% vs. Ibov"
+    if (!isIbov) {
+      try {
+        const resIb = await fetchChart('^BVSP', rng, '1d');
+        const infoIb = extrairResumo(resIb, true);
+        const baseIb = infoIb.pontos[0]?.close || 1;
+        serieIbovBase = {};
+        infoIb.pontos.forEach(p => { serieIbovBase[p.dataLabel] = ((p.close / baseIb) - 1) * 100; });
+      } catch {
+        serieIbovBase = {};
+      }
+    }
+
+    const closes = info.pontos.map(p => p.close);
+    const base0 = closes[0] || 1;
+    serieAtivo = info.pontos.map((p, idx) => {
+      let mm20 = null;
+      if (idx >= 19) {
+        const slice = closes.slice(idx - 19, idx + 1);
+        mm20 = Number((slice.reduce((a, b) => a + b, 0) / 20).toFixed(2));
+      }
+      return {
+        dataLabel: p.dataLabel,
+        close: p.close,
+        open: p.open,
+        high: p.high,
+        low: p.low,
+        volume: p.volume,
+        mm20,
+        perfPct: Number((((p.close / base0) - 1) * 100).toFixed(2)),
+        ibovPct: serieIbovBase[p.dataLabel] !== undefined ? Number(serieIbovBase[p.dataLabel].toFixed(2)) : null
+      };
+    });
+
+    if (serieAtivo.length >= 2) {
+      const prim = serieAtivo[0].close;
+      const ult = serieAtivo[serieAtivo.length - 1].close;
+      const varPer = ((ult - prim) / prim) * 100;
+      const maxPer = Math.max(...closes);
+      const minPer = Math.min(...closes);
+
+      $('stPerVar').textContent = `${varPer >= 0 ? '+' : ''}${fmtNum(varPer, 2)}%`;
+      $('stPerVar').className = varPer >= 0 ? 'din-green font-bold' : 'din-red font-bold';
+      $('stPerMax').textContent = fmtValorAtivo(maxPer, isIbov);
+      $('stPerMin').textContent = fmtValorAtivo(minPer, isIbov);
+    }
+
+    desenharGraficoB3();
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+function desenharGraficoB3() {
+  if (!serieAtivo.length) return;
+  const isIbov = ativoSelecionado === '^BVSP';
+  const ehPerf = modoGraf === 'perf' && !isIbov;
+  const mostrarMM20 = $('chkMM20').checked && !ehPerf;
+
+  const labels = serieAtivo.map(x => x.dataLabel);
+  const dadosPrincipais = serieAtivo.map(x => ehPerf ? x.perfPct : x.close);
+  const subiu = dadosPrincipais[dadosPrincipais.length - 1] >= dadosPrincipais[0];
+  const corLinha = subiu ? '#16C784' : '#EA3943';
+
+  const datasets = [
+    {
+      label: ehPerf ? `${ativoSelecionado} (%)` : (isIbov ? 'Ibovespa (pts)' : `${ativoSelecionado} (R$)`),
+      data: dadosPrincipais,
+      borderColor: corLinha,
+      backgroundColor: subiu ? 'rgba(22,199,132,0.09)' : 'rgba(234,57,67,0.09)',
+      fill: true,
+      borderWidth: 2.2,
+      pointRadius: 0,
+      pointHoverRadius: 4,
+      tension: 0.15
+    }
+  ];
+
+  if (ehPerf) {
+    datasets.push({
+      label: 'Ibovespa (%)',
+      data: serieAtivo.map(x => x.ibovPct),
+      borderColor: '#2563EB',
+      borderDash: [5, 3],
+      borderWidth: 2,
+      pointRadius: 0,
+      tension: 0.15
+    });
+  }
+
+  if (mostrarMM20) {
+    datasets.push({
+      label: 'MM20 (20 pregões)',
+      data: serieAtivo.map(x => x.mm20),
+      borderColor: '#F59E0B',
+      borderWidth: 1.8,
+      pointRadius: 0,
+      tension: 0.15
+    });
+  }
+
+  if (chartB3) chartB3.destroy();
+  const fmtY = ehPerf ? v => `${fmtNum(v, 1)}%` : (v => isIbov ? fmtNum(v, 0) : fmtBRL(v));
+  const opts = window.BDChart ? BDChart.opcoesBase({ fmtY }) : { responsive: true, maintainAspectRatio: false };
+
+  chartB3 = new Chart($('grafB3'), {
+    type: 'line',
+    data: { labels, datasets },
+    options: opts
+  });
+}
+
+// Exportações
+function baixarGraficoB3PNG() {
+  if (!window.BDChart) return;
+  const d = cotacoesResumo[ativoSelecionado];
+  const sub = d ? `Último: ${fmtValorAtivo(d.preco, ativoSelecionado === '^BVSP')} (${d.varPct >= 0 ? '+' : ''}${fmtNum(d.varPct, 2)}%)` : '';
+  BDChart.baixarPNG('grafB3', {
+    titulo: $('titGrafB3')?.textContent || `B3 — ${ativoSelecionado}`,
+    subtitulo: sub,
+    fonte: 'Bolsa de Valores do Brasil (B3) • BrasilEmDados',
+    nomeArquivo: `brasilemdados-b3-${ativoSelecionado.replace(/[^a-zA-Z0-9]/g, '').toLowerCase()}-${rangeAtual}`
+  });
+}
+
+function exportarCSV() {
+  if (!serieAtivo.length) return;
+  const cab = ['Data', 'Abertura', 'Maxima', 'Minima', 'Fechamento', 'Volume', 'MM20'];
+  const linhas = serieAtivo.map(x => [x.dataLabel, x.open.toFixed(2), x.high.toFixed(2), x.low.toFixed(2), x.close.toFixed(2), x.volume, x.mm20 ?? ''].join(';'));
+  const blob = new Blob(['\uFEFF' + [cab.join(';'), ...linhas].join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `brasilemdados_b3_${ativoSelecionado.replace(/[^a-zA-Z0-9]/g, '')}_${rangeAtual}.csv`;
+  a.click();
+}
+
+function citarB3ABNT(btn) {
+  if (!window.BDChart) return;
+  BDChart.copiarABNT({
+    titulo: `Cotação e Série Histórica na B3 — ${ativoSelecionado}`,
+    fonteOficial: 'Bolsa de Valores do Brasil (B3)'
+  }, btn);
+}
+
+async function carregarTudo(forcar = false) {
+  $('statusB3').innerHTML = `<span class="w-2 h-2 rounded-full bg-[#16C784] animate-pulse"></span><span>Atualizando dados da B3...</span>`;
+
+  // Carrega Ibovespa e o ativo principal primeiro para resposta rápida
+  try {
+    const resIb = await fetchChart('^BVSP', '5d', '1d');
+    cotacoesResumo['^BVSP'] = extrairResumo(resIb, true);
+    pintarIbovespa();
+  } catch {}
+
+  await selecionarAtivo(ativoSelecionado);
+
+  // Carrega demais ações em lotes para não sobrecarregar
+  const restantes = ATIVOS_B3.map(a => a.ticker).filter(t => t !== ativoSelecionado);
+  for (let i = 0; i < restantes.length; i += 4) {
+    const lote = restantes.slice(i, i + 4);
+    await Promise.allSettled(lote.map(async t => {
+      const r = await fetchChart(t, '5d', '1d');
+      cotacoesResumo[t] = extrairResumo(r, false);
+    }));
+    pintarFita();
+    renderizarGradeAcoes();
+  }
+
+  $('statusB3').innerHTML = `<span class="w-2 h-2 rounded-full bg-[#16C784]"></span><span>Cotações B3 atualizadas</span>`;
+}
+
+// Inicialização
+(() => {
+  let temaSalvo = 'light';
+  try { temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light'; } catch {}
+  aplicarTema(temaSalvo);
+  renderBotoesSetor();
+  carregarTudo(false);
+})();
+</script>
+</body>
+</html>
