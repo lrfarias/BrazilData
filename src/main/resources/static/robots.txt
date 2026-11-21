@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://brasilemdados.com/sitemap.xml
+Sitemap: https://brasilemdadosp.com/sitemap.xml
