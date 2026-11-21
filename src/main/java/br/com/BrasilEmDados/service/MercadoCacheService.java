@@ -1,5 +1,9 @@
 package br.com.BrasilEmDados.service;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -26,19 +30,24 @@ public class MercadoCacheService {
         }
 
         try {
-            String response = restTemplate.getForObject(url, String.class);
-            if (response != null && !response.isBlank()) {
-                cache.put(key, new CacheEntry(response, Instant.now().plusSeconds(ttlSeconds)));
-                return response;
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("User-Agent", "Mozilla/5.0 (compatible; BrasilEmDados/1.4; +https://brasilemdadosp.com)");
+            headers.set("Accept", "application/json");
+
+            ResponseEntity<String> resp = restTemplate.exchange(
+                    url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+            String body = resp.getBody();
+            if (body != null && !body.isBlank()) {
+                cache.put(key, new CacheEntry(body, Instant.now().plusSeconds(ttlSeconds)));
+                return body;
             }
         } catch (Exception e) {
-            // Se a API externa cair, devolve o último cache válido em vez de quebrar a tela
             if (entry != null) {
                 return entry.payload();
             }
             throw new RuntimeException("Falha ao consultar API externa: " + url, e);
         }
 
-        return entry != null ? entry.payload() : "[]";
+        return entry != null ? entry.payload() : "{}";
     }
 }

@@ -15,19 +15,24 @@ public class MercadoProxyController {
         this.cacheService = cacheService;
     }
 
-    // Câmbio ao vivo com cache de 60 segundos
     @GetMapping(value = "/mercado/cambio-live", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getCambioLive(
             @RequestParam(defaultValue = "USD-BRL,EUR-BRL,GBP-BRL,BTC-BRL") String pares) {
 
         String paresLimpos = pares.replaceAll("[^A-Za-z,-]", "");
-        String url = "https://economia.awesomeapi.com.br/json/last/" + paresLimpos;
-        String json = cacheService.getOrFetch("cambio:" + paresLimpos, url, 60);
-        return ResponseEntity.ok(json);
+        String awesomeUrl = "https://economia.awesomeapi.com.br/json/last/" + paresLimpos;
+
+        try {
+            String json = cacheService.getOrFetch("cambio:" + paresLimpos, awesomeUrl, 60);
+            return ResponseEntity.ok(json);
+        } catch (Exception e) {
+            // Fallback gratuito e sem bloqueio de nuvem (taxas base BRL)
+            String fallbackUrl = "https://open.er-api.com/v6/latest/BRL";
+            String json = cacheService.getOrFetch("cambio:fallback:BRL", fallbackUrl, 300);
+            return ResponseEntity.ok(json);
+        }
     }
 
-    // Séries do BCB SGS (ex: 433 = IPCA, 189 = IGP-M, 13762 = DBGG) com cache de 12
-    // horas
     @GetMapping(value = "/bcb/serie/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getSerieBcb(
             @PathVariable int id,
