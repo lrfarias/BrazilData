@@ -128,12 +128,12 @@
     <!-- 1. KPIs FISCAIS OFICIAIS (BCB SGS) -->
     <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 ocultar-em-presentation">
       <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-        <span class="text-xs din-text-muted uppercase font-semibold">Dívida Bruta (DBGG / PIB)</span>
+        <span class="text-xs din-text-muted uppercase font-semibold" data-glossario="DBGG">Dívida Bruta (DBGG / PIB)</span>
         <p id="kDbgg" class="text-xl font-bold din-red mt-1">—</p>
         <span id="kDbggRef" class="text-[11px] din-text-muted">BCB Oficial (SGS 13762)</span>
       </div>
       <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-        <span class="text-xs din-text-muted uppercase font-semibold">Dívida Líquida (DLSP / PIB)</span>
+        <span class="text-xs din-text-muted uppercase font-semibold" data-glossario="DLSP">Dívida Líquida (DLSP / PIB)</span>
         <p id="kDlsp" class="text-xl font-bold din-text-main mt-1">—</p>
         <span id="kDlspRef" class="text-[11px] din-text-muted">BCB Oficial (SGS 4513)</span>
       </div>
@@ -336,7 +336,9 @@
   </div>
 </footer>
 
-<script src="/js/chart-utils.js?v=1"></script><script>
+<script src="/js/layout.js"></script>
+<script src="/js/chart-utils.js?v=1"></script>
+<script>
 const $ = id => document.getElementById(id);
 const fmtNum = (v, d = 2) => Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
 const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
@@ -426,7 +428,7 @@ function normalizarSgs(json, inverterSinal = false) {
 }
 
 // Busca no proxy Spring Boot -> BCB direto com dataInicial/dataFinal (<= 10 anos) -> BCB ultimos
-async function buscarSgs(codigo, meses = 116) {
+async function buscarSgs(codigo, meses = 116, inverterSinal = false) {
   const { dataInicial, dataFinal } = janelaDatasBcb(meses);
   const lim = Math.min(meses, 118);
   const urls = [
@@ -437,7 +439,7 @@ async function buscarSgs(codigo, meses = 116) {
   for (const url of urls) {
     try {
       const json = await fetchJsonComTimeout(url, 9000);
-      const dados = normalizarSgs(json);
+      const dados = normalizarSgs(json, inverterSinal);
       if (dados.length > 0) return dados;
     } catch {}
   }

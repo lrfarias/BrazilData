@@ -205,7 +205,7 @@
             <button id="tabCusto" type="button" onclick="setAbaConv('custo')" class="px-3 py-1 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer">Quanto você paga de verdade</button>
             <button id="tabSpread" type="button" onclick="setAbaConv('spread')" class="px-3 py-1 rounded-md din-text-muted transition cursor-pointer">Auditar cotação do banco</button>
           </div>
-          <span id="custoHint" class="text-[11px] din-text-muted">Simulação de IOF + spread médio por canal</span>
+          <span id="custoHint" class="text-[11px] din-text-muted" data-glossario="SPREAD">Simulação de IOF + spread médio por canal</span>
         </div>
 
         <div id="viewCusto" class="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -505,6 +505,7 @@
 </footer>
 
 <!-- Utilitário de Gráficos (PNG + ABNT) ANTES dos scripts da página -->
+<script src="/js/layout.js"></script>
 <script src="/js/chart-utils.js?v=1"></script>
 <script src="js/cambio/cambio-core.js?v=8"></script>
 <script src="js/cambio/cambio-graficos.js?v=8"></script>

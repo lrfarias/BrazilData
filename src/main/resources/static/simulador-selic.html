@@ -122,7 +122,7 @@
     <!-- 1. KPIs OFICIAIS DO BANCO CENTRAL -->
     <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 ocultar-em-presentation">
       <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-        <span class="text-xs din-text-muted uppercase font-semibold">Selic (meta)</span>
+        <span class="text-xs din-text-muted uppercase font-semibold" data-glossario="SELIC">Selic (meta)</span>
         <p id="kSelic" class="text-xl font-bold din-green mt-1">—</p>
         <span class="text-[11px] din-text-muted">BCB Oficial (SGS 432)</span>
       </div>
@@ -132,7 +132,7 @@
         <span class="text-[11px] din-text-muted">BCB Oficial (SGS 4389)</span>
       </div>
       <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-        <span class="text-xs din-text-muted uppercase font-semibold">IPCA (12 meses)</span>
+        <span class="text-xs din-text-muted uppercase font-semibold" data-glossario="IPCA">IPCA (12 meses)</span>
         <p id="kIpca" class="text-xl font-bold din-red mt-1">—</p>
         <span class="text-[11px] din-text-muted">BCB / IBGE (SGS 13522)</span>
       </div>
@@ -406,7 +406,8 @@
   </div>
 </footer>
 
-<!-- Utilitário de Gráficos (PNG + ABNT + Responsivo) antes do script da página -->
+<!-- Utilitário de Layout e Gráficos (Tooltips + PNG + ABNT) antes do script da página -->
+<script src="/js/layout.js"></script>
 <script src="/js/chart-utils.js?v=1"></script>
 
 <script>
@@ -852,15 +853,29 @@ function desenharFluxo() {
   });
 }
 
+async function fetchBcbSerie(id, ultimos) {
+  const urls = [
+    `/api/bcb/serie/${id}?ultimos=${ultimos}`,
+    `https://api.bcb.gov.br/dados/serie/bcdata.sgs.${id}/dados/ultimos/${ultimos}?formato=json`
+  ];
+  for (const url of urls) {
+    try {
+      const r = await fetch(url);
+      if (!r.ok) continue;
+      const j = await r.json();
+      if (Array.isArray(j) && j.length) return j;
+    } catch {}
+  }
+  throw new Error('SGS ' + id);
+}
+
 async function carregarHistoricoBC() {
   $('subGrafBC').textContent = 'Buscando séries mensais oficiais no Banco Central (últimos 5 anos)...';
   try {
-    const [rSel, rIpc] = await Promise.all([
-      fetch('https://api.bcb.gov.br/dados/serie/bcdata.sgs.4189/dados/ultimos/60?formato=json'),
-      fetch('https://api.bcb.gov.br/dados/serie/bcdata.sgs.13522/dados/ultimos/60?formato=json')
+    const [jSel, jIpc] = await Promise.all([
+      fetchBcbSerie(4189, 60),
+      fetchBcbSerie(13522, 60)
     ]);
-    if (!rSel.ok || !rIpc.ok) throw new Error('SGS hist');
-    const [jSel, jIpc] = await Promise.all([rSel.json(), rIpc.json()]);
 
     const mapIpc = {};
     jIpc.forEach(x => { mapIpc[x.data.slice(3)] = parseFloat(x.valor); });
@@ -947,9 +962,7 @@ function lerURL() {
 }
 
 async function sgs(c) {
-  const r = await fetch(`https://api.bcb.gov.br/dados/serie/bcdata.sgs.${c}/dados/ultimos/1?formato=json`);
-  if (!r.ok) throw new Error('SGS ' + c);
-  const j = await r.json();
+  const j = await fetchBcbSerie(c, 1);
   return { v: parseFloat(j[0].valor), d: j[0].data };
 }
 

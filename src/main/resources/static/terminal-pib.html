@@ -162,7 +162,10 @@
         <!-- KPIs Consolidados no Topo -->
         <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 ocultar-em-presentation">
             <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-                <span id="kpiPibTitulo" class="text-xs din-text-muted uppercase font-semibold">PIB Nacional Consolidado (<span class="labelAno">2021</span>)</span>
+                <div class="flex items-center">
+                    <span id="kpiPibTitulo" class="text-xs din-text-muted uppercase font-semibold">PIB Nacional Consolidado (<span class="labelAno">2021</span>)</span>
+                    <span data-glossario="PIB"></span>
+                </div>
                 <p id="kpiPibBrasil" class="text-xl font-bold din-green mt-1">R$ 0,00 tri</p>
                 <span id="kpiPibSub" class="text-[11px] din-text-muted">Fonte oficial: IBGE (SIDRA 5938)</span>
             </div>
@@ -355,7 +358,7 @@
                         <div class="din-secondary-bg border din-border rounded-lg p-4 space-y-3">
                             <div class="flex justify-between items-center border-b din-border pb-2">
                                 <div>
-                                    <span class="text-xs font-semibold din-green uppercase tracking-wider">Vocação Econômica Real</span>
+                                    <span class="text-xs font-semibold din-green uppercase tracking-wider" data-glossario="VAB">Vocação Econômica Real</span>
                                     <p id="lblVocacaoDominante" class="text-xs din-text-main font-medium mt-0.5">Composição do Valor Adicionado</p>
                                 </div>
                             </div>
@@ -513,7 +516,8 @@
         </div>
     </footer>
 
-    <!-- Utilitário de Gráficos (PNG + ABNT) carregado ANTES do script da página -->
+    <!-- Utilitário de Layout e Gráficos (Tooltips + PNG + ABNT) carregado ANTES do script da página -->
+    <script src="/js/layout.js"></script>
     <script src="/js/chart-utils.js?v=1"></script>
 
     <script>
