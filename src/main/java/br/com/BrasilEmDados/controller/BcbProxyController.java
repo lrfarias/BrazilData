@@ -1,4 +1,4 @@
-package br.com.BrasilEmDados.service;
+package br.com.BrasilEmDados.controller;
 
 import br.com.BrasilEmDados.service.BcbProxyService;
 import org.springframework.http.MediaType;

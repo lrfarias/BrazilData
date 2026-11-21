@@ -41,7 +41,7 @@
         </nav>
 
         <div class="flex items-center gap-2.5 relative">
-          <button onclick="alternarModoApresentacao()" id="btnModoApresentacao" class="hidden lg:inline-flex items-center gap-1.5 din-secondary-bg hover:opacity-80 border din-border din-text-main text-xs font-semibold px-3 py-1.5 rounded-lg transition">
+          <button onclick="alternarModoApresentacao()" id="btnModoApresentacao" class="hidden lg:inline-flex items-center gap-1.5 din-secondary-bg hover:opacity-80 border din-border din-text-main text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer">
             <svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect>
               <line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line>
@@ -72,11 +72,11 @@
               <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M7 14l4-4 4 4 5-5"></path></svg>
               Comparador Histórico
             </a>
-            <button onclick="exportarCSV(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left">
+            <button onclick="exportarCSV(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left cursor-pointer">
               <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
               Exportar Histórico (CSV)
             </button>
-            <button onclick="window.print(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left">
+            <button onclick="window.print(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left cursor-pointer">
               <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
               Exportar Relatório (PDF)
             </button>
@@ -104,7 +104,7 @@
     </div>
   </header>
 
-  <!-- Breadcrumb + Status Live -->
+  <!-- Breadcrumb + Status Live + ABNT -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex flex-wrap items-center justify-between gap-2 text-xs ocultar-em-presentation">
     <div class="flex items-center gap-2 din-text-muted">
       <a href="economia.html" class="hover:din-green font-semibold inline-flex items-center gap-1 transition">
@@ -114,9 +114,14 @@
       <span>/</span>
       <span class="din-text-main font-bold">Conversor de Moedas & Paridade Cambial</span>
     </div>
-    <div class="flex items-center gap-2 din-text-muted">
-      <span class="w-2 h-2 rounded-full bg-[#16C784] animate-pulse"></span>
-      <span id="statusLive">Carregando cotações...</span>
+    <div class="flex flex-wrap items-center gap-3 din-text-muted">
+      <span class="inline-flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-[#16C784] animate-pulse"></span>
+        <span id="statusLive">Carregando cotações...</span>
+      </span>
+      <button type="button" onclick="citarCambioABNT(this)" class="px-2.5 py-1 rounded-md text-[11px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
+        Citar (ABNT)
+      </button>
     </div>
   </div>
 
@@ -138,9 +143,9 @@
     <section class="space-y-3 ocultar-em-presentation">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="inline-flex din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
-          <button id="rkGlobais" type="button" onclick="setRanking('globais')" class="px-3 py-1 rounded-md din-card-bg din-text-main border din-border transition">Top 5 Globais</button>
-          <button id="rkAltas" type="button" onclick="setRanking('altas')" class="px-3 py-1 rounded-md din-text-muted transition">↑ 5 Valorizadas (dia)</button>
-          <button id="rkBaixas" type="button" onclick="setRanking('baixas')" class="px-3 py-1 rounded-md din-text-muted transition">↓ 5 Desvalorizadas (dia)</button>
+          <button id="rkGlobais" type="button" onclick="setRanking('globais')" class="px-3 py-1 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer">Top 5 Globais</button>
+          <button id="rkAltas" type="button" onclick="setRanking('altas')" class="px-3 py-1 rounded-md din-text-muted transition cursor-pointer">↑ 5 Valorizadas (dia)</button>
+          <button id="rkBaixas" type="button" onclick="setRanking('baixas')" class="px-3 py-1 rounded-md din-text-muted transition cursor-pointer">↓ 5 Desvalorizadas (dia)</button>
         </div>
 
         <label class="inline-flex items-center gap-2 text-xs din-text-muted cursor-pointer select-none">
@@ -176,7 +181,7 @@
           </div>
           <div class="md:col-span-1 flex justify-center">
             <button type="button" onclick="inverterConv()" title="Inverter moedas"
-              class="w-full md:w-10 h-10 rounded-lg din-secondary-bg border din-border din-text-main font-bold hover:border-[#16C784] transition">⇄</button>
+              class="w-full md:w-10 h-10 rounded-lg din-secondary-bg border din-border din-text-main font-bold hover:border-[#16C784] transition cursor-pointer">⇄</button>
           </div>
           <div class="md:col-span-4">
             <label class="block text-xs font-semibold din-text-main">Para
@@ -197,8 +202,8 @@
       <div class="pt-4 border-t din-border space-y-3">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <div class="inline-flex din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
-            <button id="tabCusto" type="button" onclick="setAbaConv('custo')" class="px-3 py-1 rounded-md din-card-bg din-text-main border din-border transition">Quanto você paga de verdade</button>
-            <button id="tabSpread" type="button" onclick="setAbaConv('spread')" class="px-3 py-1 rounded-md din-text-muted transition">Auditar cotação do banco</button>
+            <button id="tabCusto" type="button" onclick="setAbaConv('custo')" class="px-3 py-1 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer">Quanto você paga de verdade</button>
+            <button id="tabSpread" type="button" onclick="setAbaConv('spread')" class="px-3 py-1 rounded-md din-text-muted transition cursor-pointer">Auditar cotação do banco</button>
           </div>
           <span id="custoHint" class="text-[11px] din-text-muted">Simulação de IOF + spread médio por canal</span>
         </div>
@@ -267,14 +272,14 @@
           <div>
             <span class="block text-xs font-semibold din-text-main mb-1.5">Período</span>
             <div id="grupoPeriodos" class="grid grid-cols-4 gap-1 din-secondary-bg p-1 rounded-lg border din-border text-[11px] font-semibold">
-              <button data-per="3" type="button" onclick="setPeriodo(3)" class="btn-per py-1.5 rounded-md din-text-muted transition">3d</button>
-              <button data-per="5" type="button" onclick="setPeriodo(5)" class="btn-per py-1.5 rounded-md din-text-muted transition">5d</button>
-              <button data-per="15" type="button" onclick="setPeriodo(15)" class="btn-per py-1.5 rounded-md din-text-muted transition">15d</button>
-              <button data-per="30" type="button" onclick="setPeriodo(30)" class="btn-per py-1.5 rounded-md din-text-muted transition">30d</button>
-              <button data-per="90" type="button" onclick="setPeriodo(90)" class="btn-per py-1.5 rounded-md din-card-bg din-text-main border din-border transition">3m</button>
-              <button data-per="180" type="button" onclick="setPeriodo(180)" class="btn-per py-1.5 rounded-md din-text-muted transition">6m</button>
-              <button data-per="365" type="button" onclick="setPeriodo(365)" class="btn-per py-1.5 rounded-md din-text-muted transition">1 ano</button>
-              <button data-per="tudo" type="button" onclick="setPeriodo('tudo')" class="btn-per py-1.5 rounded-md din-text-muted transition">Tudo</button>
+              <button data-per="3" type="button" onclick="setPeriodo(3)" class="btn-per py-1.5 rounded-md din-text-muted transition cursor-pointer">3d</button>
+              <button data-per="5" type="button" onclick="setPeriodo(5)" class="btn-per py-1.5 rounded-md din-text-muted transition cursor-pointer">5d</button>
+              <button data-per="15" type="button" onclick="setPeriodo(15)" class="btn-per py-1.5 rounded-md din-text-muted transition cursor-pointer">15d</button>
+              <button data-per="30" type="button" onclick="setPeriodo(30)" class="btn-per py-1.5 rounded-md din-text-muted transition cursor-pointer">30d</button>
+              <button data-per="90" type="button" onclick="setPeriodo(90)" class="btn-per py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer">3m</button>
+              <button data-per="180" type="button" onclick="setPeriodo(180)" class="btn-per py-1.5 rounded-md din-text-muted transition cursor-pointer">6m</button>
+              <button data-per="365" type="button" onclick="setPeriodo(365)" class="btn-per py-1.5 rounded-md din-text-muted transition cursor-pointer">1 ano</button>
+              <button data-per="tudo" type="button" onclick="setPeriodo('tudo')" class="btn-per py-1.5 rounded-md din-text-muted transition cursor-pointer">Tudo</button>
             </div>
           </div>
 
@@ -295,8 +300,8 @@
           <div>
             <span class="block text-xs font-semibold din-text-main mb-1.5">Modo do gráfico</span>
             <div class="grid grid-cols-2 gap-1.5 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
-              <button id="mPar" type="button" onclick="setModo('par')" class="py-1.5 rounded-md din-card-bg din-text-main border din-border transition">Par Direto (A/B)</button>
-              <button id="mBase" type="button" onclick="setModo('base100')" class="py-1.5 rounded-md din-text-muted transition">Base 100 (vs USD)</button>
+              <button id="mPar" type="button" onclick="setModo('par')" class="py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer">Par Direto (A/B)</button>
+              <button id="mBase" type="button" onclick="setModo('base100')" class="py-1.5 rounded-md din-text-muted transition cursor-pointer">Base 100 (vs USD)</button>
             </div>
           </div>
 
@@ -375,22 +380,25 @@
       <div class="lg:col-span-8 din-card-bg border din-border rounded-lg p-5 shadow-sm flex flex-col space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div class="inline-flex din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold flex-wrap gap-0.5">
-            <button id="tabGrafEvol" type="button" onclick="setAbaGraf('evol')" class="px-3 py-1.5 rounded-md din-card-bg din-text-main border din-border transition">Evolução do Par</button>
-            <button id="tabGrafMacro" type="button" onclick="setAbaGraf('macro')" class="px-3 py-1.5 rounded-md din-text-muted transition">Termômetro: Dólar ou Real?</button>
-            <button id="tabGrafSinal" type="button" onclick="setAbaGraf('sinal')" class="px-3 py-1.5 rounded-md din-text-muted transition">Resumo / Viés</button>
-            <button id="tabGrafSaz" type="button" onclick="setAbaGraf('saz')" class="px-3 py-1.5 rounded-md din-text-muted transition">Sazonalidade</button>
+            <button id="tabGrafEvol" type="button" onclick="setAbaGraf('evol')" class="px-3 py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer">Evolução do Par</button>
+            <button id="tabGrafMacro" type="button" onclick="setAbaGraf('macro')" class="px-3 py-1.5 rounded-md din-text-muted transition cursor-pointer">Termômetro: Dólar ou Real?</button>
+            <button id="tabGrafSinal" type="button" onclick="setAbaGraf('sinal')" class="px-3 py-1.5 rounded-md din-text-muted transition cursor-pointer">Resumo / Viés</button>
+            <button id="tabGrafSaz" type="button" onclick="setAbaGraf('saz')" class="px-3 py-1.5 rounded-md din-text-muted transition cursor-pointer">Sazonalidade</button>
           </div>
 
-          <div id="ctrlTecnico" class="flex flex-wrap items-center gap-3 text-xs">
-            <label class="inline-flex items-center gap-1.5 din-text-muted cursor-pointer select-none">
-              <input id="chkMM20" type="checkbox" class="accent-[#F59E0B] cursor-pointer" onchange="desenharGrafico()">
-              <span>MM20</span>
-            </label>
-            <label class="inline-flex items-center gap-1.5 din-text-muted cursor-pointer select-none">
-              <input id="chkMedia" type="checkbox" class="accent-[#9299A3] cursor-pointer" onchange="desenharGrafico()">
-              <span>Média</span>
-            </label>
-            <button type="button" onclick="exportarCSV()" class="px-2.5 py-1 rounded-md font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition">↓ CSV</button>
+          <div class="flex flex-wrap items-center gap-2.5 text-xs">
+            <div id="ctrlTecnico" class="flex flex-wrap items-center gap-3">
+              <label class="inline-flex items-center gap-1.5 din-text-muted cursor-pointer select-none">
+                <input id="chkMM20" type="checkbox" class="accent-[#F59E0B] cursor-pointer" onchange="desenharGrafico()">
+                <span>MM20</span>
+              </label>
+              <label class="inline-flex items-center gap-1.5 din-text-muted cursor-pointer select-none">
+                <input id="chkMedia" type="checkbox" class="accent-[#9299A3] cursor-pointer" onchange="desenharGrafico()">
+                <span>Média</span>
+              </label>
+              <button type="button" onclick="exportarCSV()" class="px-2.5 py-1 rounded-md font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ CSV</button>
+            </div>
+            <button type="button" onclick="baixarGraficoCambio()" class="px-2.5 py-1 rounded-md font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ PNG</button>
           </div>
         </div>
 
@@ -413,8 +421,10 @@
             <h2 class="text-base font-semibold din-text-main">O Dólar subiu no mundo ou o Real caiu sozinho?</h2>
             <p class="text-xs din-text-muted">Variação acumulada de cada moeda frente ao Dólar (USD) no período de <strong id="macroDias" class="din-text-main">3 meses</strong>. Barras verdes = valorizou frente ao USD.</p>
           </div>
-          <div class="relative w-full h-[360px]">
-            <canvas id="grafMacro"></canvas>
+          <div class="relative flex-1 w-full min-h-[360px]">
+            <div class="absolute inset-0">
+              <canvas id="grafMacro"></canvas>
+            </div>
           </div>
           <p id="macroVeredito" class="text-xs din-secondary-bg border din-border rounded-lg p-3 din-text-main leading-relaxed">—</p>
         </div>
@@ -443,6 +453,17 @@
           <div class="overflow-x-auto border din-border rounded-lg">
             <table id="matrizSazonal" class="w-full text-xs border-collapse"></table>
           </div>
+        </div>
+
+        <!-- Selo de Fonte Oficial -->
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t din-border text-[11px] din-text-muted">
+          <span class="inline-flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+            <span>Fontes: <strong class="din-text-main">Banco Central Europeu (Frankfurter)</strong> • AwesomeAPI (tempo real) & ExchangeRate-API</span>
+          </span>
+          <button type="button" onclick="citarCambioABNT(this)" class="underline hover:din-green transition cursor-pointer">
+            Copiar citação ABNT
+          </button>
         </div>
       </div>
     </section>
@@ -483,9 +504,53 @@
   </div>
 </footer>
 
+<!-- Utilitário de Gráficos (PNG + ABNT) ANTES dos scripts da página -->
+<script src="/js/chart-utils.js?v=1"></script>
 <script src="js/cambio/cambio-core.js?v=8"></script>
 <script src="js/cambio/cambio-graficos.js?v=8"></script>
 <script>
+function baixarGraficoCambio() {
+  if (!window.BDChart) return;
+  const a = $('gMoedaA')?.value || 'USD';
+  const b = $('gMoedaB')?.value || 'BRL';
+  const per = typeof labelPeriodo === 'function' ? labelPeriodo() : '';
+
+  if (typeof abaGraf !== 'undefined' && abaGraf === 'macro') {
+    BDChart.baixarPNG('grafMacro', {
+      titulo: `Termômetro Cambial vs. Dólar (${per})`,
+      subtitulo: 'Variação acumulada de moedas globais e emergentes frente ao USD',
+      fonte: 'Banco Central Europeu (Frankfurter)',
+      nomeArquivo: `brasilemdados-termometro-cambio-${a}-${b}`
+    });
+  } else if (typeof abaGraf !== 'undefined' && abaGraf === 'saz') {
+    BDChart.baixarPNG('grafSazonal', {
+      titulo: `Desempenho Sazonal Histórico (${a}/${b})`,
+      subtitulo: 'Variação mensal acumulada por ano (2021 até o ano atual)',
+      fonte: 'Banco Central Europeu (Frankfurter)',
+      nomeArquivo: `brasilemdados-sazonalidade-${a}-${b}`
+    });
+  } else if (typeof abaGraf !== 'undefined' && abaGraf === 'sinal') {
+    BDChart.mostrarToast('Selecione Evolução, Termômetro ou Sazonalidade para exportar PNG.');
+  } else {
+    BDChart.baixarPNG('grafMoedas', {
+      titulo: $('titGraf')?.textContent || `Evolução Cambial ${a}/${b}`,
+      subtitulo: $('subGraf')?.textContent || '',
+      fonte: 'Banco Central Europeu (Frankfurter) • AwesomeAPI (intradiário)',
+      nomeArquivo: `brasilemdados-cambio-${a}-${b}`
+    });
+  }
+}
+
+function citarCambioABNT(btn) {
+  if (!window.BDChart) return;
+  const a = $('gMoedaA')?.value || 'USD';
+  const b = $('gMoedaB')?.value || 'BRL';
+  BDChart.copiarABNT({
+    titulo: `Conversor de Moedas e Série Histórica Cambial (${a}/${b})`,
+    fonteOficial: 'Banco Central Europeu (Frankfurter), AwesomeAPI e ExchangeRate-API'
+  }, btn);
+}
+
 (() => {
   let temaSalvo = 'light';
   try { temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light'; } catch {}

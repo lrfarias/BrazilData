@@ -115,7 +115,7 @@
     <div class="flex flex-wrap items-center gap-2">
       <span id="statusFonte" class="inline-flex items-center gap-1.5 text-[11px] din-text-muted">
         <span class="w-2 h-2 rounded-full bg-[#16C784] animate-pulse"></span>
-        <span>Sincronizando séries oficiais do Banco Central...</span>
+        <span>Sincronizando séries oficiais do Banco Central e IBGE...</span>
       </span>
       <button type="button" onclick="citarInflacaoABNT(this)" class="px-2.5 py-1 rounded-md text-[11px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
         Citar (ABNT)
@@ -130,7 +130,7 @@
       <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
         <span class="text-xs din-text-muted uppercase font-semibold">IPCA (12 meses)</span>
         <p id="kIpca12" class="text-xl font-bold din-red mt-1">—</p>
-        <span id="kIpca12Ref" class="text-[11px] din-text-muted">BCB Oficial (SGS 13522)</span>
+        <span id="kIpca12Ref" class="text-[11px] din-text-muted">BCB / IBGE (SGS 13522)</span>
       </div>
       <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
         <span class="text-xs din-text-muted uppercase font-semibold">IPCA (último mês)</span>
@@ -167,7 +167,7 @@
           </label>
 
           <label class="block text-xs font-semibold din-text-main">Índice oficial de correção
-            <select id="calcIndice" onchange="recalcularCorrecao()" class="inp mt-1 font-semibold">
+            <select id="calcIndice" onchange="popularSelectsDatas(); recalcularCorrecao()" class="inp mt-1 font-semibold">
               <option value="ipca" selected>IPCA — Inflação Oficial (IBGE / SGS 433)</option>
               <option value="igpm">IGP-M — Contratos e Aluguéis (FGV / SGS 189)</option>
             </select>
@@ -184,9 +184,9 @@
 
           <div class="flex flex-wrap gap-1.5 pt-1">
             <button type="button" onclick="atalhoCalc(12)" class="px-2.5 py-1 rounded text-[11px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main cursor-pointer">Há 1 ano</button>
+            <button type="button" onclick="atalhoCalc(36)" class="px-2.5 py-1 rounded text-[11px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main cursor-pointer">Há 3 anos</button>
             <button type="button" onclick="atalhoCalc(60)" class="px-2.5 py-1 rounded text-[11px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main cursor-pointer">Há 5 anos</button>
-            <button type="button" onclick="atalhoCalc(120)" class="px-2.5 py-1 rounded text-[11px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] cursor-pointer">Há 10 anos</button>
-            <button type="button" onclick="atalhoCalc(999)" class="px-2.5 py-1 rounded text-[11px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main cursor-pointer">Série toda</button>
+            <button type="button" onclick="atalhoCalc(999)" class="px-2.5 py-1 rounded text-[11px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] cursor-pointer">Série toda (10a)</button>
           </div>
         </div>
 
@@ -211,7 +211,7 @@
         <div class="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h2 id="titGrafErosao" class="text-base font-bold din-text-main">Evolução da Correção vs. Erosão do Poder de Compra</h2>
-            <p id="subGrafErosao" class="text-xs din-text-muted">Cálculo exato por composição mensal da série oficial do Banco Central.</p>
+            <p id="subGrafErosao" class="text-xs din-text-muted">Cálculo exato por composição mensal da série oficial do Banco Central e IBGE.</p>
           </div>
           <div class="flex items-center gap-2">
             <button type="button" onclick="exportarCSV()" class="px-2.5 py-1 rounded-md text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ CSV</button>
@@ -228,7 +228,7 @@
         <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t din-border text-[11px] din-text-muted">
           <span class="inline-flex items-center gap-1.5">
             <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
-            <span>Fonte oficial: <strong class="din-text-main">Banco Central do Brasil (SGS 433 & 189)</strong> • IBGE / FGV</span>
+            <span>Fonte oficial: <strong class="din-text-main">Banco Central do Brasil (SGS 433 & 189)</strong> • IBGE (SIDRA 1737) / FGV</span>
           </span>
           <button type="button" onclick="citarInflacaoABNT(this)" class="underline hover:din-green transition cursor-pointer">Copiar citação ABNT</button>
         </div>
@@ -246,10 +246,10 @@
 
         <div class="flex flex-wrap items-center gap-2">
           <div id="ctrlHorizonte" class="inline-flex din-secondary-bg p-0.5 rounded-lg border din-border text-[11px] font-semibold">
+            <button id="h1a" type="button" onclick="setHorizonte(12)" class="px-2.5 py-1 rounded-md din-text-muted cursor-pointer">1a</button>
             <button id="h3a" type="button" onclick="setHorizonte(36)" class="px-2.5 py-1 rounded-md din-text-muted cursor-pointer">3a</button>
             <button id="h5a" type="button" onclick="setHorizonte(60)" class="px-2.5 py-1 rounded-md din-text-muted cursor-pointer">5a</button>
-            <button id="h10a" type="button" onclick="setHorizonte(120)" class="px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border cursor-pointer">10a</button>
-            <button id="hTudo" type="button" onclick="setHorizonte(999)" class="px-2.5 py-1 rounded-md din-text-muted cursor-pointer">Tudo</button>
+            <button id="hTudo" type="button" onclick="setHorizonte(999)" class="px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border cursor-pointer">Máx</button>
           </div>
           <button type="button" onclick="baixarAnalisePNG()" class="px-2.5 py-1 rounded-md text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ PNG</button>
         </div>
@@ -277,7 +277,7 @@
       <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t din-border text-[11px] din-text-muted">
         <span class="inline-flex items-center gap-1.5">
           <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
-          <span>Fontes oficiais: <strong class="din-text-main">Banco Central do Brasil</strong> (SGS 433, 13522, 189, 1619) & <strong class="din-text-main">IBGE</strong> (SIDRA 7060)</span>
+          <span>Fontes oficiais: <strong class="din-text-main">Banco Central do Brasil</strong> (SGS 433, 13522, 189, 1619) & <strong class="din-text-main">IBGE</strong> (SIDRA 1737 e 7060)</span>
         </span>
         <button type="button" onclick="citarInflacaoABNT(this)" class="underline hover:din-green transition cursor-pointer">Copiar citação ABNT</button>
       </div>
@@ -295,7 +295,7 @@
       </details>
 
       <p class="lg:col-span-6 text-xs din-text-muted leading-relaxed">
-        <strong class="din-text-main">Transparência e fontes.</strong> Todas as séries temporais são consultadas diretamente das bases oficiais do Banco Central do Brasil (Sistema Gerenciador de Séries Temporais — SGS) e do IBGE (API SIDRA, tabela 7060), com camada de cache no backend do BrasilEmDados para estabilidade e velocidade.
+        <strong class="din-text-main">Transparência e fontes.</strong> Todas as séries temporais são consultadas diretamente das bases oficiais do Banco Central do Brasil (Sistema Gerenciador de Séries Temporais — SGS) e do IBGE (API SIDRA, tabelas 1737 e 7060).
       </p>
     </section>
   </main>
@@ -326,15 +326,15 @@ const fmtBRL = (v, d = 2) => Number(v || 0).toLocaleString('pt-BR', { style: 'cu
 const fmtNum = (v, d = 2) => Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
 const MESES_CURTOS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
-let serieIpca = [];    // [{ ym: '2015-01', label: 'Jan/15', data: '01/01/2015', v: 1.24 }, ...]
+let serieIpca = [];
 let serieIgpm = [];
 let serieIpca12 = [];
 let serieSm = [];
 let dadosGrupos = null;
 let ultimoCalculo = null;
 
-let abaAnalise = 'indices'; // 'indices' | 'salario' | 'grupos'
-let horizonteMeses = 120;
+let abaAnalise = 'indices';
+let horizonteMeses = 999;
 
 let chartErosao = null, chartIndices = null, chartSalario = null, chartGrupos = null;
 
@@ -374,31 +374,79 @@ function alternarModoApresentacao() {
     : `<svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect><line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line><line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line></svg><span>Modo Tela Cheia</span>`;
 }
 
-// Busca no proxy Spring Boot (/api/bcb/serie/...) com fallback automático para a API oficial do BCB
-async function buscarSgs(codigo, ultimos = 240) {
+// Formata data no padrão exigido pelo BCB (dd/MM/yyyy), sempre dentro do limite de 10 anos
+function janelaDatasBcb(meses = 116) {
+  const fim = new Date();
+  const ini = new Date(fim.getFullYear(), fim.getMonth() - Math.min(meses, 118), 1);
+  const fmt = d => `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+  return { dataInicial: fmt(ini), dataFinal: fmt(fim) };
+}
+
+async function fetchJsonComTimeout(url, ms = 10000) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), ms);
+  try {
+    const r = await fetch(url, { signal: ctrl.signal });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return await r.json();
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function normalizarSgs(json) {
+  if (!Array.isArray(json)) return [];
+  return json.map(item => {
+    const partes = String(item.data || '').split('/');
+    if (partes.length !== 3) return null;
+    const [dd, mm, yyyy] = partes;
+    const val = parseFloat(String(item.valor).replace(',', '.'));
+    if (Number.isNaN(val)) return null;
+    return {
+      ym: `${yyyy}-${mm}`,
+      label: `${MESES_CURTOS[Number(mm) - 1]}/${yyyy.slice(2)}`,
+      data: item.data,
+      v: val
+    };
+  }).filter(Boolean);
+}
+
+// Busca no proxy Spring Boot -> BCB direto com dataInicial/dataFinal (<= 10 anos) -> BCB ultimos
+async function buscarSgs(codigo, meses = 116) {
+  const { dataInicial, dataFinal } = janelaDatasBcb(meses);
+  const lim = Math.min(meses, 118);
   const urls = [
-    `/api/bcb/serie/${codigo}?ultimos=${ultimos}`,
-    `https://api.bcb.gov.br/dados/serie/bcdata.sgs.${codigo}/dados/ultimos/${ultimos}?formato=json`
+    `/api/bcb/serie/${codigo}?dataInicial=${encodeURIComponent(dataInicial)}&dataFinal=${encodeURIComponent(dataFinal)}`,
+    `https://api.bcb.gov.br/dados/serie/bcdata.sgs.${codigo}/dados?formato=json&dataInicial=${encodeURIComponent(dataInicial)}&dataFinal=${encodeURIComponent(dataFinal)}`,
+    `https://api.bcb.gov.br/dados/serie/bcdata.sgs.${codigo}/dados/ultimos/${lim}?formato=json`
   ];
   for (const url of urls) {
     try {
-      const r = await fetch(url);
-      if (!r.ok) continue;
-      const json = await r.json();
-      if (Array.isArray(json) && json.length > 0) {
-        return json.map(item => {
-          const [dd, mm, yyyy] = String(item.data).split('/');
-          return {
-            ym: `${yyyy}-${mm}`,
-            label: `${MESES_CURTOS[Number(mm) - 1]}/${yyyy.slice(2)}`,
-            data: item.data,
-            v: parseFloat(String(item.valor).replace(',', '.'))
-          };
-        }).filter(x => !Number.isNaN(x.v));
-      }
+      const json = await fetchJsonComTimeout(url, 9000);
+      const dados = normalizarSgs(json);
+      if (dados.length > 0) return dados;
     } catch {}
   }
-  throw new Error(`Não foi possível carregar a série SGS ${codigo}`);
+  throw new Error(`Falha ao carregar SGS ${codigo}`);
+}
+
+// Fallback oficial direto do IBGE SIDRA (Tabela 1737: v/63 = IPCA mensal, v/2265 = IPCA 12m)
+async function buscarIpcaSidra(variavel = 63, ultimos = 120) {
+  const url = `https://apisidra.ibge.gov.br/values/t/1737/n1/all/v/${variavel}/p/last%20${ultimos}?formato=json`;
+  const json = await fetchJsonComTimeout(url, 10000);
+  if (!Array.isArray(json) || json.length < 2) throw new Error('SIDRA 1737 vazio');
+  return json.slice(1).map(row => {
+    const cod = String(row.D3C || '');
+    const val = parseFloat(String(row.V || '').replace(',', '.'));
+    if (cod.length !== 6 || Number.isNaN(val)) return null;
+    const yyyy = cod.slice(0, 4), mm = cod.slice(4, 6);
+    return {
+      ym: `${yyyy}-${mm}`,
+      label: `${MESES_CURTOS[Number(mm) - 1]}/${yyyy.slice(2)}`,
+      data: `01/${mm}/${yyyy}`,
+      v: val
+    };
+  }).filter(Boolean);
 }
 
 // Acumulado móvel de 12 meses (composição real)
@@ -414,13 +462,16 @@ function calcularAcumulado12m(serieMensal) {
 
 // Calculadora de Correção Monetária
 function popularSelectsDatas() {
-  const base = serieIpca;
+  const tipo = $('calcIndice').value;
+  const base = (tipo === 'igpm' && serieIgpm.length) ? serieIgpm : serieIpca;
+  if (!base.length) return;
+
   const htmlOpts = base.map(x => `<option value="${x.ym}">${x.label} (${x.ym.slice(0, 4)})</option>`).join('');
   $('calcIni').innerHTML = htmlOpts;
   $('calcFim').innerHTML = htmlOpts;
 
   const idxFim = base.length - 1;
-  const idxIni = Math.max(0, base.length - 121); // 10 anos atrás por padrão
+  const idxIni = 0; // Série toda (~10 anos) por padrão
   $('calcIni').value = base[idxIni].ym;
   $('calcFim').value = base[idxFim].ym;
 }
@@ -469,7 +520,7 @@ function recalcularCorrecao() {
   const valorCorrigido = valorOrig * fator;
   const poderResidual = valorOrig / fator;
   const perdaRealPct = (1 - (1 / fator)) * 100;
-  const nomeIndice = tipo === 'igpm' ? 'IGP-M (FGV)' : 'IPCA (IBGE)';
+  const nomeIndice = (tipo === 'igpm' && serieIgpm.length) ? 'IGP-M (FGV)' : 'IPCA (IBGE)';
 
   $('resCorrigido').textContent = fmtBRL(valorCorrigido);
   $('resAcumulado').textContent = `${nomeIndice} acumulado: ${inflacaoAcum >= 0 ? '+' : ''}${fmtNum(inflacaoAcum, 2)}% (${trecho.length} meses)`;
@@ -491,7 +542,7 @@ function recalcularCorrecao() {
       labels,
       datasets: [
         {
-          label: `Valor corrigido (${tipo.toUpperCase()})`,
+          label: `Valor corrigido (${nomeIndice.split(' ')[0]})`,
           data: serieCorrigida,
           borderColor: '#16C784',
           backgroundColor: 'rgba(22,199,132,0.08)',
@@ -539,9 +590,9 @@ function setHorizonte(meses) {
   horizonteMeses = meses;
   const on = 'px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border cursor-pointer';
   const off = 'px-2.5 py-1 rounded-md din-text-muted cursor-pointer';
+  $('h1a').className = meses === 12 ? on : off;
   $('h3a').className = meses === 36 ? on : off;
   $('h5a').className = meses === 60 ? on : off;
-  $('h10a').className = meses === 120 ? on : off;
   $('hTudo').className = meses === 999 ? on : off;
   desenharAbaAnalise();
 }
@@ -556,16 +607,24 @@ function desenharAbaAnalise() {
 }
 
 function desenharIndices12m() {
+  if (!serieIpca.length) return;
   const ipca12 = calcularAcumulado12m(serieIpca);
-  const igpm12 = calcularAcumulado12m(serieIgpm);
+  const igpm12 = serieIgpm.length ? calcularAcumulado12m(serieIgpm) : [];
   const mapIgpm = Object.fromEntries(igpm12.map(x => [x.ym, x.v]));
 
-  let unidos = ipca12.filter(x => mapIgpm[x.ym] !== undefined).map(x => ({
+  let base = ipca12.map(x => ({
     label: x.label,
     ipca: Number(x.v.toFixed(2)),
-    igpm: Number(mapIgpm[x.ym].toFixed(2))
+    igpm: mapIgpm[x.ym] !== undefined ? Number(mapIgpm[x.ym].toFixed(2)) : null
   }));
-  if (horizonteMeses < unidos.length) unidos = unidos.slice(-horizonteMeses);
+  if (horizonteMeses < base.length) base = base.slice(-horizonteMeses);
+
+  const datasets = [
+    { label: 'IPCA 12 meses (%)', data: base.map(x => x.ipca), borderColor: '#16C784', backgroundColor: 'rgba(22,199,132,0.08)', fill: true, borderWidth: 2.2, pointRadius: 0, tension: 0.2 }
+  ];
+  if (igpm12.length) {
+    datasets.push({ label: 'IGP-M 12 meses (%)', data: base.map(x => x.igpm), borderColor: '#F59E0B', borderWidth: 2, pointRadius: 0, tension: 0.2 });
+  }
 
   if (chartIndices) chartIndices.destroy();
   const opts = window.BDChart
@@ -574,19 +633,16 @@ function desenharIndices12m() {
 
   chartIndices = new Chart($('grafIndices'), {
     type: 'line',
-    data: {
-      labels: unidos.map(x => x.label),
-      datasets: [
-        { label: 'IPCA 12 meses (%)', data: unidos.map(x => x.ipca), borderColor: '#16C784', backgroundColor: 'rgba(22,199,132,0.08)', fill: true, borderWidth: 2.2, pointRadius: 0, tension: 0.2 },
-        { label: 'IGP-M 12 meses (%)', data: unidos.map(x => x.igpm), borderColor: '#F59E0B', borderWidth: 2, pointRadius: 0, tension: 0.2 }
-      ]
-    },
+    data: { labels: base.map(x => x.label), datasets },
     options: opts
   });
 }
 
 function desenharSalarioVsInflacao() {
-  if (!serieSm.length || !serieIpca.length) return;
+  if (!serieSm.length || !serieIpca.length) {
+    $('resumoSalario').textContent = 'Série do Salário Mínimo (BCB SGS 1619) temporariamente indisponível no Banco Central.';
+    return;
+  }
   const mapSm = Object.fromEntries(serieSm.map(x => [x.ym, x.v]));
   let base = serieIpca.filter(x => mapSm[x.ym] !== undefined);
   if (horizonteMeses < base.length) base = base.slice(-horizonteMeses);
@@ -632,9 +688,7 @@ async function carregarGruposIbge() {
   $('subGrupos').textContent = 'Consultando grupos oficiais do IPCA direto na API SIDRA do IBGE (Tabela 7060)...';
   const url = 'https://apisidra.ibge.gov.br/values/t/7060/n1/all/v/2265/p/last%201/c315/7170,7445,7486,7558,7625,7660,7712,7766,7786?formato=json';
   try {
-    const r = await fetch(url);
-    if (!r.ok) throw new Error('SIDRA ' + r.status);
-    const json = await r.json();
+    const json = await fetchJsonComTimeout(url, 10000);
     const linhas = json.slice(1).map(row => ({
       nome: String(row.D4N || '').replace(/^\d+\./, '').trim(),
       val: parseFloat(String(row.V).replace(',', '.')),
@@ -690,7 +744,7 @@ function baixarErosaoPNG() {
   BDChart.baixarPNG('grafErosao', {
     titulo: `Correção Monetária e Erosão do Poder de Compra (${trecho[0].label} – ${trecho[trecho.length - 1].label})`,
     subtitulo: `Valor base: ${fmtBRL(valorOrig)} • Índice oficial: ${nomeIndice}`,
-    fonte: 'Banco Central do Brasil (SGS 433 / 189) • IBGE / FGV',
+    fonte: 'Banco Central do Brasil (SGS 433 / 189) • IBGE (SIDRA 1737) / FGV',
     nomeArquivo: `brasilemdados-poder-compra-${ultimoCalculo.tipo}`
   });
 }
@@ -738,56 +792,66 @@ function citarInflacaoABNT(btn) {
   BDChart.copiarABNT({
     titulo: 'Inflação Oficial (IPCA e IGP-M), Correção Monetária e Poder de Compra do Salário Mínimo',
     fonteOficial: 'Banco Central do Brasil e IBGE',
-    serie: 'SGS 433, 13522, 189, 1619 e SIDRA 7060'
+    serie: 'SGS 433, 13522, 189, 1619 e SIDRA 1737/7060'
   }, btn);
 }
 
-// Inicialização
+// Inicialização resiliente (Promise.allSettled + fallback IBGE SIDRA)
 (async () => {
   let temaSalvo = 'light';
   try { temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light'; } catch {}
   aplicarTema(temaSalvo);
 
-  try {
-    const [ipca, igpm, ipca12, sm] = await Promise.all([
-      buscarSgs(433, 240),
-      buscarSgs(189, 240),
-      buscarSgs(13522, 24),
-      buscarSgs(1619, 240)
-    ]);
+  const [rIpca, rIgpm, rIpca12, rSm] = await Promise.allSettled([
+    buscarSgs(433, 116).catch(() => buscarIpcaSidra(63, 118)),
+    buscarSgs(189, 116),
+    buscarSgs(13522, 24).catch(() => buscarIpcaSidra(2265, 24)),
+    buscarSgs(1619, 116)
+  ]);
 
-    serieIpca = ipca;
-    serieIgpm = igpm;
-    serieIpca12 = ipca12;
-    serieSm = sm;
+  if (rIpca.status === 'fulfilled') serieIpca = rIpca.value;
+  if (rIgpm.status === 'fulfilled') serieIgpm = rIgpm.value;
+  if (rIpca12.status === 'fulfilled') serieIpca12 = rIpca12.value;
+  if (rSm.status === 'fulfilled') serieSm = rSm.value;
 
-    const ultIpca = serieIpca[serieIpca.length - 1];
-    const ultIpca12 = serieIpca12[serieIpca12.length - 1];
+  if (!serieIpca.length) {
+    $('statusFonte').innerHTML = `<span class="w-2 h-2 rounded-full bg-[#EA3943]"></span><span>APIs oficiais indisponíveis no momento. Recarregue em instantes.</span>`;
+    $('leituraCalc').textContent = 'Não foi possível obter os dados oficiais do IPCA agora. Recarregue a página em alguns segundos.';
+    return;
+  }
+
+  const ultIpca = serieIpca[serieIpca.length - 1];
+  const ipca12Calc = serieIpca12.length ? serieIpca12 : calcularAcumulado12m(serieIpca);
+  const ultIpca12 = ipca12Calc[ipca12Calc.length - 1];
+
+  $('kIpca12').textContent = `${fmtNum(ultIpca12.v, 2)}%`;
+  $('kIpca12Ref').textContent = `BCB / IBGE • Ref. ${ultIpca12.label}`;
+
+  $('kIpcaMes').textContent = `${ultIpca.v >= 0 ? '+' : ''}${fmtNum(ultIpca.v, 2)}%`;
+  $('kIpcaMesRef').textContent = `BCB / IBGE • Ref. ${ultIpca.label}`;
+
+  if (serieIgpm.length >= 12) {
     const igpm12Arr = calcularAcumulado12m(serieIgpm);
     const ultIgpm12 = igpm12Arr[igpm12Arr.length - 1];
-    const ultSm = serieSm[serieSm.length - 1];
-
-    $('kIpca12').textContent = `${fmtNum(ultIpca12.v, 2)}%`;
-    $('kIpca12Ref').textContent = `BCB SGS 13522 • Ref. ${ultIpca12.label}`;
-
-    $('kIpcaMes').textContent = `${ultIpca.v >= 0 ? '+' : ''}${fmtNum(ultIpca.v, 2)}%`;
-    $('kIpcaMesRef').textContent = `BCB SGS 433 • Ref. ${ultIpca.label}`;
-
     $('kIgpm12').textContent = `${fmtNum(ultIgpm12.v, 2)}%`;
     $('kIgpm12Ref').textContent = `BCB SGS 189 • Ref. ${ultIgpm12.label}`;
+  } else {
+    $('kIgpm12').textContent = 'Indisp.';
+  }
 
+  if (serieSm.length) {
+    const ultSm = serieSm[serieSm.length - 1];
     $('kSmAtual').textContent = fmtBRL(ultSm.v, 0);
     $('kSmRef').textContent = `BCB SGS 1619 • Ref. ${ultSm.label}`;
-
-    $('statusFonte').innerHTML = `<span class="w-2 h-2 rounded-full bg-[#16C784]"></span><span>Dados oficiais BCB atualizados (${ultIpca.label})</span>`;
-
-    popularSelectsDatas();
-    recalcularCorrecao();
-    desenharAbaAnalise();
-  } catch (err) {
-    console.error(err);
-    $('statusFonte').innerHTML = `<span class="w-2 h-2 rounded-full bg-[#EA3943]"></span><span>Erro ao consultar Banco Central. Tente recarregar.</span>`;
+  } else {
+    $('kSmAtual').textContent = 'Indisp.';
   }
+
+  $('statusFonte').innerHTML = `<span class="w-2 h-2 rounded-full bg-[#16C784]"></span><span>Dados oficiais atualizados (${ultIpca.label})</span>`;
+
+  popularSelectsDatas();
+  recalcularCorrecao();
+  desenharAbaAnalise();
 })();
 </script>
 </body>
