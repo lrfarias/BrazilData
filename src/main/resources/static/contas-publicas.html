@@ -426,22 +426,22 @@ function normalizarSgs(json, inverterSinal = false) {
 }
 
 // Busca no proxy Spring Boot -> BCB direto com dataInicial/dataFinal (<= 10 anos) -> BCB ultimos
-async function buscarSgs(codigo, meses = 116, inverterSinal = false) {
+async function buscarSgs(codigo, meses = 116) {
   const { dataInicial, dataFinal } = janelaDatasBcb(meses);
   const lim = Math.min(meses, 118);
   const urls = [
-    `/api/bcb/serie/${codigo}?dataInicial=${encodeURIComponent(dataInicial)}&dataFinal=${encodeURIComponent(dataFinal)}`,
+    `/api/bcb/serie/${codigo}?ultimos=${lim}`,
     `https://api.bcb.gov.br/dados/serie/bcdata.sgs.${codigo}/dados?formato=json&dataInicial=${encodeURIComponent(dataInicial)}&dataFinal=${encodeURIComponent(dataFinal)}`,
     `https://api.bcb.gov.br/dados/serie/bcdata.sgs.${codigo}/dados/ultimos/${lim}?formato=json`
   ];
   for (const url of urls) {
     try {
       const json = await fetchJsonComTimeout(url, 9000);
-      const dados = normalizarSgs(json, inverterSinal);
+      const dados = normalizarSgs(json);
       if (dados.length > 0) return dados;
     } catch {}
   }
-  throw new Error(`Erro na série SGS ${codigo}`);
+  throw new Error(`Falha ao carregar SGS ${codigo}`);
 }
 
 // Presets do Simulador de Trajetória
