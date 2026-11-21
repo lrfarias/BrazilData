@@ -8,8 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
 <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
-    <link rel="stylesheet" href="css/theme.css">
-
+<link rel="stylesheet" href="css/theme.css">
 </head>
 <body class="min-h-screen font-sans flex flex-col justify-between">
 <div>
@@ -20,8 +19,8 @@
         <div class="flex items-center gap-3">
           <a href="index.html" class="flex items-center gap-3 group">
             <div class="w-10 h-10 rounded-lg din-secondary-bg border din-border flex items-center justify-center shadow-sm overflow-hidden group-hover:border-[#16C784] transition-colors duration-200">
-  <img src="download.png" alt="BrasilEmDados" class="w-8 h-8 object-contain transition-transform duration-200 group-hover:scale-110">
-</div>
+              <img src="download.png" alt="BrasilEmDados" class="w-8 h-8 object-contain transition-transform duration-200 group-hover:scale-110">
+            </div>
             <div>
               <div class="flex items-center gap-2">
                 <span class="text-lg font-extrabold tracking-tight din-text-main">BrasilEmDados</span>
@@ -51,7 +50,7 @@
             </select>
           </div>
 
-          <button onclick="alternarModoApresentacao()" id="btnModoApresentacao" class="hidden lg:inline-flex items-center gap-1.5 din-secondary-bg hover:opacity-80 border din-border din-text-main text-xs font-semibold px-3 py-1.5 rounded-lg transition">
+          <button onclick="alternarModoApresentacao()" id="btnModoApresentacao" class="hidden lg:inline-flex items-center gap-1.5 din-secondary-bg hover:opacity-80 border din-border din-text-main text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer">
             <svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect>
               <line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line>
@@ -86,7 +85,7 @@
               <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M7 14l4-4 4 4 5-5"></path></svg>
               Dispersão Tributo × IDH
             </a>
-            <button onclick="window.print(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left">
+            <button onclick="window.print(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left cursor-pointer">
               <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
               Exportar Relatório (PDF)
             </button>
@@ -114,8 +113,8 @@
     </div>
   </header>
 
-  <!-- Barra de Trilha -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex items-center justify-between text-xs ocultar-em-presentation">
+  <!-- Barra de Trilha + ABNT -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex flex-wrap items-center justify-between gap-2 text-xs ocultar-em-presentation">
     <div class="flex items-center gap-2 din-text-muted">
       <a href="economia.html" class="hover:din-green font-semibold inline-flex items-center gap-1 transition">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
@@ -124,6 +123,10 @@
       <span>/</span>
       <span class="din-text-main font-bold">Impostos, População & IDH</span>
     </div>
+    <button type="button" onclick="citarImpostoABNT(this)"
+      class="px-2.5 py-1 rounded-md text-[11px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
+      Citar dados (ABNT)
+    </button>
   </div>
 
   <!-- Tooltip do mapa -->
@@ -149,10 +152,10 @@
         <input id="rngTaxa" type="range" min="20" max="45" step="0.5" value="33"
           class="w-full accent-[#16C784] cursor-pointer" oninput="mudarTaxa(+this.value)">
         <div class="flex flex-wrap gap-1.5 pt-0.5">
-          <button type="button" onclick="mudarTaxa(27)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main">EUA 27%</button>
-          <button type="button" onclick="mudarTaxa(33)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784]">Brasil 33%</button>
-          <button type="button" onclick="mudarTaxa(34)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main">OCDE 34%</button>
-          <button type="button" onclick="mudarTaxa(45)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main">França 45%</button>
+          <button type="button" onclick="mudarTaxa(27)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main cursor-pointer">EUA 27%</button>
+          <button type="button" onclick="mudarTaxa(33)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] cursor-pointer">Brasil 33%</button>
+          <button type="button" onclick="mudarTaxa(34)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main cursor-pointer">OCDE 34%</button>
+          <button type="button" onclick="mudarTaxa(45)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main cursor-pointer">França 45%</button>
         </div>
       </div>
     </section>
@@ -162,18 +165,22 @@
       <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
         <span id="k1Lbl" class="text-xs din-text-muted uppercase font-semibold">Arrecadação estimada</span>
         <p id="k1" class="text-xl font-bold din-red mt-1">—</p>
+        <span class="text-[11px] din-text-muted">Simulação sobre PIB IBGE</span>
       </div>
       <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
         <span class="text-xs din-text-muted uppercase font-semibold">Média por habitante</span>
         <p id="k2" class="text-xl font-bold din-text-main mt-1">—</p>
+        <span class="text-[11px] din-text-muted">Arrecadação est. ÷ População</span>
       </div>
       <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
         <span class="text-xs din-text-muted uppercase font-semibold">Maior tributo / hab.</span>
         <p id="k3" class="text-xl font-bold din-text-main mt-1">—</p>
+        <span class="text-[11px] din-text-muted">Líder no recorte selecionado</span>
       </div>
       <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
         <span class="text-xs din-text-muted uppercase font-semibold">IDH médio (filtro)</span>
         <p id="k4" class="text-xl font-bold din-green mt-1">—</p>
+        <span class="text-[11px] din-text-muted">PNUD / Ipea / FJP (Radar IDHM)</span>
       </div>
     </section>
 
@@ -218,9 +225,9 @@
         </div>
 
         <div class="grid grid-cols-3 gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
-          <button id="tabResumo" type="button" onclick="setAba('resumo')" class="py-1.5 rounded-md din-card-bg din-text-main border din-border transition">Resumo</button>
-          <button id="tabEvolucao" type="button" onclick="setAba('evolucao')" class="py-1.5 rounded-md din-text-muted transition">Evolução</button>
-          <button id="tabComparar" type="button" onclick="setAba('comparar')" class="py-1.5 rounded-md din-text-muted transition">Comparar</button>
+          <button id="tabResumo" type="button" onclick="setAba('resumo')" class="py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer">Resumo</button>
+          <button id="tabEvolucao" type="button" onclick="setAba('evolucao')" class="py-1.5 rounded-md din-text-muted transition cursor-pointer">Evolução</button>
+          <button id="tabComparar" type="button" onclick="setAba('comparar')" class="py-1.5 rounded-md din-text-muted transition cursor-pointer">Comparar</button>
         </div>
 
         <!-- ABA 1: RESUMO + PIZZA VOCAÇÃO -->
@@ -278,11 +285,14 @@
 
         <!-- ABA 2: EVOLUÇÃO -->
         <div id="viewEvolucao" class="hidden space-y-3 flex-1 flex flex-col">
-          <div class="flex items-center justify-between text-xs">
+          <div class="flex items-center justify-between gap-2 text-xs">
             <span class="din-text-muted">Evolução do PIB e arrecadação</span>
-            <strong id="histCresc" class="din-green">—</strong>
+            <div class="flex items-center gap-2">
+              <strong id="histCresc" class="din-green">—</strong>
+              <button type="button" onclick="baixarHistUfPNG()" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ PNG</button>
+            </div>
           </div>
-          <div class="flex-1 min-h-[240px]"><canvas id="grafHist"></canvas></div>
+          <div class="relative flex-1 min-h-[240px]"><canvas id="grafHist"></canvas></div>
           <p id="histNota" class="text-[11px] din-text-muted leading-relaxed"></p>
         </div>
 
@@ -309,7 +319,7 @@
           <span class="text-xs din-text-muted">Clique em qualquer coluna para ordenar ou na linha para inspecionar</span>
         </div>
         <button type="button" onclick="exportarCSV()"
-          class="px-3 py-1.5 rounded-lg text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition">
+          class="px-3 py-1.5 rounded-lg text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
           ↓ Exportar CSV
         </button>
       </div>
@@ -328,19 +338,35 @@
           <h2 id="titGrafInf" class="text-base font-semibold din-text-main">Capacidade tributária × Desenvolvimento Humano (IDH)</h2>
           <p id="subGrafInf" class="text-xs din-text-muted">Cada ponto é um estado. Linhas tracejadas marcam as médias do Brasil; o ponto azul destaca o estado selecionado.</p>
         </div>
-        <div class="inline-flex din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
-          <button id="tInfScatter" type="button" onclick="setAbaInf('scatter')" class="px-3 py-1.5 rounded-md din-card-bg din-text-main border din-border transition">Tributo/hab. × IDH</button>
-          <button id="tInfBar" type="button" onclick="setAbaInf('bar')" class="px-3 py-1.5 rounded-md din-text-muted transition">PIB vs. População</button>
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="inline-flex din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+            <button id="tInfScatter" type="button" onclick="setAbaInf('scatter')" class="px-3 py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer">Tributo/hab. × IDH</button>
+            <button id="tInfBar" type="button" onclick="setAbaInf('bar')" class="px-3 py-1.5 rounded-md din-text-muted transition cursor-pointer">PIB vs. População</button>
+          </div>
+          <button type="button" onclick="baixarGrafInfPNG()" class="px-2.5 py-1.5 rounded-md text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
+            ↓ PNG
+          </button>
         </div>
       </div>
 
       <div id="viewInfScatter" class="space-y-3">
-        <div class="h-[340px]"><canvas id="grafScatter"></canvas></div>
+        <div class="relative w-full h-[320px] sm:h-[340px]"><canvas id="grafScatter"></canvas></div>
         <p id="leituraScatter" class="text-xs din-secondary-bg border din-border rounded-lg p-3 din-text-muted leading-relaxed"></p>
       </div>
 
       <div id="viewInfBar" class="hidden">
-        <div class="h-[340px]"><canvas id="graf"></canvas></div>
+        <div class="relative w-full h-[320px] sm:h-[340px]"><canvas id="graf"></canvas></div>
+      </div>
+
+      <!-- Selo de Fonte Oficial -->
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t din-border text-[11px] din-text-muted">
+        <span class="inline-flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+          <span>Fontes oficiais: <strong class="din-text-main">IBGE</strong> (SIDRA 5938 — PIB e População) & <strong class="din-text-main">PNUD / Ipea / FJP</strong> (Radar IDHM 2021)</span>
+        </span>
+        <button type="button" onclick="citarImpostoABNT(this)" class="underline hover:din-green transition cursor-pointer">
+          Copiar citação ABNT
+        </button>
       </div>
     </section>
 
@@ -368,6 +394,9 @@
   </div>
 </footer>
 
+<!-- Utilitário de Gráficos (PNG + ABNT + Responsivo) antes do script da página -->
+<script src="/js/chart-utils.js?v=1"></script>
+
 <script>
 const $ = i => document.getElementById(i);
 const BD = {
@@ -386,6 +415,48 @@ let TODOS = [], D_ALL = [], D = [], col = 'arrec', dir = -1;
 let mediaHabBR = 0, mediaIdhBR = 0, ufSel = 'SP', ufComp = 'RJ', regiaoSel = 'Todas', abaRx = 'resumo', abaInf = 'scatter', geoPronto = false;
 let chartBar = null, chartPie = null, chartHist = null, chartScatter = null;
 
+// Exportação PNG e Citação ABNT
+function baixarHistUfPNG() {
+  if (!window.BDChart) return;
+  const nome = $('stNome')?.textContent || ufSel;
+  BDChart.baixarPNG('grafHist', {
+    titulo: `Evolução do PIB e Arrecadação Estimada — ${nome} (${ufSel})`,
+    subtitulo: `Carga tributária simulada: ${BD.num(TAXA * 100, 1)}% do PIB`,
+    fonte: 'IBGE — Contas Regionais (SIDRA 5938) • Estimativa tributária BrasilEmDados',
+    nomeArquivo: `brasilemdados-evolucao-${ufSel.toLowerCase()}`
+  });
+}
+
+function baixarGrafInfPNG() {
+  if (!window.BDChart) return;
+  const recorte = regiaoSel === 'Todas' ? 'Brasil' : regiaoSel;
+  if (abaInf === 'scatter') {
+    BDChart.baixarPNG('grafScatter', {
+      titulo: `Capacidade Tributária por Habitante × IDH (${recorte} · ${anoAtual || ''})`,
+      subtitulo: `Carga tributária simulada: ${BD.num(TAXA * 100, 1)}% do PIB`,
+      fonte: 'IBGE (SIDRA 5938) & PNUD / Ipea / FJP (Radar IDHM 2021)',
+      nomeArquivo: `brasilemdados-tributo-idh-${anoAtual || 'br'}`
+    });
+  } else {
+    BDChart.baixarPNG('graf', {
+      titulo: `Peso no PIB Nacional vs. População (${recorte} · ${anoAtual || ''})`,
+      subtitulo: 'Participação percentual dos estados',
+      fonte: 'IBGE — Contas Regionais (SIDRA 5938)',
+      nomeArquivo: `brasilemdados-pib-vs-pop-${anoAtual || 'br'}`
+    });
+  }
+}
+
+function citarImpostoABNT(btn) {
+  if (!window.BDChart) return;
+  const recorte = regiaoSel === 'Todas' ? 'Brasil' : `Região ${regiaoSel}`;
+  BDChart.copiarABNT({
+    titulo: `Impostos Estimados, População e IDH Estadual (${recorte}, ${anoAtual || 2021})`,
+    fonteOficial: 'IBGE e PNUD/Ipea/FJP',
+    serie: 'SIDRA 5938 e Radar IDHM 2021'
+  }, btn);
+}
+
 const IBGE_UF = {
   '11':'RO','12':'AC','13':'AM','14':'RR','15':'PA','16':'AP','17':'TO',
   '21':'MA','22':'PI','23':'CE','24':'RN','25':'PB','26':'PE','27':'AL','28':'SE','29':'BA',
@@ -401,7 +472,6 @@ const REGIAO = {
 };
 const REGIOES = ['Todas', 'Norte', 'Nordeste', 'Centro-Oeste', 'Sudeste', 'Sul'];
 
-// Radar IDHM 2021 (PNUD / Ipea / FJP) — fallback automático caso o banco não tenha série própria de IDH
 const IDHM_UF = {
   DF: 0.814, SP: 0.806, SC: 0.792, MG: 0.774, ES: 0.771, RS: 0.771, PR: 0.769, RJ: 0.762,
   MS: 0.742, GO: 0.737, MT: 0.736, CE: 0.734, TO: 0.731, RN: 0.728, PE: 0.719, AC: 0.710,
@@ -496,7 +566,7 @@ function renderBotoesRegiao() {
   $('btnsRegiao').innerHTML = REGIOES.map(r => {
     const ativo = r === regiaoSel;
     return `<button type="button" onclick="setRegiao('${r}')"
-      class="px-2.5 py-1 rounded-md text-xs font-semibold border transition ${ativo ? 'din-btn border-transparent' : 'din-secondary-bg din-border din-text-muted hover:din-text-main'}">${r === 'Todas' ? 'Brasil' : r}</button>`;
+      class="px-2.5 py-1 rounded-md text-xs font-semibold border transition cursor-pointer ${ativo ? 'din-btn border-transparent' : 'din-secondary-bg din-border din-text-muted hover:din-text-main'}">${r === 'Todas' ? 'Brasil' : r}</button>`;
   }).join('');
 }
 
@@ -570,8 +640,8 @@ function aplicarFiltros() {
 
 function setAba(a) {
   abaRx = a;
-  const on = 'py-1.5 rounded-md din-card-bg din-text-main border din-border transition';
-  const off = 'py-1.5 rounded-md din-text-muted transition';
+  const on = 'py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer';
+  const off = 'py-1.5 rounded-md din-text-muted transition cursor-pointer';
   $('tabResumo').className = a === 'resumo' ? on : off;
   $('tabEvolucao').className = a === 'evolucao' ? on : off;
   $('tabComparar').className = a === 'comparar' ? on : off;
@@ -592,8 +662,8 @@ function setAba(a) {
 
 function setAbaInf(a) {
   abaInf = a;
-  const on = 'px-3 py-1.5 rounded-md din-card-bg din-text-main border din-border transition';
-  const off = 'px-3 py-1.5 rounded-md din-text-muted transition';
+  const on = 'px-3 py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer';
+  const off = 'px-3 py-1.5 rounded-md din-text-muted transition cursor-pointer';
   $('tInfScatter').className = a === 'scatter' ? on : off;
   $('tInfBar').className = a === 'bar' ? on : off;
 
@@ -703,7 +773,10 @@ function renderEvolucao(sigla) {
   $('histCresc').textContent = `${cresc >= 0 ? '+' : ''}${BD.num(cresc, 1)}% (${anos[0]}–${anos[anos.length - 1]})`;
   $('histNota').textContent = `Crescimento nominal do PIB de ${sigla} entre ${anos[0]} e ${anos[anos.length - 1]}, com arrecadação recalculada para ${BD.num(TAXA * 100, 1)}%.`;
 
-  const c = BD.cor();
+  const baseOpts = window.BDChart
+    ? BDChart.opcoesBase({ fmtY: v => BD.compact(v) })
+    : { maintainAspectRatio: false };
+
   chartHist = new Chart($('grafHist'), {
     type: 'line',
     data: {
@@ -713,12 +786,7 @@ function renderEvolucao(sigla) {
         { label: 'Arrecadação est.', data: arrecs, borderColor: '#EA3943', borderWidth: 2, borderDash: [4, 3], tension: .2, pointRadius: 2 }
       ]
     },
-    options: {
-      maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
-      plugins: { legend: { labels: { color: c.tx, boxWidth: 10, font: { size: 11 } } }, tooltip: { callbacks: { label: x => ` ${x.dataset.label}: ${BD.compact(x.parsed.y)}` } } },
-      scales: { x: { ticks: { color: c.mu }, grid: { display: false } }, y: { ticks: { color: c.mu, callback: v => BD.compact(v) }, grid: { color: c.grid } } }
-    }
+    options: baseOpts
   });
 }
 
@@ -839,7 +907,6 @@ function tabela() {
 }
 function ord(k) { if (col === k) dir *= -1; else { col = k; dir = -1; } tabela(); }
 
-// Plugin simples para desenhar linhas de média BR (quadrantes) no gráfico de dispersão
 const refLinesPlugin = {
   id: 'refLines',
   afterDatasetsDraw(chart) {
@@ -893,6 +960,7 @@ function graficoScatter() {
       ]
     },
     options: {
+      responsive: true,
       maintainAspectRatio: false,
       onClick: (_, els) => {
         if (!els.length) return;
@@ -947,7 +1015,7 @@ function graficoBar() {
     data: { labels: t.map(d => d.sigla), datasets: [
       { label: '% do PIB nacional', data: t.map(d => +d.sp.toFixed(2)), backgroundColor: '#16C784', borderRadius: 4 },
       { label: '% da população', data: t.map(d => +d.sh.toFixed(2)), backgroundColor: '#2563EB', borderRadius: 4 }] },
-    options: { indexAxis: 'y', maintainAspectRatio: false, plugins: { legend: { labels: { color: c.tx } } },
+    options: { responsive: true, indexAxis: 'y', maintainAspectRatio: false, plugins: { legend: { labels: { color: c.tx } } },
       scales: { x: { ticks: { color: c.mu, callback: v => v + '%' }, grid: { color: c.grid } }, y: { ticks: { color: c.mu }, grid: { display: false } } } }
   });
 }

@@ -11,24 +11,21 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">        
-<link rel="stylesheet" href="css/theme.css">
-
+    <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
+    <link rel="stylesheet" href="css/theme.css">
 </head>
 <body class="min-h-screen font-sans flex flex-col justify-between">
     <div>
         <!-- Cabeçalho Institucional (Aba ECONOMIA Selecionada) -->
         <header class="sticky top-0 z-50 border-b din-border din-bg-main/95 backdrop-blur">
             <div class="max-w-7xl mx-auto px-4 sm:px-6">
-                
                 <div class="flex items-center justify-between h-16 gap-4">
-                    
                     <!-- Esquerda: Logo Autoral + Badge de Status -->
                     <div class="flex items-center gap-3">
                         <a href="index.html" class="flex items-center gap-3 group">
                             <div class="w-10 h-10 rounded-lg din-secondary-bg border din-border flex items-center justify-center shadow-sm overflow-hidden group-hover:border-[#16C784] transition-colors duration-200">
-  <img src="download.png" alt="BrasilEmDados" class="w-8 h-8 object-contain transition-transform duration-200 group-hover:scale-110">
-</div>
+                                <img src="download.png" alt="BrasilEmDados" class="w-8 h-8 object-contain transition-transform duration-200 group-hover:scale-110">
+                            </div>
                             <div>
                                 <div class="flex items-center gap-2">
                                     <span class="text-lg font-extrabold tracking-tight din-text-main">BrasilEmDados</span>
@@ -43,27 +40,15 @@
 
                     <!-- Centro: Abas de Navegação em Cápsula (Economia Ativa) -->
                     <nav class="hidden md:flex items-center gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
-                        <a href="index.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
-                            Início
-                        </a>
-                        <a href="glossario.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
-                            Glossário
-                        </a>
-                        <a href="economia.html" class="px-3.5 py-1.5 rounded-md din-card-bg din-text-main shadow-sm border din-border transition">
-                            Economia
-                        </a>
-                        <a href="sobre.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
-                            Sobre
-                        </a>
-                        <a href="contato.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
-                            Contato
-                        </a>
+                        <a href="index.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Início</a>
+                        <a href="glossario.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Glossário</a>
+                        <a href="economia.html" class="px-3.5 py-1.5 rounded-md din-card-bg din-text-main shadow-sm border din-border transition">Economia</a>
+                        <a href="sobre.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Sobre</a>
+                        <a href="contato.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Contato</a>
                     </nav>
 
                     <!-- Direita: Seletor de Ano + Menu de Painel Sóbrio -->
                     <div class="flex items-center gap-2.5 relative">
-                        
-                        <!-- Seletor de Ano Base -->
                         <div class="flex items-center gap-1.5 din-secondary-bg border din-border rounded-lg px-3 py-1.5">
                             <span class="text-xs din-text-muted font-medium">Base:</span>
                             <select id="selectAno" onchange="trocarAno(this.value)"
@@ -75,7 +60,7 @@
                             </select>
                         </div>
 
-                        <button onclick="alternarModoApresentacao()" id="btnModoApresentacao" class="hidden lg:inline-flex items-center gap-1.5 din-secondary-bg hover:opacity-80 border din-border din-text-main text-xs font-semibold px-3 py-1.5 rounded-lg transition">
+                        <button onclick="alternarModoApresentacao()" id="btnModoApresentacao" class="hidden lg:inline-flex items-center gap-1.5 din-secondary-bg hover:opacity-80 border din-border din-text-main text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer">
                             <svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect>
                                 <line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line>
@@ -84,51 +69,39 @@
                             <span>Modo Tela Cheia</span>
                         </button>
 
-                        <!-- Botão de Ajustes e Ferramentas -->
                         <button id="menuDropdownBtn" onclick="toggleDropdownMenu()" title="Preferências e Ferramentas" class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center hover:border-[#16C784] transition cursor-pointer">
                             <svg class="w-4 h-4 din-text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="4" y1="21" x2="4" y2="14"></line>
-                                <line x1="4" y1="10" x2="4" y2="3"></line>
-                                <line x1="12" y1="21" x2="12" y2="12"></line>
-                                <line x1="12" y1="8" x2="12" y2="3"></line>
-                                <line x1="20" y1="21" x2="20" y2="16"></line>
-                                <line x1="20" y1="12" x2="20" y2="3"></line>
-                                <line x1="1" y1="14" x2="7" y2="14"></line>
-                                <line x1="9" y1="8" x2="15" y2="8"></line>
+                                <line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line>
+                                <line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line>
+                                <line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line>
                                 <line x1="17" y1="16" x2="23" y2="16"></line>
                             </svg>
                         </button>
 
-                        <!-- Menu Lateral Suspenso -->
                         <div id="dropdownMenu" class="hidden absolute right-0 top-11 w-64 rounded-xl din-card-bg border din-border shadow-2xl py-1.5 z-50">
                             <div class="px-4 py-1.5 border-b din-border">
                                 <p class="text-[10px] font-bold uppercase tracking-wider din-text-muted">Ferramentas do Terminal</p>
                             </div>
-
                             <a href="economia.html" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition">
                                 <svg class="w-4 h-4 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                                 </svg>
                                 Voltar ao Hub Economia
                             </a>
-
                             <a href="#secaoRanking" onclick="toggleDropdownMenu()" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition">
                                 <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
                                 </svg>
                                 Classificação Estadual
                             </a>
-
-                            <button onclick="gerarDossieExecutivo(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left">
+                            <button onclick="gerarDossieExecutivo(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left cursor-pointer">
                                 <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
                                 Exportar Relatório (PDF)
                             </button>
-
                             <div class="my-1 border-t din-border"></div>
-
-                            <!-- Switch de Aparência (Dark Mode / Light Mode) -->
                             <div class="flex items-center justify-between px-4 py-2.5 text-xs font-medium din-text-main cursor-pointer select-none" onclick="alternarDarkLight()">
                                 <div class="flex items-center gap-3">
                                     <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -141,11 +114,10 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
 
-                <!-- Navegação Mobile (ECONOMIA ativa) -->
+                <!-- Navegação Mobile -->
                 <nav class="flex md:hidden items-center gap-5 h-10 overflow-x-auto no-scrollbar text-xs font-semibold border-t din-border">
                     <a href="index.html" class="din-text-muted hover:din-text-main h-full flex items-center">Início</a>
                     <a href="glossario.html" class="din-text-muted hover:din-text-main h-full flex items-center">Glossário</a>
@@ -153,12 +125,11 @@
                     <a href="sobre.html" class="din-text-muted hover:din-text-main h-full flex items-center">Sobre</a>
                     <a href="contato.html" class="din-text-muted hover:din-text-main h-full flex items-center">Contato</a>
                 </nav>
-
             </div>
         </header>
 
-        <!-- Barra de Trilha (Breadcrumb) -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex items-center justify-between text-xs ocultar-em-presentation">
+        <!-- Barra de Trilha (Breadcrumb) + Citação ABNT -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex flex-wrap items-center justify-between gap-2 text-xs ocultar-em-presentation">
             <div class="flex items-center gap-2 din-text-muted">
                 <a href="economia.html" class="hover:din-green font-semibold inline-flex items-center gap-1 transition">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -169,6 +140,12 @@
                 <span>/</span>
                 <span class="din-text-main font-bold">Módulo 01: Contas Regionais, PIB & Vocação Setorial</span>
             </div>
+
+            <button type="button"
+                onclick="BDChart.copiarABNT({ titulo: 'Contas Regionais, PIB Estadual e Vocação Setorial (' + anoSelecionado + ')', fonteOficial: 'IBGE', serie: 'SIDRA 5938' }, this)"
+                class="px-2.5 py-1 rounded-md text-[11px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
+                Citar dados (ABNT)
+            </button>
         </div>
 
         <!-- KPIs Nacionais no Topo -->
@@ -176,7 +153,7 @@
             <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
                 <span class="text-xs din-text-muted uppercase font-semibold">PIB Nacional Consolidado (<span class="labelAno">2021</span>)</span>
                 <p id="kpiPibBrasil" class="text-xl font-bold din-green mt-1">R$ 0,00 tri</p>
-                <span class="text-[11px] din-text-muted">Soma oficial das 27 UFs no banco</span>
+                <span class="text-[11px] din-text-muted">Fonte oficial: IBGE (SIDRA 5938)</span>
             </div>
             <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
                 <span class="text-xs din-text-muted uppercase font-semibold">População Total (<span class="labelAno">2021</span>)</span>
@@ -186,7 +163,7 @@
             <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
                 <span class="text-xs din-text-muted uppercase font-semibold">Arrecadação Tributária Est.</span>
                 <p id="kpiImpostoBrasil" class="text-xl font-bold din-red mt-1">R$ 0,00 tri</p>
-                <span class="text-[11px] din-text-muted">Carga média bruta (~33% do PIB)</span>
+                <span class="text-[11px] din-text-muted">Estimativa (~33% do PIB · STN)</span>
             </div>
             <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
                 <span class="text-xs din-text-muted uppercase font-semibold">Concentração Top 5 UFs (<span class="labelAno">2021</span>)</span>
@@ -198,7 +175,7 @@
         <!-- Conteúdo Principal -->
         <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-            <!-- Coluna Esquerda: Mapa Interativo + Ranking / Pizza (7 colunas) -->
+            <!-- Coluna Esquerda: Mapa Interativo + Ranking / Pizza -->
             <section class="lg:col-span-7 flex flex-col gap-6">
 
                 <!-- Mapa Interativo -->
@@ -244,11 +221,11 @@
 
                         <div class="flex items-center gap-1.5 din-secondary-bg p-1 rounded-lg border din-border">
                             <button id="btnVerTabela" onclick="alternarVisaoRanking('tabela')"
-                                class="px-3 py-1.5 rounded-md text-xs font-semibold din-btn transition">
+                                class="px-3 py-1.5 rounded-md text-xs font-semibold din-btn transition cursor-pointer">
                                 Tabela
                             </button>
                             <button id="btnVerPizza" onclick="alternarVisaoRanking('pizza')"
-                                class="px-3 py-1.5 rounded-md text-xs font-semibold din-text-muted hover:din-text-main transition">
+                                class="px-3 py-1.5 rounded-md text-xs font-semibold din-text-muted hover:din-text-main transition cursor-pointer">
                                 Pizza (Top 5 + Outros)
                             </button>
                         </div>
@@ -293,10 +270,15 @@
                     <!-- VISÃO 2: Gráfico de Pizza -->
                     <div id="containerVisaoPizza" class="hidden">
                         <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center din-secondary-bg p-4 rounded-lg border din-border">
-                            <div class="md:col-span-7 flex justify-center">
+                            <div class="md:col-span-7 flex flex-col items-center gap-3">
                                 <div class="w-full max-w-[280px]">
                                     <canvas id="graficoPizzaTop5"></canvas>
                                 </div>
+                                <button type="button"
+                                    onclick="BDChart.baixarPNG('graficoPizzaTop5', { titulo: 'Concentração do PIB Nacional (' + anoSelecionado + ')', subtitulo: 'Top 5 Estados vs. Outros 22', fonte: 'IBGE — Contas Regionais (SIDRA 5938)', nomeArquivo: 'concentracao-pib-' + anoSelecionado })"
+                                    class="px-2.5 py-1 rounded-md text-[11px] font-semibold din-card-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
+                                    ↓ Baixar gráfico (PNG)
+                                </button>
                             </div>
                             <div class="md:col-span-5 space-y-2.5">
                                 <h4 class="text-xs font-bold uppercase tracking-wider din-green">
@@ -310,10 +292,9 @@
                         </div>
                     </div>
                 </div>
-
             </section>
 
-            <!-- Coluna Direita: Raio-X + Vocação Setorial + Simulador (5 colunas - Sem o bloco de IA) -->
+            <!-- Coluna Direita: Raio-X + Vocação Setorial + Simulador -->
             <section class="lg:col-span-5 flex flex-col gap-6">
 
                 <!-- Card Principal do Estado -->
@@ -357,9 +338,9 @@
                         <div class="flex justify-between items-center border-b din-border pb-2.5">
                             <div>
                                 <h3 class="text-sm font-semibold din-text-main">Simulador de Cenários ("E se...?")</h3>
-                                <p class="text-xs din-text-muted">Projete o impacto econômico e fiscal para o estado selecionado</p>
+                                <p class="text-xs din-text-muted">Projeção educativa para o estado selecionado</p>
                             </div>
-                            <span class="text-[10px] din-secondary-bg din-green border din-border px-2 py-0.5 rounded font-bold">Interativo</span>
+                            <span class="text-[10px] din-secondary-bg din-green border din-border px-2 py-0.5 rounded font-bold">Simulação</span>
                         </div>
 
                         <div class="space-y-4 pt-1 text-xs">
@@ -394,23 +375,32 @@
                         </div>
                     </div>
                 </div>
-
             </section>
 
-            <!-- Seção Inferior: Comparador Direto entre Dois Estados (12 colunas) -->
-            <section class="lg:col-span-12 din-card-bg border din-border rounded-lg p-6 shadow-sm">
-                <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+            <!-- Seção Inferior: Comparador Direto entre Dois Estados -->
+            <section class="lg:col-span-12 din-card-bg border din-border rounded-lg p-6 shadow-sm space-y-5">
+                <div class="flex flex-wrap justify-between items-center gap-4">
                     <div>
                         <h2 class="text-lg font-semibold din-text-main">Comparador Direto entre Estados (<span class="labelAno">2021</span>)</h2>
                         <p class="text-xs din-text-muted">Compare o volume do PIB Estadual e a produtividade média (PIB per capita)</p>
                     </div>
-                    <div class="flex items-center gap-3">
+                    <div class="flex flex-wrap items-center gap-2.5">
                         <select id="uf1" class="din-secondary-bg border din-border rounded-lg px-3 py-2 text-sm din-text-main focus:outline-none"></select>
                         <span class="din-text-muted font-bold">VS</span>
                         <select id="uf2" class="din-secondary-bg border din-border rounded-lg px-3 py-2 text-sm din-text-main focus:outline-none"></select>
                         <button onclick="compararEstados()"
-                            class="din-btn text-sm font-semibold px-4 py-2 rounded-lg transition">
+                            class="din-btn text-sm font-semibold px-4 py-2 rounded-lg transition cursor-pointer">
                             Comparar
+                        </button>
+                        <button type="button"
+                            onclick="BDChart.baixarPNG('graficoPib', { titulo: 'PIB Estadual (' + anoSelecionado + '): ' + document.getElementById('uf1').value + ' vs ' + document.getElementById('uf2').value, fonte: 'IBGE — Contas Regionais (SIDRA 5938)', nomeArquivo: 'comparativo-pib-' + anoSelecionado })"
+                            class="px-3 py-2 rounded-lg text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
+                            ↓ PNG (PIB)
+                        </button>
+                        <button type="button"
+                            onclick="BDChart.baixarPNG('graficoPerCapita', { titulo: 'PIB per Capita (' + anoSelecionado + '): ' + document.getElementById('uf1').value + ' vs ' + document.getElementById('uf2').value, fonte: 'IBGE — Contas Regionais (SIDRA 5938)', nomeArquivo: 'comparativo-percapita-' + anoSelecionado })"
+                            class="px-3 py-2 rounded-lg text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
+                            ↓ PNG (Per Capita)
                         </button>
                     </div>
                 </div>
@@ -423,8 +413,19 @@
                         <canvas id="graficoPerCapita" height="160"></canvas>
                     </div>
                 </div>
-            </section>
 
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t din-border text-[11px] din-text-muted">
+                    <span class="inline-flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+                        <span>Fonte oficial: <strong class="din-text-main">IBGE</strong> • Sistema de Contas Regionais (Tabela SIDRA 5938)</span>
+                    </span>
+                    <button type="button"
+                        onclick="BDChart.copiarABNT({ titulo: 'Comparativo Estadual de PIB e PIB per Capita (' + anoSelecionado + ')', fonteOficial: 'IBGE', serie: 'SIDRA 5938' }, this)"
+                        class="underline hover:din-green transition cursor-pointer">
+                        Copiar citação ABNT
+                    </button>
+                </div>
+            </section>
         </main>
     </div>
 
@@ -445,6 +446,9 @@
             </div>
         </div>
     </footer>
+
+    <!-- Utilitário de Gráficos (PNG + ABNT) carregado ANTES do script da página -->
+    <script src="/js/chart-utils.js?v=1"></script>
 
     <script>
         let ufSelecionada = 'SP';
@@ -680,7 +684,7 @@
 
             const pibInicialReais = d.pibMil * 1000;
             const pibFinalReais = pibInicialReais * Math.pow(1 + (taxaCrescimento / 100), anosProjecao);
-            
+
             let impostoAcumulado = 0;
             let pibCorrente = pibInicialReais;
             for (let i = 0; i < anosProjecao; i++) {
@@ -702,14 +706,14 @@
             if (modo === 'pizza') {
                 divTabela.classList.add('hidden');
                 divPizza.classList.remove('hidden');
-                btnPiz.className = 'px-3 py-1.5 rounded-md text-xs font-semibold din-btn transition';
-                btnTab.className = 'px-3 py-1.5 rounded-md text-xs font-semibold din-text-muted hover:din-text-main transition';
+                btnPiz.className = 'px-3 py-1.5 rounded-md text-xs font-semibold din-btn transition cursor-pointer';
+                btnTab.className = 'px-3 py-1.5 rounded-md text-xs font-semibold din-text-muted hover:din-text-main transition cursor-pointer';
                 renderizarGraficoPizzaTop5();
             } else {
                 divPizza.classList.add('hidden');
                 divTabela.classList.remove('hidden');
-                btnTab.className = 'px-3 py-1.5 rounded-md text-xs font-semibold din-btn transition';
-                btnPiz.className = 'px-3 py-1.5 rounded-md text-xs font-semibold din-text-muted hover:din-text-main transition';
+                btnTab.className = 'px-3 py-1.5 rounded-md text-xs font-semibold din-btn transition cursor-pointer';
+                btnPiz.className = 'px-3 py-1.5 rounded-md text-xs font-semibold din-text-muted hover:din-text-main transition cursor-pointer';
             }
         }
 
@@ -784,7 +788,6 @@
 
             const top5 = listaOrdenada.slice(0, 5);
             const outros = listaOrdenada.slice(5);
-
             const shareOutros = outros.reduce((acc, cur) => acc + cur.sharePib, 0);
 
             const labels = [...top5.map(d => `${d.nome} (${d.sigla})`), 'Outros 22 Estados'];
@@ -838,13 +841,8 @@
         function alterarModoMapa(novoModo) {
             modoMapa = novoModo;
             const legenda = document.getElementById('legendaMapaCalor');
-
-            if (modoMapa === 'padrao') {
-                legenda.classList.add('hidden');
-            } else {
-                legenda.classList.remove('hidden');
-            }
-
+            if (modoMapa === 'padrao') legenda.classList.add('hidden');
+            else legenda.classList.remove('hidden');
             if (geojsonLayer) geojsonLayer.setStyle(estiloMapa);
         }
 
@@ -876,7 +874,7 @@
                     weight: selecionado ? 2.5 : 1.2,
                     opacity: 1,
                     color: selecionado ? '#16C784' : (isDark ? '#2B3036' : '#CBD5E1'),
-                    fillOpacity: selecionado ? 0.85 : 0.85
+                    fillOpacity: 0.85
                 };
             }
 
@@ -896,9 +894,7 @@
         function selecionarEstado(sigla, nome) {
             ufSelecionada = sigla;
             if (nome) nomeUfSelecionada = nome;
-
             if (geojsonLayer) geojsonLayer.setStyle(estiloMapa);
-
             renderizarTabelaRanking();
             exibirDetalhesEstado(ufSelecionada, nomeUfSelecionada);
             atualizarSimulador();

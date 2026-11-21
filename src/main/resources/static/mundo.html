@@ -20,8 +20,8 @@
         <div class="flex items-center gap-3">
           <a href="index.html" class="flex items-center gap-3 group">
             <div class="w-10 h-10 rounded-lg din-secondary-bg border din-border flex items-center justify-center shadow-sm overflow-hidden group-hover:border-[#16C784] transition-colors duration-200">
-  <img src="download.png" alt="BrasilEmDados" class="w-8 h-8 object-contain transition-transform duration-200 group-hover:scale-110">
-</div>
+              <img src="download.png" alt="BrasilEmDados" class="w-8 h-8 object-contain transition-transform duration-200 group-hover:scale-110">
+            </div>
             <div>
               <div class="flex items-center gap-2">
                 <span class="text-lg font-extrabold tracking-tight din-text-main">BrasilEmDados</span>
@@ -43,7 +43,7 @@
         </nav>
 
         <div class="flex items-center gap-2.5 relative">
-          <button onclick="alternarModoApresentacao()" id="btnModoApresentacao" class="hidden lg:inline-flex items-center gap-1.5 din-secondary-bg hover:opacity-80 border din-border din-text-main text-xs font-semibold px-3 py-1.5 rounded-lg transition">
+          <button onclick="alternarModoApresentacao()" id="btnModoApresentacao" class="hidden lg:inline-flex items-center gap-1.5 din-secondary-bg hover:opacity-80 border din-border din-text-main text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer">
             <svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect>
               <line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line>
@@ -78,11 +78,11 @@
               <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M7 14l4-4 4 4 5-5"></path></svg>
               Comparador Multi-País
             </a>
-            <button onclick="forcarAtualizacaoCache(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left">
+            <button onclick="forcarAtualizacaoCache(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left cursor-pointer">
               <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
               Atualizar dados das APIs
             </button>
-            <button onclick="window.print(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left">
+            <button onclick="window.print(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left cursor-pointer">
               <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
               Exportar Relatório (PDF)
             </button>
@@ -110,7 +110,7 @@
     </div>
   </header>
 
-  <!-- Breadcrumb + Status de Sincronia -->
+  <!-- Breadcrumb + Status de Sincronia + ABNT -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex flex-wrap items-center justify-between gap-2 text-xs ocultar-em-presentation">
     <div class="flex items-center gap-2 din-text-muted">
       <a href="economia.html" class="hover:din-green font-semibold inline-flex items-center gap-1 transition">
@@ -120,9 +120,14 @@
       <span>/</span>
       <span class="din-text-main font-bold">Mapa-Múndi & Indicadores Globais</span>
     </div>
-    <div class="flex items-center gap-2 din-text-muted">
-      <span class="w-2 h-2 rounded-full bg-[#16C784] animate-pulse"></span>
-      <span id="statusSync">Sincronizando Banco Mundial e câmbio...</span>
+    <div class="flex flex-wrap items-center gap-3 din-text-muted">
+      <span class="inline-flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-[#16C784] animate-pulse"></span>
+        <span id="statusSync">Sincronizando Banco Mundial e câmbio...</span>
+      </span>
+      <button type="button" onclick="citarMundoABNT(this)" class="px-2.5 py-1 rounded-md text-[11px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
+        Citar (ABNT)
+      </button>
     </div>
   </div>
 
@@ -150,12 +155,12 @@
     <section class="din-card-bg border din-border rounded-xl p-4 shadow-sm space-y-3 ocultar-em-presentation">
       <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
         <div class="flex flex-wrap items-center gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
-          <button id="catCont" type="button" onclick="setCategoriaFiltro('cont')" class="px-2.5 py-1.5 rounded-md din-card-bg din-text-main border din-border transition">Continentes</button>
-          <button id="catReg" type="button" onclick="setCategoriaFiltro('reg')" class="px-2.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Regiões</button>
-          <button id="catBlocos" type="button" onclick="setCategoriaFiltro('blocos')" class="px-2.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Blocos econômicos</button>
-          <button id="catGeopol" type="button" onclick="setCategoriaFiltro('geopol')" class="px-2.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Geopolítica</button>
-          <button id="catDesenv" type="button" onclick="setCategoriaFiltro('desenv')" class="px-2.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Desenvolvimento</button>
-          <button id="catRank" type="button" onclick="setCategoriaFiltro('rank')" class="px-2.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Rankings mundiais</button>
+          <button id="catCont" type="button" onclick="setCategoriaFiltro('cont')" class="px-2.5 py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer">Continentes</button>
+          <button id="catReg" type="button" onclick="setCategoriaFiltro('reg')" class="px-2.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition cursor-pointer">Regiões</button>
+          <button id="catBlocos" type="button" onclick="setCategoriaFiltro('blocos')" class="px-2.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition cursor-pointer">Blocos econômicos</button>
+          <button id="catGeopol" type="button" onclick="setCategoriaFiltro('geopol')" class="px-2.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition cursor-pointer">Geopolítica</button>
+          <button id="catDesenv" type="button" onclick="setCategoriaFiltro('desenv')" class="px-2.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition cursor-pointer">Desenvolvimento</button>
+          <button id="catRank" type="button" onclick="setCategoriaFiltro('rank')" class="px-2.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition cursor-pointer">Rankings mundiais</button>
         </div>
 
         <div class="flex items-center gap-2 w-full xl:w-auto">
@@ -163,7 +168,7 @@
             <input id="inpBuscaPais" list="listaPaises" placeholder="Buscar qualquer país..." class="inp" oninput="buscarPais(this.value)">
             <datalist id="listaPaises"></datalist>
           </div>
-          <button type="button" onclick="limparFiltros()" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main transition shrink-0">
+          <button type="button" onclick="limparFiltros()" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main transition shrink-0 cursor-pointer">
             Todos os países
           </button>
         </div>
@@ -202,14 +207,14 @@
         </div>
       </div>
 
-      <div id="mapContainer" class="relative w-full rounded-lg din-secondary-bg border din-border overflow-hidden h-[430px] sm:h-[520px] lg:h-[560px] flex items-center justify-center">
+      <div id="mapContainer" class="relative w-full rounded-lg din-secondary-bg border din-border overflow-hidden h-[360px] sm:h-[480px] lg:h-[560px] flex items-center justify-center">
         <div id="mapLoading" class="text-xs din-text-muted">Carregando malha mundial (ISO-3166)…</div>
         <svg id="mapaMundo" class="w-full h-full hidden select-none"></svg>
 
         <div class="absolute top-3 left-3 flex flex-col gap-1 z-10">
-          <button type="button" onclick="ajustarZoom(1.35)" title="Aproximar" class="w-8 h-8 rounded-lg din-card-bg border din-border din-text-main font-bold text-sm shadow hover:border-[#16C784] transition">+</button>
-          <button type="button" onclick="ajustarZoom(0.75)" title="Afastar" class="w-8 h-8 rounded-lg din-card-bg border din-border din-text-main font-bold text-sm shadow hover:border-[#16C784] transition">−</button>
-          <button type="button" onclick="resetZoom()" title="Resetar visão" class="w-8 h-8 rounded-lg din-card-bg border din-border din-text-muted font-bold text-[10px] shadow hover:border-[#16C784] transition">1:1</button>
+          <button type="button" onclick="ajustarZoom(1.35)" title="Aproximar" class="w-8 h-8 rounded-lg din-card-bg border din-border din-text-main font-bold text-sm shadow hover:border-[#16C784] transition cursor-pointer">+</button>
+          <button type="button" onclick="ajustarZoom(0.75)" title="Afastar" class="w-8 h-8 rounded-lg din-card-bg border din-border din-text-main font-bold text-sm shadow hover:border-[#16C784] transition cursor-pointer">−</button>
+          <button type="button" onclick="resetZoom()" title="Resetar visão" class="w-8 h-8 rounded-lg din-card-bg border din-border din-text-muted font-bold text-[10px] shadow hover:border-[#16C784] transition cursor-pointer">1:1</button>
         </div>
       </div>
 
@@ -334,10 +339,10 @@
       </div>
 
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
-        <button id="abaRxEcon" type="button" onclick="setAbaRx('econ')" class="py-1.5 rounded-md din-card-bg din-text-main border din-border transition">Macro & Fiscal</button>
-        <button id="abaRxComercio" type="button" onclick="setAbaRx('comercio')" class="py-1.5 rounded-md din-text-muted transition">Comércio Exterior</button>
-        <button id="abaRxSocial" type="button" onclick="setAbaRx('social')" class="py-1.5 rounded-md din-text-muted transition">Social, IDH & Gini</button>
-        <button id="abaRxHist" type="button" onclick="setAbaRx('hist')" class="py-1.5 rounded-md din-text-muted transition">Histórico Real</button>
+        <button id="abaRxEcon" type="button" onclick="setAbaRx('econ')" class="py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer">Macro & Fiscal</button>
+        <button id="abaRxComercio" type="button" onclick="setAbaRx('comercio')" class="py-1.5 rounded-md din-text-muted transition cursor-pointer">Comércio Exterior</button>
+        <button id="abaRxSocial" type="button" onclick="setAbaRx('social')" class="py-1.5 rounded-md din-text-muted transition cursor-pointer">Social, IDH & Gini</button>
+        <button id="abaRxHist" type="button" onclick="setAbaRx('hist')" class="py-1.5 rounded-md din-text-muted transition cursor-pointer">Histórico Real</button>
       </div>
 
       <div id="viewRxEcon" class="space-y-3">
@@ -348,11 +353,14 @@
         <div id="gridComercioKpi" class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs"></div>
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
           <div class="lg:col-span-7 din-secondary-bg border din-border rounded-lg p-4 space-y-2">
-            <div class="flex items-center justify-between">
+            <div class="flex flex-wrap items-center justify-between gap-2">
               <span class="text-xs font-bold din-text-main">Principais parceiros comerciais (participação %)</span>
-              <span class="text-[10px] din-text-muted">Fonte: UN Comtrade / OEC · Observado</span>
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] din-text-muted">UN Comtrade / OEC</span>
+                <button type="button" onclick="baixarParceirosPNG()" class="px-2 py-0.5 rounded text-[10px] font-semibold din-card-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ PNG</button>
+              </div>
             </div>
-            <div id="boxGrafParceiros" class="h-[190px]"><canvas id="grafParceiros"></canvas></div>
+            <div id="boxGrafParceiros" class="relative h-[190px]"><canvas id="grafParceiros"></canvas></div>
             <p id="msgSemParceiros" class="hidden text-xs din-text-muted py-6 text-center">Detalhamento bilateral disponível para as principais economias globais.</p>
           </div>
           <div class="lg:col-span-5 din-secondary-bg border din-border rounded-lg p-4 space-y-2.5">
@@ -371,29 +379,35 @@
       </div>
 
       <div id="viewRxHist" class="hidden space-y-3">
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 max-w-3xl">
-          <select id="histSerieTipo" class="inp text-xs py-1.5" onchange="atualizarControlesHist(); carregarHistoricoReal()">
-            <option value="moeda">Câmbio Real (vs BRL ou USD/BRL)</option>
-            <option value="NY.GDP.MKTP.CD">PIB Nominal US$ (Banco Mundial)</option>
-            <option value="NY.GDP.MKTP.PP.CD">PIB em PPC US$ (Banco Mundial)</option>
-            <option value="SP.POP.TOTL">População Total (Banco Mundial)</option>
-            <option value="FP.CPI.TOTL.ZG">Inflação Anual % (Banco Mundial)</option>
-            <option value="NE.EXP.GNFS.CD">Exportações US$ (Banco Mundial)</option>
-            <option value="NE.IMP.GNFS.CD">Importações US$ (Banco Mundial)</option>
-          </select>
-          <select id="histPeriodo" class="inp text-xs py-1.5" onchange="carregarHistoricoReal()">
-            <option value="5d">5 dias (câmbio)</option>
-            <option value="1m">1 mês (câmbio)</option>
-            <option value="3m" selected>3 meses (câmbio)</option>
-            <option value="2a">2 anos (câmbio)</option>
-          </select>
-          <select id="histTipoGraf" class="inp text-xs py-1.5" onchange="desenharHistoricoReal()">
-            <option value="line">Linha</option>
-            <option value="area">Área</option>
-            <option value="bar">Barras</option>
-          </select>
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 flex-1 max-w-3xl">
+            <select id="histSerieTipo" class="inp text-xs py-1.5" onchange="atualizarControlesHist(); carregarHistoricoReal()">
+              <option value="moeda">Câmbio Real (vs BRL ou USD/BRL)</option>
+              <option value="NY.GDP.MKTP.CD">PIB Nominal US$ (Banco Mundial)</option>
+              <option value="NY.GDP.MKTP.PP.CD">PIB em PPC US$ (Banco Mundial)</option>
+              <option value="SP.POP.TOTL">População Total (Banco Mundial)</option>
+              <option value="FP.CPI.TOTL.ZG">Inflação Anual % (Banco Mundial)</option>
+              <option value="NE.EXP.GNFS.CD">Exportações US$ (Banco Mundial)</option>
+              <option value="NE.IMP.GNFS.CD">Importações US$ (Banco Mundial)</option>
+            </select>
+            <select id="histPeriodo" class="inp text-xs py-1.5" onchange="carregarHistoricoReal()">
+              <option value="5d">5 dias (câmbio)</option>
+              <option value="1m">1 mês (câmbio)</option>
+              <option value="3m" selected>3 meses (câmbio)</option>
+              <option value="2a">2 anos (câmbio)</option>
+            </select>
+            <select id="histTipoGraf" class="inp text-xs py-1.5" onchange="desenharHistoricoReal()">
+              <option value="line">Linha</option>
+              <option value="area">Área</option>
+              <option value="bar">Barras</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="baixarHistMundoPNG()" class="px-2.5 py-1.5 rounded-md text-[11px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ PNG</button>
+            <button type="button" onclick="citarMundoABNT(this)" class="px-2.5 py-1.5 rounded-md text-[11px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">Citar (ABNT)</button>
+          </div>
         </div>
-        <div class="h-[240px] din-secondary-bg/50 rounded-lg p-3 border din-border">
+        <div class="relative h-[240px] din-secondary-bg/50 rounded-lg p-3 border din-border">
           <canvas id="grafMiniPais"></canvas>
         </div>
         <p id="histExplicacao" class="text-xs din-text-muted leading-relaxed">Selecione uma série para carregar os dados oficiais.</p>
@@ -421,9 +435,9 @@
             <option value="imposto">Maior carga tributária</option>
           </select>
           <div class="inline-flex din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
-            <button id="top5Btn" type="button" onclick="setTopN(5)" class="px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border transition">Top 5</button>
-            <button id="top10Btn" type="button" onclick="setTopN(10)" class="px-2.5 py-1 rounded-md din-text-muted transition">Top 10</button>
-            <button id="top20Btn" type="button" onclick="setTopN(20)" class="px-2.5 py-1 rounded-md din-text-muted transition">Top 20</button>
+            <button id="top5Btn" type="button" onclick="setTopN(5)" class="px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer">Top 5</button>
+            <button id="top10Btn" type="button" onclick="setTopN(10)" class="px-2.5 py-1 rounded-md din-text-muted transition cursor-pointer">Top 10</button>
+            <button id="top20Btn" type="button" onclick="setTopN(20)" class="px-2.5 py-1 rounded-md din-text-muted transition cursor-pointer">Top 20</button>
           </div>
         </div>
       </div>
@@ -437,16 +451,19 @@
           <h2 class="text-base font-extrabold din-text-main">Comparador multi-país</h2>
           <p class="text-xs din-text-muted">Compare até 3 países lado a lado com dados oficiais do Banco Mundial, PNUD e câmbio comercial.</p>
         </div>
-        <select id="compGrafMetrica" class="inp !w-auto text-xs font-semibold" onchange="renderComparadorMulti()">
-          <option value="pibPc">Gráfico: PIB per capita (US$)</option>
-          <option value="pib">Gráfico: PIB Nominal (US$)</option>
-          <option value="pibPpc">Gráfico: PIB em PPC (US$)</option>
-          <option value="idh">Gráfico: IDH (PNUD)</option>
-          <option value="gini">Gráfico: Índice de Gini</option>
-          <option value="imposto">Gráfico: Carga tributária (% PIB)</option>
-          <option value="cresc">Gráfico: Crescimento (%)</option>
-          <option value="infla">Gráfico: Inflação (%)</option>
-        </select>
+        <div class="flex flex-wrap items-center gap-2">
+          <select id="compGrafMetrica" class="inp !w-auto text-xs font-semibold" onchange="renderComparadorMulti()">
+            <option value="pibPc">Gráfico: PIB per capita (US$)</option>
+            <option value="pib">Gráfico: PIB Nominal (US$)</option>
+            <option value="pibPpc">Gráfico: PIB em PPC (US$)</option>
+            <option value="idh">Gráfico: IDH (PNUD)</option>
+            <option value="gini">Gráfico: Índice de Gini</option>
+            <option value="imposto">Gráfico: Carga tributária (% PIB)</option>
+            <option value="cresc">Gráfico: Crescimento (%)</option>
+            <option value="infla">Gráfico: Inflação (%)</option>
+          </select>
+          <button type="button" onclick="baixarCompMundoPNG()" class="px-2.5 py-1.5 rounded-md text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ PNG</button>
+        </div>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -469,11 +486,21 @@
           </table>
         </div>
         <div class="lg:col-span-5 space-y-3">
-          <div class="h-[240px] din-secondary-bg/40 rounded-lg p-3 border din-border">
+          <div class="relative h-[240px] din-secondary-bg/40 rounded-lg p-3 border din-border">
             <canvas id="grafComparador"></canvas>
           </div>
           <p id="cmpAnalise" class="text-xs din-secondary-bg border din-border rounded-lg p-3 din-text-muted leading-relaxed"></p>
         </div>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t din-border text-[11px] din-text-muted">
+        <span class="inline-flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+          <span>Fontes oficiais: <strong class="din-text-main">Banco Mundial (API v2), PNUD, UN Comtrade & BCE</strong></span>
+        </span>
+        <button type="button" onclick="citarMundoABNT(this)" class="underline hover:din-green transition cursor-pointer">
+          Copiar citação ABNT
+        </button>
       </div>
     </section>
 
@@ -505,12 +532,60 @@
       <a href="economia.html" class="hover:din-text-main transition">Economia</a>
       <a href="glossario.html" class="hover:din-text-main transition">Glossário</a>
       <a href="sobre.html" class="hover:din-text-main transition">Sobre</a>
-      <a href="contato.html" class="din-text-main font-semibold">Globo</a>
+      <a href="contato.html" class="hover:din-text-main transition">Contato</a>
     </div>
   </div>
 </footer>
 
+<!-- Utilitário de Gráficos (PNG + ABNT) ANTES dos scripts da página -->
+<script src="/js/chart-utils.js?v=1"></script>
 <script src="js/mundo/constantes.js"></script>
 <script src="js/mundo/app.js"></script>
+<script>
+function baixarParceirosPNG() {
+  if (!window.BDChart) return;
+  const pais = document.getElementById('rxNome')?.textContent || 'País';
+  BDChart.baixarPNG('grafParceiros', {
+    titulo: `Principais Parceiros Comerciais — ${pais}`,
+    subtitulo: 'Participação percentual no comércio bilateral',
+    fonte: 'UN Comtrade / OEC',
+    nomeArquivo: `brasilemdados-parceiros-${pais.toLowerCase().replace(/\s+/g, '-')}`
+  });
+}
+
+function baixarHistMundoPNG() {
+  if (!window.BDChart) return;
+  const pais = document.getElementById('rxNome')?.textContent || 'País';
+  const sel = document.getElementById('histSerieTipo');
+  const serieTxt = sel ? sel.options[sel.selectedIndex].text : 'Série histórica';
+  BDChart.baixarPNG('grafMiniPais', {
+    titulo: `${pais} — ${serieTxt}`,
+    subtitulo: 'Série histórica observada',
+    fonte: sel?.value === 'moeda' ? 'Banco Central Europeu (Frankfurter)' : 'Banco Mundial (API v2)',
+    nomeArquivo: `brasilemdados-historico-${pais.toLowerCase().replace(/\s+/g, '-')}`
+  });
+}
+
+function baixarCompMundoPNG() {
+  if (!window.BDChart) return;
+  const sel = document.getElementById('compGrafMetrica');
+  const metrica = sel ? sel.options[sel.selectedIndex].text.replace('Gráfico: ', '') : 'Comparativo';
+  BDChart.baixarPNG('grafComparador', {
+    titulo: `Comparador Multi-País — ${metrica}`,
+    subtitulo: 'Indicadores macroeconômicos internacionais',
+    fonte: 'Banco Mundial (API v2) · PNUD · BCE',
+    nomeArquivo: 'brasilemdados-comparador-global'
+  });
+}
+
+function citarMundoABNT(btn) {
+  if (!window.BDChart) return;
+  const pais = document.getElementById('rxNome')?.textContent || 'Panorama Global';
+  BDChart.copiarABNT({
+    titulo: `Panorama Econômico Global e Indicadores de ${pais}`,
+    fonteOficial: 'Banco Mundial (API v2), PNUD, UN Comtrade e Banco Central Europeu'
+  }, btn);
+}
+</script>
 </body>
 </html>

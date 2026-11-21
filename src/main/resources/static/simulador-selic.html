@@ -7,8 +7,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
-    <link rel="stylesheet" href="css/theme.css">
-
+<link rel="stylesheet" href="css/theme.css">
 </head>
 <body class="min-h-screen font-sans flex flex-col justify-between">
 <div>
@@ -19,8 +18,8 @@
         <div class="flex items-center gap-3">
           <a href="index.html" class="flex items-center gap-3 group">
             <div class="w-10 h-10 rounded-lg din-secondary-bg border din-border flex items-center justify-center shadow-sm overflow-hidden group-hover:border-[#16C784] transition-colors duration-200">
-  <img src="download.png" alt="BrasilEmDados" class="w-8 h-8 object-contain transition-transform duration-200 group-hover:scale-110">
-</div>
+              <img src="download.png" alt="BrasilEmDados" class="w-8 h-8 object-contain transition-transform duration-200 group-hover:scale-110">
+            </div>
             <div>
               <div class="flex items-center gap-2">
                 <span class="text-lg font-extrabold tracking-tight din-text-main">BrasilEmDados</span>
@@ -42,7 +41,7 @@
         </nav>
 
         <div class="flex items-center gap-2.5 relative">
-          <button onclick="alternarModoApresentacao()" id="btnModoApresentacao" class="hidden lg:inline-flex items-center gap-1.5 din-secondary-bg hover:opacity-80 border din-border din-text-main text-xs font-semibold px-3 py-1.5 rounded-lg transition">
+          <button onclick="alternarModoApresentacao()" id="btnModoApresentacao" class="hidden lg:inline-flex items-center gap-1.5 din-secondary-bg hover:opacity-80 border din-border din-text-main text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer">
             <svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect>
               <line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line>
@@ -69,11 +68,11 @@
               <svg class="w-4 h-4 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
               Voltar ao Hub Economia
             </a>
-            <button onclick="exportarCSV(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left">
+            <button onclick="exportarCSV(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left cursor-pointer">
               <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
               Exportar Projeção (CSV)
             </button>
-            <button onclick="window.print(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left">
+            <button onclick="window.print(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left cursor-pointer">
               <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
               Exportar Relatório (PDF)
             </button>
@@ -112,9 +111,10 @@
       <span class="din-text-main font-bold">Simulador de Selic, Renda Fixa & Juro Real</span>
     </div>
 
-    <div class="flex items-center gap-2">
-      <button id="btnLink" type="button" onclick="copiarLink()" class="px-2.5 py-1 rounded-md font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition">Copiar link do cenário</button>
-      <button type="button" onclick="exportarCSV()" class="px-2.5 py-1 rounded-md font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition">↓ CSV</button>
+    <div class="flex flex-wrap items-center gap-2">
+      <button id="btnLink" type="button" onclick="copiarLink()" class="px-2.5 py-1 rounded-md font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">Copiar link do cenário</button>
+      <button type="button" onclick="citarCenarioABNT(this)" class="px-2.5 py-1 rounded-md font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">Citar (ABNT)</button>
+      <button type="button" onclick="exportarCSV()" class="px-2.5 py-1 rounded-md font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ CSV</button>
     </div>
   </div>
 
@@ -124,17 +124,17 @@
       <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
         <span class="text-xs din-text-muted uppercase font-semibold">Selic (meta)</span>
         <p id="kSelic" class="text-xl font-bold din-green mt-1">—</p>
-        <span class="text-[11px] din-text-muted">Taxa básica de juros</span>
+        <span class="text-[11px] din-text-muted">BCB Oficial (SGS 432)</span>
       </div>
       <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
         <span class="text-xs din-text-muted uppercase font-semibold">CDI</span>
         <p id="kCdi" class="text-xl font-bold din-text-main mt-1">—</p>
-        <span class="text-[11px] din-text-muted">Referência de CDB e LCI/LCA</span>
+        <span class="text-[11px] din-text-muted">BCB Oficial (SGS 4389)</span>
       </div>
       <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
         <span class="text-xs din-text-muted uppercase font-semibold">IPCA (12 meses)</span>
         <p id="kIpca" class="text-xl font-bold din-red mt-1">—</p>
-        <span class="text-[11px] din-text-muted">Inflação oficial acumulada</span>
+        <span class="text-[11px] din-text-muted">BCB / IBGE (SGS 13522)</span>
       </div>
       <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
         <span class="text-xs din-text-muted uppercase font-semibold">Juro real da Selic</span>
@@ -147,12 +147,11 @@
     <!-- 2. ÁREA PRINCIPAL -->
     <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-      <!-- COLUNA ESQUERDA: Controles (Aportes vs Engenharia Reversa + Estresse Macro) -->
+      <!-- COLUNA ESQUERDA: Controles -->
       <div class="lg:col-span-4 din-card-bg border din-border rounded-lg p-5 shadow-sm space-y-4 h-fit">
-        <!-- Seletor de Modo: Aportes vs Meta -->
         <div class="grid grid-cols-2 gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
-          <button id="tabSimular" type="button" onclick="setModoCalc('simular')" class="py-1.5 rounded-md din-card-bg din-text-main border din-border transition">Simular aportes</button>
-          <button id="tabMeta" type="button" onclick="setModoCalc('meta')" class="py-1.5 rounded-md din-text-muted transition">Planejar meta</button>
+          <button id="tabSimular" type="button" onclick="setModoCalc('simular')" class="py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer">Simular aportes</button>
+          <button id="tabMeta" type="button" onclick="setModoCalc('meta')" class="py-1.5 rounded-md din-text-muted transition cursor-pointer">Planejar meta</button>
         </div>
 
         <!-- ABA A: SIMULAR APORTES -->
@@ -166,13 +165,13 @@
             </label>
           </div>
           <div class="flex flex-wrap gap-1.5">
-            <button type="button" onclick="preset(5000, 300, 2)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main">Reserva (2a)</button>
-            <button type="button" onclick="preset(10000, 500, 10)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main">Médio (10a)</button>
-            <button type="button" onclick="preset(25000, 1500, 20)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main">Longo (20a)</button>
+            <button type="button" onclick="preset(5000, 300, 2)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main cursor-pointer">Reserva (2a)</button>
+            <button type="button" onclick="preset(10000, 500, 10)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main cursor-pointer">Médio (10a)</button>
+            <button type="button" onclick="preset(25000, 1500, 20)" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main cursor-pointer">Longo (20a)</button>
           </div>
         </div>
 
-        <!-- ABA B: PLANEJAR META (ENGENHARIA REVERSA) -->
+        <!-- ABA B: PLANEJAR META -->
         <div id="viewMeta" class="hidden space-y-3">
           <div class="grid grid-cols-2 gap-2">
             <label class="text-xs font-semibold din-text-main">Tipo de objetivo
@@ -204,7 +203,7 @@
           </div>
         </div>
 
-        <!-- Prazo (compartilhado entre os dois modos) -->
+        <!-- Prazo -->
         <label class="block text-xs font-semibold din-text-main pt-1">
           <span class="flex justify-between">
             Horizonte da projeção
@@ -223,9 +222,9 @@
             <span class="text-[10px] din-text-muted">Teste de estresse</span>
           </div>
           <div class="grid grid-cols-3 gap-1.5 text-[11px] font-semibold">
-            <button id="scBC" type="button" onclick="cenarioMacro('bc')" class="py-1.5 px-2 rounded-md din-card-bg border din-border din-text-main hover:border-[#16C784] transition">Atual (BC)</button>
-            <button id="scCorte" type="button" onclick="cenarioMacro('corte')" class="py-1.5 px-2 rounded-md din-secondary-bg border din-border din-text-muted hover:din-text-main transition">Corte Juros</button>
-            <button id="scInfla" type="button" onclick="cenarioMacro('infla')" class="py-1.5 px-2 rounded-md din-secondary-bg border din-border din-text-muted hover:din-text-main transition">Inflação Alta</button>
+            <button id="scBC" type="button" onclick="cenarioMacro('bc')" class="py-1.5 px-2 rounded-md din-card-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">Atual (BC)</button>
+            <button id="scCorte" type="button" onclick="cenarioMacro('corte')" class="py-1.5 px-2 rounded-md din-secondary-bg border din-border din-text-muted hover:din-text-main transition cursor-pointer">Corte Juros</button>
+            <button id="scInfla" type="button" onclick="cenarioMacro('infla')" class="py-1.5 px-2 rounded-md din-secondary-bg border din-border din-text-muted hover:din-text-main transition cursor-pointer">Inflação Alta</button>
           </div>
 
           <div class="grid grid-cols-3 gap-2">
@@ -240,7 +239,6 @@
             <label class="text-[11px] font-semibold din-text-main">IPCA+ (% a.a.)<input id="spreadIpca" class="inp mt-1" inputmode="decimal" value="6.5" oninput="calc()"></label>
           </div>
 
-          <!-- Equivalência Dinâmica CDB x LCI/LCA -->
           <div class="din-secondary-bg border din-border rounded-lg p-2.5 text-[11px] din-text-muted leading-relaxed">
             <span class="font-semibold din-text-main">Equivalência tributária:</span>
             <span id="txtEquiv">—</span>
@@ -259,7 +257,6 @@
           </div>
           <p id="resumoDidatico" class="text-sm din-text-main leading-relaxed"></p>
 
-          <!-- Barra de Composição -->
           <div class="space-y-1.5">
             <div class="flex justify-between text-[11px] din-text-muted">
               <span>Composição do maior retorno líquido (<strong id="winNome" class="din-text-main">—</strong>)</span>
@@ -277,7 +274,6 @@
             </div>
           </div>
 
-          <!-- 2 Marcos Quantitativos (Ponto de Inflexão + Renda Perpétua Real) -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t din-border">
             <div class="din-secondary-bg rounded-lg p-3">
               <span class="text-[11px] font-semibold din-text-muted block">Ponto de inflexão (juros > aporte)</span>
@@ -315,44 +311,59 @@
           </div>
         </div>
 
-        <!-- Card 3: Painel Gráfico com 3 Abas -->
+        <!-- Card 3: Painel Gráfico com 3 Abas + Exportação PNG e ABNT -->
         <div id="secaoGrafico" class="din-card-bg border din-border rounded-lg p-5 shadow-sm space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-3">
-            <div class="inline-flex din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
-              <button id="tGrafPat" type="button" onclick="setAbaGraf('pat')" class="px-3 py-1.5 rounded-md din-card-bg din-text-main border din-border transition">Patrimônio</button>
-              <button id="tGrafFluxo" type="button" onclick="setAbaGraf('fluxo')" class="px-3 py-1.5 rounded-md din-text-muted transition">Aporte vs. Juros</button>
-              <button id="tGrafBC" type="button" onclick="setAbaGraf('bc')" class="px-3 py-1.5 rounded-md din-text-muted transition">Ciclo BC (5a)</button>
+            <div class="inline-flex din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold flex-wrap gap-0.5">
+              <button id="tGrafPat" type="button" onclick="setAbaGraf('pat')" class="px-3 py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer">Patrimônio</button>
+              <button id="tGrafFluxo" type="button" onclick="setAbaGraf('fluxo')" class="px-3 py-1.5 rounded-md din-text-muted transition cursor-pointer">Aporte vs. Juros</button>
+              <button id="tGrafBC" type="button" onclick="setAbaGraf('bc')" class="px-3 py-1.5 rounded-md din-text-muted transition cursor-pointer">Ciclo BC (5a)</button>
             </div>
 
-            <!-- Controles da Aba Patrimônio -->
-            <div id="ctrlPat" class="flex flex-wrap items-center gap-3">
-              <label class="inline-flex items-center gap-1.5 text-xs din-text-muted cursor-pointer select-none">
-                <input id="chkParado" type="checkbox" class="accent-[#EA3943] cursor-pointer" onchange="calc()">
-                <span>Dinheiro parado</span>
-              </label>
-              <div class="inline-flex din-secondary-bg p-0.5 rounded-lg border din-border text-[11px] font-semibold">
-                <button id="btnNom" type="button" onclick="setModoValor('nominal')" class="px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border transition">Nominal</button>
-                <button id="btnReal" type="button" onclick="setModoValor('real')" class="px-2.5 py-1 rounded-md din-text-muted transition">Poder de compra</button>
+            <div class="flex flex-wrap items-center gap-2">
+              <div id="ctrlPat" class="flex flex-wrap items-center gap-2.5">
+                <label class="inline-flex items-center gap-1.5 text-xs din-text-muted cursor-pointer select-none">
+                  <input id="chkParado" type="checkbox" class="accent-[#EA3943] cursor-pointer" onchange="calc()">
+                  <span>Dinheiro parado</span>
+                </label>
+                <div class="inline-flex din-secondary-bg p-0.5 rounded-lg border din-border text-[11px] font-semibold">
+                  <button id="btnNom" type="button" onclick="setModoValor('nominal')" class="px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer">Nominal</button>
+                  <button id="btnReal" type="button" onclick="setModoValor('real')" class="px-2.5 py-1 rounded-md din-text-muted transition cursor-pointer">Poder de compra</button>
+                </div>
               </div>
+              <button type="button" onclick="baixarGraficoAtivo()" class="px-2.5 py-1 rounded-md text-[11px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
+                ↓ PNG
+              </button>
             </div>
           </div>
 
           <!-- Aba 1: Patrimônio Acumulado -->
           <div id="viewGrafPat">
             <p id="subGrafPat" class="text-xs din-text-muted mb-3">Evolução do saldo líquido em valores nominais.</p>
-            <div class="h-[320px]"><canvas id="grafPat"></canvas></div>
+            <div class="relative w-full h-[300px] sm:h-[340px]"><canvas id="grafPat"></canvas></div>
           </div>
 
-          <!-- Aba 2: Fluxo Anual (Aporte vs Juros Líquidos) -->
+          <!-- Aba 2: Fluxo Anual -->
           <div id="viewGrafFluxo" class="hidden">
             <p id="subGrafFluxo" class="text-xs din-text-muted mb-3">Comparação anual entre o capital aportado no ano e os juros líquidos gerados pelo instrumento líder.</p>
-            <div class="h-[320px]"><canvas id="grafFluxo"></canvas></div>
+            <div class="relative w-full h-[300px] sm:h-[340px]"><canvas id="grafFluxo"></canvas></div>
           </div>
 
           <!-- Aba 3: Histórico Real Selic vs IPCA (5 anos - Banco Central) -->
           <div id="viewGrafBC" class="hidden">
             <p id="subGrafBC" class="text-xs din-text-muted mb-3">Série histórica mensal oficial dos últimos 5 anos: Selic anualizada (série 4189) vs. IPCA acumulado em 12 meses (série 13522).</p>
-            <div class="h-[320px]"><canvas id="grafBC"></canvas></div>
+            <div class="relative w-full h-[300px] sm:h-[340px]"><canvas id="grafBC"></canvas></div>
+          </div>
+
+          <!-- Selo de Fonte Oficial -->
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t din-border text-[11px] din-text-muted">
+            <span class="inline-flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+              <span>Fonte oficial: <strong class="din-text-main">Banco Central do Brasil</strong> • SGS 432, 4389, 4189 e 13522</span>
+            </span>
+            <button type="button" onclick="citarCenarioABNT(this)" class="underline hover:din-green transition cursor-pointer">
+              Copiar citação ABNT
+            </button>
           </div>
         </div>
 
@@ -395,6 +406,9 @@
   </div>
 </footer>
 
+<!-- Utilitário de Gráficos (PNG + ABNT + Responsivo) antes do script da página -->
+<script src="/js/chart-utils.js?v=1"></script>
+
 <script>
 const $ = i => document.getElementById(i);
 const v = i => parseFloat(String($(i).value).replace(',', '.')) || 0;
@@ -409,11 +423,51 @@ const BD = {
 };
 
 let chartPat = null, chartFluxo = null, chartBC = null;
-let modoCalc = 'simular'; // 'simular' | 'meta'
-let modoValor = 'nominal'; // 'nominal' | 'real'
-let abaGraf = 'pat'; // 'pat' | 'fluxo' | 'bc'
+let modoCalc = 'simular';
+let modoValor = 'nominal';
+let abaGraf = 'pat';
 let taxasBC = { selic: 10.75, cdi: 10.65, ipca: 4.5 };
 let histBC = null, ultimoEstado = null;
+
+// Exportação PNG e ABNT integradas ao chart-utils.js
+function baixarGraficoAtivo() {
+  if (!window.BDChart) return;
+  const anos = v('anos');
+  if (abaGraf === 'pat') {
+    BDChart.baixarPNG('grafPat', {
+      titulo: `Projeção de Patrimônio em Renda Fixa (${anos} ${anos === 1 ? 'ano' : 'anos'})`,
+      subtitulo: modoValor === 'real' ? 'Valores corrigidos pelo IPCA (poder de compra atual)' : 'Saldo líquido nominal',
+      fonte: 'Simulação BrasilEmDados • Parâmetros oficiais BCB (SGS 432, 4389, 13522)',
+      nomeArquivo: `brasilemdados-renda-fixa-${anos}a`
+    });
+  } else if (abaGraf === 'fluxo') {
+    BDChart.baixarPNG('grafFluxo', {
+      titulo: `Aporte Anual vs. Juros Líquidos (${ultimoEstado?.win?.n || 'Renda Fixa'})`,
+      subtitulo: `Horizonte de ${anos} ${anos === 1 ? 'ano' : 'anos'}`,
+      fonte: 'Simulação BrasilEmDados • Parâmetros oficiais BCB (SGS 432, 4389, 13522)',
+      nomeArquivo: `brasilemdados-fluxo-juros-${anos}a`
+    });
+  } else {
+    BDChart.baixarPNG('grafBC', {
+      titulo: 'Ciclo Monetário: Selic vs. IPCA acumulado 12m (Últimos 5 anos)',
+      subtitulo: 'Séries mensais oficiais do Banco Central do Brasil',
+      fonte: 'Banco Central do Brasil (SGS 4189 e 13522)',
+      nomeArquivo: 'brasilemdados-selic-vs-ipca-5a'
+    });
+  }
+}
+
+function citarCenarioABNT(btn) {
+  if (!window.BDChart) return;
+  const ehBC = abaGraf === 'bc';
+  BDChart.copiarABNT({
+    titulo: ehBC
+      ? 'Série Histórica Mensal: Taxa Selic vs. IPCA acumulado em 12 meses (últimos 5 anos)'
+      : 'Simulador de Selic, Renda Fixa e Juro Real',
+    fonteOficial: 'Banco Central do Brasil',
+    serie: ehBC ? 'SGS 4189 e 13522' : 'SGS 432, 4389 e 13522'
+  }, btn);
+}
 
 // Controles do Cabeçalho
 function toggleDropdownMenu() { $('dropdownMenu').classList.toggle('hidden'); }
@@ -488,7 +542,6 @@ function taxaRealLiqAnual(p, m, ipca) {
   return (1 + nomLiq) / (1 + ipca) - 1;
 }
 
-// Engenharia Reversa (Busca Binária exata considerando IR regressivo por aporte)
 function resolverAporteMeta(p, m, c0, ipca, tipo, alvo) {
   const fi = Math.pow(1 + ipca, m / 12);
   let patrimonioRealAlvo = alvo;
@@ -528,8 +581,8 @@ function calcularPontoInflexao(p, m, c0, ap) {
 // Controles de Interface
 function setModoCalc(m) {
   modoCalc = m;
-  const on = 'py-1.5 rounded-md din-card-bg din-text-main border din-border transition';
-  const off = 'py-1.5 rounded-md din-text-muted transition';
+  const on = 'py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer';
+  const off = 'py-1.5 rounded-md din-text-muted transition cursor-pointer';
   $('tabSimular').className = m === 'simular' ? on : off;
   $('tabMeta').className = m === 'meta' ? on : off;
   $('viewSimular').classList.toggle('hidden', m !== 'simular');
@@ -546,8 +599,8 @@ function preset(c0, ap, anos) {
 }
 
 function cenarioMacro(tipo) {
-  const on = 'py-1.5 px-2 rounded-md din-card-bg border din-border din-text-main hover:border-[#16C784] transition';
-  const off = 'py-1.5 px-2 rounded-md din-secondary-bg border din-border din-text-muted hover:din-text-main transition';
+  const on = 'py-1.5 px-2 rounded-md din-card-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer';
+  const off = 'py-1.5 px-2 rounded-md din-secondary-bg border din-border din-text-muted hover:din-text-main transition cursor-pointer';
   $('scBC').className = tipo === 'bc' ? on : off;
   $('scCorte').className = tipo === 'corte' ? on : off;
   $('scInfla').className = tipo === 'infla' ? on : off;
@@ -570,8 +623,8 @@ function cenarioMacro(tipo) {
 
 function setModoValor(m) {
   modoValor = m;
-  const on = 'px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border transition';
-  const off = 'px-2.5 py-1 rounded-md din-text-muted transition';
+  const on = 'px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer';
+  const off = 'px-2.5 py-1 rounded-md din-text-muted transition cursor-pointer';
   $('btnNom').className = m === 'nominal' ? on : off;
   $('btnReal').className = m === 'real' ? on : off;
   $('subGrafPat').textContent = m === 'nominal'
@@ -582,8 +635,8 @@ function setModoValor(m) {
 
 function setAbaGraf(a) {
   abaGraf = a;
-  const on = 'px-3 py-1.5 rounded-md din-card-bg din-text-main border din-border transition';
-  const off = 'px-3 py-1.5 rounded-md din-text-muted transition';
+  const on = 'px-3 py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer';
+  const off = 'px-3 py-1.5 rounded-md din-text-muted transition cursor-pointer';
   $('tGrafPat').className = a === 'pat' ? on : off;
   $('tGrafFluxo').className = a === 'fluxo' ? on : off;
   $('tGrafBC').className = a === 'bc' ? on : off;
@@ -611,7 +664,6 @@ function calc() {
 
   $('lblAnos').textContent = anos + (anos === 1 ? ' ano' : ' anos');
 
-  // Se estiver no modo Planejar Meta, resolve o aporte mensal
   if (modoCalc === 'meta') {
     const tipo = $('metaTipo').value;
     $('lblMetaVal').textContent = tipo === 'renda' ? 'Renda mensal (hoje)' : 'Alvo em reais de hoje';
@@ -630,7 +682,6 @@ function calc() {
     }
   }
 
-  // Equivalência Dinâmica LCI x CDB
   const aliqVenc = IR(m * 30);
   const lciPct = v('pctLci');
   const cdbEquiv = lciPct / (1 - aliqVenc);
@@ -643,7 +694,6 @@ function calc() {
   const ordenado = [...R].sort((a, b) => b.liq - a.liq);
   const win = ordenado[0], seg = ordenado[1];
 
-  // Tabela
   $('tbody').innerHTML = R.map(r => {
     const isWin = r.n === win.n;
     return `<tr class="border-t din-border ${isWin ? 'din-secondary-bg' : ''}">
@@ -662,7 +712,6 @@ function calc() {
     </tr>`;
   }).join('');
 
-  // Leitura Analítica & Composição
   $('badgeAliquota').textContent = `IR no vencimento: ${BD.num(aliqVenc * 100, 1)}% (exceto isentos)`;
   const jurosLiq = Math.max(0, win.liq - totalInv);
   const dif = win.liq - seg.liq;
@@ -680,7 +729,6 @@ function calc() {
   $('legJur').textContent = BD.brl(jurosLiq, 0);
   $('legIr').textContent = win.iso ? 'R$ 0 (Isento)' : BD.brl(win.ir, 0);
 
-  // Marcos Quantitativos: Ponto de Inflexão + Renda Perpétua Real
   const inflx = calcularPontoInflexao(win, m, c0, ap);
   if (ap <= 0) {
     $('kpiInflexao').textContent = 'Sem aporte recorrente';
@@ -702,7 +750,6 @@ function calc() {
 
   $('kpiRendaReal').textContent = rRealLiq > 0 ? `${BD.brl(rendaRealMes, 0)} / mês` : 'R$ 0 (juro real ≤ 0)';
   $('kpiRendaNom').textContent = `Em valores de hoje sem corroer o principal · Nominal: ${BD.brl(rendaNomMes, 0)}/mês`;
-
   $('kReal').textContent = BD.num(((1 + v('selic') / 100) / (1 + ipca) - 1) * 100, 2) + '% a.a.';
 
   ultimoEstado = { P, R, win, c0, ap, anos, ipca };
@@ -749,21 +796,19 @@ function desenharPatrimonio() {
   }
 
   if (chartPat) chartPat.destroy();
+  const baseOpts = window.BDChart
+    ? BDChart.opcoesBase({ fmtY: x => BD.compact(x) })
+    : { maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, scales: { x: { ticks: { color: c.mu }, grid: { display: false } }, y: { ticks: { color: c.mu, callback: x => BD.compact(x) }, grid: { color: c.grid } } } };
+
+  baseOpts.plugins.tooltip.callbacks = {
+    title: it => `Ano ${it[0].dataIndex}`,
+    label: x => ` ${x.dataset.label}: ${BD.brl(x.parsed.y, 0)}`
+  };
+
   chartPat = new Chart($('grafPat'), {
     type: 'line',
     data: { labels: L.map(y => y + 'a'), datasets },
-    options: {
-      maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
-      plugins: {
-        legend: { labels: { color: c.tx, boxWidth: 10, font: { size: 11 } } },
-        tooltip: { callbacks: { title: it => `Ano ${it[0].dataIndex}`, label: x => ` ${x.dataset.label}: ${BD.brl(x.parsed.y, 0)}` } }
-      },
-      scales: {
-        x: { ticks: { color: c.mu }, grid: { display: false } },
-        y: { ticks: { color: c.mu, callback: x => BD.compact(x) }, grid: { color: c.grid } }
-      }
-    }
+    options: baseOpts
   });
 }
 
@@ -786,6 +831,14 @@ function desenharFluxo() {
   }
 
   if (chartFluxo) chartFluxo.destroy();
+  const baseOpts = window.BDChart
+    ? BDChart.opcoesBase({ fmtY: x => BD.compact(x) })
+    : { maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, scales: { x: { ticks: { color: c.mu }, grid: { display: false } }, y: { ticks: { color: c.mu, callback: x => BD.compact(x) }, grid: { color: c.grid } } } };
+
+  baseOpts.plugins.tooltip.callbacks = {
+    label: x => ` ${x.dataset.label}: ${BD.brl(x.parsed.y, 0)}`
+  };
+
   chartFluxo = new Chart($('grafFluxo'), {
     type: 'bar',
     data: {
@@ -795,18 +848,7 @@ function desenharFluxo() {
         { label: `Juros líquidos (${win.n})`, data: jurosAno, backgroundColor: '#16C784', borderRadius: 4 }
       ]
     },
-    options: {
-      maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
-      plugins: {
-        legend: { labels: { color: c.tx, boxWidth: 10, font: { size: 11 } } },
-        tooltip: { callbacks: { label: x => ` ${x.dataset.label}: ${BD.brl(x.parsed.y, 0)}` } }
-      },
-      scales: {
-        x: { ticks: { color: c.mu }, grid: { display: false } },
-        y: { ticks: { color: c.mu, callback: x => BD.compact(x) }, grid: { color: c.grid } }
-      }
-    }
+    options: baseOpts
   });
 }
 
@@ -844,6 +886,10 @@ function desenharBC() {
   if (!histBC) return;
   const c = BD.cor();
   if (chartBC) chartBC.destroy();
+  const baseOpts = window.BDChart
+    ? BDChart.opcoesBase({ fmtY: x => `${BD.num(x, 2)}%` })
+    : { maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, scales: { x: { ticks: { color: c.mu, maxTicksLimit: 10 }, grid: { display: false } }, y: { ticks: { color: c.mu, callback: x => x + '%' }, grid: { color: c.grid } } } };
+
   chartBC = new Chart($('grafBC'), {
     type: 'line',
     data: {
@@ -853,18 +899,7 @@ function desenharBC() {
         { label: 'IPCA 12m (% a.a.)', data: histBC.ipc, borderColor: '#EA3943', borderWidth: 2, pointRadius: 0, tension: .2 }
       ]
     },
-    options: {
-      maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
-      plugins: {
-        legend: { labels: { color: c.tx, boxWidth: 10, font: { size: 11 } } },
-        tooltip: { callbacks: { label: x => ` ${x.dataset.label}: ${BD.num(x.parsed.y, 2)}%` } }
-      },
-      scales: {
-        x: { ticks: { color: c.mu, maxTicksLimit: 10 }, grid: { display: false } },
-        y: { ticks: { color: c.mu, callback: x => x + '%' }, grid: { color: c.grid } }
-      }
-    }
+    options: baseOpts
   });
 }
 
