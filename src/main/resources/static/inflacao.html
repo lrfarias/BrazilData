@@ -416,7 +416,7 @@ async function buscarSgs(codigo, meses = 116) {
   const { dataInicial, dataFinal } = janelaDatasBcb(meses);
   const lim = Math.min(meses, 118);
   const urls = [
-    `/api/bcb/serie/${codigo}?dataInicial=${encodeURIComponent(dataInicial)}&dataFinal=${encodeURIComponent(dataFinal)}`,
+    `/api/bcb/serie/${codigo}?ultimos=${lim}`,
     `https://api.bcb.gov.br/dados/serie/bcdata.sgs.${codigo}/dados?formato=json&dataInicial=${encodeURIComponent(dataInicial)}&dataFinal=${encodeURIComponent(dataFinal)}`,
     `https://api.bcb.gov.br/dados/serie/bcdata.sgs.${codigo}/dados/ultimos/${lim}?formato=json`
   ];
