@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inflação, IPCA & Poder de Compra — BrasilEmDados</title>
+<meta name="description" content="Calculadora de correção monetária pelo IPCA e IGP-M, erosão do poder de compra, Salário Mínimo vs. Inflação e grupos do IPCA com dados oficiais do Banco Central e IBGE.">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
+<link rel="stylesheet" href="css/theme.css">
+</head>
+<body class="min-h-screen font-sans flex flex-col justify-between">
+<div>
+  <!-- Cabeçalho Institucional -->
+  <header class="sticky top-0 z-50 border-b din-border din-bg-main/95 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="flex items-center justify-between h-16 gap-4">
+        <div class="flex items-center gap-3">
+          <a href="index.html" class="flex items-center gap-3 group">
+            <div class="w-10 h-10 rounded-lg din-secondary-bg border din-border flex items-center justify-center shadow-sm overflow-hidden group-hover:border-[#16C784] transition-colors duration-200">
+              <img src="download.png" alt="BrasilEmDados" class="w-8 h-8 object-contain transition-transform duration-200 group-hover:scale-110">
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-lg font-extrabold tracking-tight din-text-main">BrasilEmDados</span>
+                <span class="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono uppercase px-2 py-0.5 rounded din-secondary-bg border din-border din-text-muted">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span> BCB · IBGE
+                </span>
+              </div>
+              <p class="text-[11px] din-text-muted hidden xl:block">Inflação Oficial (IPCA / IGP-M) & Poder de Compra</p>
+            </div>
+          </a>
+        </div>
+
+        <nav class="hidden md:flex items-center gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+          <a href="index.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Início</a>
+          <a href="glossario.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Glossário</a>
+          <a href="economia.html" class="px-3.5 py-1.5 rounded-md din-card-bg din-text-main shadow-sm border din-border transition">Economia</a>
+          <a href="sobre.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Sobre</a>
+          <a href="contato.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Contato</a>
+        </nav>
+
+        <div class="flex items-center gap-2.5 relative">
+          <button onclick="alternarModoApresentacao()" id="btnModoApresentacao" class="hidden lg:inline-flex items-center gap-1.5 din-secondary-bg hover:opacity-80 border din-border din-text-main text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer">
+            <svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line>
+              <line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line>
+            </svg>
+            <span>Modo Tela Cheia</span>
+          </button>
+
+          <button id="menuDropdownBtn" onclick="toggleDropdownMenu()" title="Preferências e Ferramentas" class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center hover:border-[#16C784] transition cursor-pointer">
+            <svg class="w-4 h-4 din-text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line>
+              <line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line>
+              <line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line>
+              <line x1="17" y1="16" x2="23" y2="16"></line>
+            </svg>
+          </button>
+
+          <div id="dropdownMenu" class="hidden absolute right-0 top-11 w-64 rounded-xl din-card-bg border din-border shadow-2xl py-1.5 z-50">
+            <div class="px-4 py-1.5 border-b din-border">
+              <p class="text-[10px] font-bold uppercase tracking-wider din-text-muted">Ferramentas do Terminal</p>
+            </div>
+            <a href="economia.html" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition">
+              <svg class="w-4 h-4 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+              Voltar ao Hub Economia
+            </a>
+            <button onclick="exportarCSV(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left cursor-pointer">
+              <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              Exportar Correção (CSV)
+            </button>
+            <button onclick="window.print(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left cursor-pointer">
+              <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              Exportar Relatório (PDF)
+            </button>
+            <div class="my-1 border-t din-border"></div>
+            <div class="flex items-center justify-between px-4 py-2.5 text-xs font-medium din-text-main cursor-pointer select-none" onclick="alternarDarkLight()">
+              <div class="flex items-center gap-3">
+                <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                <span>Modo Escuro (Dark)</span>
+              </div>
+              <div id="switchBg" class="w-10 h-5 rounded-full relative transition-colors duration-200 p-0.5 flex items-center" style="background-color: var(--border-col);">
+                <div id="switchBall" class="w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-200"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="flex md:hidden items-center gap-5 h-10 overflow-x-auto no-scrollbar text-xs font-semibold border-t din-border">
+        <a href="index.html" class="din-text-muted hover:din-text-main h-full flex items-center">Início</a>
+        <a href="glossario.html" class="din-text-muted hover:din-text-main h-full flex items-center">Glossário</a>
+        <a href="economia.html" class="din-green border-b-2 border-[#16C784] h-full flex items-center">Economia</a>
+        <a href="sobre.html" class="din-text-muted hover:din-text-main h-full flex items-center">Sobre</a>
+        <a href="contato.html" class="din-text-muted hover:din-text-main h-full flex items-center">Contato</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Breadcrumb + Ações -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex flex-wrap items-center justify-between gap-2 text-xs ocultar-em-presentation">
+    <div class="flex items-center gap-2 din-text-muted">
+      <a href="economia.html" class="hover:din-green font-semibold inline-flex items-center gap-1 transition">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        Economia e indicadores
+      </a>
+      <span>/</span>
+      <span class="din-text-main font-bold">Inflação Oficial & Poder de Compra</span>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2">
+      <span id="statusFonte" class="inline-flex items-center gap-1.5 text-[11px] din-text-muted">
+        <span class="w-2 h-2 rounded-full bg-[#16C784] animate-pulse"></span>
+        <span>Sincronizando séries oficiais do Banco Central...</span>
+      </span>
+      <button type="button" onclick="citarInflacaoABNT(this)" class="px-2.5 py-1 rounded-md text-[11px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
+        Citar (ABNT)
+      </button>
+    </div>
+  </div>
+
+  <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-5 space-y-6">
+
+    <!-- 1. KPIs OFICIAIS -->
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 ocultar-em-presentation">
+      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
+        <span class="text-xs din-text-muted uppercase font-semibold">IPCA (12 meses)</span>
+        <p id="kIpca12" class="text-xl font-bold din-red mt-1">—</p>
+        <span id="kIpca12Ref" class="text-[11px] din-text-muted">BCB Oficial (SGS 13522)</span>
+      </div>
+      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
+        <span class="text-xs din-text-muted uppercase font-semibold">IPCA (último mês)</span>
+        <p id="kIpcaMes" class="text-xl font-bold din-text-main mt-1">—</p>
+        <span id="kIpcaMesRef" class="text-[11px] din-text-muted">BCB / IBGE (SGS 433)</span>
+      </div>
+      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
+        <span class="text-xs din-text-muted uppercase font-semibold">IGP-M (12 meses)</span>
+        <p id="kIgpm12" class="text-xl font-bold din-text-main mt-1">—</p>
+        <span id="kIgpm12Ref" class="text-[11px] din-text-muted">BCB / FGV (SGS 189)</span>
+      </div>
+      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
+        <span class="text-xs din-text-muted uppercase font-semibold">Salário Mínimo Oficial</span>
+        <p id="kSmAtual" class="text-xl font-bold din-green mt-1">—</p>
+        <span id="kSmRef" class="text-[11px] din-text-muted">BCB Oficial (SGS 1619)</span>
+      </div>
+    </section>
+
+    <!-- 2. CALCULADORA DE CORREÇÃO MONETÁRIA & EROSÃO DO PODER DE COMPRA -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- Controles da Calculadora -->
+      <div class="lg:col-span-4 din-card-bg border din-border rounded-lg p-5 shadow-sm space-y-4 h-fit">
+        <div>
+          <span class="text-[11px] font-semibold uppercase tracking-wider din-green">Calculadora Real</span>
+          <h1 class="text-lg font-extrabold din-text-main mt-0.5">Correção Monetária</h1>
+          <p class="text-xs din-text-muted">Veja quanto um valor do passado precisa render para manter o mesmo poder de compra hoje.</p>
+        </div>
+
+        <div class="space-y-3">
+          <label class="block text-xs font-semibold din-text-main">Valor original (R$)
+            <input id="calcValor" type="number" step="50" min="1" value="1000" oninput="recalcularCorrecao()"
+              class="inp mt-1 font-bold text-base">
+          </label>
+
+          <label class="block text-xs font-semibold din-text-main">Índice oficial de correção
+            <select id="calcIndice" onchange="recalcularCorrecao()" class="inp mt-1 font-semibold">
+              <option value="ipca" selected>IPCA — Inflação Oficial (IBGE / SGS 433)</option>
+              <option value="igpm">IGP-M — Contratos e Aluguéis (FGV / SGS 189)</option>
+            </select>
+          </label>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <label class="block text-xs font-semibold din-text-main">De (mês/ano)
+              <select id="calcIni" onchange="recalcularCorrecao()" class="inp mt-1 text-xs"></select>
+            </label>
+            <label class="block text-xs font-semibold din-text-main">Até (mês/ano)
+              <select id="calcFim" onchange="recalcularCorrecao()" class="inp mt-1 text-xs"></select>
+            </label>
+          </div>
+
+          <div class="flex flex-wrap gap-1.5 pt-1">
+            <button type="button" onclick="atalhoCalc(12)" class="px-2.5 py-1 rounded text-[11px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main cursor-pointer">Há 1 ano</button>
+            <button type="button" onclick="atalhoCalc(60)" class="px-2.5 py-1 rounded text-[11px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main cursor-pointer">Há 5 anos</button>
+            <button type="button" onclick="atalhoCalc(120)" class="px-2.5 py-1 rounded text-[11px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] cursor-pointer">Há 10 anos</button>
+            <button type="button" onclick="atalhoCalc(999)" class="px-2.5 py-1 rounded text-[11px] font-semibold din-secondary-bg border din-border din-text-muted hover:din-text-main cursor-pointer">Série toda</button>
+          </div>
+        </div>
+
+        <!-- Resultado Resumido -->
+        <div class="pt-3 border-t din-border space-y-2.5">
+          <div class="din-secondary-bg border din-border rounded-lg p-3.5">
+            <span class="text-[11px] din-text-muted block">Valor corrigido equivalente hoje</span>
+            <p id="resCorrigido" class="text-2xl font-extrabold din-green mt-0.5">—</p>
+            <span id="resAcumulado" class="text-[11px] din-text-muted block mt-0.5">Inflação acumulada: —</span>
+          </div>
+
+          <div class="din-secondary-bg border din-border rounded-lg p-3.5">
+            <span class="text-[11px] din-text-muted block">Se ficou parado sem render, hoje compra o equivalente a</span>
+            <p id="resErosao" class="text-xl font-extrabold din-red mt-0.5">—</p>
+            <span id="resPerdaPct" class="text-[11px] din-text-muted block mt-0.5">Perda real do poder de compra: —</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráfico de Erosão do Poder de Compra -->
+      <div class="lg:col-span-8 din-card-bg border din-border rounded-lg p-5 shadow-sm flex flex-col space-y-4">
+        <div class="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h2 id="titGrafErosao" class="text-base font-bold din-text-main">Evolução da Correção vs. Erosão do Poder de Compra</h2>
+            <p id="subGrafErosao" class="text-xs din-text-muted">Cálculo exato por composição mensal da série oficial do Banco Central.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="exportarCSV()" class="px-2.5 py-1 rounded-md text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ CSV</button>
+            <button type="button" onclick="baixarErosaoPNG()" class="px-2.5 py-1 rounded-md text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ PNG</button>
+          </div>
+        </div>
+
+        <p id="leituraCalc" class="text-xs din-secondary-bg border din-border rounded-lg p-3 din-text-main leading-relaxed">Carregando série histórica oficial...</p>
+
+        <div class="relative flex-1 w-full min-h-[300px] sm:min-h-[340px]">
+          <canvas id="grafErosao"></canvas>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t din-border text-[11px] din-text-muted">
+          <span class="inline-flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+            <span>Fonte oficial: <strong class="din-text-main">Banco Central do Brasil (SGS 433 & 189)</strong> • IBGE / FGV</span>
+          </span>
+          <button type="button" onclick="citarInflacaoABNT(this)" class="underline hover:din-green transition cursor-pointer">Copiar citação ABNT</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. PAINEL ANALÍTICO COM 3 ABAS (IPCA vs IGP-M | Salário Mínimo vs Inflação | Grupos IBGE) -->
+    <section class="din-card-bg border din-border rounded-lg p-5 shadow-sm space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="inline-flex din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold flex-wrap gap-0.5">
+          <button id="abaIndices" type="button" onclick="setAbaAnalise('indices')" class="px-3 py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer">IPCA vs. IGP-M (12m)</button>
+          <button id="abaSalario" type="button" onclick="setAbaAnalise('salario')" class="px-3 py-1.5 rounded-md din-text-muted hover:din-text-main transition cursor-pointer">Salário Mínimo vs. Inflação</button>
+          <button id="abaGrupos" type="button" onclick="setAbaAnalise('grupos')" class="px-3 py-1.5 rounded-md din-text-muted hover:din-text-main transition cursor-pointer">Inflação por Grupo (IBGE)</button>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <div id="ctrlHorizonte" class="inline-flex din-secondary-bg p-0.5 rounded-lg border din-border text-[11px] font-semibold">
+            <button id="h3a" type="button" onclick="setHorizonte(36)" class="px-2.5 py-1 rounded-md din-text-muted cursor-pointer">3a</button>
+            <button id="h5a" type="button" onclick="setHorizonte(60)" class="px-2.5 py-1 rounded-md din-text-muted cursor-pointer">5a</button>
+            <button id="h10a" type="button" onclick="setHorizonte(120)" class="px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border cursor-pointer">10a</button>
+            <button id="hTudo" type="button" onclick="setHorizonte(999)" class="px-2.5 py-1 rounded-md din-text-muted cursor-pointer">Tudo</button>
+          </div>
+          <button type="button" onclick="baixarAnalisePNG()" class="px-2.5 py-1 rounded-md text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ PNG</button>
+        </div>
+      </div>
+
+      <!-- ABA 1: IPCA vs IGP-M -->
+      <div id="viewIndices" class="space-y-3">
+        <p id="subIndices" class="text-xs din-text-muted">Comparação do acumulado em 12 meses: IPCA (cesta das famílias, IBGE) vs. IGP-M (mais sensível ao dólar e commodities, FGV).</p>
+        <div class="relative w-full h-[320px] sm:h-[360px]"><canvas id="grafIndices"></canvas></div>
+      </div>
+
+      <!-- ABA 2: SALÁRIO MÍNIMO vs INFLAÇÃO -->
+      <div id="viewSalario" class="hidden space-y-3">
+        <p id="resumoSalario" class="text-xs din-secondary-bg border din-border rounded-lg p-3 din-text-main leading-relaxed">Calculando evolução real do Salário Mínimo...</p>
+        <div class="relative w-full h-[320px] sm:h-[360px]"><canvas id="grafSalario"></canvas></div>
+      </div>
+
+      <!-- ABA 3: GRUPOS DO IPCA (IBGE SIDRA 7060) -->
+      <div id="viewGrupos" class="hidden space-y-3">
+        <p id="subGrupos" class="text-xs din-text-muted">Buscando variação acumulada em 12 meses dos 9 grupos oficiais do IPCA na API do IBGE (Tabela SIDRA 7060)...</p>
+        <div class="relative w-full h-[340px] sm:h-[360px]"><canvas id="grafGrupos"></canvas></div>
+      </div>
+
+      <!-- Selo de Fonte -->
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t din-border text-[11px] din-text-muted">
+        <span class="inline-flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>
+          <span>Fontes oficiais: <strong class="din-text-main">Banco Central do Brasil</strong> (SGS 433, 13522, 189, 1619) & <strong class="din-text-main">IBGE</strong> (SIDRA 7060)</span>
+        </span>
+        <button type="button" onclick="citarInflacaoABNT(this)" class="underline hover:din-green transition cursor-pointer">Copiar citação ABNT</button>
+      </div>
+    </section>
+
+    <!-- 4. METODOLOGIA -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start ocultar-em-presentation">
+      <details class="lg:col-span-6 din-card-bg border din-border rounded-lg p-4 text-xs din-text-muted">
+        <summary class="font-semibold din-text-main cursor-pointer select-none">Como funciona o cálculo de correção monetária e a diferença IPCA × IGP-M?</summary>
+        <div class="mt-3 space-y-2 leading-relaxed">
+          <p><strong class="din-text-main">Composição mensal exata:</strong> A inflação acumulada não é soma simples, mas produto composto <code class="px-1 rounded din-secondary-bg din-text-main">∏(1 + taxa_mês/100) - 1</code>. O poder de compra residual de um dinheiro parado é obtido dividindo o valor original por esse fator acumulado.</p>
+          <p><strong class="din-text-main">IPCA vs. IGP-M:</strong> O IPCA mede o custo de vida das famílias urbanas (1 a 40 salários mínimos) e é o índice oficial das metas do Banco Central. O IGP-M tem 60% de peso em preços no atacado (IPA), por isso oscila muito mais com o dólar e commodities.</p>
+          <p><strong class="din-text-main">Base 100 (Salário Mínimo × IPCA):</strong> Iguala ambos os indicadores em 100 no mês inicial do recorte. Quando a linha verde (Salário Mínimo) está acima da linha vermelha (IPCA), houve ganho real de poder de compra.</p>
+        </div>
+      </details>
+
+      <p class="lg:col-span-6 text-xs din-text-muted leading-relaxed">
+        <strong class="din-text-main">Transparência e fontes.</strong> Todas as séries temporais são consultadas diretamente das bases oficiais do Banco Central do Brasil (Sistema Gerenciador de Séries Temporais — SGS) e do IBGE (API SIDRA, tabela 7060), com camada de cache no backend do BrasilEmDados para estabilidade e velocidade.
+      </p>
+    </section>
+  </main>
+</div>
+
+<!-- Rodapé Institucional -->
+<footer class="border-t din-border din-card-bg py-6 text-xs din-text-muted mt-8 ocultar-em-presentation">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+    <div class="flex items-center gap-2">
+      <span class="font-bold din-text-main">BrasilEmDados</span>
+      <span>•</span>
+      <span>Terminal de Inteligência Econômica e Setorial</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <a href="index.html" class="hover:din-text-main transition">Início</a>
+      <a href="economia.html" class="hover:din-text-main transition">Economia</a>
+      <a href="glossario.html" class="hover:din-text-main transition">Glossário</a>
+      <a href="sobre.html" class="hover:din-text-main transition">Sobre</a>
+      <a href="contato.html" class="hover:din-text-main transition">Contato</a>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/chart-utils.js?v=1"></script>
+<script>
+const $ = id => document.getElementById(id);
+const fmtBRL = (v, d = 2) => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: d, maximumFractionDigits: d });
+const fmtNum = (v, d = 2) => Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
+const MESES_CURTOS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
+let serieIpca = [];    // [{ ym: '2015-01', label: 'Jan/15', data: '01/01/2015', v: 1.24 }, ...]
+let serieIgpm = [];
+let serieIpca12 = [];
+let serieSm = [];
+let dadosGrupos = null;
+let ultimoCalculo = null;
+
+let abaAnalise = 'indices'; // 'indices' | 'salario' | 'grupos'
+let horizonteMeses = 120;
+
+let chartErosao = null, chartIndices = null, chartSalario = null, chartGrupos = null;
+
+// Cabeçalho e Tema
+function toggleDropdownMenu() { $('dropdownMenu').classList.toggle('hidden'); }
+window.addEventListener('click', e => {
+  const btn = $('menuDropdownBtn'), menu = $('dropdownMenu');
+  if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) menu.classList.add('hidden');
+});
+
+function alternarDarkLight() {
+  const novo = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  aplicarTema(novo);
+  try { localStorage.setItem('brasil_em_dados_tema', novo); } catch {}
+}
+
+function aplicarTema(tema) {
+  const html = document.documentElement, bg = $('switchBg'), ball = $('switchBall');
+  if (tema === 'dark') {
+    html.setAttribute('data-theme', 'dark');
+    if (bg && ball) { bg.style.backgroundColor = '#16C784'; ball.classList.add('translate-x-5'); }
+  } else {
+    html.removeAttribute('data-theme');
+    if (bg && ball) { bg.style.backgroundColor = '#E5E7EB'; ball.classList.remove('translate-x-5'); }
+  }
+  if (serieIpca.length) {
+    recalcularCorrecao();
+    desenharAbaAnalise();
+  }
+}
+
+function alternarModoApresentacao() {
+  document.body.classList.toggle('modo-apresentacao');
+  const ativo = document.body.classList.contains('modo-apresentacao');
+  $('btnModoApresentacao').innerHTML = ativo
+    ? '<span>✕ Sair da Tela Cheia</span>'
+    : `<svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect><line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line><line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line></svg><span>Modo Tela Cheia</span>`;
+}
+
+// Busca no proxy Spring Boot (/api/bcb/serie/...) com fallback automático para a API oficial do BCB
+async function buscarSgs(codigo, ultimos = 240) {
+  const urls = [
+    `/api/bcb/serie/${codigo}?ultimos=${ultimos}`,
+    `https://api.bcb.gov.br/dados/serie/bcdata.sgs.${codigo}/dados/ultimos/${ultimos}?formato=json`
+  ];
+  for (const url of urls) {
+    try {
+      const r = await fetch(url);
+      if (!r.ok) continue;
+      const json = await r.json();
+      if (Array.isArray(json) && json.length > 0) {
+        return json.map(item => {
+          const [dd, mm, yyyy] = String(item.data).split('/');
+          return {
+            ym: `${yyyy}-${mm}`,
+            label: `${MESES_CURTOS[Number(mm) - 1]}/${yyyy.slice(2)}`,
+            data: item.data,
+            v: parseFloat(String(item.valor).replace(',', '.'))
+          };
+        }).filter(x => !Number.isNaN(x.v));
+      }
+    } catch {}
+  }
+  throw new Error(`Não foi possível carregar a série SGS ${codigo}`);
+}
+
+// Acumulado móvel de 12 meses (composição real)
+function calcularAcumulado12m(serieMensal) {
+  const out = [];
+  for (let i = 11; i < serieMensal.length; i++) {
+    let fator = 1;
+    for (let k = i - 11; k <= i; k++) fator *= (1 + serieMensal[k].v / 100);
+    out.push({ ym: serieMensal[i].ym, label: serieMensal[i].label, v: (fator - 1) * 100 });
+  }
+  return out;
+}
+
+// Calculadora de Correção Monetária
+function popularSelectsDatas() {
+  const base = serieIpca;
+  const htmlOpts = base.map(x => `<option value="${x.ym}">${x.label} (${x.ym.slice(0, 4)})</option>`).join('');
+  $('calcIni').innerHTML = htmlOpts;
+  $('calcFim').innerHTML = htmlOpts;
+
+  const idxFim = base.length - 1;
+  const idxIni = Math.max(0, base.length - 121); // 10 anos atrás por padrão
+  $('calcIni').value = base[idxIni].ym;
+  $('calcFim').value = base[idxFim].ym;
+}
+
+function atalhoCalc(meses) {
+  const base = $('calcIndice').value === 'igpm' && serieIgpm.length ? serieIgpm : serieIpca;
+  if (!base.length) return;
+  const idxFim = base.length - 1;
+  const idxIni = meses >= base.length ? 0 : Math.max(0, idxFim - meses);
+  $('calcIni').value = base[idxIni].ym;
+  $('calcFim').value = base[idxFim].ym;
+  recalcularCorrecao();
+}
+
+function recalcularCorrecao() {
+  const tipo = $('calcIndice').value;
+  const base = (tipo === 'igpm' && serieIgpm.length) ? serieIgpm : serieIpca;
+  if (!base.length) return;
+
+  const valorOrig = Math.max(1, parseFloat($('calcValor').value) || 0);
+  let ymIni = $('calcIni').value;
+  let ymFim = $('calcFim').value;
+
+  if (ymIni > ymFim) {
+    const tmp = ymIni; ymIni = ymFim; ymFim = tmp;
+    $('calcIni').value = ymIni;
+    $('calcFim').value = ymFim;
+  }
+
+  const trecho = base.filter(x => x.ym >= ymIni && x.ym <= ymFim);
+  if (!trecho.length) return;
+
+  const labels = [], serieCorrigida = [], seriePoderCompra = [];
+  let fator = 1;
+
+  trecho.forEach((item, idx) => {
+    if (idx > 0 || trecho.length === 1) {
+      fator *= (1 + item.v / 100);
+    }
+    labels.push(item.label);
+    serieCorrigida.push(Number((valorOrig * fator).toFixed(2)));
+    seriePoderCompra.push(Number((valorOrig / fator).toFixed(2)));
+  });
+
+  const inflacaoAcum = (fator - 1) * 100;
+  const valorCorrigido = valorOrig * fator;
+  const poderResidual = valorOrig / fator;
+  const perdaRealPct = (1 - (1 / fator)) * 100;
+  const nomeIndice = tipo === 'igpm' ? 'IGP-M (FGV)' : 'IPCA (IBGE)';
+
+  $('resCorrigido').textContent = fmtBRL(valorCorrigido);
+  $('resAcumulado').textContent = `${nomeIndice} acumulado: ${inflacaoAcum >= 0 ? '+' : ''}${fmtNum(inflacaoAcum, 2)}% (${trecho.length} meses)`;
+  $('resErosao').textContent = fmtBRL(poderResidual);
+  $('resPerdaPct').textContent = `Perda real de poder de compra: -${fmtNum(perdaRealPct, 1)}%`;
+
+  $('leituraCalc').innerHTML = `Entre <strong>${trecho[0].label}</strong> e <strong>${trecho[trecho.length - 1].label}</strong>, o <strong>${nomeIndice}</strong> acumulou <strong class="din-red">${fmtNum(inflacaoAcum, 2)}%</strong>. Para manter o mesmo poder de compra de <strong>${fmtBRL(valorOrig)}</strong> na data inicial, você precisa hoje de <strong class="din-green">${fmtBRL(valorCorrigido)}</strong>. Se o dinheiro ficou parado sem render, hoje ele compra o equivalente a <strong class="din-red">${fmtBRL(poderResidual)}</strong> daquela época.`;
+
+  ultimoCalculo = { trecho, labels, serieCorrigida, seriePoderCompra, valorOrig, nomeIndice, tipo };
+
+  if (chartErosao) chartErosao.destroy();
+  const opts = window.BDChart
+    ? BDChart.opcoesBase({ fmtY: val => fmtBRL(val, 0) })
+    : { responsive: true, maintainAspectRatio: false };
+
+  chartErosao = new Chart($('grafErosao'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: `Valor corrigido (${tipo.toUpperCase()})`,
+          data: serieCorrigida,
+          borderColor: '#16C784',
+          backgroundColor: 'rgba(22,199,132,0.08)',
+          fill: true,
+          borderWidth: 2.2,
+          pointRadius: 0,
+          pointHoverRadius: 4,
+          tension: 0.2
+        },
+        {
+          label: 'Poder de compra (dinheiro parado)',
+          data: seriePoderCompra,
+          borderColor: '#EA3943',
+          backgroundColor: 'rgba(234,57,67,0.07)',
+          fill: true,
+          borderWidth: 2.2,
+          pointRadius: 0,
+          pointHoverRadius: 4,
+          tension: 0.2
+        }
+      ]
+    },
+    options: opts
+  });
+}
+
+// Painel Analítico (3 Abas)
+function setAbaAnalise(aba) {
+  abaAnalise = aba;
+  const on = 'px-3 py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer';
+  const off = 'px-3 py-1.5 rounded-md din-text-muted hover:din-text-main transition cursor-pointer';
+  $('abaIndices').className = aba === 'indices' ? on : off;
+  $('abaSalario').className = aba === 'salario' ? on : off;
+  $('abaGrupos').className = aba === 'grupos' ? on : off;
+
+  $('viewIndices').classList.toggle('hidden', aba !== 'indices');
+  $('viewSalario').classList.toggle('hidden', aba !== 'salario');
+  $('viewGrupos').classList.toggle('hidden', aba !== 'grupos');
+  $('ctrlHorizonte').classList.toggle('hidden', aba === 'grupos');
+
+  desenharAbaAnalise();
+}
+
+function setHorizonte(meses) {
+  horizonteMeses = meses;
+  const on = 'px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border cursor-pointer';
+  const off = 'px-2.5 py-1 rounded-md din-text-muted cursor-pointer';
+  $('h3a').className = meses === 36 ? on : off;
+  $('h5a').className = meses === 60 ? on : off;
+  $('h10a').className = meses === 120 ? on : off;
+  $('hTudo').className = meses === 999 ? on : off;
+  desenharAbaAnalise();
+}
+
+function desenharAbaAnalise() {
+  if (abaAnalise === 'indices') desenharIndices12m();
+  else if (abaAnalise === 'salario') desenharSalarioVsInflacao();
+  else if (abaAnalise === 'grupos') {
+    if (dadosGrupos) desenharGrupos();
+    else carregarGruposIbge();
+  }
+}
+
+function desenharIndices12m() {
+  const ipca12 = calcularAcumulado12m(serieIpca);
+  const igpm12 = calcularAcumulado12m(serieIgpm);
+  const mapIgpm = Object.fromEntries(igpm12.map(x => [x.ym, x.v]));
+
+  let unidos = ipca12.filter(x => mapIgpm[x.ym] !== undefined).map(x => ({
+    label: x.label,
+    ipca: Number(x.v.toFixed(2)),
+    igpm: Number(mapIgpm[x.ym].toFixed(2))
+  }));
+  if (horizonteMeses < unidos.length) unidos = unidos.slice(-horizonteMeses);
+
+  if (chartIndices) chartIndices.destroy();
+  const opts = window.BDChart
+    ? BDChart.opcoesBase({ fmtY: v => `${fmtNum(v, 1)}%` })
+    : { responsive: true, maintainAspectRatio: false };
+
+  chartIndices = new Chart($('grafIndices'), {
+    type: 'line',
+    data: {
+      labels: unidos.map(x => x.label),
+      datasets: [
+        { label: 'IPCA 12 meses (%)', data: unidos.map(x => x.ipca), borderColor: '#16C784', backgroundColor: 'rgba(22,199,132,0.08)', fill: true, borderWidth: 2.2, pointRadius: 0, tension: 0.2 },
+        { label: 'IGP-M 12 meses (%)', data: unidos.map(x => x.igpm), borderColor: '#F59E0B', borderWidth: 2, pointRadius: 0, tension: 0.2 }
+      ]
+    },
+    options: opts
+  });
+}
+
+function desenharSalarioVsInflacao() {
+  if (!serieSm.length || !serieIpca.length) return;
+  const mapSm = Object.fromEntries(serieSm.map(x => [x.ym, x.v]));
+  let base = serieIpca.filter(x => mapSm[x.ym] !== undefined);
+  if (horizonteMeses < base.length) base = base.slice(-horizonteMeses);
+  if (base.length < 2) return;
+
+  const sm0 = mapSm[base[0].ym];
+  let fatorIpca = 1;
+  const labels = [], idxSm = [], idxIpca = [];
+
+  base.forEach((item, i) => {
+    if (i > 0) fatorIpca *= (1 + item.v / 100);
+    labels.push(item.label);
+    idxSm.push(Number(((mapSm[item.ym] / sm0) * 100).toFixed(2)));
+    idxIpca.push(Number((fatorIpca * 100).toFixed(2)));
+  });
+
+  const smFim = mapSm[base[base.length - 1].ym];
+  const varSm = ((smFim / sm0) - 1) * 100;
+  const varIpca = (fatorIpca - 1) * 100;
+  const ganhoReal = (((1 + varSm / 100) / (1 + varIpca / 100)) - 1) * 100;
+
+  $('resumoSalario').innerHTML = `De <strong>${base[0].label}</strong> a <strong>${base[base.length - 1].label}</strong>, o Salário Mínimo subiu de <strong>${fmtBRL(sm0)}</strong> para <strong>${fmtBRL(smFim)}</strong> (<strong>+${fmtNum(varSm, 1)}%</strong> nominal), enquanto o IPCA acumulou <strong>+${fmtNum(varIpca, 1)}%</strong> — resultando em variação real (acima da inflação) de <strong class="${ganhoReal >= 0 ? 'din-green' : 'din-red'}">${ganhoReal >= 0 ? '+' : ''}${fmtNum(ganhoReal, 1)}%</strong>.`;
+
+  if (chartSalario) chartSalario.destroy();
+  const opts = window.BDChart
+    ? BDChart.opcoesBase({ fmtY: v => fmtNum(v, 0) })
+    : { responsive: true, maintainAspectRatio: false };
+
+  chartSalario = new Chart($('grafSalario'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Salário Mínimo (Base 100)', data: idxSm, borderColor: '#16C784', backgroundColor: 'rgba(22,199,132,0.08)', fill: true, borderWidth: 2.2, pointRadius: 0, stepped: true },
+        { label: 'IPCA Acumulado (Base 100)', data: idxIpca, borderColor: '#EA3943', borderWidth: 2.2, pointRadius: 0, tension: 0.2 }
+      ]
+    },
+    options: opts
+  });
+}
+
+async function carregarGruposIbge() {
+  $('subGrupos').textContent = 'Consultando grupos oficiais do IPCA direto na API SIDRA do IBGE (Tabela 7060)...';
+  const url = 'https://apisidra.ibge.gov.br/values/t/7060/n1/all/v/2265/p/last%201/c315/7170,7445,7486,7558,7625,7660,7712,7766,7786?formato=json';
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('SIDRA ' + r.status);
+    const json = await r.json();
+    const linhas = json.slice(1).map(row => ({
+      nome: String(row.D4N || '').replace(/^\d+\./, '').trim(),
+      val: parseFloat(String(row.V).replace(',', '.')),
+      mes: row.D3N || ''
+    })).filter(x => x.nome && !Number.isNaN(x.val))
+      .sort((a, b) => b.val - a.val);
+
+    if (!linhas.length) throw new Error('Sem linhas');
+    dadosGrupos = { mes: linhas[0].mes, itens: linhas };
+    $('subGrupos').textContent = `Variação acumulada em 12 meses por grupo de despesas — Ref.: ${dadosGrupos.mes} (IBGE / SIDRA 7060).`;
+    desenharGrupos();
+  } catch {
+    $('subGrupos').textContent = 'API SIDRA do IBGE indisponível no momento. Tente novamente em instantes.';
+  }
+}
+
+function desenharGrupos() {
+  if (!dadosGrupos) return;
+  if (chartGrupos) chartGrupos.destroy();
+  const c = window.BDChart ? BDChart.getCoresTema() : { tx: '#17191C', mu: '#737780', grid: '#E5E7EB' };
+
+  chartGrupos = new Chart($('grafGrupos'), {
+    type: 'bar',
+    data: {
+      labels: dadosGrupos.itens.map(x => x.nome),
+      datasets: [{
+        label: `IPCA 12m (${dadosGrupos.mes})`,
+        data: dadosGrupos.itens.map(x => x.val),
+        backgroundColor: dadosGrupos.itens.map(x => x.val >= 0 ? '#EA3943' : '#16C784'),
+        borderRadius: 5
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ` ${fmtNum(ctx.parsed.x, 2)}% em 12 meses` } }
+      },
+      scales: {
+        x: { ticks: { color: c.mu, callback: v => `${v}%` }, grid: { color: c.grid } },
+        y: { ticks: { color: c.tx, font: { size: 11 } }, grid: { display: false } }
+      }
+    }
+  });
+}
+
+// Exportações PNG, CSV e ABNT
+function baixarErosaoPNG() {
+  if (!window.BDChart || !ultimoCalculo) return;
+  const { trecho, valorOrig, nomeIndice } = ultimoCalculo;
+  BDChart.baixarPNG('grafErosao', {
+    titulo: `Correção Monetária e Erosão do Poder de Compra (${trecho[0].label} – ${trecho[trecho.length - 1].label})`,
+    subtitulo: `Valor base: ${fmtBRL(valorOrig)} • Índice oficial: ${nomeIndice}`,
+    fonte: 'Banco Central do Brasil (SGS 433 / 189) • IBGE / FGV',
+    nomeArquivo: `brasilemdados-poder-compra-${ultimoCalculo.tipo}`
+  });
+}
+
+function baixarAnalisePNG() {
+  if (!window.BDChart) return;
+  if (abaAnalise === 'indices') {
+    BDChart.baixarPNG('grafIndices', {
+      titulo: 'Inflação Oficial Acumulada em 12 Meses: IPCA vs. IGP-M',
+      subtitulo: 'Séries mensais compostas',
+      fonte: 'Banco Central do Brasil (SGS 433 e 189) • IBGE / FGV',
+      nomeArquivo: 'brasilemdados-ipca-vs-igpm'
+    });
+  } else if (abaAnalise === 'salario') {
+    BDChart.baixarPNG('grafSalario', {
+      titulo: 'Salário Mínimo Nominal vs. IPCA Acumulado (Base 100)',
+      subtitulo: 'Comparativo do poder de compra do Salário Mínimo',
+      fonte: 'Banco Central do Brasil (SGS 1619 e 433)',
+      nomeArquivo: 'brasilemdados-salario-minimo-vs-ipca'
+    });
+  } else {
+    BDChart.baixarPNG('grafGrupos', {
+      titulo: 'IPCA Acumulado em 12 Meses por Grupo de Despesas',
+      subtitulo: dadosGrupos ? `Referência: ${dadosGrupos.mes}` : '',
+      fonte: 'IBGE — Sistema Nacional de Índices de Preços (SIDRA 7060)',
+      nomeArquivo: 'brasilemdados-ipca-grupos-ibge'
+    });
+  }
+}
+
+function exportarCSV() {
+  if (!ultimoCalculo) return;
+  const { trecho, serieCorrigida, seriePoderCompra, tipo } = ultimoCalculo;
+  const cab = ['Data', 'Mes_Ano', `Variacao_${tipo.toUpperCase()}_%`, 'Valor_Corrigido_R$', 'Poder_Compra_Parado_R$'];
+  const linhas = trecho.map((x, i) => [x.data, x.label, x.v.toFixed(2), serieCorrigida[i].toFixed(2), seriePoderCompra[i].toFixed(2)].join(';'));
+  const blob = new Blob(['\uFEFF' + [cab.join(';'), ...linhas].join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `brasilemdados_inflacao_${tipo}.csv`;
+  a.click();
+}
+
+function citarInflacaoABNT(btn) {
+  if (!window.BDChart) return;
+  BDChart.copiarABNT({
+    titulo: 'Inflação Oficial (IPCA e IGP-M), Correção Monetária e Poder de Compra do Salário Mínimo',
+    fonteOficial: 'Banco Central do Brasil e IBGE',
+    serie: 'SGS 433, 13522, 189, 1619 e SIDRA 7060'
+  }, btn);
+}
+
+// Inicialização
+(async () => {
+  let temaSalvo = 'light';
+  try { temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light'; } catch {}
+  aplicarTema(temaSalvo);
+
+  try {
+    const [ipca, igpm, ipca12, sm] = await Promise.all([
+      buscarSgs(433, 240),
+      buscarSgs(189, 240),
+      buscarSgs(13522, 24),
+      buscarSgs(1619, 240)
+    ]);
+
+    serieIpca = ipca;
+    serieIgpm = igpm;
+    serieIpca12 = ipca12;
+    serieSm = sm;
+
+    const ultIpca = serieIpca[serieIpca.length - 1];
+    const ultIpca12 = serieIpca12[serieIpca12.length - 1];
+    const igpm12Arr = calcularAcumulado12m(serieIgpm);
+    const ultIgpm12 = igpm12Arr[igpm12Arr.length - 1];
+    const ultSm = serieSm[serieSm.length - 1];
+
+    $('kIpca12').textContent = `${fmtNum(ultIpca12.v, 2)}%`;
+    $('kIpca12Ref').textContent = `BCB SGS 13522 • Ref. ${ultIpca12.label}`;
+
+    $('kIpcaMes').textContent = `${ultIpca.v >= 0 ? '+' : ''}${fmtNum(ultIpca.v, 2)}%`;
+    $('kIpcaMesRef').textContent = `BCB SGS 433 • Ref. ${ultIpca.label}`;
+
+    $('kIgpm12').textContent = `${fmtNum(ultIgpm12.v, 2)}%`;
+    $('kIgpm12Ref').textContent = `BCB SGS 189 • Ref. ${ultIgpm12.label}`;
+
+    $('kSmAtual').textContent = fmtBRL(ultSm.v, 0);
+    $('kSmRef').textContent = `BCB SGS 1619 • Ref. ${ultSm.label}`;
+
+    $('statusFonte').innerHTML = `<span class="w-2 h-2 rounded-full bg-[#16C784]"></span><span>Dados oficiais BCB atualizados (${ultIpca.label})</span>`;
+
+    popularSelectsDatas();
+    recalcularCorrecao();
+    desenharAbaAnalise();
+  } catch (err) {
+    console.error(err);
+    $('statusFonte').innerHTML = `<span class="w-2 h-2 rounded-full bg-[#EA3943]"></span><span>Erro ao consultar Banco Central. Tente recarregar.</span>`;
+  }
+})();
+</script>
+</body>
+</html>
