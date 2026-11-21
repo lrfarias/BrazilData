@@ -466,6 +466,7 @@
         let nomeUfSelecionada = 'São Paulo';
         let anoSelecionado = 2021;
         let regiaoSelecionada = 'Todas';
+        let modoSelecao = 'estado'; // 'estado' | 'regiao'
         let modoMapa = 'padrao';
         let visaoRanking = 'tabela';
 
@@ -560,6 +561,7 @@
 
         function setRegiao(regiao) {
             regiaoSelecionada = regiao;
+            modoSelecao = 'regiao';
             renderBotoesRegiao();
             atualizarVisaoFiltrada(true);
         }
@@ -620,7 +622,8 @@
             if (Object.keys(mapaDadosPorUf).length > 0) {
                 compararEstados();
                 renderizarGraficoPizzaTop5();
-                renderizarVocacaoSetorial(ufSelecionada);
+                if (modoSelecao === 'regiao') exibirDetalhesRegiao();
+                else renderizarVocacaoSetorial(ufSelecionada);
             }
         }
 
@@ -746,12 +749,6 @@
                     document.getElementById('kpiTop5Share').innerText = `${shareRecorteBR.toFixed(1)}% do Brasil`;
                     document.getElementById('kpiLiderShare').innerText = `Líder na região: ${lider.sigla} (${shareLiderReg.toFixed(1)}% da região)`;
                 }
-
-                // Se o estado selecionado não pertence à região escolhida, seleciona o líder da região
-                if (!pertenceARegiao(ufSelecionada)) {
-                    ufSelecionada = lider.sigla;
-                    nomeUfSelecionada = lider.nome;
-                }
             }
 
             document.getElementById('tituloRanking').innerHTML = isBrasil
@@ -767,7 +764,11 @@
                 if (moverZoom) ajustarZoomRegiao();
             }
 
-            exibirDetalhesEstado(ufSelecionada, nomeUfSelecionada);
+            if (modoSelecao === 'regiao') {
+                exibirDetalhesRegiao();
+            } else {
+                exibirDetalhesEstado(ufSelecionada, nomeUfSelecionada);
+            }
             atualizarSimulador();
         }
 
@@ -794,8 +795,22 @@
         }
 
         function atualizarSimulador() {
-            const d = mapaDadosPorUf[ufSelecionada];
-            if (!d || d.pibMil <= 0) return;
+            let pibInicialMil = 0;
+            let nomeAlvo = `${nomeUfSelecionada} (${ufSelecionada})`;
+
+            if (modoSelecao === 'regiao') {
+                const filtrados = getEstadosFiltrados();
+                pibInicialMil = filtrados.reduce((acc, d) => acc + d.pibMil, 0);
+                nomeAlvo = regiaoSelecionada === 'Todas' ? 'o Brasil' : `a Região ${regiaoSelecionada}`;
+            } else {
+                const d = mapaDadosPorUf[ufSelecionada];
+                pibInicialMil = d ? d.pibMil : 0;
+            }
+
+            if (pibInicialMil <= 0) return;
+
+            const subSim = document.querySelector('#sliderCrescimento')?.closest('.din-card-bg')?.querySelector('p.text-xs.din-text-muted');
+            if (subSim) subSim.innerText = `Projeção educativa para ${nomeAlvo}`;
 
             const taxaCrescimento = parseFloat(document.getElementById('sliderCrescimento').value);
             const anosProjecao = parseInt(document.getElementById('sliderAnos').value);
@@ -806,7 +821,7 @@
 
             document.getElementById('valSliderAnos').innerText = `${anosProjecao} ${anosProjecao === 1 ? 'Ano' : 'Anos'}`;
 
-            const pibInicialReais = d.pibMil * 1000;
+            const pibInicialReais = pibInicialMil * 1000;
             const pibFinalReais = pibInicialReais * Math.pow(1 + (taxaCrescimento / 100), anosProjecao);
 
             let impostoAcumulado = 0;
@@ -880,7 +895,7 @@
 
             tbody.innerHTML = exibidos.map((d, idx) => {
                 const pibReais = d.pibMil * 1000;
-                const isSel = d.sigla === ufSelecionada;
+                const isSel = modoSelecao === 'estado' && d.sigla === ufSelecionada;
                 const perfilDominante = d.setores.vocacao;
 
                 return `
@@ -995,7 +1010,6 @@
 
         function estiloMapa(feature) {
             const sigla = feature.properties.sigla;
-            const selecionado = sigla === ufSelecionada;
             const naRegiao = pertenceARegiao(sigla);
             const dadosUf = mapaDadosPorUf[sigla];
             const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -1004,15 +1018,33 @@
                 return {
                     fillColor: isDark ? '#14171A' : '#E2E8F0',
                     weight: 0.8,
-                    opacity: 0.5,
+                    opacity: 0.45,
                     color: isDark ? '#23282E' : '#CBD5E1',
-                    fillOpacity: 0.3
+                    fillOpacity: 0.28
                 };
             }
 
             if (modoMapa === 'padrao') {
+                // Região inteira selecionada
+                if (modoSelecao === 'regiao') {
+                    const isBrasil = regiaoSelecionada === 'Todas';
+                    return {
+                        fillColor: isBrasil ? (isDark ? '#16382C' : '#D1FAE5') : '#16C784',
+                        weight: 1.4,
+                        opacity: 1,
+                        color: isBrasil ? '#16C784' : (isDark ? '#101214' : '#FFFFFF'),
+                        fillOpacity: 0.85
+                    };
+                }
+
+                // Estado individual selecionado
+                const selecionado = sigla === ufSelecionada;
+                const fundoPadrao = regiaoSelecionada !== 'Todas'
+                    ? (isDark ? '#182924' : '#ECFDF5')
+                    : (isDark ? '#191C20' : '#FFFFFF');
+
                 return {
-                    fillColor: selecionado ? '#16C784' : (isDark ? '#191C20' : '#FFFFFF'),
+                    fillColor: selecionado ? '#16C784' : fundoPadrao,
                     weight: selecionado ? 2.5 : 1.2,
                     opacity: 1,
                     color: selecionado ? '#16C784' : (isDark ? '#2B3036' : '#CBD5E1'),
@@ -1020,10 +1052,12 @@
                 };
             }
 
+            // Mapa de calor
             let corCalor = '#737780';
             if (modoMapa === 'pib') corCalor = obterCorPorPib(dadosUf ? dadosUf.pibMil : 0);
             else if (modoMapa === 'perCapita') corCalor = obterCorPorPerCapita(dadosUf ? dadosUf.perCapita : 0);
 
+            const selecionado = modoSelecao === 'estado' && sigla === ufSelecionada;
             return {
                 fillColor: corCalor,
                 weight: selecionado ? 3.0 : 1.2,
@@ -1036,8 +1070,9 @@
         function selecionarEstado(sigla, nome) {
             ufSelecionada = sigla;
             if (nome) nomeUfSelecionada = nome;
+            modoSelecao = 'estado';
 
-            // Se clicar no mapa em um estado fora da região filtrada, volta o filtro para Brasil
+            // Se clicar em um estado fora da região filtrada, volta o filtro para Brasil
             if (!pertenceARegiao(sigla)) {
                 regiaoSelecionada = 'Todas';
                 renderBotoesRegiao();
@@ -1155,6 +1190,77 @@
             setTimeout(() => mapaLeaflet.invalidateSize(), 150);
         }
 
+        function exibirDetalhesRegiao() {
+            const filtrados = getEstadosFiltrados();
+            if (!filtrados.length) return;
+
+            const isBrasil = regiaoSelecionada === 'Todas';
+            const pibMil = filtrados.reduce((acc, d) => acc + d.pibMil, 0);
+            const pibReais = pibMil * 1000;
+            const popTotal = filtrados.reduce((acc, d) => acc + d.populacao, 0);
+            const perCapita = popTotal > 0 ? pibReais / popTotal : 0;
+            const shareBR = pibTotalBrasilMil > 0 ? (pibMil / pibTotalBrasilMil) * 100 : 0;
+
+            document.getElementById('labelRegiaoEstado').innerText = isBrasil ? 'Consolidado Nacional' : 'Região Selecionada';
+            document.getElementById('tituloEstado').innerText = isBrasil ? 'Brasil (Consolidado)' : `Região ${regiaoSelecionada}`;
+            document.getElementById('badgeUf').innerText = isBrasil ? 'BR' : `${filtrados.length} UFs`;
+
+            document.getElementById('listaIndicadores').innerHTML = `
+                <div class="din-secondary-bg border din-border rounded-lg p-2.5 flex justify-between items-center">
+                    <div>
+                        <p class="text-xs font-semibold din-text-main">${isBrasil ? 'PIB Nacional' : 'PIB Regional Consolidado'}</p>
+                        <p class="text-[11px] din-text-muted">IBGE · Soma das ${filtrados.length} UFs (${anoSelecionado})</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-bold din-green">${formatarMoedaCompacta(pibReais)}</p>
+                        <p class="text-[11px] din-text-muted">${shareBR.toFixed(1)}% do Brasil</p>
+                    </div>
+                </div>
+                <div class="din-secondary-bg border din-border rounded-lg p-2.5 flex justify-between items-center">
+                    <div>
+                        <p class="text-xs font-semibold din-text-main">População Total</p>
+                        <p class="text-[11px] din-text-muted">IBGE (${anoSelecionado})</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-bold din-text-main">${popTotal.toLocaleString('pt-BR')}</p>
+                        <p class="text-[11px] din-text-muted">habitantes</p>
+                    </div>
+                </div>
+                <div class="din-secondary-bg border din-border rounded-lg p-2.5 flex justify-between items-center">
+                    <div>
+                        <p class="text-xs font-semibold din-text-main">PIB per Capita Médio</p>
+                        <p class="text-[11px] din-text-muted">Média ponderada do recorte</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-bold din-green">R$ ${Math.round(perCapita).toLocaleString('pt-BR')}</p>
+                        <p class="text-[11px] din-text-muted">por habitante</p>
+                    </div>
+                </div>
+            `;
+
+            // Vocação setorial ponderada pelo PIB de cada estado da região
+            let agro = 0, ind = 0, serv = 0, adm = 0;
+            const pesoTotal = pibMil || 1;
+            filtrados.forEach(d => {
+                const p = d.pibMil / pesoTotal;
+                agro += d.setores.agro * p;
+                ind += d.setores.ind * p;
+                serv += d.setores.serv * p;
+                adm += d.setores.adm * p;
+            });
+
+            const compRegiao = {
+                serv: Math.round(serv),
+                ind: Math.round(ind),
+                agro: Math.round(agro),
+                adm: Math.max(0, 100 - Math.round(serv) - Math.round(ind) - Math.round(agro)),
+                vocacao: isBrasil
+                    ? 'Composição ponderada do PIB brasileiro'
+                    : `Composição ponderada da Região ${regiaoSelecionada}`
+            };
+            desenharVocacao(compRegiao);
+        }
+
         function exibirDetalhesEstado(sigla, nomeOpcional) {
             ufSelecionada = sigla;
             if (nomeOpcional) nomeUfSelecionada = nomeOpcional;
@@ -1190,6 +1296,10 @@
 
         function renderizarVocacaoSetorial(sigla) {
             const comp = COMPOSICAO_SETORIAL_UF[sigla] || { agro: 10, ind: 20, serv: 50, adm: 20, vocacao: 'Diversificada' };
+            desenharVocacao(comp);
+        }
+
+        function desenharVocacao(comp) {
             document.getElementById('lblVocacaoDominante').innerText = comp.vocacao;
 
             const setores = [
@@ -1300,5 +1410,5 @@
             await atualizarBaseCompleta();
         };
     </script>
-</body>
+    </body>
 </html>
