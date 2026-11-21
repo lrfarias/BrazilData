@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BrasilEmDados — Economia e Indicadores</title>
-    <meta name="description" content="Hub econômico do BrasilEmDados: PIB estadual, impostos e IDH, câmbio global, simulador Selic, panorama mundial, inflação oficial, contas públicas, bolsa de valores (B3) e agronegócio.">
-    <!-- Tailwind CSS -->
+    <meta name="description" content="Hub econômico do BrasilEmDados: PIB estadual, impostos e IDH, câmbio global, simulador Selic, panorama mundial, inflação oficial, contas públicas e agronegócio.">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
     <link rel="stylesheet" href="css/theme.css">
@@ -17,10 +16,7 @@
         <!-- Cabeçalho Institucional Padrão -->
         <header class="sticky top-0 z-50 border-b din-border din-bg-main/95 backdrop-blur">
             <div class="max-w-7xl mx-auto px-4 sm:px-6">
-                
                 <div class="flex items-center justify-between h-16 gap-4">
-                    
-                    <!-- Esquerda: Logo Autoral + Badge de Status -->
                     <div class="flex items-center gap-3">
                         <a href="index.html" class="flex items-center gap-3 group">
                             <div class="w-10 h-10 rounded-lg din-secondary-bg border din-border flex items-center justify-center shadow-sm overflow-hidden group-hover:border-[#16C784] transition-colors duration-200">
@@ -38,26 +34,14 @@
                         </a>
                     </div>
 
-                    <!-- Centro: Abas de Navegação em Cápsula (Economia Ativo) -->
                     <nav class="hidden md:flex items-center gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
-                        <a href="index.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
-                            Início
-                        </a>
-                        <a href="glossario.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
-                            Glossário
-                        </a>
-                        <a href="economia.html" class="px-3.5 py-1.5 rounded-md din-card-bg din-text-main shadow-sm border din-border transition">
-                            Economia
-                        </a>
-                        <a href="sobre.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
-                            Sobre
-                        </a>
-                        <a href="contato.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">
-                            Contato
-                        </a>
+                        <a href="index.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Início</a>
+                        <a href="glossario.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Glossário</a>
+                        <a href="economia.html" class="px-3.5 py-1.5 rounded-md din-card-bg din-text-main shadow-sm border din-border transition">Economia</a>
+                        <a href="sobre.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Sobre</a>
+                        <a href="contato.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Contato</a>
                     </nav>
 
-                    <!-- Direita: Atalho Rápido + Menu de Preferências -->
                     <div class="flex items-center gap-2.5 relative">
                         <a href="terminal-pib.html" class="hidden sm:inline-flex items-center gap-1.5 din-btn text-xs font-semibold px-3.5 py-2 rounded-lg transition shadow-sm">
                             <span>Abrir Terminal PIB</span>
@@ -66,22 +50,16 @@
                             </svg>
                         </a>
 
-                        <!-- Botão de Ajustes e Ferramentas -->
                         <button id="menuDropdownBtn" onclick="toggleDropdownMenu()" title="Preferências e Ferramentas" class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center hover:border-[#16C784] transition cursor-pointer">
                             <svg class="w-4 h-4 din-text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="4" y1="21" x2="4" y2="14"></line>
-                                <line x1="4" y1="10" x2="4" y2="3"></line>
-                                <line x1="12" y1="21" x2="12" y2="12"></line>
-                                <line x1="12" y1="8" x2="12" y2="3"></line>
-                                <line x1="20" y1="21" x2="20" y2="16"></line>
-                                <line x1="20" y1="12" x2="20" y2="3"></line>
-                                <line x1="1" y1="14" x2="7" y2="14"></line>
-                                <line x1="9" y1="8" x2="15" y2="8"></line>
+                                <line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line>
+                                <line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line>
+                                <line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line>
                                 <line x1="17" y1="16" x2="23" y2="16"></line>
                             </svg>
                         </button>
 
-                        <!-- Menu Lateral Suspenso -->
                         <div id="dropdownMenu" class="hidden absolute right-0 top-11 w-64 rounded-xl din-card-bg border din-border shadow-2xl py-1.5 z-50">
                             <div class="px-4 py-1.5 border-b din-border">
                                 <p class="text-[10px] font-bold uppercase tracking-wider din-text-muted">Módulos de Economia</p>
@@ -115,18 +93,13 @@
                                 <span class="w-2 h-2 rounded-full bg-[#16C784] shrink-0"></span>
                                 07. Contas Públicas & Dívida
                             </a>
-                            <a href="bovespa.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
-                                <span class="w-2 h-2 rounded-full bg-[#16C784] shrink-0"></span>
-                                08. Bolsa de Valores (B3)
-                            </a>
                             <a href="agro.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
                                 <span class="w-2 h-2 rounded-full bg-[#16C784] shrink-0"></span>
-                                09. Agronegócio Brasileiro
+                                08. Agronegócio Brasileiro
                             </a>
 
                             <div class="my-1 border-t din-border"></div>
 
-                            <!-- Switch de Aparência (Dark Mode / Light Mode) -->
                             <div class="flex items-center justify-between px-4 py-2.5 text-xs font-medium din-text-main cursor-pointer select-none" onclick="alternarDarkLight()">
                                 <div class="flex items-center gap-3">
                                     <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -139,11 +112,9 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
 
-                <!-- Navegação Mobile -->
                 <nav class="flex md:hidden items-center gap-5 h-10 overflow-x-auto no-scrollbar text-xs font-semibold border-t din-border">
                     <a href="index.html" class="din-text-muted hover:din-text-main h-full flex items-center">Início</a>
                     <a href="glossario.html" class="din-text-muted hover:din-text-main h-full flex items-center">Glossário</a>
@@ -151,7 +122,6 @@
                     <a href="sobre.html" class="din-text-muted hover:din-text-main h-full flex items-center">Sobre</a>
                     <a href="contato.html" class="din-text-muted hover:din-text-main h-full flex items-center">Contato</a>
                 </nav>
-
             </div>
         </header>
 
@@ -162,13 +132,13 @@
                     Economia e indicadores
                 </h1>
                 <p class="text-sm sm:text-base din-text-muted leading-relaxed">
-                    Explore dados econômicos oficiais, acompanhe a arrecadação tributária brasileira, consulte indicadores regionais e utilize ferramentas de inflação, contas públicas, câmbio, bolsa de valores, agronegócio e simulação financeira em um só lugar.
+                    Explore dados econômicos oficiais, acompanhe a arrecadação tributária brasileira, consulte indicadores regionais e utilize ferramentas de inflação, contas públicas, câmbio, agronegócio e simulação financeira em um só lugar.
                 </p>
             </div>
 
             <div class="flex items-center justify-between pt-8 pb-2">
                 <h2 class="text-sm font-bold din-text-main">Explore as ferramentas</h2>
-                <span class="text-xs din-text-muted">09 módulos ativos</span>
+                <span class="text-xs din-text-muted">08 módulos ativos</span>
             </div>
         </section>
 
@@ -184,7 +154,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                             </svg>
                         </div>
-                        <span class="text-xs font-medium din-text-muted">01 / 09</span>
+                        <span class="text-xs font-medium din-text-muted">01 / 08</span>
                     </div>
 
                     <div>
@@ -236,7 +206,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 2v4m0 12v4M2 12h4m12 0h4"></path>
                             </svg>
                         </div>
-                        <span class="text-xs font-medium din-text-muted">02 / 09</span>
+                        <span class="text-xs font-medium din-text-muted">02 / 08</span>
                     </div>
 
                     <div>
@@ -287,7 +257,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
                             </svg>
                         </div>
-                        <span class="text-xs font-medium din-text-muted">03 / 09</span>
+                        <span class="text-xs font-medium din-text-muted">03 / 08</span>
                     </div>
 
                     <div>
@@ -338,7 +308,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
-                        <span class="text-xs font-medium din-text-muted">04 / 09</span>
+                        <span class="text-xs font-medium din-text-muted">04 / 08</span>
                     </div>
 
                     <div>
@@ -380,7 +350,7 @@
                 </div>
             </div>
 
-            <!-- MÓDULO 05: Mapa-Múndi & Indicadores Globais -->
+            <!-- MÓDULO 05 -->
             <div id="mapa-mundi" onclick="window.location.href='mundo.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
                 <div class="space-y-4">
                     <div class="flex items-center justify-between gap-4">
@@ -391,7 +361,7 @@
                                 <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
                             </svg>
                         </div>
-                        <span class="text-xs font-medium din-text-muted">05 / 09</span>
+                        <span class="text-xs font-medium din-text-muted">05 / 08</span>
                     </div>
 
                     <div>
@@ -433,7 +403,7 @@
                 </div>
             </div>
 
-            <!-- MÓDULO 06: Inflação & Poder de Compra -->
+            <!-- MÓDULO 06 -->
             <div id="modulo-inflacao" onclick="window.location.href='inflacao.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
                 <div class="space-y-4">
                     <div class="flex items-center justify-between gap-4">
@@ -442,7 +412,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M7 14l4-4 4 3 5-6"></path>
                             </svg>
                         </div>
-                        <span class="text-xs font-medium din-text-muted">06 / 09</span>
+                        <span class="text-xs font-medium din-text-muted">06 / 08</span>
                     </div>
 
                     <div>
@@ -484,7 +454,7 @@
                 </div>
             </div>
 
-            <!-- MÓDULO 07: Contas Públicas & Dívida -->
+            <!-- MÓDULO 07 -->
             <div id="modulo-contas-publicas" onclick="window.location.href='contas-publicas.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
                 <div class="space-y-4">
                     <div class="flex items-center justify-between gap-4">
@@ -493,7 +463,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
-                        <span class="text-xs font-medium din-text-muted">07 / 09</span>
+                        <span class="text-xs font-medium din-text-muted">07 / 08</span>
                     </div>
 
                     <div>
@@ -535,58 +505,7 @@
                 </div>
             </div>
 
-            <!-- MÓDULO 08: Bolsa de Valores (B3) -->
-            <div id="modulo-bovespa" onclick="window.location.href='bovespa.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between gap-4">
-                        <div class="w-11 h-11 rounded-xl din-icon-box flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                            </svg>
-                        </div>
-                        <span class="text-xs font-medium din-text-muted">08 / 09</span>
-                    </div>
-
-                    <div>
-                        <h3 class="text-lg font-bold din-text-main">
-                            Bolsa de Valores (B3), Ibovespa & Ações
-                        </h3>
-                        <p class="text-xs sm:text-sm din-text-muted mt-2 leading-relaxed">
-                            Acompanhe o desempenho do Ibovespa e das principais ações brasileiras (PETR4, VALE3, CMIN3, EMBR3, ITUB4, BBAS3, WEGE3 e mais) com abertura, fechamento, máxima, mínima, volume e leitura didática.
-                        </p>
-                    </div>
-
-                    <div class="din-secondary-bg border din-border rounded-xl p-3.5 space-y-2 text-xs">
-                        <p class="font-bold din-text-main uppercase tracking-wider text-[10px]">Funcionalidades deste painel:</p>
-                        <ul class="space-y-1.5 din-text-muted">
-                            <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
-                                Painel do Ibovespa (^BVSP) + grade de ações filtrável por setor, altas e baixas.
-                            </li>
-                            <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
-                                Raio-X com abertura, fechamento anterior, máxima, mínima, volume e guia didático.
-                            </li>
-                            <li class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#16C784] shrink-0"></span>
-                                Gráfico histórico com MM20, comparativo % vs. Ibovespa e exportação PNG/CSV/ABNT.
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="pt-5 mt-5 border-t din-border flex items-center justify-between">
-                    <span class="text-xs din-text-muted">Bolsa de Valores do Brasil (B3)</span>
-                    <a href="bovespa.html" class="din-green text-xs font-bold inline-flex items-center gap-1.5 hover:opacity-80 transition">
-                        <span>Abrir painel da Bolsa</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-
-            <!-- MÓDULO 09: Agronegócio Brasileiro -->
+            <!-- MÓDULO 08 -->
             <div id="modulo-agro" onclick="window.location.href='agro.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
                 <div class="space-y-4">
                     <div class="flex items-center justify-between gap-4">
@@ -595,7 +514,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
-                        <span class="text-xs font-medium din-text-muted">09 / 09</span>
+                        <span class="text-xs font-medium din-text-muted">08 / 08</span>
                     </div>
 
                     <div>
@@ -652,7 +571,7 @@
                 <div>
                     <h4 class="text-xs font-bold din-text-main">Informação econômica em um só lugar</h4>
                     <p class="text-xs din-text-muted mt-0.5">
-                        O BrasilEmDados reúne ferramentas e indicadores oficiais (IBGE, Banco Central, Tesouro Nacional, B3 e Banco Mundial) para facilitar a consulta, análise e compreensão da economia brasileira.
+                        O BrasilEmDados reúne ferramentas e indicadores oficiais (IBGE, Banco Central, Tesouro Nacional e Banco Mundial) para facilitar a consulta, análise e compreensão da economia brasileira.
                     </p>
                 </div>
             </div>
