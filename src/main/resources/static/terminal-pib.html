@@ -142,21 +142,32 @@
             </div>
 
             <button type="button"
-                onclick="BDChart.copiarABNT({ titulo: 'Contas Regionais, PIB Estadual e Vocação Setorial (' + anoSelecionado + ')', fonteOficial: 'IBGE', serie: 'SIDRA 5938' }, this)"
+                onclick="BDChart.copiarABNT({ titulo: 'Contas Regionais, PIB Estadual e Vocação Setorial (' + (regiaoSelecionada === 'Todas' ? 'Brasil' : 'Região ' + regiaoSelecionada) + ', ' + anoSelecionado + ')', fonteOficial: 'IBGE', serie: 'SIDRA 5938' }, this)"
                 class="px-2.5 py-1 rounded-md text-[11px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
                 Citar dados (ABNT)
             </button>
         </div>
 
-        <!-- KPIs Nacionais no Topo -->
+        <!-- Filtro por Região -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 ocultar-em-presentation">
+            <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm flex flex-wrap items-center justify-between gap-3">
+                <div class="space-y-1.5">
+                    <span class="block text-[11px] font-semibold uppercase tracking-wider din-text-muted">Filtrar por região</span>
+                    <div id="btnsRegiao" class="flex flex-wrap gap-1.5"></div>
+                </div>
+                <span id="badgeRegiaoAtiva" class="text-xs din-text-muted">Exibindo todos os 27 estados</span>
+            </div>
+        </section>
+
+        <!-- KPIs Consolidados no Topo -->
         <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 ocultar-em-presentation">
             <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-                <span class="text-xs din-text-muted uppercase font-semibold">PIB Nacional Consolidado (<span class="labelAno">2021</span>)</span>
+                <span id="kpiPibTitulo" class="text-xs din-text-muted uppercase font-semibold">PIB Nacional Consolidado (<span class="labelAno">2021</span>)</span>
                 <p id="kpiPibBrasil" class="text-xl font-bold din-green mt-1">R$ 0,00 tri</p>
-                <span class="text-[11px] din-text-muted">Fonte oficial: IBGE (SIDRA 5938)</span>
+                <span id="kpiPibSub" class="text-[11px] din-text-muted">Fonte oficial: IBGE (SIDRA 5938)</span>
             </div>
             <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-                <span class="text-xs din-text-muted uppercase font-semibold">População Total (<span class="labelAno">2021</span>)</span>
+                <span id="kpiPopTitulo" class="text-xs din-text-muted uppercase font-semibold">População Total (<span class="labelAno">2021</span>)</span>
                 <p id="kpiPopBrasil" class="text-xl font-bold din-text-main mt-1">0 milhões</p>
                 <span class="text-[11px] din-text-muted">Estimativa populacional IBGE</span>
             </div>
@@ -166,7 +177,7 @@
                 <span class="text-[11px] din-text-muted">Estimativa (~33% do PIB · STN)</span>
             </div>
             <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-                <span class="text-xs din-text-muted uppercase font-semibold">Concentração Top 5 UFs (<span class="labelAno">2021</span>)</span>
+                <span id="kpiTop5Titulo" class="text-xs din-text-muted uppercase font-semibold">Concentração Top 5 UFs (<span class="labelAno">2021</span>)</span>
                 <p id="kpiTop5Share" class="text-xl font-bold din-green mt-1">0,0% do Brasil</p>
                 <span id="kpiLiderShare" class="text-[11px] din-text-muted">Líder nacional</span>
             </div>
@@ -213,10 +224,10 @@
                 <div id="secaoRanking" class="din-card-bg border din-border rounded-lg p-5 shadow-sm">
                     <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
                         <div>
-                            <h3 class="text-base font-semibold din-text-main">
+                            <h3 id="tituloRanking" class="text-base font-semibold din-text-main">
                                 Ranking & Concentração Nacional (<span class="labelAno">2021</span>)
                             </h3>
-                            <p class="text-xs din-text-muted">Alterne entre a grade de dados e o gráfico de concentração (Top 5 vs. Outros)</p>
+                            <p class="text-xs din-text-muted">Alterne entre a grade de dados e o gráfico de concentração</p>
                         </div>
 
                         <div class="flex items-center gap-1.5 din-secondary-bg p-1 rounded-lg border din-border">
@@ -226,7 +237,7 @@
                             </button>
                             <button id="btnVerPizza" onclick="alternarVisaoRanking('pizza')"
                                 class="px-3 py-1.5 rounded-md text-xs font-semibold din-text-muted hover:din-text-main transition cursor-pointer">
-                                Pizza (Top 5 + Outros)
+                                Pizza (Concentração)
                             </button>
                         </div>
                     </div>
@@ -243,7 +254,7 @@
                                 <select id="selectLimiteTabela" onchange="renderizarTabelaRanking()"
                                     class="din-secondary-bg border din-border rounded-lg px-2.5 py-1.5 text-xs font-semibold din-text-main focus:outline-none cursor-pointer">
                                     <option value="5" selected class="din-card-bg din-text-main">Top 5 UFs</option>
-                                    <option value="27" class="din-card-bg din-text-main">Todas as 27 UFs</option>
+                                    <option value="27" class="din-card-bg din-text-main">Todas do filtro</option>
                                 </select>
                             </div>
                         </div>
@@ -275,16 +286,16 @@
                                     <canvas id="graficoPizzaTop5"></canvas>
                                 </div>
                                 <button type="button"
-                                    onclick="BDChart.baixarPNG('graficoPizzaTop5', { titulo: 'Concentração do PIB Nacional (' + anoSelecionado + ')', subtitulo: 'Top 5 Estados vs. Outros 22', fonte: 'IBGE — Contas Regionais (SIDRA 5938)', nomeArquivo: 'concentracao-pib-' + anoSelecionado })"
+                                    onclick="BDChart.baixarPNG('graficoPizzaTop5', { titulo: 'Concentração do PIB — ' + (regiaoSelecionada === 'Todas' ? 'Brasil' : 'Região ' + regiaoSelecionada) + ' (' + anoSelecionado + ')', subtitulo: 'Participação percentual no recorte selecionado', fonte: 'IBGE — Contas Regionais (SIDRA 5938)', nomeArquivo: 'concentracao-pib-' + regiaoSelecionada.toLowerCase() + '-' + anoSelecionado })"
                                     class="px-2.5 py-1 rounded-md text-[11px] font-semibold din-card-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
                                     ↓ Baixar gráfico (PNG)
                                 </button>
                             </div>
                             <div class="md:col-span-5 space-y-2.5">
-                                <h4 class="text-xs font-bold uppercase tracking-wider din-green">
+                                <h4 id="tituloResumoPizza" class="text-xs font-bold uppercase tracking-wider din-green">
                                     Concentração Produtiva (<span class="labelAno">2021</span>)
                                 </h4>
-                                <p class="text-xs din-text-muted leading-relaxed">
+                                <p id="descResumoPizza" class="text-xs din-text-muted leading-relaxed">
                                     Os 5 maiores estados concentram a imensa maioria do PIB brasileiro, enquanto os outros 22 dividem o restante.
                                 </p>
                                 <div id="legendaResumoPizza" class="space-y-1.5 pt-1 text-xs"></div>
@@ -301,7 +312,7 @@
                 <div class="din-card-bg border din-border rounded-lg p-5 shadow-sm space-y-4">
                     <div class="flex justify-between items-center border-b din-border pb-3">
                         <div>
-                            <span class="text-xs uppercase tracking-wider din-green font-semibold">Estado Selecionado</span>
+                            <span id="labelRegiaoEstado" class="text-xs uppercase tracking-wider din-green font-semibold">Estado Selecionado</span>
                             <h3 id="tituloEstado" class="text-2xl font-bold din-text-main mt-0.5">São Paulo (SP)</h3>
                         </div>
                         <span id="badgeUf" class="din-secondary-bg din-green border din-border font-bold px-3 py-1 rounded-md text-sm">
@@ -454,6 +465,7 @@
         let ufSelecionada = 'SP';
         let nomeUfSelecionada = 'São Paulo';
         let anoSelecionado = 2021;
+        let regiaoSelecionada = 'Todas';
         let modoMapa = 'padrao';
         let visaoRanking = 'tabela';
 
@@ -464,6 +476,7 @@
         let mapaDadosPorUf = {};
         let pibTotalBrasilMil = 0;
 
+        let mapaLeaflet = null;
         let geojsonLayer = null;
         let chartPib = null;
         let chartPerCapita = null;
@@ -474,6 +487,16 @@
             "AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG",
             "PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"
         ];
+
+        const REGIOES = ['Todas', 'Norte', 'Nordeste', 'Centro-Oeste', 'Sudeste', 'Sul'];
+
+        const REGIAO_UF = {
+            RO:'Norte', AC:'Norte', AM:'Norte', RR:'Norte', PA:'Norte', AP:'Norte', TO:'Norte',
+            MA:'Nordeste', PI:'Nordeste', CE:'Nordeste', RN:'Nordeste', PB:'Nordeste', PE:'Nordeste', AL:'Nordeste', SE:'Nordeste', BA:'Nordeste',
+            MG:'Sudeste', ES:'Sudeste', RJ:'Sudeste', SP:'Sudeste',
+            PR:'Sul', SC:'Sul', RS:'Sul',
+            MS:'Centro-Oeste', MT:'Centro-Oeste', GO:'Centro-Oeste', DF:'Centro-Oeste'
+        };
 
         const IBGE_UF_MAP = {
             '11':['RO','Rondônia'],'12':['AC','Acre'],'13':['AM','Amazonas'],'14':['RR','Roraima'],
@@ -515,6 +538,44 @@
             AP: { agro: 4,  ind: 11, serv: 39, adm: 46, vocacao: 'Administração Pública Federal' },
             RR: { agro: 9,  ind: 9,  serv: 36, adm: 46, vocacao: 'Comércio Fronteiriço e Público' }
         };
+
+        function pertenceARegiao(sigla) {
+            return regiaoSelecionada === 'Todas' || REGIAO_UF[sigla] === regiaoSelecionada;
+        }
+
+        function getEstadosFiltrados() {
+            return Object.values(mapaDadosPorUf).filter(d => d.pibMil > 0 && pertenceARegiao(d.sigla));
+        }
+
+        function renderBotoesRegiao() {
+            const container = document.getElementById('btnsRegiao');
+            if (!container) return;
+            container.innerHTML = REGIOES.map(r => {
+                const ativo = r === regiaoSelecionada;
+                const label = r === 'Todas' ? 'Brasil' : r;
+                return `<button type="button" onclick="setRegiao('${r}')"
+                    class="px-3 py-1.5 rounded-md text-xs font-semibold border transition cursor-pointer ${ativo ? 'din-btn border-transparent shadow-sm' : 'din-secondary-bg din-border din-text-muted hover:din-text-main'}">${label}</button>`;
+            }).join('');
+        }
+
+        function setRegiao(regiao) {
+            regiaoSelecionada = regiao;
+            renderBotoesRegiao();
+            atualizarVisaoFiltrada(true);
+        }
+
+        function ajustarZoomRegiao() {
+            if (!mapaLeaflet || !geojsonLayer) return;
+            const camadas = [];
+            geojsonLayer.eachLayer(layer => {
+                const sigla = layer.feature?.properties?.sigla;
+                if (pertenceARegiao(sigla)) camadas.push(layer);
+            });
+            if (camadas.length > 0) {
+                const grupo = L.featureGroup(camadas);
+                mapaLeaflet.fitBounds(grupo.getBounds(), { padding: [20, 20] });
+            }
+        }
 
         function toggleDropdownMenu() {
             const menu = document.getElementById('dropdownMenu');
@@ -593,13 +654,13 @@
         function processarDadosAno(ano) {
             mapaDadosPorUf = {};
             pibTotalBrasilMil = 0;
-            let popTotalBrasil = 0;
 
             UFS.forEach(uf => {
                 const comp = COMPOSICAO_SETORIAL_UF[uf] || { agro: 10, ind: 20, serv: 50, adm: 20, vocacao: 'Diversificada' };
                 mapaDadosPorUf[uf] = {
                     sigla: uf,
                     nome: uf,
+                    regiao: REGIAO_UF[uf] || '',
                     pibMil: 0,
                     populacao: 0,
                     perCapita: 0,
@@ -625,7 +686,6 @@
                     pibTotalBrasilMil += val;
                 } else if (nomeInd.includes('popula')) {
                     mapaDadosPorUf[uf].populacao = val;
-                    popTotalBrasil += val;
                 } else if (nomeInd.includes('per capita')) {
                     mapaDadosPorUf[uf].perCapita = val;
                 }
@@ -638,12 +698,65 @@
             });
 
             document.querySelectorAll('.labelAno').forEach(el => el.innerText = ano);
-            const pibBrasilReais = pibTotalBrasilMil * 1000;
-            document.getElementById('kpiPibBrasil').innerText = formatarMoedaCompacta(pibBrasilReais);
-            document.getElementById('kpiPopBrasil').innerText = popTotalBrasil > 0
-                ? (popTotalBrasil / 1e6).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' milhões'
+            atualizarVisaoFiltrada(false);
+            compararEstados();
+        }
+
+        function atualizarVisaoFiltrada(moverZoom = false) {
+            const filtrados = getEstadosFiltrados();
+            const isBrasil = regiaoSelecionada === 'Todas';
+
+            const pibRecorteMil = filtrados.reduce((acc, d) => acc + d.pibMil, 0);
+            const popRecorte = filtrados.reduce((acc, d) => acc + d.populacao, 0);
+            const pibRecorteReais = pibRecorteMil * 1000;
+            const shareRecorteBR = pibTotalBrasilMil > 0 ? (pibRecorteMil / pibTotalBrasilMil) * 100 : 0;
+
+            document.getElementById('badgeRegiaoAtiva').innerText = isBrasil
+                ? `Exibindo todos os ${filtrados.length} estados`
+                : `Região ${regiaoSelecionada}: ${filtrados.length} estados (${shareRecorteBR.toFixed(1)}% do PIB nacional)`;
+
+            document.getElementById('kpiPibTitulo').innerHTML = isBrasil
+                ? `PIB Nacional Consolidado (<span class="labelAno">${anoSelecionado}</span>)`
+                : `PIB da Região ${regiaoSelecionada} (<span class="labelAno">${anoSelecionado}</span>)`;
+            document.getElementById('kpiPibBrasil').innerText = formatarMoedaCompacta(pibRecorteReais);
+            document.getElementById('kpiPibSub').innerText = isBrasil
+                ? 'Fonte oficial: IBGE (SIDRA 5938)'
+                : `Equivale a ${shareRecorteBR.toFixed(1)}% do PIB do Brasil`;
+
+            document.getElementById('kpiPopTitulo').innerHTML = isBrasil
+                ? `População Total (<span class="labelAno">${anoSelecionado}</span>)`
+                : `População — ${regiaoSelecionada} (<span class="labelAno">${anoSelecionado}</span>)`;
+            document.getElementById('kpiPopBrasil').innerText = popRecorte > 0
+                ? (popRecorte / 1e6).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' milhões'
                 : 'Sincronize o ano';
-            document.getElementById('kpiImpostoBrasil').innerText = formatarMoedaCompacta(pibBrasilReais * 0.33);
+
+            document.getElementById('kpiImpostoBrasil').innerText = formatarMoedaCompacta(pibRecorteReais * 0.33);
+
+            const ordenados = [...filtrados].sort((a, b) => b.pibMil - a.pibMil);
+            if (ordenados.length > 0) {
+                const lider = ordenados[0];
+                if (isBrasil) {
+                    const somaTop5 = ordenados.slice(0, 5).reduce((acc, d) => acc + d.sharePib, 0);
+                    document.getElementById('kpiTop5Titulo').innerHTML = `Concentração Top 5 UFs (<span class="labelAno">${anoSelecionado}</span>)`;
+                    document.getElementById('kpiTop5Share').innerText = `${somaTop5.toFixed(1)}% do PIB`;
+                    document.getElementById('kpiLiderShare').innerText = `Líder nacional: ${lider.sigla} (${lider.sharePib.toFixed(1)}%)`;
+                } else {
+                    const shareLiderReg = pibRecorteMil > 0 ? (lider.pibMil / pibRecorteMil) * 100 : 0;
+                    document.getElementById('kpiTop5Titulo').innerHTML = `Peso no PIB Nacional (<span class="labelAno">${anoSelecionado}</span>)`;
+                    document.getElementById('kpiTop5Share').innerText = `${shareRecorteBR.toFixed(1)}% do Brasil`;
+                    document.getElementById('kpiLiderShare').innerText = `Líder na região: ${lider.sigla} (${shareLiderReg.toFixed(1)}% da região)`;
+                }
+
+                // Se o estado selecionado não pertence à região escolhida, seleciona o líder da região
+                if (!pertenceARegiao(ufSelecionada)) {
+                    ufSelecionada = lider.sigla;
+                    nomeUfSelecionada = lider.nome;
+                }
+            }
+
+            document.getElementById('tituloRanking').innerHTML = isBrasil
+                ? `Ranking & Concentração Nacional (<span class="labelAno">${anoSelecionado}</span>)`
+                : `Ranking & Concentração — ${regiaoSelecionada} (<span class="labelAno">${anoSelecionado}</span>)`;
 
             renderizarTabelaRanking();
             renderizarGraficoPizzaTop5();
@@ -651,10 +764,10 @@
             if (geojsonLayer) {
                 geojsonLayer.setStyle(estiloMapa);
                 atualizarTooltipsMapa();
+                if (moverZoom) ajustarZoomRegiao();
             }
 
             exibirDetalhesEstado(ufSelecionada, nomeUfSelecionada);
-            compararEstados();
             atualizarSimulador();
         }
 
@@ -743,17 +856,11 @@
             const termoBusca = (document.getElementById('inputBuscaUf').value || '').trim().toLowerCase();
             const limite = Number(document.getElementById('selectLimiteTabela').value || 5);
 
-            const todosComPib = Object.values(mapaDadosPorUf).filter(d => d.pibMil > 0);
+            const todosComPib = getEstadosFiltrados();
             if (todosComPib.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" class="py-4 text-center din-text-muted">Sem dados para ${anoSelecionado}. Sincronize no topo!</td></tr>`;
                 return;
             }
-
-            const ordenadosPorPib = [...todosComPib].sort((a, b) => b.pibMil - a.pibMil);
-            const somaShareTop5 = ordenadosPorPib.slice(0, 5).reduce((acc, cur) => acc + cur.sharePib, 0);
-            const lider = ordenadosPorPib[0];
-            document.getElementById('kpiTop5Share').innerText = `${somaShareTop5.toFixed(1)}% do PIB`;
-            document.getElementById('kpiLiderShare').innerText = `Líder: ${lider.sigla} (${lider.sharePib.toFixed(1)}% nacional)`;
 
             let filtrados = todosComPib.filter(d =>
                 d.nome.toLowerCase().includes(termoBusca) ||
@@ -769,7 +876,7 @@
                 return direcaoOrdenacao === 'asc' ? va - vb : vb - va;
             });
 
-            const exibidos = termoBusca ? filtrados : filtrados.slice(0, limite);
+            const exibidos = (termoBusca || regiaoSelecionada !== 'Todas') ? filtrados : filtrados.slice(0, limite);
 
             tbody.innerHTML = exibidos.map((d, idx) => {
                 const pibReais = d.pibMil * 1000;
@@ -791,18 +898,30 @@
         }
 
         function renderizarGraficoPizzaTop5() {
-            const listaOrdenada = Object.values(mapaDadosPorUf)
-                .filter(d => d.pibMil > 0)
-                .sort((a, b) => b.pibMil - a.pibMil);
-
+            const listaOrdenada = getEstadosFiltrados().sort((a, b) => b.pibMil - a.pibMil);
             if (listaOrdenada.length === 0) return;
 
-            const top5 = listaOrdenada.slice(0, 5);
+            const isBrasil = regiaoSelecionada === 'Todas';
+            const totalRecorteMil = listaOrdenada.reduce((acc, d) => acc + d.pibMil, 0) || 1;
+            const top = listaOrdenada.slice(0, 5);
             const outros = listaOrdenada.slice(5);
-            const shareOutros = outros.reduce((acc, cur) => acc + cur.sharePib, 0);
 
-            const labels = [...top5.map(d => `${d.nome} (${d.sigla})`), 'Outros 22 Estados'];
-            const valoresPercentuais = [...top5.map(d => Number(d.sharePib.toFixed(2))), Number(shareOutros.toFixed(2))];
+            const labels = top.map(d => `${d.nome} (${d.sigla})`);
+            const valoresPercentuais = top.map(d => Number(((d.pibMil / totalRecorteMil) * 100).toFixed(2)));
+
+            if (outros.length > 0) {
+                const shareOutros = outros.reduce((acc, d) => acc + ((d.pibMil / totalRecorteMil) * 100), 0);
+                labels.push(`Outros ${outros.length} Estados`);
+                valoresPercentuais.push(Number(shareOutros.toFixed(2)));
+            }
+
+            document.getElementById('tituloResumoPizza').innerHTML = isBrasil
+                ? `Concentração Produtiva (<span class="labelAno">${anoSelecionado}</span>)`
+                : `Distribuição — Região ${regiaoSelecionada} (<span class="labelAno">${anoSelecionado}</span>)`;
+            document.getElementById('descResumoPizza').innerText = isBrasil
+                ? 'Os 5 maiores estados concentram a maior parte do PIB brasileiro, enquanto os outros 22 dividem o restante.'
+                : `Participação de cada estado dentro do PIB consolidado da região ${regiaoSelecionada}.`;
+
             const cores = ['#16C784', '#2563EB', '#06B6D4', '#F59E0B', '#EA3943', '#737780'];
             const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
 
@@ -815,7 +934,7 @@
                     labels: labels,
                     datasets: [{
                         data: valoresPercentuais,
-                        backgroundColor: cores,
+                        backgroundColor: cores.slice(0, labels.length),
                         borderColor: isDark ? '#191C20' : '#FFFFFF',
                         borderWidth: 2
                     }]
@@ -826,7 +945,8 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return ` ${context.label}: ${context.parsed}% do PIB Nacional`;
+                                    const suf = isBrasil ? 'do PIB Nacional' : `da região ${regiaoSelecionada}`;
+                                    return ` ${context.label}: ${context.parsed}% ${suf}`;
                                 }
                             }
                         }
@@ -876,8 +996,19 @@
         function estiloMapa(feature) {
             const sigla = feature.properties.sigla;
             const selecionado = sigla === ufSelecionada;
+            const naRegiao = pertenceARegiao(sigla);
             const dadosUf = mapaDadosPorUf[sigla];
             const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+            if (!naRegiao) {
+                return {
+                    fillColor: isDark ? '#14171A' : '#E2E8F0',
+                    weight: 0.8,
+                    opacity: 0.5,
+                    color: isDark ? '#23282E' : '#CBD5E1',
+                    fillOpacity: 0.3
+                };
+            }
 
             if (modoMapa === 'padrao') {
                 return {
@@ -905,6 +1036,15 @@
         function selecionarEstado(sigla, nome) {
             ufSelecionada = sigla;
             if (nome) nomeUfSelecionada = nome;
+
+            // Se clicar no mapa em um estado fora da região filtrada, volta o filtro para Brasil
+            if (!pertenceARegiao(sigla)) {
+                regiaoSelecionada = 'Todas';
+                renderBotoesRegiao();
+                atualizarVisaoFiltrada(false);
+                return;
+            }
+
             if (geojsonLayer) geojsonLayer.setStyle(estiloMapa);
             renderizarTabelaRanking();
             exibirDetalhesEstado(ufSelecionada, nomeUfSelecionada);
@@ -919,15 +1059,15 @@
 
             return `
                 <div class="space-y-1.5 text-xs">
-                    <div class="flex justify-between items-center border-b din-border pb-1">
+                    <div class="flex justify-between items-center border-b din-border pb-1 gap-3">
                         <span class="font-bold text-sm din-text-main">${nomePadrao} (${sigla})</span>
                         <span class="din-secondary-bg din-green px-1.5 py-0.5 rounded text-[10px] font-bold">${d.sharePib.toFixed(1)}% do PIB</span>
                     </div>
-                    <div class="flex justify-between">
+                    <div class="flex justify-between gap-3">
                         <span class="din-text-muted">PIB:</span>
                         <span class="font-bold din-green">${formatarMoedaCompacta(d.pibMil * 1000)}</span>
                     </div>
-                    <div class="flex justify-between">
+                    <div class="flex justify-between gap-3">
                         <span class="din-text-muted">PIB per Capita:</span>
                         <span class="font-semibold din-text-main">R$ ${d.perCapita.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}</span>
                     </div>
@@ -939,7 +1079,7 @@
             if (!geojsonLayer) return;
             geojsonLayer.eachLayer(layer => {
                 const sigla = layer.feature.properties.sigla;
-                const nome = layer.feature.properties.name;
+                const nome = layer.feature.properties.name || sigla;
                 layer.setTooltipContent(montarHtmlTooltip(sigla, nome));
             });
         }
@@ -951,7 +1091,7 @@
                 return;
             }
 
-            const map = L.map('map', { zoomControl: true }).setView([-14.8, -52.0], 4);
+            mapaLeaflet = L.map('map', { zoomControl: true }).setView([-14.8, -52.0], 4);
             const urls = [
                 'https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson',
                 'https://servicodados.ibge.gov.br/api/v3/malhas/paises/BR?formato=application/vnd.geo+json&qualidade=minima&intrarregiao=UF'
@@ -1009,10 +1149,10 @@
                         }
                     });
                 }
-            }).addTo(map);
+            }).addTo(mapaLeaflet);
 
-            map.fitBounds(geojsonLayer.getBounds(), { padding: [12, 12] });
-            setTimeout(() => map.invalidateSize(), 150);
+            mapaLeaflet.fitBounds(geojsonLayer.getBounds(), { padding: [12, 12] });
+            setTimeout(() => mapaLeaflet.invalidateSize(), 150);
         }
 
         function exibirDetalhesEstado(sigla, nomeOpcional) {
@@ -1020,6 +1160,7 @@
             if (nomeOpcional) nomeUfSelecionada = nomeOpcional;
 
             document.getElementById('badgeUf').innerText = sigla;
+            document.getElementById('labelRegiaoEstado').innerText = `Estado Selecionado · ${REGIAO_UF[sigla] || 'Brasil'}`;
             document.getElementById('tituloEstado').innerText = `${nomeUfSelecionada} (${sigla})`;
 
             const container = document.getElementById('listaIndicadores');
@@ -1153,6 +1294,7 @@
             const temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light';
             aplicarTema(temaSalvo === 'dark' ? 'dark' : 'light');
 
+            renderBotoesRegiao();
             popularSelects();
             await iniciarMapa();
             await atualizarBaseCompleta();
