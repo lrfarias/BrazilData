@@ -194,27 +194,30 @@
                     <div class="flex flex-wrap justify-between items-center gap-3 mb-3">
                         <div>
                             <h2 class="text-lg font-semibold din-text-main">Mapa Econômico e Setorial</h2>
-                            <p class="text-xs din-text-muted">Clique em um estado para inspecionar ou ative o Mapa de Calor</p>
+                            <p class="text-xs din-text-muted">Clique em um estado para inspecionar ou filtre por região para ver os destaques</p>
                         </div>
 
                         <div class="flex items-center gap-2 din-secondary-bg border din-border rounded-lg px-3 py-1.5">
                             <span class="text-xs din-text-muted">Visualização:</span>
                             <select id="selectModoMapa" onchange="alterarModoMapa(this.value)"
                                 class="bg-transparent text-xs font-semibold din-text-main focus:outline-none cursor-pointer">
-                                <option value="padrao" class="din-card-bg din-text-main" selected>Padrão (Seleção)</option>
+                                <option value="padrao" class="din-card-bg din-text-main" selected>Destaque Regional (PIB)</option>
                                 <option value="pib" class="din-card-bg din-text-main">Calor: Maior PIB</option>
                                 <option value="perCapita" class="din-card-bg din-text-main">Calor: PIB per Capita</option>
                             </select>
                         </div>
                     </div>
 
-                    <div id="legendaMapaCalor" class="hidden flex items-center justify-end gap-2 text-[11px] din-text-muted mb-2.5">
-                        <span>Menor</span>
-                        <span class="w-3 h-3 rounded inline-block" style="background:#9299A3"></span>
-                        <span class="w-3 h-3 rounded inline-block" style="background:#2563EB"></span>
-                        <span class="w-3 h-3 rounded inline-block" style="background:#06B6D4"></span>
-                        <span class="w-3 h-3 rounded inline-block" style="background:#16C784"></span>
-                        <span>Maior</span>
+                    <!-- Legenda Tonal Dinâmica (Mais claro -> Mais escuro para destaque) -->
+                    <div id="legendaGradienteRegiao" class="flex flex-wrap items-center justify-between gap-3 text-[11px] din-text-muted mb-2.5 px-1">
+                        <span id="legMenorDestaque" class="font-medium">Menor peso</span>
+                        <div class="flex items-center gap-2 flex-1 max-w-[260px]">
+                            <span class="text-[10px] shrink-0">Menor</span>
+                            <div id="barraGradienteMapa" class="flex-1 h-2.5 rounded-full border din-border"
+                                 style="background: linear-gradient(90deg, #74E3B4 0%, #16C784 50%, #046C4E 100%);"></div>
+                            <span class="text-[10px] shrink-0 font-semibold din-text-main">Destaque</span>
+                        </div>
+                        <span id="legMaiorDestaque" class="font-semibold din-green">Maior destaque</span>
                     </div>
 
                     <div id="map" class="w-full h-[460px] rounded-lg border din-border din-secondary-bg" style="min-height: 460px;"></div>
@@ -305,41 +308,93 @@
                 </div>
             </section>
 
-            <!-- Coluna Direita: Raio-X + Vocação Setorial + Simulador -->
+            <!-- Coluna Direita: Raio-X (com Abas: Resumo | Destaques | Evolução) + Simulador -->
             <section class="lg:col-span-5 flex flex-col gap-6">
 
-                <!-- Card Principal do Estado -->
+                <!-- Card Principal da Região / Estado -->
                 <div class="din-card-bg border din-border rounded-lg p-5 shadow-sm space-y-4">
-                    <div class="flex justify-between items-center border-b din-border pb-3">
+                    <div class="flex justify-between items-start gap-2 border-b din-border pb-3">
                         <div>
-                            <span id="labelRegiaoEstado" class="text-xs uppercase tracking-wider din-green font-semibold">Estado Selecionado</span>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span id="labelRegiaoEstado" class="text-xs uppercase tracking-wider din-green font-semibold">Estado Selecionado</span>
+                                <button id="btnVoltarRegiao" type="button" onclick="voltarParaRegiao()"
+                                    class="hidden text-[10px] font-semibold px-2 py-0.5 rounded din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
+                                    ← Ver Região
+                                </button>
+                            </div>
                             <h3 id="tituloEstado" class="text-2xl font-bold din-text-main mt-0.5">São Paulo (SP)</h3>
                         </div>
-                        <span id="badgeUf" class="din-secondary-bg din-green border din-border font-bold px-3 py-1 rounded-md text-sm">
+                        <span id="badgeUf" class="din-secondary-bg din-green border din-border font-bold px-3 py-1 rounded-md text-sm shrink-0">
                             SP
                         </span>
                     </div>
 
-                    <div id="listaIndicadores" class="space-y-2">
-                        <p class="text-sm din-text-muted">Carregando indicadores...</p>
+                    <!-- Abas do Painel Lateral -->
+                    <div class="grid grid-cols-3 gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
+                        <button id="abaLatResumo" type="button" onclick="setAbaLateral('resumo')"
+                            class="py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer">
+                            Resumo
+                        </button>
+                        <button id="abaLatDestaques" type="button" onclick="setAbaLateral('destaques')"
+                            class="py-1.5 rounded-md din-text-muted hover:din-text-main transition cursor-pointer">
+                            Destaques
+                        </button>
+                        <button id="abaLatEvolucao" type="button" onclick="setAbaLateral('evolucao')"
+                            class="py-1.5 rounded-md din-text-muted hover:din-text-main transition cursor-pointer">
+                            Evolução
+                        </button>
                     </div>
 
-                    <!-- Vocação Econômica Real e Composição do Valor Adicionado -->
-                    <div class="din-secondary-bg border din-border rounded-lg p-4 space-y-3">
-                        <div class="flex justify-between items-center border-b din-border pb-2">
-                            <div>
-                                <span class="text-xs font-semibold din-green uppercase tracking-wider">Vocação Econômica Real</span>
-                                <p id="lblVocacaoDominante" class="text-xs din-text-main font-medium mt-0.5">Composição do Valor Adicionado</p>
-                            </div>
+                    <!-- ABA 1: RESUMO + VOCAÇÃO -->
+                    <div id="viewLatResumo" class="space-y-4">
+                        <div id="listaIndicadores" class="space-y-2">
+                            <p class="text-sm din-text-muted">Carregando indicadores...</p>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center pt-1">
-                            <div class="sm:col-span-5 flex justify-center">
-                                <div class="w-28 h-28">
-                                    <canvas id="graficoSetorialUf"></canvas>
+
+                        <!-- Vocação Econômica Real e Composição do Valor Adicionado -->
+                        <div class="din-secondary-bg border din-border rounded-lg p-4 space-y-3">
+                            <div class="flex justify-between items-center border-b din-border pb-2">
+                                <div>
+                                    <span class="text-xs font-semibold din-green uppercase tracking-wider">Vocação Econômica Real</span>
+                                    <p id="lblVocacaoDominante" class="text-xs din-text-main font-medium mt-0.5">Composição do Valor Adicionado</p>
                                 </div>
                             </div>
-                            <div id="listaBarrasSetoriais" class="sm:col-span-7 space-y-2 text-xs"></div>
+                            <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center pt-1">
+                                <div class="sm:col-span-5 flex justify-center">
+                                    <div class="w-28 h-28">
+                                        <canvas id="graficoSetorialUf"></canvas>
+                                    </div>
+                                </div>
+                                <div id="listaBarrasSetoriais" class="sm:col-span-7 space-y-2 text-xs"></div>
+                            </div>
                         </div>
+                    </div>
+
+                    <!-- ABA 2: DESTAQUES DO RECORTE (COM TONALIDADE DO MAPA) -->
+                    <div id="viewLatDestaques" class="hidden space-y-3">
+                        <div class="flex items-center justify-between text-xs">
+                            <span id="subDestaques" class="din-text-muted">Ordem de destaque econômico no recorte</span>
+                            <span class="text-[10px] din-text-muted">Clique no estado</span>
+                        </div>
+                        <div id="listaDestaquesRegiao" class="space-y-2 max-h-[340px] overflow-y-auto pr-1"></div>
+                    </div>
+
+                    <!-- ABA 3: EVOLUÇÃO HISTÓRICA (2018-2021) -->
+                    <div id="viewLatEvolucao" class="hidden space-y-3">
+                        <div class="flex items-center justify-between gap-2 text-xs">
+                            <span id="lblTituloEvolucao" class="din-text-muted">Série histórica do PIB</span>
+                            <div class="flex items-center gap-2">
+                                <strong id="badgeCrescEvolucao" class="din-green">—</strong>
+                                <button type="button" onclick="baixarEvolucaoPainelPNG()"
+                                    class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
+                                    ↓ PNG
+                                </button>
+                            </div>
+                        </div>
+                        <div class="relative h-[250px] din-secondary-bg border din-border rounded-lg p-3">
+                            <canvas id="graficoEvolucaoPainel"></canvas>
+                        </div>
+                        <p id="notaEvolucaoPainel" class="text-[11px] din-text-muted leading-relaxed"></p>
                     </div>
                 </div>
 
@@ -349,7 +404,7 @@
                         <div class="flex justify-between items-center border-b din-border pb-2.5">
                             <div>
                                 <h3 class="text-sm font-semibold din-text-main">Simulador de Cenários ("E se...?")</h3>
-                                <p class="text-xs din-text-muted">Projeção educativa para o estado selecionado</p>
+                                <p id="subtituloSimulador" class="text-xs din-text-muted">Projeção educativa para o estado selecionado</p>
                             </div>
                             <span class="text-[10px] din-secondary-bg din-green border din-border px-2 py-0.5 rounded font-bold">Simulação</span>
                         </div>
@@ -466,7 +521,8 @@
         let nomeUfSelecionada = 'São Paulo';
         let anoSelecionado = 2021;
         let regiaoSelecionada = 'Todas';
-        let modoSelecao = 'estado'; // 'estado' | 'regiao'
+        let modoSelecao = 'regiao'; // 'estado' | 'regiao'
+        let abaLateral = 'resumo';  // 'resumo' | 'destaques' | 'evolucao'
         let modoMapa = 'padrao';
         let visaoRanking = 'tabela';
 
@@ -483,6 +539,7 @@
         let chartPerCapita = null;
         let chartPizzaTop5 = null;
         let chartSetorialUf = null;
+        let chartEvolucaoPainel = null;
 
         const UFS = [
             "AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG",
@@ -540,6 +597,69 @@
             RR: { agro: 9,  ind: 9,  serv: 36, adm: 46, vocacao: 'Comércio Fronteiriço e Público' }
         };
 
+        // Escala tonal: verde médio-claro (#74E3B4) -> verde marca (#16C784) -> esmeralda escuro (#046C4E) para o destaque
+        function interpolarCorVerde(t) {
+            const clamped = Math.max(0, Math.min(1, t));
+            // Curva suave para dar contraste entre estados intermediários e líderes
+            const s = Math.pow(clamped, 0.72);
+            const c0 = [116, 227, 180]; // #74E3B4 (menor destaque - visível, não lavado)
+            const c1 = [22, 199, 132];  // #16C784 (médio)
+            const c2 = [4, 108, 78];    // #046C4E (maior destaque - escuro marcante)
+
+            let r, g, b;
+            if (s <= 0.5) {
+                const k = s / 0.5;
+                r = Math.round(c0[0] + (c1[0] - c0[0]) * k);
+                g = Math.round(c0[1] + (c1[1] - c0[1]) * k);
+                b = Math.round(c0[2] + (c1[2] - c0[2]) * k);
+            } else {
+                const k = (s - 0.5) / 0.5;
+                r = Math.round(c1[0] + (c2[0] - c1[0]) * k);
+                g = Math.round(c1[1] + (c2[1] - c1[1]) * k);
+                b = Math.round(c1[2] + (c2[2] - c1[2]) * k);
+            }
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        function obterMetricaMapa() {
+            return modoMapa === 'perCapita' ? 'perCapita' : 'pibMil';
+        }
+
+        function calcularLimitesRecorte() {
+            const lista = getEstadosFiltrados();
+            const campo = obterMetricaMapa();
+            if (!lista.length) return { min: 0, max: 1, minUf: null, maxUf: null };
+
+            let minObj = lista[0], maxObj = lista[0];
+            lista.forEach(d => {
+                if (d[campo] < minObj[campo]) minObj = d;
+                if (d[campo] > maxObj[campo]) maxObj = d;
+            });
+            return { min: minObj[campo], max: maxObj[campo], minUf: minObj, maxUf: maxObj };
+        }
+
+        function corTonalEstado(sigla) {
+            const d = mapaDadosPorUf[sigla];
+            if (!d || d.pibMil <= 0) return '#74E3B4';
+            const campo = obterMetricaMapa();
+            const { min, max } = calcularLimitesRecorte();
+            if (max <= min) return '#046C4E';
+            const t = (d[campo] - min) / (max - min);
+            return interpolarCorVerde(t);
+        }
+
+        function atualizarLegendaMapa() {
+            const { minUf, maxUf } = calcularLimitesRecorte();
+            if (!minUf || !maxUf) return;
+            const ehPerCapita = modoMapa === 'perCapita';
+            const fmt = d => ehPerCapita
+                ? `R$ ${Math.round(d.perCapita).toLocaleString('pt-BR')}`
+                : formatarMoedaCompacta(d.pibMil * 1000);
+
+            document.getElementById('legMenorDestaque').innerText = `${minUf.sigla}: ${fmt(minUf)}`;
+            document.getElementById('legMaiorDestaque').innerText = `Destaque · ${maxUf.sigla}: ${fmt(maxUf)}`;
+        }
+
         function pertenceARegiao(sigla) {
             return regiaoSelecionada === 'Todas' || REGIAO_UF[sigla] === regiaoSelecionada;
         }
@@ -564,6 +684,27 @@
             modoSelecao = 'regiao';
             renderBotoesRegiao();
             atualizarVisaoFiltrada(true);
+        }
+
+        function voltarParaRegiao() {
+            modoSelecao = 'regiao';
+            atualizarVisaoFiltrada(false);
+        }
+
+        function setAbaLateral(aba) {
+            abaLateral = aba;
+            const on = 'py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer';
+            const off = 'py-1.5 rounded-md din-text-muted hover:din-text-main transition cursor-pointer';
+            document.getElementById('abaLatResumo').className = aba === 'resumo' ? on : off;
+            document.getElementById('abaLatDestaques').className = aba === 'destaques' ? on : off;
+            document.getElementById('abaLatEvolucao').className = aba === 'evolucao' ? on : off;
+
+            document.getElementById('viewLatResumo').classList.toggle('hidden', aba !== 'resumo');
+            document.getElementById('viewLatDestaques').classList.toggle('hidden', aba !== 'destaques');
+            document.getElementById('viewLatEvolucao').classList.toggle('hidden', aba !== 'evolucao');
+
+            if (aba === 'destaques') renderizarAbaDestaques();
+            if (aba === 'evolucao') renderizarEvolucaoPainel();
         }
 
         function ajustarZoomRegiao() {
@@ -624,6 +765,7 @@
                 renderizarGraficoPizzaTop5();
                 if (modoSelecao === 'regiao') exibirDetalhesRegiao();
                 else renderizarVocacaoSetorial(ufSelecionada);
+                if (abaLateral === 'evolucao') renderizarEvolucaoPainel();
             }
         }
 
@@ -747,7 +889,7 @@
                     const shareLiderReg = pibRecorteMil > 0 ? (lider.pibMil / pibRecorteMil) * 100 : 0;
                     document.getElementById('kpiTop5Titulo').innerHTML = `Peso no PIB Nacional (<span class="labelAno">${anoSelecionado}</span>)`;
                     document.getElementById('kpiTop5Share').innerText = `${shareRecorteBR.toFixed(1)}% do Brasil`;
-                    document.getElementById('kpiLiderShare').innerText = `Líder na região: ${lider.sigla} (${shareLiderReg.toFixed(1)}% da região)`;
+                    document.getElementById('kpiLiderShare').innerText = `Destaque na região: ${lider.sigla} (${shareLiderReg.toFixed(1)}% da região)`;
                 }
             }
 
@@ -755,6 +897,7 @@
                 ? `Ranking & Concentração Nacional (<span class="labelAno">${anoSelecionado}</span>)`
                 : `Ranking & Concentração — ${regiaoSelecionada} (<span class="labelAno">${anoSelecionado}</span>)`;
 
+            atualizarLegendaMapa();
             renderizarTabelaRanking();
             renderizarGraficoPizzaTop5();
 
@@ -769,7 +912,123 @@
             } else {
                 exibirDetalhesEstado(ufSelecionada, nomeUfSelecionada);
             }
+
+            renderizarAbaDestaques();
+            if (abaLateral === 'evolucao') renderizarEvolucaoPainel();
             atualizarSimulador();
+        }
+
+        function renderizarAbaDestaques() {
+            const lista = getEstadosFiltrados();
+            const campo = obterMetricaMapa();
+            const ordenados = [...lista].sort((a, b) => b[campo] - a[campo]);
+            const totalPibRecorte = ordenados.reduce((acc, d) => acc + d.pibMil, 0) || 1;
+            const ehPerCapita = modoMapa === 'perCapita';
+
+            document.getElementById('subDestaques').innerText = regiaoSelecionada === 'Todas'
+                ? (ehPerCapita ? 'Destaques nacionais em PIB per Capita' : 'Destaques nacionais em PIB')
+                : (ehPerCapita ? `Destaques de ${regiaoSelecionada} (PIB per Capita)` : `Destaques de ${regiaoSelecionada} (PIB)`);
+
+            const container = document.getElementById('listaDestaquesRegiao');
+            container.innerHTML = ordenados.map((d, idx) => {
+                const cor = corTonalEstado(d.sigla);
+                const shareReg = (d.pibMil / totalPibRecorte) * 100;
+                const isSel = modoSelecao === 'estado' && d.sigla === ufSelecionada;
+                const valorTxt = ehPerCapita
+                    ? `R$ ${Math.round(d.perCapita).toLocaleString('pt-BR')}`
+                    : formatarMoedaCompacta(d.pibMil * 1000);
+
+                return `
+                    <div onclick="selecionarEstado('${d.sigla}', '${d.nome}')"
+                        class="p-2.5 rounded-lg border cursor-pointer transition flex items-center justify-between gap-3 ${isSel ? 'border-[#16C784] din-card-bg shadow-sm' : 'din-secondary-bg din-border hover:border-[#16C784]'}">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="w-3.5 h-3.5 rounded-sm shrink-0 border border-black/15" style="background:${cor}"></span>
+                            <div class="min-w-0">
+                                <p class="text-xs font-bold din-text-main truncate">
+                                    ${idx + 1}º ${d.nome} <span class="din-text-muted font-normal">(${d.sigla})</span>
+                                </p>
+                                <p class="text-[10px] din-text-muted truncate">${d.setores.vocacao}</p>
+                            </div>
+                        </div>
+                        <div class="text-right shrink-0">
+                            <p class="text-xs font-extrabold din-green">${valorTxt}</p>
+                            <p class="text-[10px] din-text-muted">${shareReg.toFixed(1)}% ${regiaoSelecionada === 'Todas' ? 'do BR' : 'da região'}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderizarEvolucaoPainel() {
+            const porAno = {};
+            const isRegiao = modoSelecao === 'regiao';
+            const alvoLabel = isRegiao
+                ? (regiaoSelecionada === 'Todas' ? 'Brasil' : `Região ${regiaoSelecionada}`)
+                : `${nomeUfSelecionada} (${ufSelecionada})`;
+
+            todosIndicadores.forEach(ind => {
+                if (!ind.estado || !ind.estado.sigla) return;
+                const sigla = ind.estado.sigla.toUpperCase();
+                const nomeInd = (ind.nome || '').toLowerCase();
+                if (nomeInd !== 'pib estadual') return;
+
+                const inclui = isRegiao ? pertenceARegiao(sigla) : (sigla === ufSelecionada);
+                if (!inclui) return;
+
+                const ano = Number(ind.anoReferencia);
+                porAno[ano] = (porAno[ano] || 0) + (Number(ind.valor) || 0) * 1000;
+            });
+
+            const anos = Object.keys(porAno).map(Number).sort((a, b) => a - b);
+            document.getElementById('lblTituloEvolucao').innerText = `PIB histórico — ${alvoLabel}`;
+
+            if (chartEvolucaoPainel) chartEvolucaoPainel.destroy();
+
+            if (anos.length < 2) {
+                document.getElementById('badgeCrescEvolucao').innerText = 'Série única';
+                document.getElementById('notaEvolucaoPainel').innerText = 'Há apenas 1 ano disponível no banco para este recorte.';
+                return;
+            }
+
+            const valoresPib = anos.map(a => porAno[a]);
+            const valoresImp = valoresPib.map(v => v * 0.33);
+            const cresc = ((valoresPib[valoresPib.length - 1] - valoresPib[0]) / valoresPib[0]) * 100;
+
+            const badge = document.getElementById('badgeCrescEvolucao');
+            badge.innerText = `${cresc >= 0 ? '+' : ''}${cresc.toFixed(1)}% (${anos[0]}–${anos[anos.length - 1]})`;
+            badge.className = `font-bold ${cresc >= 0 ? 'din-green' : 'din-red'}`;
+
+            document.getElementById('notaEvolucaoPainel').innerText =
+                `Evolução nominal consolidada de ${alvoLabel} entre ${anos[0]} e ${anos[anos.length - 1]} (Fonte: IBGE SIDRA 5938).`;
+
+            const opts = window.BDChart
+                ? BDChart.opcoesBase({ fmtY: v => formatarMoedaCompacta(v) })
+                : { responsive: true, maintainAspectRatio: false };
+
+            chartEvolucaoPainel = new Chart(document.getElementById('graficoEvolucaoPainel'), {
+                type: 'line',
+                data: {
+                    labels: anos,
+                    datasets: [
+                        { label: 'PIB', data: valoresPib, borderColor: '#046C4E', backgroundColor: 'rgba(22,199,132,0.12)', fill: true, borderWidth: 2.5, tension: 0.25, pointRadius: 4, pointBackgroundColor: '#16C784' },
+                        { label: 'Arrecadação est. (33%)', data: valoresImp, borderColor: '#EA3943', borderDash: [4, 3], borderWidth: 2, tension: 0.25, pointRadius: 3 }
+                    ]
+                },
+                options: opts
+            });
+        }
+
+        function baixarEvolucaoPainelPNG() {
+            if (!window.BDChart) return;
+            const alvo = modoSelecao === 'regiao'
+                ? (regiaoSelecionada === 'Todas' ? 'Brasil' : `Região ${regiaoSelecionada}`)
+                : `${nomeUfSelecionada} (${ufSelecionada})`;
+            BDChart.baixarPNG('graficoEvolucaoPainel', {
+                titulo: `Evolução do PIB e Arrecadação Estimada — ${alvo}`,
+                subtitulo: 'Série histórica consolidada',
+                fonte: 'IBGE — Contas Regionais (SIDRA 5938)',
+                nomeArquivo: `brasilemdados-evolucao-pib-${alvo.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+            });
         }
 
         function gerarDossieExecutivo() {
@@ -809,8 +1068,7 @@
 
             if (pibInicialMil <= 0) return;
 
-            const subSim = document.querySelector('#sliderCrescimento')?.closest('.din-card-bg')?.querySelector('p.text-xs.din-text-muted');
-            if (subSim) subSim.innerText = `Projeção educativa para ${nomeAlvo}`;
+            document.getElementById('subtituloSimulador').innerText = `Projeção educativa para ${nomeAlvo}`;
 
             const taxaCrescimento = parseFloat(document.getElementById('sliderCrescimento').value);
             const anosProjecao = parseInt(document.getElementById('sliderAnos').value);
@@ -937,7 +1195,7 @@
                 ? 'Os 5 maiores estados concentram a maior parte do PIB brasileiro, enquanto os outros 22 dividem o restante.'
                 : `Participação de cada estado dentro do PIB consolidado da região ${regiaoSelecionada}.`;
 
-            const cores = ['#16C784', '#2563EB', '#06B6D4', '#F59E0B', '#EA3943', '#737780'];
+            const cores = ['#046C4E', '#16C784', '#2563EB', '#06B6D4', '#F59E0B', '#737780'];
             const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
 
             const ctx = document.getElementById('graficoPizzaTop5').getContext('2d');
@@ -986,84 +1244,35 @@
 
         function alterarModoMapa(novoModo) {
             modoMapa = novoModo;
-            const legenda = document.getElementById('legendaMapaCalor');
-            if (modoMapa === 'padrao') legenda.classList.add('hidden');
-            else legenda.classList.remove('hidden');
+            atualizarLegendaMapa();
+            renderizarAbaDestaques();
             if (geojsonLayer) geojsonLayer.setStyle(estiloMapa);
-        }
-
-        function obterCorPorPib(pibMil) {
-            if (!pibMil || pibMil <= 0) return '#737780';
-            if (pibMil > 800000000) return '#16C784';
-            if (pibMil > 350000000) return '#06B6D4';
-            if (pibMil > 120000000) return '#2563EB';
-            return '#9299A3';
-        }
-
-        function obterCorPorPerCapita(perCapita) {
-            if (!perCapita || perCapita <= 0) return '#737780';
-            if (perCapita > 50000) return '#16C784';
-            if (perCapita > 35000) return '#06B6D4';
-            if (perCapita > 22000) return '#2563EB';
-            return '#9299A3';
         }
 
         function estiloMapa(feature) {
             const sigla = feature.properties.sigla;
             const naRegiao = pertenceARegiao(sigla);
-            const dadosUf = mapaDadosPorUf[sigla];
             const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
 
             if (!naRegiao) {
                 return {
-                    fillColor: isDark ? '#14171A' : '#E2E8F0',
+                    fillColor: isDark ? '#14171A' : '#E5E7EB',
                     weight: 0.8,
                     opacity: 0.45,
                     color: isDark ? '#23282E' : '#CBD5E1',
-                    fillOpacity: 0.28
+                    fillOpacity: 0.3
                 };
             }
 
-            if (modoMapa === 'padrao') {
-                // Região inteira selecionada
-                if (modoSelecao === 'regiao') {
-                    const isBrasil = regiaoSelecionada === 'Todas';
-                    return {
-                        fillColor: isBrasil ? (isDark ? '#16382C' : '#D1FAE5') : '#16C784',
-                        weight: 1.4,
-                        opacity: 1,
-                        color: isBrasil ? '#16C784' : (isDark ? '#101214' : '#FFFFFF'),
-                        fillOpacity: 0.85
-                    };
-                }
+            const corDestaque = corTonalEstado(sigla);
+            const estadoAtivo = modoSelecao === 'estado' && sigla === ufSelecionada;
 
-                // Estado individual selecionado
-                const selecionado = sigla === ufSelecionada;
-                const fundoPadrao = regiaoSelecionada !== 'Todas'
-                    ? (isDark ? '#182924' : '#ECFDF5')
-                    : (isDark ? '#191C20' : '#FFFFFF');
-
-                return {
-                    fillColor: selecionado ? '#16C784' : fundoPadrao,
-                    weight: selecionado ? 2.5 : 1.2,
-                    opacity: 1,
-                    color: selecionado ? '#16C784' : (isDark ? '#2B3036' : '#CBD5E1'),
-                    fillOpacity: 0.85
-                };
-            }
-
-            // Mapa de calor
-            let corCalor = '#737780';
-            if (modoMapa === 'pib') corCalor = obterCorPorPib(dadosUf ? dadosUf.pibMil : 0);
-            else if (modoMapa === 'perCapita') corCalor = obterCorPorPerCapita(dadosUf ? dadosUf.perCapita : 0);
-
-            const selecionado = modoSelecao === 'estado' && sigla === ufSelecionada;
             return {
-                fillColor: corCalor,
-                weight: selecionado ? 3.0 : 1.2,
+                fillColor: corDestaque,
+                weight: estadoAtivo ? 3.0 : 1.3,
                 opacity: 1,
-                color: selecionado ? '#17191C' : (isDark ? '#2B3036' : '#FFFFFF'),
-                fillOpacity: selecionado ? 0.95 : 0.8
+                color: estadoAtivo ? (isDark ? '#F5F6F7' : '#17191C') : (isDark ? '#101214' : '#FFFFFF'),
+                fillOpacity: estadoAtivo ? 0.98 : 0.9
             };
         }
 
@@ -1072,7 +1281,6 @@
             if (nome) nomeUfSelecionada = nome;
             modoSelecao = 'estado';
 
-            // Se clicar em um estado fora da região filtrada, volta o filtro para Brasil
             if (!pertenceARegiao(sigla)) {
                 regiaoSelecionada = 'Todas';
                 renderBotoesRegiao();
@@ -1083,6 +1291,8 @@
             if (geojsonLayer) geojsonLayer.setStyle(estiloMapa);
             renderizarTabelaRanking();
             exibirDetalhesEstado(ufSelecionada, nomeUfSelecionada);
+            renderizarAbaDestaques();
+            if (abaLateral === 'evolucao') renderizarEvolucaoPainel();
             atualizarSimulador();
         }
 
@@ -1172,7 +1382,8 @@
 
                     layer.on({
                         mouseover: function (e) {
-                            e.target.setStyle({ weight: 2.5, color: '#16C784', fillOpacity: 0.9 });
+                            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                            e.target.setStyle({ weight: 2.6, color: isDark ? '#F5F6F7' : '#17191C', fillOpacity: 0.98 });
                             e.target.bringToFront();
                         },
                         mouseout: function (e) {
@@ -1201,6 +1412,7 @@
             const perCapita = popTotal > 0 ? pibReais / popTotal : 0;
             const shareBR = pibTotalBrasilMil > 0 ? (pibMil / pibTotalBrasilMil) * 100 : 0;
 
+            document.getElementById('btnVoltarRegiao').classList.add('hidden');
             document.getElementById('labelRegiaoEstado').innerText = isBrasil ? 'Consolidado Nacional' : 'Região Selecionada';
             document.getElementById('tituloEstado').innerText = isBrasil ? 'Brasil (Consolidado)' : `Região ${regiaoSelecionada}`;
             document.getElementById('badgeUf').innerText = isBrasil ? 'BR' : `${filtrados.length} UFs`;
@@ -1238,7 +1450,6 @@
                 </div>
             `;
 
-            // Vocação setorial ponderada pelo PIB de cada estado da região
             let agro = 0, ind = 0, serv = 0, adm = 0;
             const pesoTotal = pibMil || 1;
             filtrados.forEach(d => {
@@ -1264,6 +1475,10 @@
         function exibirDetalhesEstado(sigla, nomeOpcional) {
             ufSelecionada = sigla;
             if (nomeOpcional) nomeUfSelecionada = nomeOpcional;
+
+            const btnVoltar = document.getElementById('btnVoltarRegiao');
+            btnVoltar.innerText = regiaoSelecionada === 'Todas' ? '← Ver Brasil' : `← Ver ${regiaoSelecionada}`;
+            btnVoltar.classList.remove('hidden');
 
             document.getElementById('badgeUf').innerText = sigla;
             document.getElementById('labelRegiaoEstado').innerText = `Estado Selecionado · ${REGIAO_UF[sigla] || 'Brasil'}`;
@@ -1410,5 +1625,5 @@
             await atualizarBaseCompleta();
         };
     </script>
-    </body>
+</body>
 </html>
