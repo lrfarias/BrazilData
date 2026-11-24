@@ -129,9 +129,12 @@
     </button>
   </div>
 
-  <!-- Tooltip do mapa -->
+  <!-- Tooltip do mapa (com bandeira do estado) -->
   <div id="mapTip" class="pointer-events-none fixed z-50 hidden px-3 py-2 rounded-lg text-xs shadow-lg border din-border din-card-bg">
-    <p id="tipNome" class="font-bold din-text-main"></p>
+    <div class="flex items-center gap-2">
+      <span id="tipBand" class="shrink-0"></span>
+      <p id="tipNome" class="font-bold din-text-main"></p>
+    </div>
     <p id="tipVal" class="din-green font-semibold mt-0.5"></p>
     <p id="tipHint" class="text-[10px] din-text-muted mt-0.5">Clique para ver o raio-x</p>
   </div>
@@ -207,7 +210,7 @@
           <svg id="mapaBr" viewBox="0 0 600 560" class="w-full max-h-[450px] hidden"></svg>
         </div>
 
-        <!-- Legenda Tonal Dinâmica (Verde médio-claro -> Verde esmeralda escuro para o destaque) -->
+        <!-- Legenda Tonal Dinâmica -->
         <div class="mt-3 pt-3 border-t din-border flex flex-wrap items-center justify-between gap-3 text-[11px] din-text-muted">
           <span id="legMin" class="font-medium">Menor</span>
           <div class="flex items-center gap-2 flex-1 max-w-[260px]">
@@ -231,7 +234,10 @@
                 ← Ver Região
               </button>
             </div>
-            <h3 id="stNome" class="text-xl font-extrabold din-text-main mt-0.5">—</h3>
+            <div class="flex items-center gap-2.5 mt-0.5">
+              <span id="stBand" class="shrink-0"></span>
+              <h3 id="stNome" class="text-xl font-extrabold din-text-main">—</h3>
+            </div>
           </div>
           <span id="stSigla" class="px-2.5 py-1 rounded-md din-secondary-bg border din-border text-sm font-extrabold din-green shrink-0">--</span>
         </div>
@@ -297,7 +303,7 @@
           </div>
         </div>
 
-        <!-- ABA 2: DESTAQUES DO RECORTE (COM TONALIDADE EXATA DO MAPA) -->
+        <!-- ABA 2: DESTAQUES DO RECORTE -->
         <div id="viewDestaques" class="hidden space-y-3 flex-1 flex flex-col">
           <div class="flex items-center justify-between gap-2 text-xs">
             <span id="subDestaques" class="din-text-muted">Destaques no recorte selecionado</span>
@@ -373,7 +379,7 @@
       </div>
 
       <div id="viewInfScatter" class="space-y-3">
-        <div class="relative w-full h-[320px] sm:h-[340px]"><canvas id="grafScatter"></canvas></div>
+        <div class="relative w-full h-[340px] sm:h-[380px]"><canvas id="grafScatter"></canvas></div>
         <p id="leituraScatter" class="text-xs din-secondary-bg border din-border rounded-lg p-3 din-text-muted leading-relaxed"></p>
       </div>
 
@@ -417,7 +423,6 @@
   </div>
 </footer>
 
-<!-- Utilitário de Layout e Gráficos (Tooltips + PNG + ABNT) antes do script da página -->
 <script src="/js/layout.js"></script>
 <script src="/js/chart-utils.js?v=1"></script>
 
@@ -437,18 +442,81 @@ const BD = {
 let TAXA = 0.33, anoAtual = null;
 let TODOS = [], D_ALL = [], D = [], col = 'arrec', dir = -1;
 let mediaHabBR = 0, mediaIdhBR = 0, pibTotalBR = 0, popTotalBR = 0;
-let ufSel = 'SP', ufComp = 'RJ', regiaoSel = 'Todas', modoSel = 'regiao'; // 'regiao' | 'estado'
+let ufSel = 'SP', ufComp = 'RJ', regiaoSel = 'Todas', modoSel = 'regiao';
 let abaRx = 'resumo', abaInf = 'scatter', geoPronto = false;
 let chartBar = null, chartPie = null, chartHist = null, chartScatter = null;
 
-// Escala tonal: verde médio-claro (#74E3B4) -> verde marca (#16C784) -> esmeralda escuro (#046C4E) para o destaque
+// Bandeiras oficiais (SVGs diretos da Wikimedia — mais leves e estáveis)
+const BANDEIRA_UF_URL = {
+  BR: 'https://upload.wikimedia.org/wikipedia/commons/0/05/Flag_of_Brazil.svg',
+  AC: 'https://upload.wikimedia.org/wikipedia/commons/4/4c/Bandeira_do_Acre.svg',
+  AL: 'https://upload.wikimedia.org/wikipedia/commons/8/88/Bandeira_de_Alagoas.svg',
+  AP: 'https://upload.wikimedia.org/wikipedia/commons/0/0c/Bandeira_do_Amap%C3%A1.svg',
+  AM: 'https://upload.wikimedia.org/wikipedia/commons/6/6b/Bandeira_do_Amazonas.svg',
+  BA: 'https://upload.wikimedia.org/wikipedia/commons/2/28/Bandeira_da_Bahia.svg',
+  CE: 'https://upload.wikimedia.org/wikipedia/commons/2/2e/Bandeira_do_Cear%C3%A1.svg',
+  DF: 'https://upload.wikimedia.org/wikipedia/commons/3/3c/Bandeira_do_Distrito_Federal_%28Brasil%29.svg',
+  ES: 'https://upload.wikimedia.org/wikipedia/commons/4/43/Bandeira_do_Esp%C3%ADrito_Santo.svg',
+  GO: 'https://upload.wikimedia.org/wikipedia/commons/b/be/Flag_of_Goi%C3%A1s.svg',
+  MA: 'https://upload.wikimedia.org/wikipedia/commons/4/45/Bandeira_do_Maranh%C3%A3o.svg',
+  MT: 'https://upload.wikimedia.org/wikipedia/commons/0/0b/Bandeira_de_Mato_Grosso.svg',
+  MS: 'https://upload.wikimedia.org/wikipedia/commons/6/64/Bandeira_de_Mato_Grosso_do_Sul.svg',
+  MG: 'https://upload.wikimedia.org/wikipedia/commons/f/f4/Bandeira_de_Minas_Gerais.svg',
+  PA: 'https://upload.wikimedia.org/wikipedia/commons/0/02/Bandeira_do_Par%C3%A1.svg',
+  PB: 'https://upload.wikimedia.org/wikipedia/commons/b/bb/Bandeira_da_Para%C3%ADba.svg',
+  PR: 'https://upload.wikimedia.org/wikipedia/commons/9/93/Bandeira_do_Paran%C3%A1.svg',
+  PE: 'https://upload.wikimedia.org/wikipedia/commons/5/59/Bandeira_de_Pernambuco.svg',
+  PI: 'https://upload.wikimedia.org/wikipedia/commons/3/33/Bandeira_do_Piau%C3%AD.svg',
+  RJ: 'https://upload.wikimedia.org/wikipedia/commons/7/73/Bandeira_do_estado_do_Rio_de_Janeiro.svg',
+  RN: 'https://upload.wikimedia.org/wikipedia/commons/3/30/Bandeira_do_Rio_Grande_do_Norte.svg',
+  RS: 'https://upload.wikimedia.org/wikipedia/commons/6/63/Bandeira_do_Rio_Grande_do_Sul.svg',
+  RO: 'https://upload.wikimedia.org/wikipedia/commons/f/fa/Bandeira_de_Rond%C3%B4nia.svg',
+  RR: 'https://upload.wikimedia.org/wikipedia/commons/9/98/Bandeira_de_Roraima.svg',
+  SC: 'https://upload.wikimedia.org/wikipedia/commons/1/1a/Bandeira_de_Santa_Catarina.svg',
+  SP: 'https://upload.wikimedia.org/wikipedia/commons/2/2b/Bandeira_do_estado_de_S%C3%A3o_Paulo.svg',
+  SE: 'https://upload.wikimedia.org/wikipedia/commons/b/be/Bandeira_de_Sergipe.svg',
+  TO: 'https://upload.wikimedia.org/wikipedia/commons/f/ff/Bandeira_do_Tocantins.svg'
+};
+
+function htmlBandeiraUF(uf, px = 20) {
+  const key = uf && BANDEIRA_UF_URL[uf] ? uf : 'BR';
+  const url = BANDEIRA_UF_URL[key] || '';
+  const siglaTxt = uf || 'BR';
+  const fallback = `<span style="width:${px}px;height:${px}px;font-size:${Math.max(7, Math.round(px * 0.42))}px" class="rounded-full bg-[#16C784] text-white font-extrabold inline-flex items-center justify-center shrink-0">${siglaTxt}</span>`;
+  if (!url) return fallback;
+  return `<img src="${url}" alt="Bandeira ${siglaTxt}" width="${px}" height="${px}" style="width:${px}px;height:${px}px" class="rounded-full object-cover border din-border shrink-0 bg-white" onerror="this.outerHTML='${fallback.replace(/'/g, "\\'")}'">`;
+}
+
+const cacheBandeiras = {};
+function obterImagemBandeira(uf) {
+  if (cacheBandeiras[uf]) return cacheBandeiras[uf];
+  const url = BANDEIRA_UF_URL[uf];
+  if (!url) return null;
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => { if (chartScatter) chartScatter.draw(); };
+  img.onerror = () => {
+    if (!img._retriedNoCors) {
+      img._retriedNoCors = true;
+      const img2 = new Image();
+      img2.onload = () => { cacheBandeiras[uf] = img2; if (chartScatter) chartScatter.draw(); };
+      img2.onerror = () => { img2._falhou = true; };
+      img2.src = url;
+      cacheBandeiras[uf] = img2;
+    } else {
+      img._falhou = true;
+    }
+  };
+  img.src = url;
+  cacheBandeiras[uf] = img;
+  return img;
+}
+
+// Escala tonal verde
 function interpolarCorVerde(t) {
   const clamped = Math.max(0, Math.min(1, t));
   const s = Math.pow(clamped, 0.72);
-  const c0 = [116, 227, 180]; // #74E3B4 (menor destaque - visível, sem lavar para o branco)
-  const c1 = [22, 199, 132];  // #16C784 (intermediário)
-  const c2 = [4, 108, 78];    // #046C4E (maior destaque - escuro marcante)
-
+  const c0 = [116, 227, 180], c1 = [22, 199, 132], c2 = [4, 108, 78];
   let r, g, b;
   if (s <= 0.5) {
     const k = s / 0.5;
@@ -830,6 +898,7 @@ function exibirDetalhesRegiao() {
 
   $('btnVoltarRegiao').classList.add('hidden');
   $('stRegiao').textContent = isBrasil ? 'Consolidado Nacional' : 'Região Selecionada';
+  $('stBand').innerHTML = htmlBandeiraUF('BR', 24);
   $('stNome').textContent = isBrasil ? 'Brasil (Consolidado)' : `Região ${regiaoSel}`;
   $('stSigla').textContent = isBrasil ? '27 UFs' : `${D.length} UFs`;
 
@@ -887,6 +956,7 @@ function exibirDetalhesEstado(sigla) {
   btnV.classList.remove('hidden');
 
   $('stRegiao').textContent = `${d.regiao} · #${d.rkHab}º em tributo/hab`;
+  $('stBand').innerHTML = htmlBandeiraUF(d.sigla, 24);
   $('stNome').textContent = d.nome;
   $('stSigla').textContent = d.sigla;
 
@@ -1084,6 +1154,7 @@ async function iniciarMapa() {
     .on('mouseenter', function() {
       const uf = this.getAttribute('data-uf');
       const d = D_ALL.find(x => x.sigla === uf);
+      $('tipBand').innerHTML = htmlBandeiraUF(uf, 18);
       $('tipNome').textContent = d ? `${d.nome} (${uf})` : uf;
       $('tipVal').textContent = d ? fmtMetrica(d, $('mapMetrica').value) : 'Sem dados';
       $('tipHint').textContent = abaRx === 'comparar' ? 'Clique para comparar como Estado B' : 'Clique para ver o raio-x';
@@ -1159,101 +1230,105 @@ function tabela() {
 }
 function ord(k) { if (col === k) dir *= -1; else { col = k; dir = -1; } tabela(); }
 
-const BANDEIRA_UF_URL = {
-  AC: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Bandeira_do_Acre.svg/64px-Bandeira_do_Acre.svg.png',
-  AL: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Bandeira_de_Alagoas.svg/64px-Bandeira_de_Alagoas.svg.png',
-  AP: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Bandeira_do_Amap%C3%A1.svg/64px-Bandeira_do_Amap%C3%A1.svg.png',
-  AM: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Bandeira_do_Amazonas.svg/64px-Bandeira_do_Amazonas.svg.png',
-  BA: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Bandeira_da_Bahia.svg/64px-Bandeira_da_Bahia.svg.png',
-  CE: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Bandeira_do_Cear%C3%A1.svg/64px-Bandeira_do_Cear%C3%A1.svg.png',
-  DF: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Bandeira_do_Distrito_Federal_%28Brasil%29.svg/64px-Bandeira_do_Distrito_Federal_%28Brasil%29.svg.png',
-  ES: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Bandeira_do_Esp%C3%ADrito_Santo.svg/64px-Bandeira_do_Esp%C3%ADrito_Santo.svg.png',
-  GO: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Flag_of_Goi%C3%A1s.svg/64px-Flag_of_Goi%C3%A1s.svg.png',
-  MA: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Bandeira_do_Maranh%C3%A3o.svg/64px-Bandeira_do_Maranh%C3%A3o.svg.png',
-  MT: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Bandeira_de_Mato_Grosso.svg/64px-Bandeira_de_Mato_Grosso.svg.png',
-  MS: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Bandeira_de_Mato_Grosso_do_Sul.svg/64px-Bandeira_de_Mato_Grosso_do_Sul.svg.png',
-  MG: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Bandeira_de_Minas_Gerais.svg/64px-Bandeira_de_Minas_Gerais.svg.png',
-  PA: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Bandeira_do_Par%C3%A1.svg/64px-Bandeira_do_Par%C3%A1.svg.png',
-  PB: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Bandeira_da_Para%C3%ADba.svg/64px-Bandeira_da_Para%C3%ADba.svg.png',
-  PR: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Bandeira_do_Paran%C3%A1.svg/64px-Bandeira_do_Paran%C3%A1.svg.png',
-  PE: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Bandeira_de_Pernambuco.svg/64px-Bandeira_de_Pernambuco.svg.png',
-  PI: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Bandeira_do_Piau%C3%AD.svg/64px-Bandeira_do_Piau%C3%AD.svg.png',
-  RJ: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Bandeira_do_estado_do_Rio_de_Janeiro.svg/64px-Bandeira_do_estado_do_Rio_de_Janeiro.svg.png',
-  RN: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Bandeira_do_Rio_Grande_do_Norte.svg/64px-Bandeira_do_Rio_Grande_do_Norte.svg.png',
-  RS: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Bandeira_do_Rio_Grande_do_Sul.svg/64px-Bandeira_do_Rio_Grande_do_Sul.svg.png',
-  RO: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Bandeira_de_Rond%C3%B4nia.svg/64px-Bandeira_de_Rond%C3%B4nia.svg.png',
-  RR: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Bandeira_de_Roraima.svg/64px-Bandeira_do_Roraima.svg.png',
-  SC: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Bandeira_de_Santa_Catarina.svg/64px-Bandeira_de_Santa_Catarina.svg.png',
-  SP: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Bandeira_do_estado_de_S%C3%A3o_Paulo.svg/64px-Bandeira_do_estado_de_S%C3%A3o_Paulo.svg.png',
-  SE: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Bandeira_de_Sergipe.svg/64px-Bandeira_de_Sergipe.svg.png',
-  TO: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Bandeira_do_Tocantins.svg/64px-Bandeira_do_Tocantins.svg.png'
-};
-
-const cacheBandeiras = {};
-function obterImagemBandeira(uf) {
-  if (cacheBandeiras[uf]) return cacheBandeiras[uf];
-  const url = BANDEIRA_UF_URL[uf];
-  if (!url) return null;
-  const img = new Image();
-  img.crossOrigin = 'anonymous';
-  img.onload = () => { if (chartScatter) chartScatter.draw(); };
-  img.onerror = () => { img._falhou = true; };
-  img.src = url;
-  cacheBandeiras[uf] = img;
-  return img;
-}
-
+// Plugin de bandeiras circulares com afastamento automático para evitar sobreposição
 const bandeirasScatterPlugin = {
   id: 'bandeirasScatter',
   afterDatasetsDraw(chart) {
-    const { ctx } = chart;
+    const { ctx, chartArea } = chart;
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
 
+    // 1. Coleta todos os pontos visíveis
+    const nodes = [];
     chart.data.datasets.forEach((ds, dsIdx) => {
       const meta = chart.getDatasetMeta(dsIdx);
       if (meta.hidden) return;
-      const ehSelecionado = dsIdx === 1;
-
+      const ehSel = dsIdx === 1;
       meta.data.forEach((el, idx) => {
         const pt = ds.data[idx];
         if (!pt || !pt.uf) return;
-        const { x, y } = el.tooltipPosition();
-        const r = ehSelecionado ? 14 : 11;
-        const img = obterImagemBandeira(pt.uf);
+        const pos = el.tooltipPosition();
+        nodes.push({
+          ox: pos.x, oy: pos.y,
+          x: pos.x, y: pos.y,
+          r: ehSel ? 12.5 : 9.5,
+          uf: pt.uf,
+          ehSel
+        });
+      });
+    });
 
+    // 2. Separação suave (evita bolinhas umas em cima das outras)
+    for (let iter = 0; iter < 18; iter++) {
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const a = nodes[i], b = nodes[j];
+          let dx = b.x - a.x, dy = b.y - a.y;
+          let dist = Math.hypot(dx, dy);
+          const minDist = a.r + b.r + 2;
+          if (dist < minDist) {
+            if (dist < 0.1) { dx = 1; dy = 0.5; dist = Math.hypot(dx, dy); }
+            const push = (minDist - dist) * 0.52;
+            const ux = dx / dist, uy = dy / dist;
+            a.x -= ux * push; a.y -= uy * push;
+            b.x += ux * push; b.y += uy * push;
+          }
+        }
+      }
+      // Mantém dentro da área do gráfico
+      nodes.forEach(n => {
+        n.x = Math.max(chartArea.left + n.r + 1, Math.min(chartArea.right - n.r - 1, n.x));
+        n.y = Math.max(chartArea.top + n.r + 1, Math.min(chartArea.bottom - n.r - 1, n.y));
+      });
+    }
+
+    // 3. Desenha primeiro os normais, depois o selecionado por cima
+    nodes.sort((a, b) => (a.ehSel ? 1 : 0) - (b.ehSel ? 1 : 0));
+
+    nodes.forEach(n => {
+      const img = obterImagemBandeira(n.uf);
+      ctx.save();
+
+      // Linha guia discreta caso a bolinha tenha se deslocado para não sobrepor outra
+      if (Math.hypot(n.x - n.ox, n.y - n.oy) > 4) {
+        ctx.beginPath();
+        ctx.moveTo(n.ox, n.oy);
+        ctx.lineTo(n.x, n.y);
+        ctx.strokeStyle = isDark ? 'rgba(146,153,163,0.4)' : 'rgba(115,119,128,0.35)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+      ctx.fillStyle = isDark ? '#191C20' : '#FFFFFF';
+      ctx.fill();
+
+      if (img && img.complete && !img._falhou && img.naturalWidth > 0) {
         ctx.save();
         ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fillStyle = isDark ? '#191C20' : '#FFFFFF';
-        ctx.fill();
-
-        if (img && img.complete && !img._falhou && img.naturalWidth > 0) {
-          ctx.save();
-          ctx.beginPath();
-          ctx.arc(x, y, r - 0.8, 0, Math.PI * 2);
-          ctx.clip();
-          const aspect = img.naturalWidth / img.naturalHeight;
-          const drawH = r * 2;
-          const drawW = drawH * Math.max(1, aspect * 0.85);
-          ctx.drawImage(img, x - drawW / 2, y - drawH / 2, drawW, drawH);
-          ctx.restore();
-        } else {
-          ctx.fillStyle = ehSelecionado ? '#2563EB' : '#16C784';
-          ctx.fill();
-          ctx.fillStyle = '#FFFFFF';
-          ctx.font = 'bold 8px sans-serif';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(pt.uf, x, y);
-        }
-
-        ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.lineWidth = ehSelecionado ? 2.6 : 1.4;
-        ctx.strokeStyle = ehSelecionado ? '#2563EB' : (isDark ? '#2B3036' : '#CBD5E1');
-        ctx.stroke();
+        ctx.arc(n.x, n.y, n.r - 0.8, 0, Math.PI * 2);
+        ctx.clip();
+        const aspect = img.naturalWidth / img.naturalHeight;
+        const drawH = n.r * 2;
+        const drawW = drawH * Math.max(1, aspect * 0.85);
+        ctx.drawImage(img, n.x - drawW / 2, n.y - drawH / 2, drawW, drawH);
         ctx.restore();
-      });
+      } else {
+        ctx.fillStyle = n.ehSel ? '#2563EB' : '#16C784';
+        ctx.fill();
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 7.5px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(n.uf, n.x, n.y);
+      }
+
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+      ctx.lineWidth = n.ehSel ? 2.5 : 1.3;
+      ctx.strokeStyle = n.ehSel ? '#2563EB' : (isDark ? '#2B3036' : '#CBD5E1');
+      ctx.stroke();
+      ctx.restore();
     });
   }
 };
@@ -1292,8 +1367,8 @@ function graficoScatter() {
       data: outros,
       backgroundColor: 'rgba(22,199,132,0.01)',
       borderColor: 'transparent',
-      pointRadius: 11,
-      pointHoverRadius: 13
+      pointRadius: 10,
+      pointHoverRadius: 12
     }
   ];
   if (selObj) {
@@ -1302,8 +1377,8 @@ function graficoScatter() {
       data: selecionado,
       backgroundColor: 'rgba(37,99,235,0.01)',
       borderColor: 'transparent',
-      pointRadius: 14,
-      pointHoverRadius: 16
+      pointRadius: 13,
+      pointHoverRadius: 15
     });
   }
 
