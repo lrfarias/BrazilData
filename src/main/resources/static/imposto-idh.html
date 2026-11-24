@@ -365,7 +365,7 @@
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 id="titGrafInf" class="text-base font-semibold din-text-main">Capacidade tributária × Desenvolvimento Humano (IDH)</h2>
-          <p id="subGrafInf" class="text-xs din-text-muted">Cada ponto é um estado. Linhas tracejadas marcam as médias do Brasil; clique em um ponto para inspecionar.</p>
+          <p id="subGrafInf" class="text-xs din-text-muted">Clique na legenda para filtrar por região ou na bolinha para selecionar/desselecionar o estado. Tracejados marcam as médias do Brasil.</p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
           <div class="inline-flex din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
@@ -445,8 +445,18 @@ let mediaHabBR = 0, mediaIdhBR = 0, pibTotalBR = 0, popTotalBR = 0;
 let ufSel = 'SP', ufComp = 'RJ', regiaoSel = 'Todas', modoSel = 'regiao';
 let abaRx = 'resumo', abaInf = 'scatter', geoPronto = false;
 let chartBar = null, chartPie = null, chartHist = null, chartScatter = null;
+let scatterMouse = null;
 
-// Bandeiras oficiais (SVGs diretos da Wikimedia — mais leves e estáveis)
+// Cores de legenda por região
+const COR_REGIAO = {
+  'Norte': '#0EA5E9',
+  'Nordeste': '#F59E0B',
+  'Centro-Oeste': '#8B5CF6',
+  'Sudeste': '#16C784',
+  'Sul': '#EC4899'
+};
+
+// Bandeiras oficiais (SVGs diretos da Wikimedia)
 const BANDEIRA_UF_URL = {
   BR: 'https://upload.wikimedia.org/wikipedia/commons/0/05/Flag_of_Brazil.svg',
   AC: 'https://upload.wikimedia.org/wikipedia/commons/4/4c/Bandeira_do_Acre.svg',
@@ -484,7 +494,8 @@ function htmlBandeiraUF(uf, px = 20) {
   const siglaTxt = uf || 'BR';
   const fallback = `<span style="width:${px}px;height:${px}px;font-size:${Math.max(7, Math.round(px * 0.42))}px" class="rounded-full bg-[#16C784] text-white font-extrabold inline-flex items-center justify-center shrink-0">${siglaTxt}</span>`;
   if (!url) return fallback;
-  return `<img src="${url}" alt="Bandeira ${siglaTxt}" width="${px}" height="${px}" style="width:${px}px;height:${px}px" class="rounded-full object-cover border din-border shrink-0 bg-white" onerror="this.outerHTML='${fallback.replace(/'/g, "\\'")}'">`;
+  const imgZoom = key === 'DF' ? 'transform:scale(2.15);' : '';
+  return `<span style="width:${px}px;height:${px}px" class="rounded-full overflow-hidden border din-border inline-flex items-center justify-center shrink-0 bg-white"><img src="${url}" alt="Bandeira ${siglaTxt}" style="width:100%;height:100%;object-fit:cover;${imgZoom}" onerror="this.parentElement.outerHTML='${fallback.replace(/'/g, "\\'")}'"></span>`;
 }
 
 const cacheBandeiras = {};
@@ -850,7 +861,7 @@ function setAbaInf(a) {
 
   if (a === 'scatter') {
     $('titGrafInf').textContent = 'Capacidade tributária × Desenvolvimento Humano (IDH)';
-    $('subGrafInf').textContent = 'Cada ponto é um estado. Linhas tracejadas marcam as médias do Brasil; clique em um ponto para inspecionar.';
+    $('subGrafInf').textContent = 'Clique na legenda para filtrar por região ou na bolinha para selecionar/desselecionar o estado. Tracejados marcam as médias do Brasil.';
     graficoScatter();
   } else {
     $('titGrafInf').textContent = 'Peso na economia e na população';
@@ -1167,6 +1178,8 @@ async function iniciarMapa() {
       if (!uf) return;
       if (abaRx === 'comparar' && uf !== ufSel) {
         ufComp = uf; $('selCompB').value = ufComp; renderComparar(); pintarMapa();
+      } else if (modoSel === 'estado' && ufSel === uf) {
+        voltarParaRegiao();
       } else {
         selecionarEstado(uf);
       }
@@ -1230,22 +1243,60 @@ function tabela() {
 }
 function ord(k) { if (col === k) dir *= -1; else { col = k; dir = -1; } tabela(); }
 
-// Plugin de bandeiras circulares com afastamento automático para evitar sobreposição
+// Plugin de tracejado acompanhando o mouse (crosshair)
+const crosshairPlugin = {
+  id: 'crosshairMouse',
+  afterEvent(chart, args) {
+    const { event } = args;
+    const { chartArea } = chart;
+    if (event.type === 'mouseout') {
+      scatterMouse = null;
+      args.changed = true;
+      return;
+    }
+    if (
+      event.x >= chartArea.left && event.x <= chartArea.right &&
+      event.y >= chartArea.top && event.y <= chartArea.bottom
+    ) {
+      scatterMouse = { x: event.x, y: event.y };
+      args.changed = true;
+    } else if (scatterMouse) {
+      scatterMouse = null;
+      args.changed = true;
+    }
+  },
+  afterDatasetsDraw(chart) {
+    if (!scatterMouse) return;
+    const { ctx, chartArea: { left, right, top, bottom } } = chart;
+    ctx.save();
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = 'rgba(22, 199, 132, 0.75)';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(scatterMouse.x, top);
+    ctx.lineTo(scatterMouse.x, bottom);
+    ctx.moveTo(left, scatterMouse.y);
+    ctx.lineTo(right, scatterMouse.y);
+    ctx.stroke();
+    ctx.restore();
+  }
+};
+
+// Plugin de bandeiras circulares com zoom no DF e afastamento suave
 const bandeirasScatterPlugin = {
   id: 'bandeirasScatter',
   afterDatasetsDraw(chart) {
     const { ctx, chartArea } = chart;
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
 
-    // 1. Coleta todos os pontos visíveis
     const nodes = [];
     chart.data.datasets.forEach((ds, dsIdx) => {
       const meta = chart.getDatasetMeta(dsIdx);
       if (meta.hidden) return;
-      const ehSel = dsIdx === 1;
       meta.data.forEach((el, idx) => {
         const pt = ds.data[idx];
         if (!pt || !pt.uf) return;
+        const ehSel = modoSel === 'estado' && pt.uf === ufSel;
         const pos = el.tooltipPosition();
         nodes.push({
           ox: pos.x, oy: pos.y,
@@ -1257,7 +1308,6 @@ const bandeirasScatterPlugin = {
       });
     });
 
-    // 2. Separação suave (evita bolinhas umas em cima das outras)
     for (let iter = 0; iter < 18; iter++) {
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
@@ -1274,21 +1324,18 @@ const bandeirasScatterPlugin = {
           }
         }
       }
-      // Mantém dentro da área do gráfico
       nodes.forEach(n => {
         n.x = Math.max(chartArea.left + n.r + 1, Math.min(chartArea.right - n.r - 1, n.x));
         n.y = Math.max(chartArea.top + n.r + 1, Math.min(chartArea.bottom - n.r - 1, n.y));
       });
     }
 
-    // 3. Desenha primeiro os normais, depois o selecionado por cima
     nodes.sort((a, b) => (a.ehSel ? 1 : 0) - (b.ehSel ? 1 : 0));
 
     nodes.forEach(n => {
       const img = obterImagemBandeira(n.uf);
       ctx.save();
 
-      // Linha guia discreta caso a bolinha tenha se deslocado para não sobrepor outra
       if (Math.hypot(n.x - n.ox, n.y - n.oy) > 4) {
         ctx.beginPath();
         ctx.moveTo(n.ox, n.oy);
@@ -1309,7 +1356,9 @@ const bandeirasScatterPlugin = {
         ctx.arc(n.x, n.y, n.r - 0.8, 0, Math.PI * 2);
         ctx.clip();
         const aspect = img.naturalWidth / img.naturalHeight;
-        const drawH = n.r * 2;
+        // Zoom especial no DF para a parte verde preencher toda a bolinha
+        const zoom = n.uf === 'DF' ? 2.15 : 1;
+        const drawH = n.r * 2 * zoom;
         const drawW = drawH * Math.max(1, aspect * 0.85);
         ctx.drawImage(img, n.x - drawW / 2, n.y - drawH / 2, drawW, drawH);
         ctx.restore();
@@ -1325,7 +1374,7 @@ const bandeirasScatterPlugin = {
 
       ctx.beginPath();
       ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-      ctx.lineWidth = n.ehSel ? 2.5 : 1.3;
+      ctx.lineWidth = n.ehSel ? 2.6 : 1.3;
       ctx.strokeStyle = n.ehSel ? '#2563EB' : (isDark ? '#2B3036' : '#CBD5E1');
       ctx.stroke();
       ctx.restore();
@@ -1356,47 +1405,61 @@ const refLinesPlugin = {
 function graficoScatter() {
   if (!D.length) return;
   const c = BD.cor();
-  const destacarUf = modoSel === 'estado';
-  const outros = D.filter(d => !destacarUf || d.sigla !== ufSel).map(d => ({ x: Math.round(d.hab), y: d.idh, uf: d.sigla, nome: d.nome }));
-  const selObj = destacarUf ? D.find(d => d.sigla === ufSel) : null;
-  const selecionado = selObj ? [{ x: Math.round(selObj.hab), y: selObj.idh, uf: selObj.sigla, nome: selObj.nome }] : [];
+  const selObj = modoSel === 'estado' ? D.find(d => d.sigla === ufSel) : null;
+  const regioesAtivas = ['Norte', 'Nordeste', 'Centro-Oeste', 'Sudeste', 'Sul'];
 
-  const datasets = [
-    {
-      label: regiaoSel === 'Todas' ? 'Estados do Brasil' : `Estados da região ${regiaoSel}`,
-      data: outros,
-      backgroundColor: 'rgba(22,199,132,0.01)',
-      borderColor: 'transparent',
-      pointRadius: 10,
-      pointHoverRadius: 12
+  const datasets = [];
+  regioesAtivas.forEach(reg => {
+    const pts = D
+      .filter(d => d.regiao === reg)
+      .map(d => ({ x: Math.round(d.hab), y: d.idh, uf: d.sigla, nome: d.nome, regiao: d.regiao }));
+    if (pts.length) {
+      datasets.push({
+        label: reg,
+        data: pts,
+        backgroundColor: 'rgba(0,0,0,0.01)',
+        borderColor: COR_REGIAO[reg] || '#16C784',
+        borderWidth: 0,
+        pointRadius: 10,
+        pointHoverRadius: 12
+      });
     }
-  ];
-  if (selObj) {
-    datasets.push({
-      label: `${selObj.nome} (${selObj.sigla})`,
-      data: selecionado,
-      backgroundColor: 'rgba(37,99,235,0.01)',
-      borderColor: 'transparent',
-      pointRadius: 13,
-      pointHoverRadius: 15
-    });
-  }
+  });
 
   if (chartScatter) chartScatter.destroy();
   chartScatter = new Chart($('grafScatter'), {
     type: 'scatter',
-    plugins: [refLinesPlugin, bandeirasScatterPlugin],
+    plugins: [refLinesPlugin, crosshairPlugin, bandeirasScatterPlugin],
     data: { datasets },
     options: {
       responsive: true,
       maintainAspectRatio: false,
       onClick: (_, els) => {
-        if (!els.length) return;
+        if (!els.length) {
+          if (modoSel === 'estado') voltarParaRegiao();
+          return;
+        }
         const pt = chartScatter.data.datasets[els[0].datasetIndex].data[els[0].index];
-        if (pt && pt.uf) selecionarEstado(pt.uf);
+        if (!pt || !pt.uf) return;
+        if (modoSel === 'estado' && ufSel === pt.uf) voltarParaRegiao();
+        else selecionarEstado(pt.uf);
       },
       plugins: {
-        legend: { labels: { color: c.tx, boxWidth: 10, font: { size: 11 } } },
+        legend: {
+          labels: {
+            color: c.tx,
+            boxWidth: 10,
+            font: { size: 11 },
+            generateLabels: chart => chart.data.datasets.map((ds, i) => ({
+              text: ds.label,
+              fillStyle: COR_REGIAO[ds.label] || '#16C784',
+              strokeStyle: COR_REGIAO[ds.label] || '#16C784',
+              fontColor: c.tx,
+              hidden: !chart.isDatasetVisible(i),
+              datasetIndex: i
+            }))
+          }
+        },
         tooltip: {
           callbacks: {
             label: ctx => {
