@@ -124,11 +124,14 @@
     </div>
   </div>
 
-  <!-- Tooltip do Mapa -->
+  <!-- Tooltip do Mapa (com bandeira) -->
   <div id="mapTip" class="pointer-events-none fixed z-50 hidden px-3 py-2 rounded-lg text-xs shadow-lg border din-border din-card-bg">
-    <p id="tipNome" class="font-bold din-text-main"></p>
-    <p id="tipVal" class="din-green font-semibold mt-0.5"></p>
-    <p id="tipSub" class="text-[10px] din-text-muted mt-0.5">Clique para ver os detalhes do estado</p>
+    <div class="flex items-center gap-2">
+      <span id="tipBand" class="shrink-0"></span>
+      <p id="tipNome" class="font-bold din-text-main"></p>
+    </div>
+    <p id="tipVal" class="din-green font-semibold mt-0.5 tabular-nums"></p>
+    <p id="tipSub" class="text-[10px] din-text-muted mt-0.5">Clique para inspecionar</p>
   </div>
 
   <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-5 space-y-6">
@@ -147,7 +150,7 @@
     </section>
 
     <!-- 2. KPIs NACIONAIS DA CULTURA -->
-    <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 ocultar-em-presentation">
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 ocultar-em-presentation tabular-nums">
       <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
         <span class="text-xs din-text-muted uppercase font-semibold">Produção Nacional</span>
         <p id="kProdTotal" class="text-xl font-bold din-green mt-1">—</p>
@@ -170,7 +173,7 @@
       </div>
     </section>
 
-    <!-- 3. MAPA ESTADUAL + RAIO-X DO ESTADO NA CULTURA -->
+    <!-- 3. MAPA ESTADUAL + RAIO-X DO BRASIL / ESTADO NA CULTURA -->
     <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
       <!-- Mapa -->
@@ -178,7 +181,7 @@
         <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
           <div>
             <h1 id="titMapaAgro" class="text-lg font-bold din-text-main">Mapa da Produção — Soja em grão</h1>
-            <p class="text-xs din-text-muted">Tonalidade mais escura indica maior destaque estadual na cultura selecionada.</p>
+            <p class="text-xs din-text-muted">1º clique seleciona o estado; 2º clique (ou Esc) volta para o consolidado Brasil.</p>
           </div>
           <select id="selMetricaAgro" class="inp !w-auto text-xs font-semibold" onchange="atualizarVisualizacaoAgro()">
             <option value="prod" selected>Produção (toneladas)</option>
@@ -193,7 +196,7 @@
           <svg id="mapaAgro" viewBox="0 0 600 560" class="w-full max-h-[450px] hidden"></svg>
         </div>
 
-        <div class="mt-3 pt-3 border-t din-border flex flex-wrap items-center justify-between gap-3 text-[11px] din-text-muted">
+        <div class="mt-3 pt-3 border-t din-border flex flex-wrap items-center justify-between gap-3 text-[11px] din-text-muted tabular-nums">
           <span id="legMinAgro" class="font-medium">Menor</span>
           <div class="flex items-center gap-2 flex-1 max-w-[260px]">
             <span class="text-[10px] shrink-0">Menor</span>
@@ -205,18 +208,27 @@
         </div>
       </div>
 
-      <!-- Raio-X do Estado + Gráfico dos Top Estados -->
+      <!-- Raio-X + Gráfico dos Top Estados -->
       <div class="lg:col-span-5 flex flex-col gap-6">
         <div class="din-card-bg border din-border rounded-xl p-5 shadow-sm space-y-4">
           <div class="flex items-start justify-between gap-2 pb-3 border-b din-border">
             <div>
-              <span class="text-[10px] font-bold uppercase tracking-wider din-green">Estado Inspecionado</span>
-              <h2 id="rxUfNome" class="text-xl font-extrabold din-text-main mt-0.5">Mato Grosso (MT)</h2>
+              <div class="flex flex-wrap items-center gap-2">
+                <span id="rxScopeLbl" class="text-[10px] font-bold uppercase tracking-wider din-green">Consolidado Nacional</span>
+                <button id="btnVoltarBrasilAgro" type="button" onclick="limparSelecaoAgro()"
+                  class="hidden text-[10px] font-semibold px-2 py-0.5 rounded din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
+                  ← Ver Brasil
+                </button>
+              </div>
+              <div class="flex items-center gap-2.5 mt-1">
+                <span id="rxUfBand" class="shrink-0"></span>
+                <h2 id="rxUfNome" class="text-xl font-extrabold din-text-main">Brasil (Consolidado)</h2>
+              </div>
             </div>
-            <span id="rxUfBadge" class="px-2.5 py-1 rounded-md din-secondary-bg border din-border text-xs font-extrabold din-green">MT</span>
+            <span id="rxUfBadge" class="px-2.5 py-1 rounded-md din-secondary-bg border din-border text-xs font-extrabold din-green shrink-0">BR</span>
           </div>
 
-          <div class="grid grid-cols-2 gap-2.5 text-xs">
+          <div class="grid grid-cols-2 gap-2.5 text-xs tabular-nums">
             <div class="din-secondary-bg border din-border rounded-lg p-3">
               <span class="text-[11px] din-text-muted block">Produção</span>
               <strong id="rxProd" class="text-sm font-extrabold din-green mt-0.5 block">—</strong>
@@ -235,7 +247,7 @@
             <div class="din-secondary-bg border din-border rounded-lg p-3">
               <span class="text-[11px] din-text-muted block">Rendimento</span>
               <strong id="rxRend" class="text-sm font-extrabold din-green mt-0.5 block">—</strong>
-              <span class="text-[10px] din-text-muted">kg por hectare</span>
+              <span id="rxRendSub" class="text-[10px] din-text-muted">kg por hectare</span>
             </div>
           </div>
         </div>
@@ -244,7 +256,7 @@
           <div class="flex items-center justify-between gap-2">
             <div>
               <h3 class="text-sm font-bold din-text-main">Top 8 Estados Produtores</h3>
-              <p class="text-[11px] din-text-muted">Clique em um estado no ranking ou mapa para inspecionar</p>
+              <p class="text-[11px] din-text-muted">Clique em uma barra para selecionar ou desselecionar</p>
             </div>
             <button type="button" onclick="baixarGrafAgroPNG()" class="px-2.5 py-1 rounded-md text-[11px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ PNG</button>
           </div>
@@ -262,12 +274,16 @@
           <h2 class="text-base font-bold din-text-main">Ranking Estadual por Cultura</h2>
           <p class="text-xs din-text-muted">Valores oficiais da Pesquisa Agrícola Municipal (IBGE · Tabela SIDRA 5457).</p>
         </div>
-        <button type="button" onclick="exportarCSV()" class="px-3 py-1.5 rounded-lg text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ Exportar CSV</button>
+        <div class="flex flex-wrap items-center gap-2">
+          <input id="buscaUfAgro" type="text" oninput="atualizarVisualizacaoAgro()" placeholder="Buscar estado ou sigla..."
+            class="din-secondary-bg border din-border rounded-lg px-3 py-1.5 text-xs din-text-main placeholder-gray-400 focus:outline-none">
+          <button type="button" onclick="exportarCSV()" class="px-3 py-1.5 rounded-lg text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ Exportar CSV</button>
+        </div>
       </div>
 
       <div class="overflow-x-auto max-h-[380px] overflow-y-auto">
-        <table class="w-full text-left text-xs border-collapse">
-          <thead class="sticky top-0 din-card-bg">
+        <table class="w-full text-left text-xs border-collapse tabular-nums">
+          <thead class="sticky top-0 din-card-bg z-10">
             <tr class="din-text-muted border-b din-border uppercase">
               <th class="py-2.5 px-2">#</th>
               <th class="py-2.5 px-2">Estado</th>
@@ -315,6 +331,7 @@
 
 <script src="/js/layout.js"></script>
 <script src="/js/chart-utils.js?v=1"></script>
+<script src="/js/uf-utils.js?v=1"></script>
 <script>
 const $ = id => document.getElementById(id);
 const fmtNum = (v, d = 0) => Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
@@ -342,25 +359,26 @@ const CULTURAS = [
   { id: '40106', nome: 'Feijão em grão' }
 ];
 
-const IBGE_UF = {
-  '11':'RO','12':'AC','13':'AM','14':'RR','15':'PA','16':'AP','17':'TO',
-  '21':'MA','22':'PI','23':'CE','24':'RN','25':'PB','26':'PE','27':'AL','28':'SE','29':'BA',
-  '31':'MG','32':'ES','33':'RJ','35':'SP','41':'PR','42':'SC','43':'RS',
-  '50':'MS','51':'MT','52':'GO','53':'DF'
-};
-
 let culturaSel = CULTURAS[0];
 let anoSafra = '';
-let dadosUf = []; // [{ sigla, nome, area, prod, valor, rend, shareProd, shareValor }]
-let ufInspecionada = 'MT';
+let dadosUf = [];
+let totaisBrasil = { prod: 0, valor: 0, area: 0, rend: 0 };
+let ufInspecionada = null; // null = Consolidado Brasil; 'MT' = Estado selecionado
 let geoPronto = false;
 let chartAgro = null;
 
-// Cabeçalho e Tema
+// Cabeçalho, Tema e Atalhos
 function toggleDropdownMenu() { $('dropdownMenu').classList.toggle('hidden'); }
 window.addEventListener('click', e => {
   const btn = $('menuDropdownBtn'), menu = $('dropdownMenu');
   if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) menu.classList.add('hidden');
+});
+
+window.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if (document.body.classList.contains('modo-apresentacao')) alternarModoApresentacao();
+    else if (ufInspecionada) limparSelecaoAgro();
+  }
 });
 
 function alternarDarkLight() {
@@ -389,25 +407,6 @@ function alternarModoApresentacao() {
     : `<svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect><line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line><line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line></svg><span>Modo Tela Cheia</span>`;
 }
 
-// Escala tonal: verde médio-claro (#74E3B4) -> verde marca (#16C784) -> esmeralda escuro (#046C4E)
-function interpolarVerde(t) {
-  const s = Math.pow(Math.max(0, Math.min(1, t)), 0.72);
-  const c0 = [116, 227, 180], c1 = [22, 199, 132], c2 = [4, 108, 78];
-  let r, g, b;
-  if (s <= 0.5) {
-    const k = s / 0.5;
-    r = Math.round(c0[0] + (c1[0] - c0[0]) * k);
-    g = Math.round(c0[1] + (c1[1] - c0[1]) * k);
-    b = Math.round(c0[2] + (c1[2] - c0[2]) * k);
-  } else {
-    const k = (s - 0.5) / 0.5;
-    r = Math.round(c1[0] + (c2[0] - c1[0]) * k);
-    g = Math.round(c1[1] + (c2[1] - c1[1]) * k);
-    b = Math.round(c1[2] + (c2[2] - c1[2]) * k);
-  }
-  return `rgb(${r}, ${g}, ${b})`;
-}
-
 function fmtMetricaAgro(d, k) {
   if (!d) return '—';
   if (k === 'prod') return fmtTon(d.prod);
@@ -415,6 +414,17 @@ function fmtMetricaAgro(d, k) {
   if (k === 'area') return fmtNum(d.area, 0) + ' ha';
   if (k === 'rend') return fmtNum(d.rend, 0) + ' kg/ha';
   return '—';
+}
+
+function alternarSelecaoUf(uf) {
+  if (!uf) return;
+  ufInspecionada = (ufInspecionada === uf) ? null : uf;
+  atualizarVisualizacaoAgro();
+}
+
+function limparSelecaoAgro() {
+  ufInspecionada = null;
+  atualizarVisualizacaoAgro();
 }
 
 function renderBotoesCultura() {
@@ -450,7 +460,7 @@ async function carregarDadosCultura() {
     const porUf = {};
     linhas.forEach(row => {
       const codUf = String(row.D1C || '').slice(0, 2);
-      const sigla = IBGE_UF[codUf];
+      const sigla = BDUF.IBGE_UF[codUf];
       if (!sigla) return;
       const nome = String(row.D1N || sigla).replace(/\s*\([A-Z]{2}\)\s*$/, '').trim();
       const varCod = String(row.D2C || '');
@@ -460,21 +470,29 @@ async function carregarDadosCultura() {
       if (!porUf[sigla]) porUf[sigla] = { sigla, nome, area: 0, prod: 0, valor: 0 };
       if (varCod === '216') porUf[sigla].area = valNum;
       else if (varCod === '214') porUf[sigla].prod = valNum;
-      else if (varCod === '215') porUf[sigla].valor = valNum * 1000; // mil R$ -> R$
+      else if (varCod === '215') porUf[sigla].valor = valNum * 1000;
     });
 
     const lista = Object.values(porUf).filter(d => d.prod > 0 || d.valor > 0);
-    const totProd = lista.reduce((a, d) => a + d.prod, 0) || 1;
-    const totValor = lista.reduce((a, d) => a + d.valor, 0) || 1;
+    const totProd = lista.reduce((a, d) => a + d.prod, 0);
+    const totValor = lista.reduce((a, d) => a + d.valor, 0);
     const totArea = lista.reduce((a, d) => a + d.area, 0);
 
+    totaisBrasil = {
+      prod: totProd,
+      valor: totValor,
+      area: totArea,
+      rend: totArea > 0 ? (totProd * 1000) / totArea : 0
+    };
+
     lista.forEach(d => {
-      d.shareProd = (d.prod / totProd) * 100;
-      d.shareValor = (d.valor / totValor) * 100;
+      d.shareProd = totProd > 0 ? (d.prod / totProd) * 100 : 0;
+      d.shareValor = totValor > 0 ? (d.valor / totValor) * 100 : 0;
       d.rend = d.area > 0 ? (d.prod * 1000) / d.area : 0;
     });
 
     dadosUf = lista.sort((a, b) => b.prod - a.prod);
+    dadosUf.forEach((d, idx) => d.rankProd = idx + 1);
 
     // KPIs
     $('kProdTotal').textContent = fmtTon(totProd);
@@ -485,7 +503,7 @@ async function carregarDadosCultura() {
       const lider = dadosUf[0];
       $('kLiderAgro').textContent = `${lider.sigla} · ${fmtTon(lider.prod)}`;
       $('kLiderShare').textContent = `${lider.nome} (${fmtNum(lider.shareProd, 1)}% do Brasil)`;
-      if (!dadosUf.some(x => x.sigla === ufInspecionada)) ufInspecionada = lider.sigla;
+      if (ufInspecionada && !dadosUf.some(x => x.sigla === ufInspecionada)) ufInspecionada = null;
     }
 
     $('statusAgro').innerHTML = `<span class="w-2 h-2 rounded-full bg-[#16C784]"></span><span>IBGE PAM (${anoSafra}) · ${culturaSel.nome}</span>`;
@@ -513,9 +531,29 @@ function atualizarVisualizacaoAgro() {
 }
 
 function pintarRaioXAgro() {
-  const d = dadosUf.find(x => x.sigla === ufInspecionada) || dadosUf[0];
-  if (!d) return;
-  $('rxUfNome').textContent = `${d.nome} (${d.sigla})`;
+  const d = ufInspecionada ? dadosUf.find(x => x.sigla === ufInspecionada) : null;
+
+  if (!d) {
+    $('btnVoltarBrasilAgro').classList.add('hidden');
+    $('rxScopeLbl').textContent = 'Consolidado Nacional';
+    $('rxUfBand').innerHTML = BDUF.htmlBandeira('BR', 24);
+    $('rxUfNome').textContent = 'Brasil (Consolidado)';
+    $('rxUfBadge').textContent = `${dadosUf.length} UFs`;
+    $('rxProd').textContent = fmtTon(totaisBrasil.prod);
+    $('rxShareProd').textContent = `100% da safra nacional (${culturaSel.nome})`;
+    $('rxValor').textContent = fmtMoeda(totaisBrasil.valor);
+    $('rxShareValor').textContent = 'Valor total na lavoura';
+    $('rxArea').textContent = fmtNum(totaisBrasil.area, 0) + ' ha';
+    $('rxRend').textContent = fmtNum(totaisBrasil.rend, 0) + ' kg/ha';
+    $('rxRendSub').textContent = 'média nacional ponderada';
+    return;
+  }
+
+  const regiao = BDUF.REGIAO_UF[d.sigla] || 'Brasil';
+  $('btnVoltarBrasilAgro').classList.remove('hidden');
+  $('rxScopeLbl').textContent = `${regiao} · #${d.rankProd}º produtor nacional`;
+  $('rxUfBand').innerHTML = BDUF.htmlBandeira(d.sigla, 24);
+  $('rxUfNome').textContent = d.nome;
   $('rxUfBadge').textContent = d.sigla;
   $('rxProd').textContent = fmtTon(d.prod);
   $('rxShareProd').textContent = `${fmtNum(d.shareProd, 1)}% da produção nacional`;
@@ -523,6 +561,8 @@ function pintarRaioXAgro() {
   $('rxShareValor').textContent = `${fmtNum(d.shareValor, 1)}% do valor nacional`;
   $('rxArea').textContent = fmtNum(d.area, 0) + ' ha';
   $('rxRend').textContent = fmtNum(d.rend, 0) + ' kg/ha';
+  const diffRend = totaisBrasil.rend > 0 ? ((d.rend - totaisBrasil.rend) / totaisBrasil.rend) * 100 : 0;
+  $('rxRendSub').innerHTML = `<span class="${diffRend >= 0 ? 'din-green' : 'din-red'} font-semibold">${diffRend >= 0 ? '+' : ''}${fmtNum(diffRend, 1)}% vs média BR</span>`;
 }
 
 function desenharTopAgro(k, ordenados) {
@@ -537,7 +577,11 @@ function desenharTopAgro(k, ordenados) {
       datasets: [{
         label: culturaSel.nome,
         data: top8.map(x => Number(x[k].toFixed(2))),
-        backgroundColor: top8.map((_, idx) => interpolarVerde(1 - idx / Math.max(1, top8.length - 1))),
+        backgroundColor: top8.map((x, idx) =>
+          x.sigla === ufInspecionada
+            ? '#2563EB'
+            : BDUF.interpolarVerde(1 - idx / Math.max(1, top8.length - 1))
+        ),
         borderRadius: 5
       }]
     },
@@ -545,11 +589,9 @@ function desenharTopAgro(k, ordenados) {
       indexAxis: 'y',
       responsive: true,
       maintainAspectRatio: false,
+      onHover: (ev, els) => { ev.native.target.style.cursor = els.length ? 'pointer' : 'default'; },
       onClick: (_, els) => {
-        if (els.length && top8[els[0].index]) {
-          ufInspecionada = top8[els[0].index].sigla;
-          atualizarVisualizacaoAgro();
-        }
+        if (els.length && top8[els[0].index]) alternarSelecaoUf(top8[els[0].index].sigla);
       },
       plugins: {
         legend: { display: false },
@@ -568,12 +610,28 @@ function desenharTopAgro(k, ordenados) {
 }
 
 function renderizarTabelaAgro(ordenados) {
-  $('tbodyAgro').innerHTML = ordenados.map((d, idx) => {
+  const termo = ($('buscaUfAgro')?.value || '').trim().toLowerCase();
+  const filtrados = termo
+    ? ordenados.filter(d => d.nome.toLowerCase().includes(termo) || d.sigla.toLowerCase().includes(termo))
+    : ordenados;
+
+  if (!filtrados.length) {
+    $('tbodyAgro').innerHTML = `<tr><td colspan="7" class="py-4 text-center din-text-muted">Nenhum estado encontrado para "${termo}".</td></tr>`;
+    return;
+  }
+
+  $('tbodyAgro').innerHTML = filtrados.map((d, idx) => {
     const sel = d.sigla === ufInspecionada;
-    return `<tr onclick="ufInspecionada='${d.sigla}'; atualizarVisualizacaoAgro();"
+    return `<tr onclick="alternarSelecaoUf('${d.sigla}')"
       class="cursor-pointer transition hover:opacity-85 ${sel ? 'din-secondary-bg' : ''}">
-      <td class="py-2.5 px-2 font-bold din-green">${idx + 1}º</td>
-      <td class="py-2.5 px-2 font-semibold din-text-main">${d.nome} <span class="din-text-muted">(${d.sigla})</span></td>
+      <td class="py-2.5 px-2 font-bold din-green font-mono">${idx + 1}º</td>
+      <td class="py-2.5 px-2">
+        <div class="flex items-center gap-2">
+          ${BDUF.htmlBandeira(d.sigla, 18)}
+          <span class="font-semibold din-text-main">${d.nome}</span>
+          <span class="text-[10px] font-mono px-1.5 py-0.5 rounded din-secondary-bg border din-border din-text-muted">${d.sigla}</span>
+        </div>
+      </td>
       <td class="py-2.5 px-2 font-bold din-green">${fmtTon(d.prod)}</td>
       <td class="py-2.5 px-2 din-text-main">${fmtNum(d.shareProd, 1)}%</td>
       <td class="py-2.5 px-2 din-text-main">${fmtMoeda(d.valor)}</td>
@@ -584,14 +642,7 @@ function renderizarTabelaAgro(ordenados) {
 }
 
 async function iniciarMapaAgro() {
-  const urls = [
-    'https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson',
-    'https://servicodados.ibge.gov.br/api/v3/malhas/paises/BR?formato=application/vnd.geo+json&qualidade=minima&intrarregiao=UF'
-  ];
-  let geo = null;
-  for (const u of urls) {
-    try { const r = await fetch(u); if (r.ok) { geo = await r.json(); break; } } catch {}
-  }
+  const geo = await BDUF.obterGeoJsonBrasil();
   if (!geo) { $('mapLoading').textContent = 'Não foi possível carregar a malha do Brasil.'; return; }
 
   const svg = d3.select('#mapaAgro');
@@ -599,27 +650,43 @@ async function iniciarMapaAgro() {
   const path = d3.geoPath().projection(proj);
   const tip = $('mapTip');
 
+  // Clique no fundo vazio do SVG desseleciona o estado
+  svg.on('click', ev => {
+    if (ev.target === svg.node() && ufInspecionada) limparSelecaoAgro();
+  });
+
   svg.selectAll('path')
     .data(geo.features)
     .join('path')
+    .attr('class', 'cursor-pointer transition-opacity')
     .attr('d', path)
-    .attr('data-uf', f => f.properties.sigla || IBGE_UF[String(f.properties.codarea)] || '')
+    .attr('data-uf', f => f.properties.sigla || '')
     .on('mouseenter', function() {
       const uf = this.getAttribute('data-uf');
       const d = dadosUf.find(x => x.sigla === uf);
       const k = $('selMetricaAgro').value;
-      $('tipNome').textContent = d ? `${d.nome} (${uf})` : uf;
+      const nome = d ? d.nome : (BDUF.NOMES_UF[uf] || uf);
+      $('tipBand').innerHTML = BDUF.htmlBandeira(uf, 18);
+      $('tipNome').textContent = `${nome} (${uf})`;
       $('tipVal').textContent = d ? fmtMetricaAgro(d, k) : 'Sem produção registrada';
-      $('tipSub').textContent = d ? `${fmtNum(d.shareProd, 1)}% da produção nacional` : 'Clique para inspecionar';
+      $('tipSub').textContent = d
+        ? (uf === ufInspecionada ? 'Clique novamente para voltar ao Brasil' : `${fmtNum(d.shareProd, 1)}% da produção nacional · Clique para inspecionar`)
+        : 'Sem registro na PAM';
       tip.classList.remove('hidden');
+      d3.select(this).raise();
     })
     .on('mousemove', ev => { tip.style.left = (ev.clientX + 14) + 'px'; tip.style.top = (ev.clientY + 14) + 'px'; })
-    .on('mouseleave', () => tip.classList.add('hidden'))
-    .on('click', function() {
+    .on('mouseleave', () => {
+      tip.classList.add('hidden');
+      // Mantém o estado selecionado por cima das bordas vizinhas
+      if (ufInspecionada) {
+        svg.selectAll('path').filter(function() { return this.getAttribute('data-uf') === ufInspecionada; }).raise();
+      }
+    })
+    .on('click', function(ev) {
+      ev.stopPropagation();
       const uf = this.getAttribute('data-uf');
-      if (!uf) return;
-      ufInspecionada = uf;
-      atualizarVisualizacaoAgro();
+      alternarSelecaoUf(uf);
     });
 
   $('mapLoading').classList.add('hidden');
@@ -635,11 +702,12 @@ function pintarMapaAgro(k, minVal, maxVal) {
   const borda = dark ? '#101214' : '#FFFFFF';
   const bordaSel = dark ? '#F5F6F7' : '#17191C';
 
-  d3.select('#mapaAgro').selectAll('path')
+  const paths = d3.select('#mapaAgro').selectAll('path');
+  paths
     .attr('fill', function() {
       const d = dadosUf.find(x => x.sigla === this.getAttribute('data-uf'));
       if (!d || maxVal <= minVal) return d ? '#046C4E' : semDado;
-      return interpolarVerde((d[k] - minVal) / (maxVal - minVal));
+      return BDUF.interpolarVerde((d[k] - minVal) / (maxVal - minVal));
     })
     .attr('fill-opacity', function() {
       const d = dadosUf.find(x => x.sigla === this.getAttribute('data-uf'));
@@ -651,6 +719,10 @@ function pintarMapaAgro(k, minVal, maxVal) {
     .attr('stroke-width', function() {
       return this.getAttribute('data-uf') === ufInspecionada ? 2.6 : 1.0;
     });
+
+  if (ufInspecionada) {
+    paths.filter(function() { return this.getAttribute('data-uf') === ufInspecionada; }).raise();
+  }
 }
 
 // Exportações
