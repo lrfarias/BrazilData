@@ -492,10 +492,11 @@ function htmlBandeiraUF(uf, px = 20) {
   const key = uf && BANDEIRA_UF_URL[uf] ? uf : 'BR';
   const url = BANDEIRA_UF_URL[key] || '';
   const siglaTxt = uf || 'BR';
-  const fallback = `<span style="width:${px}px;height:${px}px;font-size:${Math.max(7, Math.round(px * 0.42))}px" class="rounded-full bg-[#16C784] text-white font-extrabold inline-flex items-center justify-center shrink-0">${siglaTxt}</span>`;
-  if (!url) return fallback;
-  const imgZoom = key === 'DF' ? 'transform:scale(2.15);' : '';
-  return `<span style="width:${px}px;height:${px}px" class="rounded-full overflow-hidden border din-border inline-flex items-center justify-center shrink-0 bg-white"><img src="${url}" alt="Bandeira ${siglaTxt}" style="width:100%;height:100%;object-fit:cover;${imgZoom}" onerror="this.parentElement.outerHTML='${fallback.replace(/'/g, "\\'")}'"></span>`;
+  if (!url) {
+    return `<span style="width:${px}px;height:${px}px;font-size:${Math.max(7, Math.round(px * 0.42))}px" class="rounded-full bg-[#16C784] text-white font-extrabold inline-flex items-center justify-center shrink-0">${siglaTxt}</span>`;
+  }
+  const imgZoom = key === 'DF' ? 'transform:scale(2.8);' : '';
+  return `<span style="width:${px}px;height:${px}px" class="rounded-full overflow-hidden border din-border inline-flex items-center justify-center shrink-0 bg-white shadow-xs"><img src="${url}" alt="Bandeira ${siglaTxt}" style="width:100%;height:100%;object-fit:cover;${imgZoom}" onerror="this.style.display='none'"></span>`;
 }
 
 const cacheBandeiras = {};
@@ -1053,9 +1054,10 @@ function renderDestaques() {
       <div onclick="selecionarEstado('${d.sigla}')"
         class="p-2.5 rounded-lg border cursor-pointer transition flex items-center justify-between gap-3 ${isSel ? 'border-[#16C784] din-card-bg shadow-sm' : 'din-secondary-bg din-border hover:border-[#16C784]'}">
         <div class="flex items-center gap-2.5 min-w-0">
-          <span class="w-3.5 h-3.5 rounded-sm shrink-0 border border-black/15" style="background:${cor}"></span>
+          <span class="w-3 h-3 rounded-sm shrink-0 border border-black/15" style="background:${cor}"></span>
+          ${htmlBandeiraUF(d.sigla, 18)}
           <div class="min-w-0">
-            <p class="text-xs font-bold din-text-main truncate">${idx + 1}º ${d.nome} <span class="din-text-muted font-normal">(${d.sigla})</span></p>
+            <p class="text-xs font-bold din-text-main truncate">${idx + 1}º ${d.nome} <span class="text-[10px] font-mono din-text-muted font-normal">${d.sigla}</span></p>
             <p class="text-[10px] din-text-muted truncate">IDH ${BD.num(d.idh, 3)} · Arrec.: ${BD.compact(d.arrec)}</p>
           </div>
         </div>
@@ -1232,8 +1234,14 @@ function tabela() {
   $('thead').innerHTML = '<th class="py-2 px-2">#</th>' + cols.map(([k, t]) => `<th class="s py-2 px-2" onclick="ord('${k}')">${t} ↕</th>`).join('');
   const L = [...D].sort((a, b) => col === 'nome' ? dir * -1 * a.nome.localeCompare(b.nome) : dir * (a[col] - b[col]));
   $('tbody').innerHTML = L.map((d, i) => `<tr onclick="selecionarEstado('${d.sigla}')" class="cursor-pointer hover:opacity-85 ${modoSel === 'estado' && d.sigla === ufSel ? 'din-secondary-bg' : ''}">
-    <td class="py-2 px-2 din-text-muted">${i + 1}</td>
-    <td class="py-2 px-2 font-semibold din-text-main">${d.nome} <span class="din-text-muted">(${d.sigla})</span></td>
+    <td class="py-2 px-2 din-text-muted font-mono">${i + 1}</td>
+    <td class="py-2 px-2">
+      <div class="flex items-center gap-2">
+        ${htmlBandeiraUF(d.sigla, 18)}
+        <span class="font-semibold din-text-main">${d.nome}</span>
+        <span class="text-[10px] font-mono px-1.5 py-0.5 rounded din-secondary-bg border din-border din-text-muted">${d.sigla}</span>
+      </div>
+    </td>
     <td class="py-2 px-2 din-text-main">${BD.compact(d.pib * 1000)}</td>
     <td class="py-2 px-2 din-text-main">${BD.num(d.sp, 1)}%</td>
     <td class="py-2 px-2 din-text-main">${BD.num(d.sh, 1)}%</td>
@@ -1301,7 +1309,7 @@ const bandeirasScatterPlugin = {
         nodes.push({
           ox: pos.x, oy: pos.y,
           x: pos.x, y: pos.y,
-          r: ehSel ? 12.5 : 9.5,
+          r: ehSel ? 14.5 : 11.5,
           uf: pt.uf,
           ehSel
         });
@@ -1357,7 +1365,7 @@ const bandeirasScatterPlugin = {
         ctx.clip();
         const aspect = img.naturalWidth / img.naturalHeight;
         // Zoom especial no DF para a parte verde preencher toda a bolinha
-        const zoom = n.uf === 'DF' ? 2.15 : 1;
+        const zoom = n.uf === 'DF' ? 2.8 : 1;
         const drawH = n.r * 2 * zoom;
         const drawW = drawH * Math.max(1, aspect * 0.85);
         ctx.drawImage(img, n.x - drawW / 2, n.y - drawH / 2, drawW, drawH);
@@ -1366,7 +1374,7 @@ const bandeirasScatterPlugin = {
         ctx.fillStyle = n.ehSel ? '#2563EB' : '#16C784';
         ctx.fill();
         ctx.fillStyle = '#FFFFFF';
-        ctx.font = 'bold 7.5px sans-serif';
+        ctx.font = 'bold 8px sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(n.uf, n.x, n.y);
@@ -1420,8 +1428,8 @@ function graficoScatter() {
         backgroundColor: 'rgba(0,0,0,0.01)',
         borderColor: COR_REGIAO[reg] || '#16C784',
         borderWidth: 0,
-        pointRadius: 10,
-        pointHoverRadius: 12
+        pointRadius: 11.5,
+        pointHoverRadius: 14
       });
     }
   });
@@ -1434,6 +1442,9 @@ function graficoScatter() {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      onHover: (ev, els) => {
+        ev.native.target.style.cursor = els.length ? 'pointer' : 'crosshair';
+      },
       onClick: (_, els) => {
         if (!els.length) {
           if (modoSel === 'estado') voltarParaRegiao();
