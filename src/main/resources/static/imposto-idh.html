@@ -797,7 +797,6 @@ function selecionarEstado(sigla) {
   ufSel = sigla;
   modoSel = 'estado';
 
-  // Se clicou em um estado fora da região filtrada, abre o Brasil todo
   if (regiaoSel !== 'Todas' && d.regiao !== regiaoSel) {
     regiaoSel = 'Todas';
     renderBotoesRegiao();
@@ -858,7 +857,6 @@ function exibirDetalhesRegiao() {
   $('stIdh').textContent = BD.num(idhReg, 3);
   $('stIdhFaixa').textContent = faixaIDH(idhReg);
 
-  // Vocação ponderada pelo PIB de cada estado do recorte
   let agro = 0, ind = 0, serv = 0, adm = 0;
   const pesoTotal = pibReg || 1;
   D.forEach(d => {
@@ -1161,6 +1159,105 @@ function tabela() {
 }
 function ord(k) { if (col === k) dir *= -1; else { col = k; dir = -1; } tabela(); }
 
+const BANDEIRA_UF_URL = {
+  AC: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Bandeira_do_Acre.svg/64px-Bandeira_do_Acre.svg.png',
+  AL: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Bandeira_de_Alagoas.svg/64px-Bandeira_de_Alagoas.svg.png',
+  AP: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Bandeira_do_Amap%C3%A1.svg/64px-Bandeira_do_Amap%C3%A1.svg.png',
+  AM: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Bandeira_do_Amazonas.svg/64px-Bandeira_do_Amazonas.svg.png',
+  BA: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Bandeira_da_Bahia.svg/64px-Bandeira_da_Bahia.svg.png',
+  CE: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Bandeira_do_Cear%C3%A1.svg/64px-Bandeira_do_Cear%C3%A1.svg.png',
+  DF: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Bandeira_do_Distrito_Federal_%28Brasil%29.svg/64px-Bandeira_do_Distrito_Federal_%28Brasil%29.svg.png',
+  ES: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Bandeira_do_Esp%C3%ADrito_Santo.svg/64px-Bandeira_do_Esp%C3%ADrito_Santo.svg.png',
+  GO: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Flag_of_Goi%C3%A1s.svg/64px-Flag_of_Goi%C3%A1s.svg.png',
+  MA: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Bandeira_do_Maranh%C3%A3o.svg/64px-Bandeira_do_Maranh%C3%A3o.svg.png',
+  MT: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Bandeira_de_Mato_Grosso.svg/64px-Bandeira_de_Mato_Grosso.svg.png',
+  MS: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Bandeira_de_Mato_Grosso_do_Sul.svg/64px-Bandeira_de_Mato_Grosso_do_Sul.svg.png',
+  MG: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Bandeira_de_Minas_Gerais.svg/64px-Bandeira_de_Minas_Gerais.svg.png',
+  PA: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Bandeira_do_Par%C3%A1.svg/64px-Bandeira_do_Par%C3%A1.svg.png',
+  PB: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Bandeira_da_Para%C3%ADba.svg/64px-Bandeira_da_Para%C3%ADba.svg.png',
+  PR: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Bandeira_do_Paran%C3%A1.svg/64px-Bandeira_do_Paran%C3%A1.svg.png',
+  PE: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Bandeira_de_Pernambuco.svg/64px-Bandeira_de_Pernambuco.svg.png',
+  PI: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Bandeira_do_Piau%C3%AD.svg/64px-Bandeira_do_Piau%C3%AD.svg.png',
+  RJ: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Bandeira_do_estado_do_Rio_de_Janeiro.svg/64px-Bandeira_do_estado_do_Rio_de_Janeiro.svg.png',
+  RN: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Bandeira_do_Rio_Grande_do_Norte.svg/64px-Bandeira_do_Rio_Grande_do_Norte.svg.png',
+  RS: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Bandeira_do_Rio_Grande_do_Sul.svg/64px-Bandeira_do_Rio_Grande_do_Sul.svg.png',
+  RO: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Bandeira_de_Rond%C3%B4nia.svg/64px-Bandeira_de_Rond%C3%B4nia.svg.png',
+  RR: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Bandeira_de_Roraima.svg/64px-Bandeira_do_Roraima.svg.png',
+  SC: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Bandeira_de_Santa_Catarina.svg/64px-Bandeira_de_Santa_Catarina.svg.png',
+  SP: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Bandeira_do_estado_de_S%C3%A3o_Paulo.svg/64px-Bandeira_do_estado_de_S%C3%A3o_Paulo.svg.png',
+  SE: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Bandeira_de_Sergipe.svg/64px-Bandeira_de_Sergipe.svg.png',
+  TO: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Bandeira_do_Tocantins.svg/64px-Bandeira_do_Tocantins.svg.png'
+};
+
+const cacheBandeiras = {};
+function obterImagemBandeira(uf) {
+  if (cacheBandeiras[uf]) return cacheBandeiras[uf];
+  const url = BANDEIRA_UF_URL[uf];
+  if (!url) return null;
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => { if (chartScatter) chartScatter.draw(); };
+  img.onerror = () => { img._falhou = true; };
+  img.src = url;
+  cacheBandeiras[uf] = img;
+  return img;
+}
+
+const bandeirasScatterPlugin = {
+  id: 'bandeirasScatter',
+  afterDatasetsDraw(chart) {
+    const { ctx } = chart;
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+    chart.data.datasets.forEach((ds, dsIdx) => {
+      const meta = chart.getDatasetMeta(dsIdx);
+      if (meta.hidden) return;
+      const ehSelecionado = dsIdx === 1;
+
+      meta.data.forEach((el, idx) => {
+        const pt = ds.data[idx];
+        if (!pt || !pt.uf) return;
+        const { x, y } = el.tooltipPosition();
+        const r = ehSelecionado ? 14 : 11;
+        const img = obterImagemBandeira(pt.uf);
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fillStyle = isDark ? '#191C20' : '#FFFFFF';
+        ctx.fill();
+
+        if (img && img.complete && !img._falhou && img.naturalWidth > 0) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(x, y, r - 0.8, 0, Math.PI * 2);
+          ctx.clip();
+          const aspect = img.naturalWidth / img.naturalHeight;
+          const drawH = r * 2;
+          const drawW = drawH * Math.max(1, aspect * 0.85);
+          ctx.drawImage(img, x - drawW / 2, y - drawH / 2, drawW, drawH);
+          ctx.restore();
+        } else {
+          ctx.fillStyle = ehSelecionado ? '#2563EB' : '#16C784';
+          ctx.fill();
+          ctx.fillStyle = '#FFFFFF';
+          ctx.font = 'bold 8px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(pt.uf, x, y);
+        }
+
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.lineWidth = ehSelecionado ? 2.6 : 1.4;
+        ctx.strokeStyle = ehSelecionado ? '#2563EB' : (isDark ? '#2B3036' : '#CBD5E1');
+        ctx.stroke();
+        ctx.restore();
+      });
+    });
+  }
+};
+
 const refLinesPlugin = {
   id: 'refLines',
   afterDatasetsDraw(chart) {
@@ -1193,28 +1290,27 @@ function graficoScatter() {
     {
       label: regiaoSel === 'Todas' ? 'Estados do Brasil' : `Estados da região ${regiaoSel}`,
       data: outros,
-      backgroundColor: 'rgba(22,199,132,0.8)',
-      borderColor: '#046C4E',
-      pointRadius: 6,
-      pointHoverRadius: 8
+      backgroundColor: 'rgba(22,199,132,0.01)',
+      borderColor: 'transparent',
+      pointRadius: 11,
+      pointHoverRadius: 13
     }
   ];
   if (selObj) {
     datasets.push({
       label: `${selObj.nome} (${selObj.sigla})`,
       data: selecionado,
-      backgroundColor: '#2563EB',
-      borderColor: '#FFFFFF',
-      borderWidth: 2,
-      pointRadius: 9,
-      pointHoverRadius: 11
+      backgroundColor: 'rgba(37,99,235,0.01)',
+      borderColor: 'transparent',
+      pointRadius: 14,
+      pointHoverRadius: 16
     });
   }
 
   if (chartScatter) chartScatter.destroy();
   chartScatter = new Chart($('grafScatter'), {
     type: 'scatter',
-    plugins: [refLinesPlugin],
+    plugins: [refLinesPlugin, bandeirasScatterPlugin],
     data: { datasets },
     options: {
       responsive: true,
