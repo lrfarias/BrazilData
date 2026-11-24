@@ -135,7 +135,7 @@
       <span id="tipBand" class="shrink-0"></span>
       <p id="tipNome" class="font-bold din-text-main"></p>
     </div>
-    <p id="tipVal" class="din-green font-semibold mt-0.5"></p>
+    <p id="tipVal" class="din-green font-semibold mt-0.5 tabular-nums"></p>
     <p id="tipHint" class="text-[10px] din-text-muted mt-0.5">Clique para ver o raio-x</p>
   </div>
 
@@ -148,7 +148,7 @@
       </div>
 
       <div class="lg:w-[360px] space-y-1.5 lg:border-l lg:pl-5 din-border">
-        <div class="flex items-center justify-between text-xs">
+        <div class="flex items-center justify-between text-xs tabular-nums">
           <span class="font-semibold din-text-main">Carga tributária simulada</span>
           <strong id="lblTaxa" class="din-green">33,0% do PIB</strong>
         </div>
@@ -164,7 +164,7 @@
     </section>
 
     <!-- KPIs Consolidados -->
-    <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 ocultar-em-presentation">
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 ocultar-em-presentation tabular-nums">
       <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
         <span id="k1Lbl" class="text-xs din-text-muted uppercase font-semibold">Arrecadação estimada</span>
         <p id="k1" class="text-xl font-bold din-red mt-1">—</p>
@@ -193,7 +193,7 @@
         <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
           <div>
             <h2 class="text-base font-semibold din-text-main">Mapa interativo do Brasil</h2>
-            <p id="mapSub" class="text-xs din-text-muted">Filtre por região para ver os destaques ou clique em um estado para inspecionar.</p>
+            <p id="mapSub" class="text-xs din-text-muted">1º clique seleciona o estado; 2º clique (ou Esc) volta ao consolidado.</p>
           </div>
           <select id="mapMetrica" class="inp !w-auto text-xs font-semibold" onchange="alterarMetricaMapa()">
             <option value="hab">Tributo por habitante</option>
@@ -211,7 +211,7 @@
         </div>
 
         <!-- Legenda Tonal Dinâmica -->
-        <div class="mt-3 pt-3 border-t din-border flex flex-wrap items-center justify-between gap-3 text-[11px] din-text-muted">
+        <div class="mt-3 pt-3 border-t din-border flex flex-wrap items-center justify-between gap-3 text-[11px] din-text-muted tabular-nums">
           <span id="legMin" class="font-medium">Menor</span>
           <div class="flex items-center gap-2 flex-1 max-w-[260px]">
             <span class="text-[10px] shrink-0">Menor</span>
@@ -252,7 +252,7 @@
 
         <!-- ABA 1: RESUMO + PIZZA VOCAÇÃO -->
         <div id="viewResumo" class="space-y-4 flex-1 flex flex-col justify-between">
-          <div class="grid grid-cols-2 gap-2.5">
+          <div class="grid grid-cols-2 gap-2.5 tabular-nums">
             <div class="din-secondary-bg rounded-lg p-3">
               <span id="lblStArrec" class="text-[11px] din-text-muted">Arrecadação est.</span>
               <p id="stArrec" class="text-base font-bold din-red mt-0.5">—</p>
@@ -275,7 +275,7 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-3 gap-2 pt-2 border-t din-border text-center text-xs">
+          <div class="grid grid-cols-3 gap-2 pt-2 border-t din-border text-center text-xs tabular-nums">
             <div>
               <span class="block text-[10px] din-text-muted">PIB per capita</span>
               <strong id="stPibPc" class="din-text-main">—</strong>
@@ -298,7 +298,7 @@
             </div>
             <div class="grid grid-cols-12 items-center gap-3">
               <div class="col-span-5 h-[125px]"><canvas id="grafVocacao"></canvas></div>
-              <div id="legVocacao" class="col-span-7 space-y-1.5 text-xs"></div>
+              <div id="legVocacao" class="col-span-7 space-y-1.5 text-xs tabular-nums"></div>
             </div>
           </div>
         </div>
@@ -309,7 +309,7 @@
             <span id="subDestaques" class="din-text-muted">Destaques no recorte selecionado</span>
             <span class="text-[10px] din-text-muted shrink-0">Clique no estado</span>
           </div>
-          <div id="listaDestaques" class="space-y-2 max-h-[345px] overflow-y-auto pr-1 flex-1"></div>
+          <div id="listaDestaques" class="space-y-2 max-h-[345px] overflow-y-auto pr-1 flex-1 tabular-nums"></div>
         </div>
 
         <!-- ABA 3: EVOLUÇÃO -->
@@ -317,7 +317,7 @@
           <div class="flex items-center justify-between gap-2 text-xs">
             <span id="lblEvolTit" class="din-text-muted">Evolução do PIB e arrecadação</span>
             <div class="flex items-center gap-2">
-              <strong id="histCresc" class="din-green">—</strong>
+              <strong id="histCresc" class="din-green tabular-nums">—</strong>
               <button type="button" onclick="baixarHistUfPNG()" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ PNG</button>
             </div>
           </div>
@@ -335,26 +335,30 @@
               <select id="selCompB" class="inp mt-1 text-xs" onchange="ufComp=this.value; renderComparar(); pintarMapa()"></select>
             </label>
           </div>
-          <div id="compBody" class="divide-y din-border text-xs flex-1"></div>
+          <div id="compBody" class="divide-y din-border text-xs flex-1 tabular-nums"></div>
         </div>
       </div>
     </section>
 
-    <!-- Ranking + Exportar CSV -->
+    <!-- Ranking + Busca + Exportar CSV -->
     <section id="secaoRanking" class="din-card-bg border din-border rounded-lg p-5 shadow-sm">
       <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
         <div>
           <h2 id="titTabela" class="text-base font-semibold din-text-main">Ranking dos 27 estados</h2>
           <span class="text-xs din-text-muted">Clique em qualquer coluna para ordenar ou na linha para inspecionar</span>
         </div>
-        <button type="button" onclick="exportarCSV()"
-          class="px-3 py-1.5 rounded-lg text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
-          ↓ Exportar CSV
-        </button>
+        <div class="flex flex-wrap items-center gap-2">
+          <input id="buscaUfImposto" type="text" oninput="tabela()" placeholder="Buscar estado ou sigla..."
+            class="din-secondary-bg border din-border rounded-lg px-3 py-1.5 text-xs din-text-main placeholder-gray-400 focus:outline-none">
+          <button type="button" onclick="exportarCSV()"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
+            ↓ Exportar CSV
+          </button>
+        </div>
       </div>
       <div class="overflow-x-auto max-h-[440px] overflow-y-auto">
-        <table class="w-full text-left text-xs border-collapse">
-          <thead class="sticky top-0 din-card-bg"><tr id="thead" class="din-text-muted border-b din-border"></tr></thead>
+        <table class="w-full text-left text-xs border-collapse tabular-nums">
+          <thead class="sticky top-0 din-card-bg z-10"><tr id="thead" class="din-text-muted border-b din-border"></tr></thead>
           <tbody id="tbody" class="divide-y din-border"><tr><td class="py-4 din-text-muted">Carregando dados…</td></tr></tbody>
         </table>
       </div>
@@ -425,6 +429,7 @@
 
 <script src="/js/layout.js"></script>
 <script src="/js/chart-utils.js?v=1"></script>
+<script src="/js/uf-utils.js?v=1"></script>
 
 <script>
 const $ = i => document.getElementById(i);
@@ -439,7 +444,7 @@ const BD = {
   indicadores: async () => { const r = await fetch('/api/indicadores'); if (!r.ok) throw new Error('API ' + r.status); return r.json(); }
 };
 
-let TAXA = 0.33, anoAtual = null;
+let TAXA = 0.33, anoAtual = null, anosDisponiveis = [];
 let TODOS = [], D_ALL = [], D = [], col = 'arrec', dir = -1;
 let mediaHabBR = 0, mediaIdhBR = 0, pibTotalBR = 0, popTotalBR = 0;
 let ufSel = 'SP', ufComp = 'RJ', regiaoSel = 'Todas', modoSel = 'regiao';
@@ -456,92 +461,35 @@ const COR_REGIAO = {
   'Sul': '#EC4899'
 };
 
-// Bandeiras oficiais (SVGs diretos da Wikimedia)
-const BANDEIRA_UF_URL = {
-  BR: 'https://upload.wikimedia.org/wikipedia/commons/0/05/Flag_of_Brazil.svg',
-  AC: 'https://upload.wikimedia.org/wikipedia/commons/4/4c/Bandeira_do_Acre.svg',
-  AL: 'https://upload.wikimedia.org/wikipedia/commons/8/88/Bandeira_de_Alagoas.svg',
-  AP: 'https://upload.wikimedia.org/wikipedia/commons/0/0c/Bandeira_do_Amap%C3%A1.svg',
-  AM: 'https://upload.wikimedia.org/wikipedia/commons/6/6b/Bandeira_do_Amazonas.svg',
-  BA: 'https://upload.wikimedia.org/wikipedia/commons/2/28/Bandeira_da_Bahia.svg',
-  CE: 'https://upload.wikimedia.org/wikipedia/commons/2/2e/Bandeira_do_Cear%C3%A1.svg',
-  DF: 'https://upload.wikimedia.org/wikipedia/commons/3/3c/Bandeira_do_Distrito_Federal_%28Brasil%29.svg',
-  ES: 'https://upload.wikimedia.org/wikipedia/commons/4/43/Bandeira_do_Esp%C3%ADrito_Santo.svg',
-  GO: 'https://upload.wikimedia.org/wikipedia/commons/b/be/Flag_of_Goi%C3%A1s.svg',
-  MA: 'https://upload.wikimedia.org/wikipedia/commons/4/45/Bandeira_do_Maranh%C3%A3o.svg',
-  MT: 'https://upload.wikimedia.org/wikipedia/commons/0/0b/Bandeira_de_Mato_Grosso.svg',
-  MS: 'https://upload.wikimedia.org/wikipedia/commons/6/64/Bandeira_de_Mato_Grosso_do_Sul.svg',
-  MG: 'https://upload.wikimedia.org/wikipedia/commons/f/f4/Bandeira_de_Minas_Gerais.svg',
-  PA: 'https://upload.wikimedia.org/wikipedia/commons/0/02/Bandeira_do_Par%C3%A1.svg',
-  PB: 'https://upload.wikimedia.org/wikipedia/commons/b/bb/Bandeira_da_Para%C3%ADba.svg',
-  PR: 'https://upload.wikimedia.org/wikipedia/commons/9/93/Bandeira_do_Paran%C3%A1.svg',
-  PE: 'https://upload.wikimedia.org/wikipedia/commons/5/59/Bandeira_de_Pernambuco.svg',
-  PI: 'https://upload.wikimedia.org/wikipedia/commons/3/33/Bandeira_do_Piau%C3%AD.svg',
-  RJ: 'https://upload.wikimedia.org/wikipedia/commons/7/73/Bandeira_do_estado_do_Rio_de_Janeiro.svg',
-  RN: 'https://upload.wikimedia.org/wikipedia/commons/3/30/Bandeira_do_Rio_Grande_do_Norte.svg',
-  RS: 'https://upload.wikimedia.org/wikipedia/commons/6/63/Bandeira_do_Rio_Grande_do_Sul.svg',
-  RO: 'https://upload.wikimedia.org/wikipedia/commons/f/fa/Bandeira_de_Rond%C3%B4nia.svg',
-  RR: 'https://upload.wikimedia.org/wikipedia/commons/9/98/Bandeira_de_Roraima.svg',
-  SC: 'https://upload.wikimedia.org/wikipedia/commons/1/1a/Bandeira_de_Santa_Catarina.svg',
-  SP: 'https://upload.wikimedia.org/wikipedia/commons/2/2b/Bandeira_do_estado_de_S%C3%A3o_Paulo.svg',
-  SE: 'https://upload.wikimedia.org/wikipedia/commons/b/be/Bandeira_de_Sergipe.svg',
-  TO: 'https://upload.wikimedia.org/wikipedia/commons/f/ff/Bandeira_do_Tocantins.svg'
-};
-
-function htmlBandeiraUF(uf, px = 20) {
-  const key = uf && BANDEIRA_UF_URL[uf] ? uf : 'BR';
-  const url = BANDEIRA_UF_URL[key] || '';
-  const siglaTxt = uf || 'BR';
-  if (!url) {
-    return `<span style="width:${px}px;height:${px}px;font-size:${Math.max(7, Math.round(px * 0.42))}px" class="rounded-full bg-[#16C784] text-white font-extrabold inline-flex items-center justify-center shrink-0">${siglaTxt}</span>`;
-  }
-  const imgZoom = key === 'DF' ? 'transform:scale(2.8);' : '';
-  return `<span style="width:${px}px;height:${px}px" class="rounded-full overflow-hidden border din-border inline-flex items-center justify-center shrink-0 bg-white shadow-xs"><img src="${url}" alt="Bandeira ${siglaTxt}" style="width:100%;height:100%;object-fit:cover;${imgZoom}" onerror="this.style.display='none'"></span>`;
-}
-
+// Cache de imagens das bandeiras para o canvas do Chart.js (tenta SVG local e cai para Wikimedia)
 const cacheBandeiras = {};
 function obterImagemBandeira(uf) {
   if (cacheBandeiras[uf]) return cacheBandeiras[uf];
-  const url = BANDEIRA_UF_URL[uf];
-  if (!url) return null;
+  const localUrl = BDUF.urlBandeira(uf);
+  const remoteUrl = BDUF.WIKIMEDIA_UF[uf];
+  if (!localUrl && !remoteUrl) return null;
+
   const img = new Image();
-  img.crossOrigin = 'anonymous';
   img.onload = () => { if (chartScatter) chartScatter.draw(); };
   img.onerror = () => {
-    if (!img._retriedNoCors) {
-      img._retriedNoCors = true;
+    if (!img._triedRemote && remoteUrl) {
+      img._triedRemote = true;
+      img.crossOrigin = 'anonymous';
+      img.src = remoteUrl;
+    } else if (!img._triedNoCors && remoteUrl) {
+      img._triedNoCors = true;
       const img2 = new Image();
       img2.onload = () => { cacheBandeiras[uf] = img2; if (chartScatter) chartScatter.draw(); };
       img2.onerror = () => { img2._falhou = true; };
-      img2.src = url;
+      img2.src = remoteUrl;
       cacheBandeiras[uf] = img2;
     } else {
       img._falhou = true;
     }
   };
-  img.src = url;
+  img.src = localUrl;
   cacheBandeiras[uf] = img;
   return img;
-}
-
-// Escala tonal verde
-function interpolarCorVerde(t) {
-  const clamped = Math.max(0, Math.min(1, t));
-  const s = Math.pow(clamped, 0.72);
-  const c0 = [116, 227, 180], c1 = [22, 199, 132], c2 = [4, 108, 78];
-  let r, g, b;
-  if (s <= 0.5) {
-    const k = s / 0.5;
-    r = Math.round(c0[0] + (c1[0] - c0[0]) * k);
-    g = Math.round(c0[1] + (c1[1] - c0[1]) * k);
-    b = Math.round(c0[2] + (c1[2] - c0[2]) * k);
-  } else {
-    const k = (s - 0.5) / 0.5;
-    r = Math.round(c1[0] + (c2[0] - c1[0]) * k);
-    g = Math.round(c1[1] + (c2[1] - c1[1]) * k);
-    b = Math.round(c1[2] + (c2[2] - c1[2]) * k);
-  }
-  return `rgb(${r}, ${g}, ${b})`;
 }
 
 function limitesMetricaRecorte() {
@@ -559,7 +507,21 @@ function corTonalEstado(d) {
   if (!d) return '#74E3B4';
   const { k, min, max } = limitesMetricaRecorte();
   if (max <= min) return '#046C4E';
-  return interpolarCorVerde((d[k] - min) / (max - min));
+  return BDUF.interpolarVerde((d[k] - min) / (max - min));
+}
+
+function sincronizarURL() {
+  try {
+    const params = new URLSearchParams();
+    if (anoAtual) params.set('ano', anoAtual);
+    if (regiaoSel && regiaoSel !== 'Todas') params.set('regiao', regiaoSel);
+    if (modoSel === 'estado' && ufSel) params.set('uf', ufSel);
+    const pct = Math.round(TAXA * 1000) / 10;
+    if (pct !== 33) params.set('taxa', pct);
+    const qs = params.toString();
+    const novaUrl = window.location.pathname + (qs ? '?' + qs : '') + window.location.hash;
+    window.history.replaceState(null, '', novaUrl);
+  } catch {}
 }
 
 // Exportação PNG e Citação ABNT
@@ -606,21 +568,6 @@ function citarImpostoABNT(btn) {
   }, btn);
 }
 
-const IBGE_UF = {
-  '11':'RO','12':'AC','13':'AM','14':'RR','15':'PA','16':'AP','17':'TO',
-  '21':'MA','22':'PI','23':'CE','24':'RN','25':'PB','26':'PE','27':'AL','28':'SE','29':'BA',
-  '31':'MG','32':'ES','33':'RJ','35':'SP','41':'PR','42':'SC','43':'RS',
-  '50':'MS','51':'MT','52':'GO','53':'DF'
-};
-const REGIAO = {
-  RO:'Norte',AC:'Norte',AM:'Norte',RR:'Norte',PA:'Norte',AP:'Norte',TO:'Norte',
-  MA:'Nordeste',PI:'Nordeste',CE:'Nordeste',RN:'Nordeste',PB:'Nordeste',PE:'Nordeste',AL:'Nordeste',SE:'Nordeste',BA:'Nordeste',
-  MG:'Sudeste',ES:'Sudeste',RJ:'Sudeste',SP:'Sudeste',
-  PR:'Sul',SC:'Sul',RS:'Sul',
-  MS:'Centro-Oeste',MT:'Centro-Oeste',GO:'Centro-Oeste',DF:'Centro-Oeste'
-};
-const REGIOES = ['Todas', 'Norte', 'Nordeste', 'Centro-Oeste', 'Sudeste', 'Sul'];
-
 const IDHM_UF = {
   DF: 0.814, SP: 0.806, SC: 0.792, MG: 0.774, ES: 0.771, RS: 0.771, PR: 0.769, RJ: 0.762,
   MS: 0.742, GO: 0.737, MT: 0.736, CE: 0.734, TO: 0.731, RN: 0.728, PE: 0.719, AC: 0.710,
@@ -660,11 +607,33 @@ const COMPOSICAO_SETORIAL_UF = {
   RR: { agro: 9,  ind: 9,  serv: 36, adm: 46, vocacao: 'Comércio e Setor Público' }
 };
 
-// Controles do Cabeçalho
+// Controles do Cabeçalho & Atalhos de Teclado
 function toggleDropdownMenu() { $('dropdownMenu').classList.toggle('hidden'); }
 window.addEventListener('click', e => {
   const btn = $('menuDropdownBtn'), menu = $('dropdownMenu');
   if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) menu.classList.add('hidden');
+});
+
+window.addEventListener('keydown', e => {
+  const tag = (e.target && e.target.tagName) || '';
+  if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
+
+  if (e.key === 'Escape') {
+    if (document.body.classList.contains('modo-apresentacao')) alternarModoApresentacao();
+    else if (modoSel === 'estado') voltarParaRegiao();
+  } else if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && anosDisponiveis.length > 1) {
+    const idx = anosDisponiveis.indexOf(anoAtual);
+    if (idx === -1) return;
+    // anosDisponiveis está decrescente (ex.: [2021, 2020, 2019, 2018]): Left recua no tempo, Right avança
+    const proxIdx = e.key === 'ArrowLeft'
+      ? Math.min(anosDisponiveis.length - 1, idx + 1)
+      : Math.max(0, idx - 1);
+    if (proxIdx !== idx) {
+      const novoAno = anosDisponiveis[proxIdx];
+      $('ano').value = novoAno;
+      montar(novoAno);
+    }
+  }
 });
 
 function alternarDarkLight() {
@@ -715,7 +684,7 @@ function fmtMetrica(d, k) {
 }
 
 function renderBotoesRegiao() {
-  $('btnsRegiao').innerHTML = REGIOES.map(r => {
+  $('btnsRegiao').innerHTML = BDUF.REGIOES.map(r => {
     const ativo = r === regiaoSel;
     return `<button type="button" onclick="setRegiao('${r}')"
       class="px-2.5 py-1 rounded-md text-xs font-semibold border transition cursor-pointer ${ativo ? 'din-btn border-transparent shadow-sm' : 'din-secondary-bg din-border din-text-muted hover:din-text-main'}">${r === 'Todas' ? 'Brasil' : r}</button>`;
@@ -735,6 +704,7 @@ function voltarParaRegiao() {
   if (geoPronto) pintarMapa();
   tabela();
   if (abaInf === 'scatter') graficoScatter();
+  sincronizarURL();
 }
 
 function alterarMetricaMapa() {
@@ -754,7 +724,8 @@ function montar(ano) {
   const m = {};
   TODOS.filter(i => +i.anoReferencia === ano && i.estado).forEach(i => {
     const n = (i.nome || '').toLowerCase(), v = +i.valor || 0;
-    const d = m[i.estado.sigla] || (m[i.estado.sigla] = { sigla: i.estado.sigla, nome: i.estado.nome, regiao: REGIAO[i.estado.sigla] || '', pib: 0, pop: 0, idh: 0 });
+    const sigla = i.estado.sigla;
+    const d = m[sigla] || (m[sigla] = { sigla, nome: i.estado.nome, regiao: BDUF.REGIAO_UF[sigla] || '', pib: 0, pop: 0, idh: 0 });
     if (n === 'pib estadual') d.pib = v; else if (n.includes('popula')) d.pop = v; else if (n.includes('idh')) d.idh = v;
   });
 
@@ -811,6 +782,7 @@ function aplicarFiltros() {
   if (geoPronto) pintarMapa();
   if (abaInf === 'scatter') graficoScatter();
   else graficoBar();
+  sincronizarURL();
 }
 
 function atualizarPainelLateral() {
@@ -838,7 +810,7 @@ function setAba(a) {
 
   $('mapSub').textContent = a === 'comparar'
     ? 'Modo comparação ativo: clique em um estado no mapa para comparar como Estado B.'
-    : 'Filtre por região para ver os destaques ou clique em um estado para inspecionar.';
+    : '1º clique seleciona o estado; 2º clique (ou Esc) volta ao consolidado.';
 
   if (a === 'resumo') {
     if (modoSel === 'regiao') exibirDetalhesRegiao();
@@ -892,6 +864,7 @@ function selecionarEstado(sigla) {
   else graficoBar();
   if (geoPronto) pintarMapa();
   tabela();
+  sincronizarURL();
 }
 
 function exibirDetalhesRegiao() {
@@ -910,7 +883,7 @@ function exibirDetalhesRegiao() {
 
   $('btnVoltarRegiao').classList.add('hidden');
   $('stRegiao').textContent = isBrasil ? 'Consolidado Nacional' : 'Região Selecionada';
-  $('stBand').innerHTML = htmlBandeiraUF('BR', 24);
+  $('stBand').innerHTML = BDUF.htmlBandeira('BR', 24);
   $('stNome').textContent = isBrasil ? 'Brasil (Consolidado)' : `Região ${regiaoSel}`;
   $('stSigla').textContent = isBrasil ? '27 UFs' : `${D.length} UFs`;
 
@@ -968,7 +941,7 @@ function exibirDetalhesEstado(sigla) {
   btnV.classList.remove('hidden');
 
   $('stRegiao').textContent = `${d.regiao} · #${d.rkHab}º em tributo/hab`;
-  $('stBand').innerHTML = htmlBandeiraUF(d.sigla, 24);
+  $('stBand').innerHTML = BDUF.htmlBandeira(d.sigla, 24);
   $('stNome').textContent = d.nome;
   $('stSigla').textContent = d.sigla;
 
@@ -1055,9 +1028,12 @@ function renderDestaques() {
         class="p-2.5 rounded-lg border cursor-pointer transition flex items-center justify-between gap-3 ${isSel ? 'border-[#16C784] din-card-bg shadow-sm' : 'din-secondary-bg din-border hover:border-[#16C784]'}">
         <div class="flex items-center gap-2.5 min-w-0">
           <span class="w-3 h-3 rounded-sm shrink-0 border border-black/15" style="background:${cor}"></span>
-          ${htmlBandeiraUF(d.sigla, 18)}
+          ${BDUF.htmlBandeira(d.sigla, 18)}
           <div class="min-w-0">
-            <p class="text-xs font-bold din-text-main truncate">${idx + 1}º ${d.nome} <span class="text-[10px] font-mono din-text-muted font-normal">${d.sigla}</span></p>
+            <p class="text-xs font-bold din-text-main truncate flex items-center gap-1.5">
+              <span>${idx + 1}º ${d.nome}</span>
+              <span class="text-[10px] font-mono px-1.5 py-0.2 rounded din-card-bg border din-border din-text-muted font-normal">${d.sigla}</span>
+            </p>
             <p class="text-[10px] din-text-muted truncate">IDH ${BD.num(d.idh, 3)} · Arrec.: ${BD.compact(d.arrec)}</p>
           </div>
         </div>
@@ -1079,7 +1055,7 @@ function renderEvolucao() {
   TODOS.filter(i => i.estado && (i.nome || '').toLowerCase() === 'pib estadual').forEach(i => {
     const sigla = i.estado.sigla;
     const inclui = isRegiao
-      ? (regiaoSel === 'Todas' || REGIAO[sigla] === regiaoSel)
+      ? (regiaoSel === 'Todas' || BDUF.REGIAO_UF[sigla] === regiaoSel)
       : (sigla === ufSel);
     if (!inclui) return;
     const a = +i.anoReferencia;
@@ -1143,14 +1119,7 @@ function renderComparar() {
 }
 
 async function iniciarMapa() {
-  const urls = [
-    'https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson',
-    'https://servicodados.ibge.gov.br/api/v3/malhas/paises/BR?formato=application/vnd.geo+json&qualidade=minima&intrarregiao=UF'
-  ];
-  let geo = null;
-  for (const u of urls) {
-    try { const r = await fetch(u); if (r.ok) { geo = await r.json(); break; } } catch {}
-  }
+  const geo = await BDUF.obterGeoJsonBrasil();
   if (!geo) { $('mapLoading').textContent = 'Não foi possível carregar o mapa no momento.'; return; }
 
   const svg = d3.select('#mapaBr');
@@ -1158,24 +1127,38 @@ async function iniciarMapa() {
   const path = d3.geoPath().projection(proj);
   const tip = $('mapTip');
 
+  // Clique no fundo vazio do SVG desseleciona o estado
+  svg.on('click', ev => {
+    if (ev.target === svg.node() && modoSel === 'estado') voltarParaRegiao();
+  });
+
   svg.selectAll('path')
     .data(geo.features)
     .join('path')
     .attr('class', 'uf-path cursor-pointer transition-opacity')
     .attr('d', path)
-    .attr('data-uf', f => f.properties.sigla || IBGE_UF[String(f.properties.codarea)] || '')
+    .attr('data-uf', f => f.properties.sigla || '')
     .on('mouseenter', function() {
       const uf = this.getAttribute('data-uf');
       const d = D_ALL.find(x => x.sigla === uf);
-      $('tipBand').innerHTML = htmlBandeiraUF(uf, 18);
-      $('tipNome').textContent = d ? `${d.nome} (${uf})` : uf;
+      $('tipBand').innerHTML = BDUF.htmlBandeira(uf, 18);
+      $('tipNome').textContent = d ? `${d.nome} (${uf})` : (BDUF.NOMES_UF[uf] || uf);
       $('tipVal').textContent = d ? fmtMetrica(d, $('mapMetrica').value) : 'Sem dados';
-      $('tipHint').textContent = abaRx === 'comparar' ? 'Clique para comparar como Estado B' : 'Clique para ver o raio-x';
+      $('tipHint').textContent = abaRx === 'comparar'
+        ? 'Clique para comparar como Estado B'
+        : (modoSel === 'estado' && ufSel === uf ? 'Clique novamente para voltar ao consolidado' : 'Clique para ver o raio-x');
       tip.classList.remove('hidden');
+      d3.select(this).raise();
     })
     .on('mousemove', ev => { tip.style.left = (ev.clientX + 14) + 'px'; tip.style.top = (ev.clientY + 14) + 'px'; })
-    .on('mouseleave', () => tip.classList.add('hidden'))
-    .on('click', function() {
+    .on('mouseleave', () => {
+      tip.classList.add('hidden');
+      if (modoSel === 'estado' && ufSel) {
+        svg.selectAll('path').filter(function() { return this.getAttribute('data-uf') === ufSel; }).raise();
+      }
+    })
+    .on('click', function(ev) {
+      ev.stopPropagation();
       const uf = this.getAttribute('data-uf');
       if (!uf) return;
       if (abaRx === 'comparar' && uf !== ufSel) {
@@ -1206,7 +1189,8 @@ function pintarMapa() {
     $('legMax').textContent = `Destaque · ${dMax.sigla}: ${fmtMetrica(dMax, k)}`;
   }
 
-  d3.select('#mapaBr').selectAll('path')
+  const paths = d3.select('#mapaBr').selectAll('path');
+  paths
     .attr('fill', function() {
       const d = D.find(x => x.sigla === this.getAttribute('data-uf'));
       return d ? corTonalEstado(d) : apagado;
@@ -1227,17 +1211,31 @@ function pintarMapa() {
       if (abaRx === 'comparar' && uf === ufComp) return 2.4;
       return 1.0;
     });
+
+  if (modoSel === 'estado' && ufSel) {
+    paths.filter(function() { return this.getAttribute('data-uf') === ufSel; }).raise();
+  }
 }
 
 function tabela() {
   const cols = [['nome', 'Estado'], ['pib', 'PIB'], ['sp', '% PIB'], ['sh', '% Pop.'], ['arrec', 'Arrecadação est.'], ['hab', 'Por hab.'], ['idh', 'IDH']];
   $('thead').innerHTML = '<th class="py-2 px-2">#</th>' + cols.map(([k, t]) => `<th class="s py-2 px-2" onclick="ord('${k}')">${t} ↕</th>`).join('');
-  const L = [...D].sort((a, b) => col === 'nome' ? dir * -1 * a.nome.localeCompare(b.nome) : dir * (a[col] - b[col]));
+  const termo = ($('buscaUfImposto')?.value || '').trim().toLowerCase();
+  const base = termo
+    ? D.filter(d => d.nome.toLowerCase().includes(termo) || d.sigla.toLowerCase().includes(termo))
+    : D;
+
+  if (!base.length) {
+    $('tbody').innerHTML = `<tr><td colspan="8" class="py-4 text-center din-text-muted">Nenhum estado encontrado para "${termo}".</td></tr>`;
+    return;
+  }
+
+  const L = [...base].sort((a, b) => col === 'nome' ? dir * -1 * a.nome.localeCompare(b.nome) : dir * (a[col] - b[col]));
   $('tbody').innerHTML = L.map((d, i) => `<tr onclick="selecionarEstado('${d.sigla}')" class="cursor-pointer hover:opacity-85 ${modoSel === 'estado' && d.sigla === ufSel ? 'din-secondary-bg' : ''}">
     <td class="py-2 px-2 din-text-muted font-mono">${i + 1}</td>
     <td class="py-2 px-2">
       <div class="flex items-center gap-2">
-        ${htmlBandeiraUF(d.sigla, 18)}
+        ${BDUF.htmlBandeira(d.sigla, 18)}
         <span class="font-semibold din-text-main">${d.nome}</span>
         <span class="text-[10px] font-mono px-1.5 py-0.5 rounded din-secondary-bg border din-border din-text-muted">${d.sigla}</span>
       </div>
@@ -1364,7 +1362,6 @@ const bandeirasScatterPlugin = {
         ctx.arc(n.x, n.y, n.r - 0.8, 0, Math.PI * 2);
         ctx.clip();
         const aspect = img.naturalWidth / img.naturalHeight;
-        // Zoom especial no DF para a parte verde preencher toda a bolinha
         const zoom = n.uf === 'DF' ? 2.8 : 1;
         const drawH = n.r * 2 * zoom;
         const drawW = drawH * Math.max(1, aspect * 0.85);
@@ -1545,14 +1542,37 @@ function exportarCSV() {
   let temaSalvo = 'light';
   try { temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light'; } catch {}
   aplicarTema(temaSalvo);
+
+  // Restaura estado inicial da URL (?ano=...®iao=...&uf=...&taxa=...)
+  const urlParams = new URLSearchParams(window.location.search);
+  const paramTaxa = parseFloat(urlParams.get('taxa'));
+  if (!Number.isNaN(paramTaxa) && paramTaxa >= 20 && paramTaxa <= 45) {
+    TAXA = paramTaxa / 100;
+    $('rngTaxa').value = paramTaxa;
+    $('lblTaxa').textContent = BD.num(paramTaxa, 1) + '% do PIB';
+  }
+  const paramRegiao = urlParams.get('regiao');
+  if (paramRegiao && BDUF.REGIOES.includes(paramRegiao)) {
+    regiaoSel = paramRegiao;
+  }
+
   renderBotoesRegiao();
   iniciarMapa();
   try {
     TODOS = await BD.indicadores();
-    const anos = [...new Set(TODOS.filter(i => /per capita/i.test(i.nome)).map(i => +i.anoReferencia))].sort((a, b) => b - a);
-    if (!anos.length) throw new Error('sem anos');
-    $('ano').innerHTML = anos.map(a => `<option value="${a}">${a}</option>`).join('');
-    montar(anos[0]);
+    anosDisponiveis = [...new Set(TODOS.filter(i => /per capita/i.test(i.nome)).map(i => +i.anoReferencia))].sort((a, b) => b - a);
+    if (!anosDisponiveis.length) throw new Error('sem anos');
+    $('ano').innerHTML = anosDisponiveis.map(a => `<option value="${a}">${a}</option>`).join('');
+
+    const paramAno = Number(urlParams.get('ano'));
+    const anoInicial = anosDisponiveis.includes(paramAno) ? paramAno : anosDisponiveis[0];
+    $('ano').value = anoInicial;
+    montar(anoInicial);
+
+    const paramUf = (urlParams.get('uf') || '').toUpperCase();
+    if (paramUf && D_ALL.some(d => d.sigla === paramUf)) {
+      selecionarEstado(paramUf);
+    }
   } catch (e) {
     $('tbody').innerHTML = '<tr><td class="py-4 din-red">Não foi possível carregar os indicadores. Recarregue a página em instantes.</td></tr>';
     console.error(e);

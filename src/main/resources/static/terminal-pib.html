@@ -6,11 +6,9 @@
     <title>BrasilEmDados — Contas Regionais, PIB & Vocação Setorial</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Leaflet CSS & JS (jsDelivr) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js & D3.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
     <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
     <link rel="stylesheet" href="css/theme.css">
 </head>
@@ -148,6 +146,19 @@
             </button>
         </div>
 
+        <!-- Tooltip do Mapa (com bandeira do estado) -->
+        <div id="mapTip" class="pointer-events-none fixed z-50 hidden px-3 py-2 rounded-lg text-xs shadow-lg border din-border din-card-bg">
+            <div class="flex items-center justify-between gap-3 border-b din-border pb-1">
+                <div class="flex items-center gap-2">
+                    <span id="tipBand" class="shrink-0"></span>
+                    <p id="tipNome" class="font-bold din-text-main"></p>
+                </div>
+                <span id="tipShare" class="din-secondary-bg din-green px-1.5 py-0.5 rounded text-[10px] font-bold tabular-nums"></span>
+            </div>
+            <p id="tipVal" class="din-green font-semibold mt-1 tabular-nums"></p>
+            <p id="tipSub" class="text-[11px] din-text-muted mt-0.5 tabular-nums"></p>
+        </div>
+
         <!-- Filtro por Região -->
         <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 ocultar-em-presentation">
             <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm flex flex-wrap items-center justify-between gap-3">
@@ -155,12 +166,12 @@
                     <span class="block text-[11px] font-semibold uppercase tracking-wider din-text-muted">Filtrar por região</span>
                     <div id="btnsRegiao" class="flex flex-wrap gap-1.5"></div>
                 </div>
-                <span id="badgeRegiaoAtiva" class="text-xs din-text-muted">Exibindo todos os 27 estados</span>
+                <span id="badgeRegiaoAtiva" class="text-xs din-text-muted tabular-nums">Exibindo todos os 27 estados</span>
             </div>
         </section>
 
         <!-- KPIs Consolidados no Topo -->
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 ocultar-em-presentation">
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 ocultar-em-presentation tabular-nums">
             <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
                 <div class="flex items-center">
                     <span id="kpiPibTitulo" class="text-xs din-text-muted uppercase font-semibold">PIB Nacional Consolidado (<span class="labelAno">2021</span>)</span>
@@ -192,12 +203,12 @@
             <!-- Coluna Esquerda: Mapa Interativo + Ranking / Pizza -->
             <section class="lg:col-span-7 flex flex-col gap-6">
 
-                <!-- Mapa Interativo -->
-                <div class="din-card-bg border din-border rounded-lg p-5 shadow-sm">
+                <!-- Mapa Interativo D3 -->
+                <div class="din-card-bg border din-border rounded-lg p-5 shadow-sm flex flex-col">
                     <div class="flex flex-wrap justify-between items-center gap-3 mb-3">
                         <div>
                             <h2 class="text-lg font-semibold din-text-main">Mapa Econômico e Setorial</h2>
-                            <p class="text-xs din-text-muted">Clique em um estado para inspecionar ou filtre por região para ver os destaques</p>
+                            <p class="text-xs din-text-muted">1º clique seleciona o estado; 2º clique (ou Esc) volta ao consolidado.</p>
                         </div>
 
                         <div class="flex items-center gap-2 din-secondary-bg border din-border rounded-lg px-3 py-1.5">
@@ -212,7 +223,7 @@
                     </div>
 
                     <!-- Legenda Tonal Dinâmica -->
-                    <div id="legendaGradienteRegiao" class="flex flex-wrap items-center justify-between gap-3 text-[11px] din-text-muted mb-2.5 px-1">
+                    <div id="legendaGradienteRegiao" class="flex flex-wrap items-center justify-between gap-3 text-[11px] din-text-muted mb-2.5 px-1 tabular-nums">
                         <span id="legMenorDestaque" class="font-medium">Menor peso</span>
                         <div class="flex items-center gap-2 flex-1 max-w-[260px]">
                             <span class="text-[10px] shrink-0">Menor</span>
@@ -223,7 +234,10 @@
                         <span id="legMaiorDestaque" class="font-semibold din-green">Maior destaque</span>
                     </div>
 
-                    <div id="map" class="w-full h-[460px] rounded-lg border din-border din-secondary-bg" style="min-height: 460px;"></div>
+                    <div class="relative flex-1 min-h-[420px] rounded-lg border din-border din-secondary-bg flex items-center justify-center p-2">
+                        <p id="mapLoading" class="text-xs din-text-muted">Carregando malha geográfica…</p>
+                        <svg id="mapaPib" viewBox="0 0 600 560" class="w-full max-h-[450px] hidden"></svg>
+                    </div>
                 </div>
 
                 <!-- Card Híbrido: Tabela Ordenável vs Gráfico de Pizza -->
@@ -266,7 +280,7 @@
                         </div>
 
                         <div class="overflow-x-auto max-h-[360px] overflow-y-auto">
-                            <table class="w-full text-left border-collapse text-xs">
+                            <table class="w-full text-left border-collapse text-xs tabular-nums">
                                 <thead class="sticky top-0 din-card-bg z-10">
                                     <tr class="border-b din-border din-text-muted uppercase">
                                         <th class="py-2.5 px-2">#</th>
@@ -304,7 +318,7 @@
                                 <p id="descResumoPizza" class="text-xs din-text-muted leading-relaxed">
                                     Os 5 maiores estados concentram a imensa maioria do PIB brasileiro, enquanto os outros 22 dividem o restante.
                                 </p>
-                                <div id="legendaResumoPizza" class="space-y-1.5 pt-1 text-xs"></div>
+                                <div id="legendaResumoPizza" class="space-y-1.5 pt-1 text-xs tabular-nums"></div>
                             </div>
                         </div>
                     </div>
@@ -319,7 +333,7 @@
                     <div class="flex justify-between items-start gap-2 border-b din-border pb-3">
                         <div>
                             <div class="flex flex-wrap items-center gap-2">
-                                <span id="labelRegiaoEstado" class="text-xs uppercase tracking-wider din-green font-semibold">Estado Selecionado</span>
+                                <span id="labelRegiaoEstado" class="text-xs uppercase tracking-wider din-green font-semibold">Consolidado Nacional</span>
                                 <button id="btnVoltarRegiao" type="button" onclick="voltarParaRegiao()"
                                     class="hidden text-[10px] font-semibold px-2 py-0.5 rounded din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
                                     ← Ver Região
@@ -353,7 +367,7 @@
 
                     <!-- ABA 1: RESUMO + VOCAÇÃO -->
                     <div id="viewLatResumo" class="space-y-4">
-                        <div id="listaIndicadores" class="space-y-2">
+                        <div id="listaIndicadores" class="space-y-2 tabular-nums">
                             <p class="text-sm din-text-muted">Carregando indicadores...</p>
                         </div>
 
@@ -371,18 +385,18 @@
                                         <canvas id="graficoSetorialUf"></canvas>
                                     </div>
                                 </div>
-                                <div id="listaBarrasSetoriais" class="sm:col-span-7 space-y-2 text-xs"></div>
+                                <div id="listaBarrasSetoriais" class="sm:col-span-7 space-y-2 text-xs tabular-nums"></div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- ABA 2: DESTAQUES DO RECORTE (COM TONALIDADE DO MAPA + BANDEIRAS) -->
+                    <!-- ABA 2: DESTAQUES DO RECORTE -->
                     <div id="viewLatDestaques" class="hidden space-y-3">
                         <div class="flex items-center justify-between text-xs">
                             <span id="subDestaques" class="din-text-muted">Ordem de destaque econômico no recorte</span>
                             <span class="text-[10px] din-text-muted">Clique no estado</span>
                         </div>
-                        <div id="listaDestaquesRegiao" class="space-y-2 max-h-[340px] overflow-y-auto pr-1"></div>
+                        <div id="listaDestaquesRegiao" class="space-y-2 max-h-[340px] overflow-y-auto pr-1 tabular-nums"></div>
                     </div>
 
                     <!-- ABA 3: EVOLUÇÃO HISTÓRICA (2018-2021) -->
@@ -390,7 +404,7 @@
                         <div class="flex items-center justify-between gap-2 text-xs">
                             <span id="lblTituloEvolucao" class="din-text-muted">Série histórica do PIB</span>
                             <div class="flex items-center gap-2">
-                                <strong id="badgeCrescEvolucao" class="din-green">—</strong>
+                                <strong id="badgeCrescEvolucao" class="din-green tabular-nums">—</strong>
                                 <button type="button" onclick="baixarEvolucaoPainelPNG()"
                                     class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
                                     ↓ PNG
@@ -410,12 +424,12 @@
                         <div class="flex justify-between items-center border-b din-border pb-2.5">
                             <div>
                                 <h3 class="text-sm font-semibold din-text-main">Simulador de Cenários ("E se...?")</h3>
-                                <p id="subtituloSimulador" class="text-xs din-text-muted">Projeção educativa para o estado selecionado</p>
+                                <p id="subtituloSimulador" class="text-xs din-text-muted">Projeção educativa para o recorte selecionado</p>
                             </div>
                             <span class="text-[10px] din-secondary-bg din-green border din-border px-2 py-0.5 rounded font-bold">Simulação</span>
                         </div>
 
-                        <div class="space-y-4 pt-1 text-xs">
+                        <div class="space-y-4 pt-1 text-xs tabular-nums">
                             <div>
                                 <div class="flex justify-between mb-1">
                                     <span class="din-text-muted">Cresc. Anual do PIB Projetado:</span>
@@ -436,7 +450,7 @@
                         </div>
                     </div>
 
-                    <div class="din-secondary-bg p-4 rounded-lg border din-border space-y-2.5 text-xs mt-4">
+                    <div class="din-secondary-bg p-4 rounded-lg border din-border space-y-2.5 text-xs mt-4 tabular-nums">
                         <div class="flex justify-between items-center">
                             <span class="din-text-muted">PIB Projetado ao Final:</span>
                             <span id="simResPibFinal" class="text-sm font-extrabold din-green">R$ --</span>
@@ -519,9 +533,10 @@
         </div>
     </footer>
 
-    <!-- Utilitário de Layout e Gráficos -->
+    <!-- Utilitários Compartilhados -->
     <script src="/js/layout.js"></script>
     <script src="/js/chart-utils.js?v=1"></script>
+    <script src="/js/uf-utils.js?v=1"></script>
 
     <script>
         let ufSelecionada = 'SP';
@@ -540,81 +555,13 @@
         let mapaDadosPorUf = {};
         let pibTotalBrasilMil = 0;
 
-        let mapaLeaflet = null;
-        let geojsonLayer = null;
+        let geoDataBrasil = null;
+        let geoPronto = false;
         let chartPib = null;
         let chartPerCapita = null;
         let chartPizzaTop5 = null;
         let chartSetorialUf = null;
         let chartEvolucaoPainel = null;
-
-        const UFS = [
-            "AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG",
-            "PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"
-        ];
-
-        const REGIOES = ['Todas', 'Norte', 'Nordeste', 'Centro-Oeste', 'Sudeste', 'Sul'];
-
-        const REGIAO_UF = {
-            RO:'Norte', AC:'Norte', AM:'Norte', RR:'Norte', PA:'Norte', AP:'Norte', TO:'Norte',
-            MA:'Nordeste', PI:'Nordeste', CE:'Nordeste', RN:'Nordeste', PB:'Nordeste', PE:'Nordeste', AL:'Nordeste', SE:'Nordeste', BA:'Nordeste',
-            MG:'Sudeste', ES:'Sudeste', RJ:'Sudeste', SP:'Sudeste',
-            PR:'Sul', SC:'Sul', RS:'Sul',
-            MS:'Centro-Oeste', MT:'Centro-Oeste', GO:'Centro-Oeste', DF:'Centro-Oeste'
-        };
-
-        const BANDEIRA_UF_URL = {
-            BR: 'https://upload.wikimedia.org/wikipedia/commons/0/05/Flag_of_Brazil.svg',
-            AC: 'https://upload.wikimedia.org/wikipedia/commons/4/4c/Bandeira_do_Acre.svg',
-            AL: 'https://upload.wikimedia.org/wikipedia/commons/8/88/Bandeira_de_Alagoas.svg',
-            AP: 'https://upload.wikimedia.org/wikipedia/commons/0/0c/Bandeira_do_Amap%C3%A1.svg',
-            AM: 'https://upload.wikimedia.org/wikipedia/commons/6/6b/Bandeira_do_Amazonas.svg',
-            BA: 'https://upload.wikimedia.org/wikipedia/commons/2/28/Bandeira_da_Bahia.svg',
-            CE: 'https://upload.wikimedia.org/wikipedia/commons/2/2e/Bandeira_do_Cear%C3%A1.svg',
-            DF: 'https://upload.wikimedia.org/wikipedia/commons/3/3c/Bandeira_do_Distrito_Federal_%28Brasil%29.svg',
-            ES: 'https://upload.wikimedia.org/wikipedia/commons/4/43/Bandeira_do_Esp%C3%ADrito_Santo.svg',
-            GO: 'https://upload.wikimedia.org/wikipedia/commons/b/be/Flag_of_Goi%C3%A1s.svg',
-            MA: 'https://upload.wikimedia.org/wikipedia/commons/4/45/Bandeira_do_Maranh%C3%A3o.svg',
-            MT: 'https://upload.wikimedia.org/wikipedia/commons/0/0b/Bandeira_de_Mato_Grosso.svg',
-            MS: 'https://upload.wikimedia.org/wikipedia/commons/6/64/Bandeira_de_Mato_Grosso_do_Sul.svg',
-            MG: 'https://upload.wikimedia.org/wikipedia/commons/f/f4/Bandeira_de_Minas_Gerais.svg',
-            PA: 'https://upload.wikimedia.org/wikipedia/commons/0/02/Bandeira_do_Par%C3%A1.svg',
-            PB: 'https://upload.wikimedia.org/wikipedia/commons/b/bb/Bandeira_da_Para%C3%ADba.svg',
-            PR: 'https://upload.wikimedia.org/wikipedia/commons/9/93/Bandeira_do_Paran%C3%A1.svg',
-            PE: 'https://upload.wikimedia.org/wikipedia/commons/5/59/Bandeira_de_Pernambuco.svg',
-            PI: 'https://upload.wikimedia.org/wikipedia/commons/3/33/Bandeira_do_Piau%C3%AD.svg',
-            RJ: 'https://upload.wikimedia.org/wikipedia/commons/7/73/Bandeira_do_estado_do_Rio_de_Janeiro.svg',
-            RN: 'https://upload.wikimedia.org/wikipedia/commons/3/30/Bandeira_do_Rio_Grande_do_Norte.svg',
-            RS: 'https://upload.wikimedia.org/wikipedia/commons/6/63/Bandeira_do_Rio_Grande_do_Sul.svg',
-            RO: 'https://upload.wikimedia.org/wikipedia/commons/f/fa/Bandeira_de_Rond%C3%B4nia.svg',
-            RR: 'https://upload.wikimedia.org/wikipedia/commons/9/98/Bandeira_de_Roraima.svg',
-            SC: 'https://upload.wikimedia.org/wikipedia/commons/1/1a/Bandeira_de_Santa_Catarina.svg',
-            SP: 'https://upload.wikimedia.org/wikipedia/commons/2/2b/Bandeira_do_estado_de_S%C3%A3o_Paulo.svg',
-            SE: 'https://upload.wikimedia.org/wikipedia/commons/b/be/Bandeira_de_Sergipe.svg',
-            TO: 'https://upload.wikimedia.org/wikipedia/commons/f/ff/Bandeira_do_Tocantins.svg'
-        };
-
-        function htmlBandeiraUF(uf, px = 20) {
-            const key = uf && BANDEIRA_UF_URL[uf] ? uf : 'BR';
-            const url = BANDEIRA_UF_URL[key] || '';
-            const siglaTxt = uf || 'BR';
-            if (!url) {
-                return `<span style="width:${px}px;height:${px}px;font-size:${Math.max(7, Math.round(px * 0.42))}px" class="rounded-full bg-[#16C784] text-white font-extrabold inline-flex items-center justify-center shrink-0">${siglaTxt}</span>`;
-            }
-            const imgZoom = key === 'DF' ? 'transform:scale(2.8);' : '';
-            return `<span style="width:${px}px;height:${px}px" class="rounded-full overflow-hidden border din-border inline-flex items-center justify-center shrink-0 bg-white shadow-xs"><img src="${url}" alt="Bandeira ${siglaTxt}" style="width:100%;height:100%;object-fit:cover;${imgZoom}" onerror="this.style.display='none'"></span>`;
-        }
-
-        const IBGE_UF_MAP = {
-            '11':['RO','Rondônia'],'12':['AC','Acre'],'13':['AM','Amazonas'],'14':['RR','Roraima'],
-            '15':['PA','Pará'],'16':['AP','Amapá'],'17':['TO','Tocantins'],'21':['MA','Maranhão'],
-            '22':['PI','Piauí'],'23':['CE','Ceará'],'24':['RN','Rio Grande do Norte'],'25':['PB','Paraíba'],
-            '26':['PE','Pernambuco'],'27':['AL','Alagoas'],'28':['SE','Sergipe'],'29':['BA','Bahia'],
-            '31':['MG','Minas Gerais'],'32':['ES','Espírito Santo'],'33':['RJ','Rio de Janeiro'],
-            '35':['SP','São Paulo'],'41':['PR','Paraná'],'42':['SC','Santa Catarina'],
-            '43':['RS','Rio Grande do Sul'],'50':['MS','Mato Grosso do Sul'],'51':['MT','Mato Grosso'],
-            '52':['GO','Goiás'],'53':['DF','Distrito Federal']
-        };
 
         const COMPOSICAO_SETORIAL_UF = {
             SP: { agro: 2,  ind: 22, serv: 67, adm: 9,  vocacao: 'Polo Financeiro, Serviços e Tecnologia' },
@@ -646,26 +593,6 @@
             RR: { agro: 9,  ind: 9,  serv: 36, adm: 46, vocacao: 'Comércio Fronteiriço e Público' }
         };
 
-        // Escala tonal verde
-        function interpolarCorVerde(t) {
-            const clamped = Math.max(0, Math.min(1, t));
-            const s = Math.pow(clamped, 0.72);
-            const c0 = [116, 227, 180], c1 = [22, 199, 132], c2 = [4, 108, 78];
-            let r, g, b;
-            if (s <= 0.5) {
-                const k = s / 0.5;
-                r = Math.round(c0[0] + (c1[0] - c0[0]) * k);
-                g = Math.round(c0[1] + (c1[1] - c0[1]) * k);
-                b = Math.round(c0[2] + (c1[2] - c0[2]) * k);
-            } else {
-                const k = (s - 0.5) / 0.5;
-                r = Math.round(c1[0] + (c2[0] - c1[0]) * k);
-                g = Math.round(c1[1] + (c2[1] - c1[1]) * k);
-                b = Math.round(c1[2] + (c2[2] - c1[2]) * k);
-            }
-            return `rgb(${r}, ${g}, ${b})`;
-        }
-
         function obterMetricaMapa() {
             return modoMapa === 'perCapita' ? 'perCapita' : 'pibMil';
         }
@@ -689,8 +616,7 @@
             const campo = obterMetricaMapa();
             const { min, max } = calcularLimitesRecorte();
             if (max <= min) return '#046C4E';
-            const t = (d[campo] - min) / (max - min);
-            return interpolarCorVerde(t);
+            return BDUF.interpolarVerde((d[campo] - min) / (max - min));
         }
 
         function atualizarLegendaMapa() {
@@ -706,17 +632,29 @@
         }
 
         function pertenceARegiao(sigla) {
-            return regiaoSelecionada === 'Todas' || REGIAO_UF[sigla] === regiaoSelecionada;
+            return regiaoSelecionada === 'Todas' || BDUF.REGIAO_UF[sigla] === regiaoSelecionada;
         }
 
         function getEstadosFiltrados() {
             return Object.values(mapaDadosPorUf).filter(d => d.pibMil > 0 && pertenceARegiao(d.sigla));
         }
 
+        function sincronizarURL() {
+            try {
+                const params = new URLSearchParams();
+                if (anoSelecionado) params.set('ano', anoSelecionado);
+                if (regiaoSelecionada && regiaoSelecionada !== 'Todas') params.set('regiao', regiaoSelecionada);
+                if (modoSelecao === 'estado' && ufSelecionada) params.set('uf', ufSelecionada);
+                const qs = params.toString();
+                const novaUrl = window.location.pathname + (qs ? '?' + qs : '') + window.location.hash;
+                window.history.replaceState(null, '', novaUrl);
+            } catch {}
+        }
+
         function renderBotoesRegiao() {
             const container = document.getElementById('btnsRegiao');
             if (!container) return;
-            container.innerHTML = REGIOES.map(r => {
+            container.innerHTML = BDUF.REGIOES.map(r => {
                 const ativo = r === regiaoSelecionada;
                 const label = r === 'Todas' ? 'Brasil' : r;
                 return `<button type="button" onclick="setRegiao('${r}')"
@@ -752,22 +690,8 @@
             if (aba === 'evolucao') renderizarEvolucaoPainel();
         }
 
-        function ajustarZoomRegiao() {
-            if (!mapaLeaflet || !geojsonLayer) return;
-            const camadas = [];
-            geojsonLayer.eachLayer(layer => {
-                const sigla = layer.feature?.properties?.sigla;
-                if (pertenceARegiao(sigla)) camadas.push(layer);
-            });
-            if (camadas.length > 0) {
-                const grupo = L.featureGroup(camadas);
-                mapaLeaflet.fitBounds(grupo.getBounds(), { padding: [20, 20] });
-            }
-        }
-
         function toggleDropdownMenu() {
-            const menu = document.getElementById('dropdownMenu');
-            menu.classList.toggle('hidden');
+            document.getElementById('dropdownMenu').classList.toggle('hidden');
         }
 
         window.addEventListener('click', function(e) {
@@ -778,11 +702,32 @@
             }
         });
 
+        window.addEventListener('keydown', function(e) {
+            const tag = (e.target && e.target.tagName) || '';
+            if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
+
+            if (e.key === 'Escape') {
+                if (document.body.classList.contains('modo-apresentacao')) alternarModoApresentacao();
+                else if (modoSelecao === 'estado') voltarParaRegiao();
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                const sel = document.getElementById('selectAno');
+                if (!sel || sel.options.length < 2) return;
+                // Options estão em ordem decrescente [2021, 2020, 2019, 2018]: Left recua no tempo, Right avança
+                const novoIdx = e.key === 'ArrowLeft'
+                    ? Math.min(sel.options.length - 1, sel.selectedIndex + 1)
+                    : Math.max(0, sel.selectedIndex - 1);
+                if (novoIdx !== sel.selectedIndex) {
+                    sel.selectedIndex = novoIdx;
+                    trocarAno(sel.value);
+                }
+            }
+        });
+
         function alternarDarkLight() {
             const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
             const novoTema = isDark ? 'light' : 'dark';
             aplicarTema(novoTema);
-            localStorage.setItem('brasil_em_dados_tema', novoTema);
+            try { localStorage.setItem('brasil_em_dados_tema', novoTema); } catch {}
         }
 
         function aplicarTema(tema) {
@@ -804,7 +749,7 @@
                 }
             }
 
-            if (geojsonLayer) geojsonLayer.setStyle(estiloMapa);
+            if (geoPronto) pintarMapaD3(false);
             if (Object.keys(mapaDadosPorUf).length > 0) {
                 compararEstados();
                 renderizarGraficoPizzaTop5();
@@ -825,7 +770,7 @@
         function popularSelects() {
             const s1 = document.getElementById('uf1');
             const s2 = document.getElementById('uf2');
-            UFS.forEach(uf => {
+            BDUF.UFS.forEach(uf => {
                 s1.innerHTML += `<option value="${uf}" ${uf === 'SP' ? 'selected' : ''}>${uf}</option>`;
                 s2.innerHTML += `<option value="${uf}" ${uf === 'RJ' ? 'selected' : ''}>${uf}</option>`;
             });
@@ -845,12 +790,12 @@
             mapaDadosPorUf = {};
             pibTotalBrasilMil = 0;
 
-            UFS.forEach(uf => {
+            BDUF.UFS.forEach(uf => {
                 const comp = COMPOSICAO_SETORIAL_UF[uf] || { agro: 10, ind: 20, serv: 50, adm: 20, vocacao: 'Diversificada' };
                 mapaDadosPorUf[uf] = {
                     sigla: uf,
-                    nome: uf,
-                    regiao: REGIAO_UF[uf] || '',
+                    nome: BDUF.NOMES_UF[uf] || uf,
+                    regiao: BDUF.REGIAO_UF[uf] || '',
                     pibMil: 0,
                     populacao: 0,
                     perCapita: 0,
@@ -867,7 +812,7 @@
                 const uf = ind.estado.sigla.toUpperCase();
                 if (!mapaDadosPorUf[uf]) return;
 
-                mapaDadosPorUf[uf].nome = ind.estado.nome || uf;
+                if (ind.estado.nome) mapaDadosPorUf[uf].nome = ind.estado.nome;
                 const nomeInd = (ind.nome || '').toLowerCase();
                 const val = Number(ind.valor) || 0;
 
@@ -892,7 +837,7 @@
             compararEstados();
         }
 
-        function atualizarVisaoFiltrada(moverZoom = false) {
+        function atualizarVisaoFiltrada(ajustarZoom = false) {
             const filtrados = getEstadosFiltrados();
             const isBrasil = regiaoSelecionada === 'Todas';
 
@@ -946,11 +891,7 @@
             renderizarTabelaRanking();
             renderizarGraficoPizzaTop5();
 
-            if (geojsonLayer) {
-                geojsonLayer.setStyle(estiloMapa);
-                atualizarTooltipsMapa();
-                if (moverZoom) ajustarZoomRegiao();
-            }
+            if (geoPronto) pintarMapaD3(ajustarZoom);
 
             if (modoSelecao === 'regiao') {
                 exibirDetalhesRegiao();
@@ -961,6 +902,7 @@
             renderizarAbaDestaques();
             if (abaLateral === 'evolucao') renderizarEvolucaoPainel();
             atualizarSimulador();
+            sincronizarURL();
         }
 
         function renderizarAbaDestaques() {
@@ -984,11 +926,11 @@
                     : formatarMoedaCompacta(d.pibMil * 1000);
 
                 return `
-                    <div onclick="selecionarEstado('${d.sigla}', '${d.nome}')"
+                    <div onclick="alternarSelecaoEstado('${d.sigla}', '${d.nome}')"
                         class="p-2.5 rounded-lg border cursor-pointer transition flex items-center justify-between gap-3 ${isSel ? 'border-[#16C784] din-card-bg shadow-sm' : 'din-secondary-bg din-border hover:border-[#16C784]'}">
                         <div class="flex items-center gap-2.5 min-w-0">
                             <span class="w-3 h-3 rounded-sm shrink-0 border border-black/15" style="background:${cor}"></span>
-                            ${htmlBandeiraUF(d.sigla, 18)}
+                            ${BDUF.htmlBandeira(d.sigla, 18)}
                             <div class="min-w-0">
                                 <p class="text-xs font-bold din-text-main truncate flex items-center gap-1.5">
                                     <span>${idx + 1}º ${d.nome}</span>
@@ -1043,7 +985,7 @@
 
             const badge = document.getElementById('badgeCrescEvolucao');
             badge.innerText = `${cresc >= 0 ? '+' : ''}${cresc.toFixed(1)}% (${anos[0]}–${anos[anos.length - 1]})`;
-            badge.className = `font-bold ${cresc >= 0 ? 'din-green' : 'din-red'}`;
+            badge.className = `font-bold tabular-nums ${cresc >= 0 ? 'din-green' : 'din-red'}`;
 
             document.getElementById('notaEvolucaoPainel').innerText =
                 `Evolução nominal consolidada de ${alvoLabel} entre ${anos[0]} e ${anos[anos.length - 1]} (Fonte: IBGE SIDRA 5938).`;
@@ -1204,12 +1146,12 @@
                 const perfilDominante = d.setores.vocacao;
 
                 return `
-                    <tr onclick="selecionarEstado('${d.sigla}', '${d.nome}')"
+                    <tr onclick="alternarSelecaoEstado('${d.sigla}', '${d.nome}')"
                         class="${isSel ? 'din-secondary-bg' : 'hover:opacity-80'} cursor-pointer transition">
                         <td class="py-2.5 px-2 font-bold din-green font-mono">${idx + 1}º</td>
                         <td class="py-2.5 px-2">
                             <div class="flex items-center gap-2">
-                                ${htmlBandeiraUF(d.sigla, 18)}
+                                ${BDUF.htmlBandeira(d.sigla, 18)}
                                 <span class="font-semibold din-text-main">${d.nome}</span>
                                 <span class="text-[10px] font-mono px-1.5 py-0.5 rounded din-secondary-bg border din-border din-text-muted">${d.sigla}</span>
                             </div>
@@ -1299,163 +1241,149 @@
             modoMapa = novoModo;
             atualizarLegendaMapa();
             renderizarAbaDestaques();
-            if (geojsonLayer) geojsonLayer.setStyle(estiloMapa);
+            if (geoPronto) pintarMapaD3(false);
         }
 
-        function estiloMapa(feature) {
-            const sigla = feature.properties.sigla;
-            const naRegiao = pertenceARegiao(sigla);
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-
-            if (!naRegiao) {
-                return {
-                    fillColor: isDark ? '#14171A' : '#E5E7EB',
-                    weight: 0.8,
-                    opacity: 0.45,
-                    color: isDark ? '#23282E' : '#CBD5E1',
-                    fillOpacity: 0.3
-                };
+        function alternarSelecaoEstado(sigla, nome) {
+            if (!sigla) return;
+            if (modoSelecao === 'estado' && ufSelecionada === sigla) {
+                voltarParaRegiao();
+            } else {
+                selecionarEstado(sigla, nome);
             }
-
-            const corDestaque = corTonalEstado(sigla);
-            const estadoAtivo = modoSelecao === 'estado' && sigla === ufSelecionada;
-
-            return {
-                fillColor: corDestaque,
-                weight: estadoAtivo ? 3.0 : 1.3,
-                opacity: 1,
-                color: estadoAtivo ? (isDark ? '#F5F6F7' : '#17191C') : (isDark ? '#101214' : '#FFFFFF'),
-                fillOpacity: estadoAtivo ? 0.98 : 0.9
-            };
         }
 
         function selecionarEstado(sigla, nome) {
             ufSelecionada = sigla;
-            if (nome) nomeUfSelecionada = nome;
+            nomeUfSelecionada = nome || mapaDadosPorUf[sigla]?.nome || BDUF.NOMES_UF[sigla] || sigla;
             modoSelecao = 'estado';
 
             if (!pertenceARegiao(sigla)) {
                 regiaoSelecionada = 'Todas';
                 renderBotoesRegiao();
-                atualizarVisaoFiltrada(false);
+                atualizarVisaoFiltrada(true);
                 return;
             }
 
-            if (geojsonLayer) geojsonLayer.setStyle(estiloMapa);
+            if (geoPronto) pintarMapaD3(false);
             renderizarTabelaRanking();
             exibirDetalhesEstado(ufSelecionada, nomeUfSelecionada);
             renderizarAbaDestaques();
             if (abaLateral === 'evolucao') renderizarEvolucaoPainel();
             atualizarSimulador();
+            sincronizarURL();
         }
 
-        function montarHtmlTooltip(sigla, nomePadrao) {
-            const d = mapaDadosPorUf[sigla];
-            const band = htmlBandeiraUF(sigla, 18);
-            if (!d || d.pibMil <= 0) {
-                return `<div class="text-xs"><div class="flex items-center gap-2">${band}<p class="font-bold text-sm din-green">${nomePadrao} (${sigla})</p></div><p class="din-text-muted mt-1">Sem dados.</p></div>`;
-            }
-
-            return `
-                <div class="space-y-1.5 text-xs">
-                    <div class="flex justify-between items-center border-b din-border pb-1 gap-3">
-                        <div class="flex items-center gap-2">
-                            ${band}
-                            <span class="font-bold text-sm din-text-main">${nomePadrao} (${sigla})</span>
-                        </div>
-                        <span class="din-secondary-bg din-green px-1.5 py-0.5 rounded text-[10px] font-bold">${d.sharePib.toFixed(1)}% do PIB</span>
-                    </div>
-                    <div class="flex justify-between gap-3">
-                        <span class="din-text-muted">PIB:</span>
-                        <span class="font-bold din-green">${formatarMoedaCompacta(d.pibMil * 1000)}</span>
-                    </div>
-                    <div class="flex justify-between gap-3">
-                        <span class="din-text-muted">PIB per Capita:</span>
-                        <span class="font-semibold din-text-main">R$ ${d.perCapita.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}</span>
-                    </div>
-                </div>
-            `;
-        }
-
-        function atualizarTooltipsMapa() {
-            if (!geojsonLayer) return;
-            geojsonLayer.eachLayer(layer => {
-                const sigla = layer.feature.properties.sigla;
-                const nome = layer.feature.properties.name || sigla;
-                layer.setTooltipContent(montarHtmlTooltip(sigla, nome));
-            });
-        }
-
-        async function iniciarMapa() {
-            const elMap = document.getElementById('map');
-            if (typeof L === 'undefined') {
-                elMap.innerHTML = '<p class="p-6 text-xs din-red">Biblioteca do mapa (Leaflet) não carregou.</p>';
+        async function iniciarMapaD3() {
+            const geo = await BDUF.obterGeoJsonBrasil();
+            if (!geo) {
+                document.getElementById('mapLoading').textContent = 'Não foi possível carregar a malha geográfica do Brasil.';
                 return;
             }
+            geoDataBrasil = geo;
 
-            mapaLeaflet = L.map('map', { zoomControl: true }).setView([-14.8, -52.0], 4);
-            const urls = [
-                'https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson',
-                'https://servicodados.ibge.gov.br/api/v3/malhas/paises/BR?formato=application/vnd.geo+json&qualidade=minima&intrarregiao=UF'
-            ];
+            const svg = d3.select('#mapaPib');
+            const tip = document.getElementById('mapTip');
 
-            let geojsonData = null;
-            for (const url of urls) {
-                try {
-                    const resp = await fetch(url);
-                    if (resp.ok) {
-                        geojsonData = await resp.json();
-                        break;
+            // Clique no fundo vazio do SVG volta ao consolidado
+            svg.on('click', ev => {
+                if (ev.target === svg.node() && modoSelecao === 'estado') voltarParaRegiao();
+            });
+
+            svg.selectAll('path')
+                .data(geo.features)
+                .join('path')
+                .attr('class', 'cursor-pointer transition-opacity')
+                .attr('data-uf', f => f.properties.sigla || '')
+                .on('mouseenter', function() {
+                    const uf = this.getAttribute('data-uf');
+                    const d = mapaDadosPorUf[uf];
+                    const nome = d ? d.nome : (BDUF.NOMES_UF[uf] || uf);
+                    document.getElementById('tipBand').innerHTML = BDUF.htmlBandeira(uf, 18);
+                    document.getElementById('tipNome').textContent = `${nome} (${uf})`;
+                    if (d && d.pibMil > 0) {
+                        document.getElementById('tipShare').textContent = `${d.sharePib.toFixed(1)}% do PIB`;
+                        document.getElementById('tipShare').classList.remove('hidden');
+                        document.getElementById('tipVal').textContent = `PIB: ${formatarMoedaCompacta(d.pibMil * 1000)}`;
+                        document.getElementById('tipSub').textContent = `Per capita: R$ ${Math.round(d.perCapita).toLocaleString('pt-BR')}`;
+                    } else {
+                        document.getElementById('tipShare').classList.add('hidden');
+                        document.getElementById('tipVal').textContent = 'Sem dados';
+                        document.getElementById('tipSub').textContent = '';
                     }
-                } catch (err) {
-                    console.warn('Falha ao carregar malha de:', url, err);
-                }
+                    tip.classList.remove('hidden');
+                    d3.select(this).raise();
+                })
+                .on('mousemove', ev => {
+                    tip.style.left = (ev.clientX + 14) + 'px';
+                    tip.style.top = (ev.clientY + 14) + 'px';
+                })
+                .on('mouseleave', () => {
+                    tip.classList.add('hidden');
+                    if (modoSelecao === 'estado' && ufSelecionada) {
+                        svg.selectAll('path').filter(function() { return this.getAttribute('data-uf') === ufSelecionada; }).raise();
+                    }
+                })
+                .on('click', function(ev) {
+                    ev.stopPropagation();
+                    const uf = this.getAttribute('data-uf');
+                    const d = mapaDadosPorUf[uf];
+                    alternarSelecaoEstado(uf, d ? d.nome : BDUF.NOMES_UF[uf]);
+                });
+
+            document.getElementById('mapLoading').classList.add('hidden');
+            svg.classed('hidden', false);
+            geoPronto = true;
+            pintarMapaD3(true);
+        }
+
+        function pintarMapaD3(ajustarZoom = false) {
+            if (!geoPronto || !geoDataBrasil) return;
+            const svg = d3.select('#mapaPib');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const apagado = isDark ? '#14171A' : '#E5E7EB';
+            const bordaApagada = isDark ? '#23282E' : '#CBD5E1';
+            const bordaNormal = isDark ? '#101214' : '#FFFFFF';
+            const bordaSel = isDark ? '#F5F6F7' : '#17191C';
+
+            const paths = svg.selectAll('path');
+
+            if (ajustarZoom) {
+                const alvo = regiaoSelecionada === 'Todas'
+                    ? geoDataBrasil
+                    : { type: 'FeatureCollection', features: geoDataBrasil.features.filter(f => pertenceARegiao(f.properties.sigla)) };
+                const pad = regiaoSelecionada === 'Todas' ? [[16, 16], [584, 544]] : [[34, 34], [566, 526]];
+                const proj = d3.geoIdentity().reflectY(true).fitExtent(pad, alvo);
+                const pathGen = d3.geoPath().projection(proj);
+                paths.attr('d', pathGen);
             }
 
-            if (!geojsonData || !geojsonData.features) {
-                elMap.innerHTML = '<p class="p-6 text-xs din-red">Não foi possível carregar a malha geográfica do Brasil.</p>';
-                return;
+            paths
+                .attr('fill', function() {
+                    const uf = this.getAttribute('data-uf');
+                    return pertenceARegiao(uf) ? corTonalEstado(uf) : apagado;
+                })
+                .attr('fill-opacity', function() {
+                    const uf = this.getAttribute('data-uf');
+                    if (!pertenceARegiao(uf)) return 0.35;
+                    return (modoSelecao === 'estado' && uf === ufSelecionada) ? 0.98 : 0.92;
+                })
+                .attr('stroke', function() {
+                    const uf = this.getAttribute('data-uf');
+                    if (!pertenceARegiao(uf)) return bordaApagada;
+                    if (modoSelecao === 'estado' && uf === ufSelecionada) return bordaSel;
+                    return bordaNormal;
+                })
+                .attr('stroke-width', function() {
+                    const uf = this.getAttribute('data-uf');
+                    if (!pertenceARegiao(uf)) return 0.7;
+                    if (modoSelecao === 'estado' && uf === ufSelecionada) return 2.8;
+                    return 1.1;
+                });
+
+            if (modoSelecao === 'estado' && ufSelecionada) {
+                paths.filter(function() { return this.getAttribute('data-uf') === ufSelecionada; }).raise();
             }
-
-            geojsonData.features.forEach(f => {
-                const p = f.properties || (f.properties = {});
-                if (!p.sigla && p.codarea && IBGE_UF_MAP[String(p.codarea)]) {
-                    p.sigla = IBGE_UF_MAP[String(p.codarea)][0];
-                    p.name = IBGE_UF_MAP[String(p.codarea)][1];
-                }
-            });
-
-            geojsonLayer = L.geoJson(geojsonData, {
-                style: estiloMapa,
-                onEachFeature: function (feature, layer) {
-                    const nome = feature.properties.name || feature.properties.sigla;
-                    const sigla = feature.properties.sigla;
-
-                    layer.bindTooltip(montarHtmlTooltip(sigla, nome), {
-                        sticky: true,
-                        className: 'custom-tooltip',
-                        direction: 'auto'
-                    });
-
-                    layer.on({
-                        mouseover: function (e) {
-                            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-                            e.target.setStyle({ weight: 2.6, color: isDark ? '#F5F6F7' : '#17191C', fillOpacity: 0.98 });
-                            e.target.bringToFront();
-                        },
-                        mouseout: function (e) {
-                            e.target.setStyle(estiloMapa(e.target.feature));
-                        },
-                        click: function (e) {
-                            selecionarEstado(sigla, nome);
-                            e.target.bringToFront();
-                        }
-                    });
-                }
-            }).addTo(mapaLeaflet);
-
-            mapaLeaflet.fitBounds(geojsonLayer.getBounds(), { padding: [12, 12] });
-            setTimeout(() => mapaLeaflet.invalidateSize(), 150);
         }
 
         function exibirDetalhesRegiao() {
@@ -1471,7 +1399,7 @@
 
             document.getElementById('btnVoltarRegiao').classList.add('hidden');
             document.getElementById('labelRegiaoEstado').innerText = isBrasil ? 'Consolidado Nacional' : 'Região Selecionada';
-            document.getElementById('bandeiraEstado').innerHTML = htmlBandeiraUF('BR', 26);
+            document.getElementById('bandeiraEstado').innerHTML = BDUF.htmlBandeira('BR', 26);
             document.getElementById('tituloEstado').innerText = isBrasil ? 'Brasil (Consolidado)' : `Região ${regiaoSelecionada}`;
             document.getElementById('badgeUf').innerText = isBrasil ? 'BR' : `${filtrados.length} UFs`;
 
@@ -1539,8 +1467,8 @@
             btnVoltar.classList.remove('hidden');
 
             document.getElementById('badgeUf').innerText = sigla;
-            document.getElementById('labelRegiaoEstado').innerText = `Estado Selecionado · ${REGIAO_UF[sigla] || 'Brasil'}`;
-            document.getElementById('bandeiraEstado').innerHTML = htmlBandeiraUF(sigla, 26);
+            document.getElementById('labelRegiaoEstado').innerText = `Estado Selecionado · ${BDUF.REGIAO_UF[sigla] || 'Brasil'}`;
+            document.getElementById('bandeiraEstado').innerHTML = BDUF.htmlBandeira(sigla, 26);
             document.getElementById('tituloEstado').innerText = nomeUfSelecionada;
 
             const container = document.getElementById('listaIndicadores');
@@ -1675,13 +1603,32 @@
         }
 
         window.onload = async () => {
-            const temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light';
+            let temaSalvo = 'light';
+            try { temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light'; } catch {}
             aplicarTema(temaSalvo === 'dark' ? 'dark' : 'light');
+
+            // Restaura parâmetros da URL (?ano=...®iao=...&uf=...)
+            const urlParams = new URLSearchParams(window.location.search);
+            const paramAno = Number(urlParams.get('ano'));
+            const selAno = document.getElementById('selectAno');
+            if (paramAno && Array.from(selAno.options).some(o => Number(o.value) === paramAno)) {
+                anoSelecionado = paramAno;
+                selAno.value = String(paramAno);
+            }
+            const paramRegiao = urlParams.get('regiao');
+            if (paramRegiao && BDUF.REGIOES.includes(paramRegiao)) {
+                regiaoSelecionada = paramRegiao;
+            }
 
             renderBotoesRegiao();
             popularSelects();
-            await iniciarMapa();
+            await iniciarMapaD3();
             await atualizarBaseCompleta();
+
+            const paramUf = (urlParams.get('uf') || '').toUpperCase();
+            if (paramUf && BDUF.UFS.includes(paramUf)) {
+                selecionarEstado(paramUf, mapaDadosPorUf[paramUf]?.nome);
+            }
         };
     </script>
 </body>
