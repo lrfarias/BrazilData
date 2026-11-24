@@ -211,7 +211,7 @@
                         </div>
                     </div>
 
-                    <!-- Legenda Tonal Dinâmica (Mais claro -> Mais escuro para destaque) -->
+                    <!-- Legenda Tonal Dinâmica -->
                     <div id="legendaGradienteRegiao" class="flex flex-wrap items-center justify-between gap-3 text-[11px] din-text-muted mb-2.5 px-1">
                         <span id="legMenorDestaque" class="font-medium">Menor peso</span>
                         <div class="flex items-center gap-2 flex-1 max-w-[260px]">
@@ -325,10 +325,13 @@
                                     ← Ver Região
                                 </button>
                             </div>
-                            <h3 id="tituloEstado" class="text-2xl font-bold din-text-main mt-0.5">São Paulo (SP)</h3>
+                            <div class="flex items-center gap-2.5 mt-1">
+                                <span id="bandeiraEstado" class="shrink-0"></span>
+                                <h3 id="tituloEstado" class="text-2xl font-bold din-text-main">Brasil (Consolidado)</h3>
+                            </div>
                         </div>
                         <span id="badgeUf" class="din-secondary-bg din-green border din-border font-bold px-3 py-1 rounded-md text-sm shrink-0">
-                            SP
+                            BR
                         </span>
                     </div>
 
@@ -373,7 +376,7 @@
                         </div>
                     </div>
 
-                    <!-- ABA 2: DESTAQUES DO RECORTE (COM TONALIDADE DO MAPA) -->
+                    <!-- ABA 2: DESTAQUES DO RECORTE (COM TONALIDADE DO MAPA + BANDEIRAS) -->
                     <div id="viewLatDestaques" class="hidden space-y-3">
                         <div class="flex items-center justify-between text-xs">
                             <span id="subDestaques" class="din-text-muted">Ordem de destaque econômico no recorte</span>
@@ -516,7 +519,7 @@
         </div>
     </footer>
 
-    <!-- Utilitário de Layout e Gráficos (Tooltips + PNG + ABNT) carregado ANTES do script da página -->
+    <!-- Utilitário de Layout e Gráficos -->
     <script src="/js/layout.js"></script>
     <script src="/js/chart-utils.js?v=1"></script>
 
@@ -560,6 +563,48 @@
             MS:'Centro-Oeste', MT:'Centro-Oeste', GO:'Centro-Oeste', DF:'Centro-Oeste'
         };
 
+        const BANDEIRA_UF_URL = {
+            BR: 'https://upload.wikimedia.org/wikipedia/commons/0/05/Flag_of_Brazil.svg',
+            AC: 'https://upload.wikimedia.org/wikipedia/commons/4/4c/Bandeira_do_Acre.svg',
+            AL: 'https://upload.wikimedia.org/wikipedia/commons/8/88/Bandeira_de_Alagoas.svg',
+            AP: 'https://upload.wikimedia.org/wikipedia/commons/0/0c/Bandeira_do_Amap%C3%A1.svg',
+            AM: 'https://upload.wikimedia.org/wikipedia/commons/6/6b/Bandeira_do_Amazonas.svg',
+            BA: 'https://upload.wikimedia.org/wikipedia/commons/2/28/Bandeira_da_Bahia.svg',
+            CE: 'https://upload.wikimedia.org/wikipedia/commons/2/2e/Bandeira_do_Cear%C3%A1.svg',
+            DF: 'https://upload.wikimedia.org/wikipedia/commons/3/3c/Bandeira_do_Distrito_Federal_%28Brasil%29.svg',
+            ES: 'https://upload.wikimedia.org/wikipedia/commons/4/43/Bandeira_do_Esp%C3%ADrito_Santo.svg',
+            GO: 'https://upload.wikimedia.org/wikipedia/commons/b/be/Flag_of_Goi%C3%A1s.svg',
+            MA: 'https://upload.wikimedia.org/wikipedia/commons/4/45/Bandeira_do_Maranh%C3%A3o.svg',
+            MT: 'https://upload.wikimedia.org/wikipedia/commons/0/0b/Bandeira_de_Mato_Grosso.svg',
+            MS: 'https://upload.wikimedia.org/wikipedia/commons/6/64/Bandeira_de_Mato_Grosso_do_Sul.svg',
+            MG: 'https://upload.wikimedia.org/wikipedia/commons/f/f4/Bandeira_de_Minas_Gerais.svg',
+            PA: 'https://upload.wikimedia.org/wikipedia/commons/0/02/Bandeira_do_Par%C3%A1.svg',
+            PB: 'https://upload.wikimedia.org/wikipedia/commons/b/bb/Bandeira_da_Para%C3%ADba.svg',
+            PR: 'https://upload.wikimedia.org/wikipedia/commons/9/93/Bandeira_do_Paran%C3%A1.svg',
+            PE: 'https://upload.wikimedia.org/wikipedia/commons/5/59/Bandeira_de_Pernambuco.svg',
+            PI: 'https://upload.wikimedia.org/wikipedia/commons/3/33/Bandeira_do_Piau%C3%AD.svg',
+            RJ: 'https://upload.wikimedia.org/wikipedia/commons/7/73/Bandeira_do_estado_do_Rio_de_Janeiro.svg',
+            RN: 'https://upload.wikimedia.org/wikipedia/commons/3/30/Bandeira_do_Rio_Grande_do_Norte.svg',
+            RS: 'https://upload.wikimedia.org/wikipedia/commons/6/63/Bandeira_do_Rio_Grande_do_Sul.svg',
+            RO: 'https://upload.wikimedia.org/wikipedia/commons/f/fa/Bandeira_de_Rond%C3%B4nia.svg',
+            RR: 'https://upload.wikimedia.org/wikipedia/commons/9/98/Bandeira_de_Roraima.svg',
+            SC: 'https://upload.wikimedia.org/wikipedia/commons/1/1a/Bandeira_de_Santa_Catarina.svg',
+            SP: 'https://upload.wikimedia.org/wikipedia/commons/2/2b/Bandeira_do_estado_de_S%C3%A3o_Paulo.svg',
+            SE: 'https://upload.wikimedia.org/wikipedia/commons/b/be/Bandeira_de_Sergipe.svg',
+            TO: 'https://upload.wikimedia.org/wikipedia/commons/f/ff/Bandeira_do_Tocantins.svg'
+        };
+
+        function htmlBandeiraUF(uf, px = 20) {
+            const key = uf && BANDEIRA_UF_URL[uf] ? uf : 'BR';
+            const url = BANDEIRA_UF_URL[key] || '';
+            const siglaTxt = uf || 'BR';
+            if (!url) {
+                return `<span style="width:${px}px;height:${px}px;font-size:${Math.max(7, Math.round(px * 0.42))}px" class="rounded-full bg-[#16C784] text-white font-extrabold inline-flex items-center justify-center shrink-0">${siglaTxt}</span>`;
+            }
+            const imgZoom = key === 'DF' ? 'transform:scale(2.8);' : '';
+            return `<span style="width:${px}px;height:${px}px" class="rounded-full overflow-hidden border din-border inline-flex items-center justify-center shrink-0 bg-white shadow-xs"><img src="${url}" alt="Bandeira ${siglaTxt}" style="width:100%;height:100%;object-fit:cover;${imgZoom}" onerror="this.style.display='none'"></span>`;
+        }
+
         const IBGE_UF_MAP = {
             '11':['RO','Rondônia'],'12':['AC','Acre'],'13':['AM','Amazonas'],'14':['RR','Roraima'],
             '15':['PA','Pará'],'16':['AP','Amapá'],'17':['TO','Tocantins'],'21':['MA','Maranhão'],
@@ -601,15 +646,11 @@
             RR: { agro: 9,  ind: 9,  serv: 36, adm: 46, vocacao: 'Comércio Fronteiriço e Público' }
         };
 
-        // Escala tonal: verde médio-claro (#74E3B4) -> verde marca (#16C784) -> esmeralda escuro (#046C4E) para o destaque
+        // Escala tonal verde
         function interpolarCorVerde(t) {
             const clamped = Math.max(0, Math.min(1, t));
-            // Curva suave para dar contraste entre estados intermediários e líderes
             const s = Math.pow(clamped, 0.72);
-            const c0 = [116, 227, 180]; // #74E3B4 (menor destaque - visível, não lavado)
-            const c1 = [22, 199, 132];  // #16C784 (médio)
-            const c2 = [4, 108, 78];    // #046C4E (maior destaque - escuro marcante)
-
+            const c0 = [116, 227, 180], c1 = [22, 199, 132], c2 = [4, 108, 78];
             let r, g, b;
             if (s <= 0.5) {
                 const k = s / 0.5;
@@ -946,10 +987,12 @@
                     <div onclick="selecionarEstado('${d.sigla}', '${d.nome}')"
                         class="p-2.5 rounded-lg border cursor-pointer transition flex items-center justify-between gap-3 ${isSel ? 'border-[#16C784] din-card-bg shadow-sm' : 'din-secondary-bg din-border hover:border-[#16C784]'}">
                         <div class="flex items-center gap-2.5 min-w-0">
-                            <span class="w-3.5 h-3.5 rounded-sm shrink-0 border border-black/15" style="background:${cor}"></span>
+                            <span class="w-3 h-3 rounded-sm shrink-0 border border-black/15" style="background:${cor}"></span>
+                            ${htmlBandeiraUF(d.sigla, 18)}
                             <div class="min-w-0">
-                                <p class="text-xs font-bold din-text-main truncate">
-                                    ${idx + 1}º ${d.nome} <span class="din-text-muted font-normal">(${d.sigla})</span>
+                                <p class="text-xs font-bold din-text-main truncate flex items-center gap-1.5">
+                                    <span>${idx + 1}º ${d.nome}</span>
+                                    <span class="text-[10px] font-mono px-1.5 py-0.2 rounded din-card-bg border din-border din-text-muted font-normal">${d.sigla}</span>
                                 </p>
                                 <p class="text-[10px] din-text-muted truncate">${d.setores.vocacao}</p>
                             </div>
@@ -1163,8 +1206,14 @@
                 return `
                     <tr onclick="selecionarEstado('${d.sigla}', '${d.nome}')"
                         class="${isSel ? 'din-secondary-bg' : 'hover:opacity-80'} cursor-pointer transition">
-                        <td class="py-2.5 px-2 font-bold din-green">${idx + 1}º</td>
-                        <td class="py-2.5 px-2 font-semibold din-text-main">${d.nome} <span class="din-text-muted">(${d.sigla})</span></td>
+                        <td class="py-2.5 px-2 font-bold din-green font-mono">${idx + 1}º</td>
+                        <td class="py-2.5 px-2">
+                            <div class="flex items-center gap-2">
+                                ${htmlBandeiraUF(d.sigla, 18)}
+                                <span class="font-semibold din-text-main">${d.nome}</span>
+                                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded din-secondary-bg border din-border din-text-muted">${d.sigla}</span>
+                            </div>
+                        </td>
                         <td class="py-2.5 px-2 font-bold din-green">${formatarMoedaCompacta(pibReais)}</td>
                         <td class="py-2.5 px-2 din-text-main">${d.sharePib.toFixed(1)}%</td>
                         <td class="py-2.5 px-2 din-text-main">R$ ${d.perCapita.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}</td>
@@ -1302,14 +1351,18 @@
 
         function montarHtmlTooltip(sigla, nomePadrao) {
             const d = mapaDadosPorUf[sigla];
+            const band = htmlBandeiraUF(sigla, 18);
             if (!d || d.pibMil <= 0) {
-                return `<div class="text-xs"><p class="font-bold text-sm din-green">${nomePadrao} (${sigla})</p><p class="din-text-muted mt-1">Sem dados.</p></div>`;
+                return `<div class="text-xs"><div class="flex items-center gap-2">${band}<p class="font-bold text-sm din-green">${nomePadrao} (${sigla})</p></div><p class="din-text-muted mt-1">Sem dados.</p></div>`;
             }
 
             return `
                 <div class="space-y-1.5 text-xs">
                     <div class="flex justify-between items-center border-b din-border pb-1 gap-3">
-                        <span class="font-bold text-sm din-text-main">${nomePadrao} (${sigla})</span>
+                        <div class="flex items-center gap-2">
+                            ${band}
+                            <span class="font-bold text-sm din-text-main">${nomePadrao} (${sigla})</span>
+                        </div>
                         <span class="din-secondary-bg din-green px-1.5 py-0.5 rounded text-[10px] font-bold">${d.sharePib.toFixed(1)}% do PIB</span>
                     </div>
                     <div class="flex justify-between gap-3">
@@ -1418,6 +1471,7 @@
 
             document.getElementById('btnVoltarRegiao').classList.add('hidden');
             document.getElementById('labelRegiaoEstado').innerText = isBrasil ? 'Consolidado Nacional' : 'Região Selecionada';
+            document.getElementById('bandeiraEstado').innerHTML = htmlBandeiraUF('BR', 26);
             document.getElementById('tituloEstado').innerText = isBrasil ? 'Brasil (Consolidado)' : `Região ${regiaoSelecionada}`;
             document.getElementById('badgeUf').innerText = isBrasil ? 'BR' : `${filtrados.length} UFs`;
 
@@ -1486,7 +1540,8 @@
 
             document.getElementById('badgeUf').innerText = sigla;
             document.getElementById('labelRegiaoEstado').innerText = `Estado Selecionado · ${REGIAO_UF[sigla] || 'Brasil'}`;
-            document.getElementById('tituloEstado').innerText = `${nomeUfSelecionada} (${sigla})`;
+            document.getElementById('bandeiraEstado').innerHTML = htmlBandeiraUF(sigla, 26);
+            document.getElementById('tituloEstado').innerText = nomeUfSelecionada;
 
             const container = document.getElementById('listaIndicadores');
             const indicadoresUfAno = todosIndicadores.filter(i =>
