@@ -9,17 +9,23 @@ body{background:var(--bg);color:var(--tx)}
 .inp{background:var(--sec);border:1px solid var(--bd);color:var(--tx);border-radius:.5rem;padding:.5rem .75rem;width:100%;font-size:.875rem}
 .inp:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--gr);outline-offset:2px}
 select option{background:var(--card);color:var(--tx)}
-th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}`;
+th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}
+.tabular-nums{font-variant-numeric:tabular-nums}
+.no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}`;
   const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
   const isFile = location.protocol === 'file:';
   const rota = slug => {
-    const limpo = String(slug || '').replace(/^\/|\.html$/g, '');
-    if (!limpo || limpo === 'index') return isFile ? 'index.html' : '/';
-    return isFile ? `${limpo}.html` : `/${limpo}`;
+    const raw = String(slug || '');
+    const [caminho, hash] = raw.split('#');
+    const limpo = caminho.replace(/^\/|\.html$/g, '');
+    const base = (!limpo || limpo === 'index')
+      ? (isFile ? 'index.html' : '/')
+      : (isFile ? `${limpo}.html` : `/${limpo}`);
+    return hash ? `${base}#${hash}` : base;
   };
 
-  // Detecta automaticamente o contexto da página (ou respeita data-badge / data-sub se informados)
+  // Detecta automaticamente o contexto da página (ou respeita data-badge / data-sub)
   const elHdr = document.getElementById('bd-header');
   const ctxStr = (location.pathname + ' ' + document.title).toLowerCase();
 
@@ -35,9 +41,12 @@ th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}`;
     autoBadge = 'IBGE PAM · AGRO';
     autoSub = 'Produção Agrícola, Safras e Vocação Regional';
   } else if (/mundo|global/.test(ctxStr)) {
-    autoBadge = 'GLOBAL · MACRO';
+    autoBadge = 'WORLD BANK · BCE';
     autoSub = 'Panorama Global, PIB Mundial & Blocos Econômicos';
-  } else if (/imposto|popula|idh|contas|pib/.test(ctxStr)) {
+  } else if (/imposto|popula|idh/.test(ctxStr)) {
+    autoBadge = 'IBGE · PNUD';
+    autoSub = 'Inteligência Macroeconômica, Tributária & IDH';
+  } else if (/contas|pib/.test(ctxStr)) {
     autoBadge = 'IBGE SIDRA';
     autoSub = 'Inteligência Macroeconômica e Contas Regionais';
   } else if (/selic|juros|simulador/.test(ctxStr)) {
@@ -85,8 +94,8 @@ th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}`;
   };
   const links = f => nav.map(([s, t]) => `<a href="${rota(s)}" class="${f(isAtivo(s, t))}">${t}</a>`).join('');
 
-  const temTabela = !!document.getElementById('titTabela');
-  const linkClassif = temTabela ? '#titTabela' : rota('economia');
+  const temRanking = !!(document.getElementById('secaoRanking') || document.getElementById('titTabela'));
+  const linkClassif = document.getElementById('secaoRanking') ? '#secaoRanking' : '#titTabela';
   const logoSrc = isFile ? 'download.png' : '/download.png';
 
   const hdr = `<header class="sticky top-0 z-50 border-b din-border din-card-bg">
@@ -102,7 +111,7 @@ th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}`;
             <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span>${badge}
           </span>
         </div>
-        <p class="hidden sm:block text-[11px] din-text-muted leading-tight mt-0.5 truncate">${sub}</p>
+        <p class="hidden xl:block text-[11px] din-text-muted leading-tight mt-0.5 truncate">${sub}</p>
       </div>
     </a>
 
@@ -135,7 +144,7 @@ th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}`;
           <a href="${rota('economia')}" class="flex items-center gap-3 px-4 py-2 text-xs font-semibold din-text-main hover:din-secondary-bg transition">
             <span class="din-green text-sm leading-none">←</span> Voltar ao Hub Economia
           </a>
-          ${temTabela ? `<a href="${linkClassif}" onclick="document.getElementById('bdMenu').classList.add('hidden')" class="flex items-center gap-3 px-4 py-2 text-xs font-semibold din-text-main hover:din-secondary-bg transition">
+          ${temRanking ? `<a href="${linkClassif}" onclick="document.getElementById('bdMenu').classList.add('hidden')" class="flex items-center gap-3 px-4 py-2 text-xs font-semibold din-text-main hover:din-secondary-bg transition">
             <svg class="w-4 h-4 din-text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 10v10"/></svg>
             Classificação Estadual
           </a>` : ''}
@@ -166,18 +175,19 @@ th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}`;
       </div>
     </div>
   </div>
-  <nav class="lg:hidden flex gap-5 h-10 px-4 overflow-x-auto items-center text-xs font-semibold border-t din-border">
-    ${links(on => (on ? 'din-green' : 'din-text-muted') + ' shrink-0')}
+  <nav class="lg:hidden flex gap-5 h-10 px-4 overflow-x-auto no-scrollbar items-center text-xs font-semibold border-t din-border">
+    ${links(on => (on ? 'din-green border-b-2 border-[#16C784] h-full flex items-center' : 'din-text-muted h-full flex items-center') + ' shrink-0')}
   </nav>
 </header>`;
 
-  const ftr = `<footer class="border-t din-border din-card-bg py-6 text-xs din-text-muted mt-8">
+  const ftr = `<footer class="border-t din-border din-card-bg py-6 text-xs din-text-muted mt-8 ocultar-em-presentation">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-3">
-      <span><strong class="din-text-main">BrasilEmDados</strong> · Dados públicos e inteligência econômica</span>
-      <div class="flex flex-wrap items-center gap-4">
+      <span><strong class="din-text-main">BrasilEmDados</strong> · Terminal de Inteligência Econômica e Setorial</span>
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <a href="${rota('index')}" class="hover:din-text-main transition">Início</a>
         <a href="${rota('economia')}" class="hover:din-text-main transition">Economia</a>
         <a href="${rota('glossario')}" class="hover:din-text-main transition">Glossário</a>
-        <a href="${rota('sobre')}" class="hover:din-text-main transition">Fontes & Sobre</a>
+        <a href="${rota('sobre')}" class="hover:din-text-main transition">Sobre</a>
         <a href="${rota('contato')}" class="hover:din-text-main transition">Contato</a>
       </div>
     </div>
@@ -187,15 +197,27 @@ th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}`;
   const elFtr = document.getElementById('bd-footer');
   if (elFtr) elFtr.innerHTML = ftr;
 
-  const selAno = document.getElementById('ano');
+  // Move seletor de ano (#ano ou #selectAno) para o cabeçalho unificado quando #bd-header está ativo
+  const selAno = document.getElementById('ano') || document.getElementById('selectAno');
   const slot = document.getElementById('bd-base-slot');
-  if (selAno && slot) {
+  if (elHdr && selAno && slot) {
     const pai = selAno.parentElement;
     selAno.className = 'bg-transparent font-bold din-text-main text-xs outline-none cursor-pointer pr-1';
     slot.appendChild(selAno);
     slot.classList.remove('hidden');
     slot.classList.add('inline-flex');
-    if (pai && pai.tagName === 'LABEL') pai.classList.add('hidden');
+    if (pai && (pai.tagName === 'LABEL' || pai.children.length === 0)) pai.classList.add('hidden');
+  }
+
+  // Normaliza links internos *.html -> rotas limpas automaticamente quando rodando via HTTP/HTTPS
+  if (!isFile) {
+    document.querySelectorAll('a[href]').forEach(a => {
+      const href = a.getAttribute('href') || '';
+      if (/^(https?:|mailto:|tel:|#)/i.test(href)) return;
+      if (/\.html($|#)/i.test(href)) {
+        a.setAttribute('href', rota(href));
+      }
+    });
   }
 
   const K = 'brasil_em_dados_tema', H = document.documentElement;
@@ -274,13 +296,24 @@ th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}`;
 
   window.BD = {
     rota,
-    brl: (v, d = 2) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: d, maximumFractionDigits: d }),
-    num: (v, d = 0) => v.toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d }),
+    brl: (v, d = 2) => window.BDFmt ? BDFmt.brl(v, d) : v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: d, maximumFractionDigits: d }),
+    num: (v, d = 0) => window.BDFmt ? BDFmt.num(v, d) : v.toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d }),
     compact: r => {
+      if (window.BDFmt) return BDFmt.compactBRL(r);
       const f = (x, s) => 'R$ ' + (r / x).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + s;
-      return r >= 1e12 ? f(1e12, 'tri') : r >= 1e9 ? f(1e9, 'bi') : r >= 1e6 ? f(1e6, 'mi') : BD.brl(r, 0);
+      return r >= 1e12 ? f(1e12, 'tri') : r >= 1e9 ? f(1e9, 'bi') : r >= 1e6 ? f(1e6, 'mi') : window.BD.brl(r, 0);
     },
     cor: () => { const d = H.getAttribute('data-theme') === 'dark'; return { tx: d ? '#F5F6F7' : '#17191C', mu: d ? '#9299A3' : '#737780', grid: d ? '#2B3036' : '#E5E7EB' }; },
-    indicadores: async () => { const r = await fetch('/api/indicadores'); if (!r.ok) throw new Error('API ' + r.status); return r.json(); }
+    indicadores: async () => {
+      if (window.BDUF && BDUF.obterCacheIndicadores) {
+        const cache = BDUF.obterCacheIndicadores();
+        if (cache && cache.length) return cache;
+      }
+      const r = await fetch('/api/indicadores');
+      if (!r.ok) throw new Error('API ' + r.status);
+      const j = await r.json();
+      if (window.BDUF && BDUF.salvarCacheIndicadores) BDUF.salvarCacheIndicadores(j);
+      return j;
+    }
   };
 })();

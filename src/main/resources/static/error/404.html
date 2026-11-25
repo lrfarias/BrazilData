@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 — Página não encontrada · BrasilEmDados</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
+<link rel="stylesheet" href="/css/theme.css">
+<script>
+  try {
+    if (localStorage.getItem('brasil_em_dados_tema') === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  } catch {}
+</script>
+</head>
+<body class="min-h-screen font-sans flex items-center justify-center px-4">
+  <main class="max-w-md w-full din-card-bg border din-border rounded-2xl p-8 text-center shadow-sm space-y-5">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full din-secondary-bg border din-border text-xs font-mono din-green font-bold">
+      <span class="w-2 h-2 rounded-full bg-[#16C784]"></span> ERRO 404
+    </div>
+
+    <div class="space-y-2">
+      <h1 class="text-2xl font-extrabold din-text-main">Página não encontrada</h1>
+      <p class="text-xs din-text-muted leading-relaxed">
+        O endereço acessado não existe ou foi movido dentro do terminal BrasilEmDados.
+      </p>
+    </div>
+
+    <div class="flex flex-wrap items-center justify-center gap-2.5 pt-2">
+      <a href="/" class="din-btn px-4 py-2 rounded-lg text-xs font-semibold transition">
+        Ir para o Início
+      </a>
+      <a href="/economia" class="din-secondary-bg border din-border hover:border-[#16C784] din-text-main px-4 py-2 rounded-lg text-xs font-semibold transition">
+        Hub Economia
+      </a>
+    </div>
+  </main>
+</body>
+</html>

@@ -93,17 +93,17 @@
       </div>
 
       <nav class="flex md:hidden items-center gap-5 h-10 overflow-x-auto no-scrollbar text-xs font-semibold border-t din-border">
-        <a href="index.html" class="din-text-muted hover:din-text-main h-full flex items-center">Início</a>
-        <a href="glossario.html" class="din-text-muted hover:din-text-main h-full flex items-center">Glossário</a>
-        <a href="economia.html" class="din-green border-b-2 border-[#16C784] h-full flex items-center">Economia</a>
-        <a href="sobre.html" class="din-text-muted hover:din-text-main h-full flex items-center">Sobre</a>
-        <a href="contato.html" class="din-text-muted hover:din-text-main h-full flex items-center">Contato</a>
+        <a href="index.html" class="din-text-muted hover:din-text-main h-full flex items-center shrink-0">Início</a>
+        <a href="glossario.html" class="din-text-muted hover:din-text-main h-full flex items-center shrink-0">Glossário</a>
+        <a href="economia.html" class="din-green border-b-2 border-[#16C784] h-full flex items-center shrink-0">Economia</a>
+        <a href="sobre.html" class="din-text-muted hover:din-text-main h-full flex items-center shrink-0">Sobre</a>
+        <a href="contato.html" class="din-text-muted hover:din-text-main h-full flex items-center shrink-0">Contato</a>
       </nav>
     </div>
   </header>
 
   <!-- Breadcrumb + Status + ABNT -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex flex-wrap items-center justify-between gap-2 text-xs ocultar-em-presentation">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4 flex flex-wrap items-center justify-between gap-2 text-xs ocultar-em-presentation">
     <div class="flex items-center gap-2 din-text-muted">
       <a href="economia.html" class="hover:din-green font-semibold inline-flex items-center gap-1 transition">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
@@ -134,53 +134,53 @@
     <p id="tipSub" class="text-[10px] din-text-muted mt-0.5">Clique para inspecionar</p>
   </div>
 
-  <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-5 space-y-6">
+  <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5 space-y-5 sm:space-y-6">
 
     <!-- 1. SELETOR DE CULTURA AGRÍCOLA (IBGE PAM) -->
-    <section class="din-card-bg border din-border rounded-xl p-4 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-4 ocultar-em-presentation">
-      <div class="space-y-1.5">
+    <section class="din-card-bg border din-border rounded-xl p-3.5 sm:p-4 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 ocultar-em-presentation">
+      <div class="space-y-1.5 min-w-0">
         <span class="block text-[11px] font-semibold uppercase tracking-wider din-text-muted" data-glossario="PAM">Cultura agrícola (IBGE PAM)</span>
-        <div id="btnsCultura" class="flex flex-wrap gap-1.5"></div>
+        <div id="btnsCultura" class="flex items-center sm:flex-wrap gap-1.5 overflow-x-auto no-scrollbar pb-0.5 sm:pb-0"></div>
       </div>
 
-      <div class="text-xs din-text-muted lg:text-right">
+      <div class="text-xs din-text-muted lg:text-right shrink-0">
         <span id="lblAnoSafra" class="font-bold din-text-main block">Ano de referência: —</span>
         <span class="text-[11px]">Pesquisa Agrícola Municipal · Tabela SIDRA 5457</span>
       </div>
     </section>
 
     <!-- 2. KPIs NACIONAIS DA CULTURA -->
-    <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 ocultar-em-presentation tabular-nums">
-      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-        <span class="text-xs din-text-muted uppercase font-semibold">Produção Nacional</span>
-        <p id="kProdTotal" class="text-xl font-bold din-green mt-1">—</p>
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 ocultar-em-presentation tabular-nums">
+      <div class="din-card-bg border din-border rounded-lg p-3.5 sm:p-4 shadow-sm">
+        <span class="text-[11px] sm:text-xs din-text-muted uppercase font-semibold">Produção Nacional</span>
+        <p id="kProdTotal" class="text-lg sm:text-xl font-bold din-green mt-1">—</p>
         <span class="text-[11px] din-text-muted">Quantidade produzida (IBGE PAM)</span>
       </div>
-      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-        <span class="text-xs din-text-muted uppercase font-semibold">Valor da Produção</span>
-        <p id="kValorTotal" class="text-xl font-bold din-text-main mt-1">—</p>
+      <div class="din-card-bg border din-border rounded-lg p-3.5 sm:p-4 shadow-sm">
+        <span class="text-[11px] sm:text-xs din-text-muted uppercase font-semibold">Valor da Produção</span>
+        <p id="kValorTotal" class="text-lg sm:text-xl font-bold din-text-main mt-1">—</p>
         <span class="text-[11px] din-text-muted">Valor bruto estimado na lavoura</span>
       </div>
-      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-        <span class="text-xs din-text-muted uppercase font-semibold">Área Colhida</span>
-        <p id="kAreaTotal" class="text-xl font-bold din-text-main mt-1">—</p>
+      <div class="din-card-bg border din-border rounded-lg p-3.5 sm:p-4 shadow-sm">
+        <span class="text-[11px] sm:text-xs din-text-muted uppercase font-semibold">Área Colhida</span>
+        <p id="kAreaTotal" class="text-lg sm:text-xl font-bold din-text-main mt-1">—</p>
         <span class="text-[11px] din-text-muted">Soma das unidades da federação</span>
       </div>
-      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-        <span class="text-xs din-text-muted uppercase font-semibold">Estado Líder</span>
-        <p id="kLiderAgro" class="text-xl font-bold din-green mt-1">—</p>
+      <div class="din-card-bg border din-border rounded-lg p-3.5 sm:p-4 shadow-sm">
+        <span class="text-[11px] sm:text-xs din-text-muted uppercase font-semibold">Estado Líder</span>
+        <p id="kLiderAgro" class="text-lg sm:text-xl font-bold din-green mt-1">—</p>
         <span id="kLiderShare" class="text-[11px] din-text-muted">Maior produtor na cultura</span>
       </div>
     </section>
 
     <!-- 3. MAPA ESTADUAL + RAIO-X DO BRASIL / ESTADO NA CULTURA -->
-    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
 
       <!-- Mapa -->
-      <div class="lg:col-span-7 din-card-bg border din-border rounded-xl p-5 shadow-sm flex flex-col">
+      <div class="lg:col-span-7 din-card-bg border din-border rounded-xl p-4 sm:p-5 shadow-sm flex flex-col">
         <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
           <div>
-            <h1 id="titMapaAgro" class="text-lg font-bold din-text-main">Mapa da Produção — Soja em grão</h1>
+            <h1 id="titMapaAgro" class="text-base sm:text-lg font-bold din-text-main">Mapa da Produção — Soja em grão</h1>
             <p class="text-xs din-text-muted">1º clique seleciona o estado; 2º clique (ou Esc) volta para o consolidado Brasil.</p>
           </div>
           <select id="selMetricaAgro" class="inp !w-auto text-xs font-semibold" onchange="atualizarVisualizacaoAgro()">
@@ -191,14 +191,14 @@
           </select>
         </div>
 
-        <div class="relative flex-1 min-h-[380px] flex items-center justify-center">
+        <div class="relative flex-1 min-h-[290px] sm:min-h-[380px] flex items-center justify-center">
           <p id="mapLoading" class="text-xs din-text-muted">Carregando malha do Brasil…</p>
-          <svg id="mapaAgro" viewBox="0 0 600 560" class="w-full max-h-[450px] hidden"></svg>
+          <svg id="mapaAgro" viewBox="0 0 600 560" class="w-full max-h-[320px] sm:max-h-[450px] hidden"></svg>
         </div>
 
-        <div class="mt-3 pt-3 border-t din-border flex flex-wrap items-center justify-between gap-3 text-[11px] din-text-muted tabular-nums">
+        <div class="mt-3 pt-3 border-t din-border flex flex-wrap items-center justify-between gap-2 sm:gap-3 text-[11px] din-text-muted tabular-nums">
           <span id="legMinAgro" class="font-medium">Menor</span>
-          <div class="flex items-center gap-2 flex-1 max-w-[260px]">
+          <div class="flex items-center gap-2 flex-1 min-w-[140px] max-w-[260px]">
             <span class="text-[10px] shrink-0">Menor</span>
             <div class="flex-1 h-2.5 rounded-full border din-border"
                  style="background: linear-gradient(90deg, #74E3B4 0%, #16C784 50%, #046C4E 100%);"></div>
@@ -209,8 +209,8 @@
       </div>
 
       <!-- Raio-X + Gráfico dos Top Estados -->
-      <div class="lg:col-span-5 flex flex-col gap-6">
-        <div class="din-card-bg border din-border rounded-xl p-5 shadow-sm space-y-4">
+      <div class="lg:col-span-5 flex flex-col gap-5 sm:gap-6">
+        <div class="din-card-bg border din-border rounded-xl p-4 sm:p-5 shadow-sm space-y-4">
           <div class="flex items-start justify-between gap-2 pb-3 border-b din-border">
             <div>
               <div class="flex flex-wrap items-center gap-2">
@@ -252,7 +252,7 @@
           </div>
         </div>
 
-        <div class="din-card-bg border din-border rounded-xl p-5 shadow-sm space-y-3 flex-1 flex flex-col justify-between">
+        <div class="din-card-bg border din-border rounded-xl p-4 sm:p-5 shadow-sm space-y-3 flex-1 flex flex-col justify-between">
           <div class="flex items-center justify-between gap-2">
             <div>
               <h3 class="text-sm font-bold din-text-main">Top 8 Estados Produtores</h3>
@@ -260,7 +260,7 @@
             </div>
             <button type="button" onclick="baixarGrafAgroPNG()" class="px-2.5 py-1 rounded-md text-[11px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ PNG</button>
           </div>
-          <div class="relative h-[220px]">
+          <div class="relative h-[200px] sm:h-[220px]">
             <canvas id="grafTopAgro"></canvas>
           </div>
         </div>
@@ -268,16 +268,16 @@
     </section>
 
     <!-- 4. RANKING ESTADUAL COMPLETO -->
-    <section class="din-card-bg border din-border rounded-xl p-5 shadow-sm space-y-3">
+    <section class="din-card-bg border din-border rounded-xl p-4 sm:p-5 shadow-sm space-y-3">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 class="text-base font-bold din-text-main">Ranking Estadual por Cultura</h2>
           <p class="text-xs din-text-muted">Valores oficiais da Pesquisa Agrícola Municipal (IBGE · Tabela SIDRA 5457).</p>
         </div>
-        <div class="flex flex-wrap items-center gap-2">
+        <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           <input id="buscaUfAgro" type="text" oninput="atualizarVisualizacaoAgro()" placeholder="Buscar estado ou sigla..."
-            class="din-secondary-bg border din-border rounded-lg px-3 py-1.5 text-xs din-text-main placeholder-gray-400 focus:outline-none">
-          <button type="button" onclick="exportarCSV()" class="px-3 py-1.5 rounded-lg text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ Exportar CSV</button>
+            class="flex-1 sm:flex-initial din-secondary-bg border din-border rounded-lg px-3 py-1.5 text-xs din-text-main placeholder-gray-400 focus:outline-none">
+          <button type="button" onclick="exportarCSV()" class="px-3 py-1.5 rounded-lg text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer shrink-0">↓ Exportar CSV</button>
         </div>
       </div>
 
@@ -285,17 +285,18 @@
         <table class="w-full text-left text-xs border-collapse tabular-nums">
           <thead class="sticky top-0 din-card-bg z-10">
             <tr class="din-text-muted border-b din-border uppercase">
-              <th class="py-2.5 px-2">#</th>
-              <th class="py-2.5 px-2">Estado</th>
-              <th class="py-2.5 px-2">Produção</th>
-              <th class="py-2.5 px-2">% Brasil</th>
-              <th class="py-2.5 px-2">Valor da Produção</th>
-              <th class="py-2.5 px-2">Área Colhida</th>
-              <th class="py-2.5 px-2">Rendimento</th>
+              <th class="py-2.5 px-2 sticky left-0 din-card-bg z-20">#</th>
+              <th class="py-2.5 px-2 whitespace-nowrap">Estado</th>
+              <th class="py-2.5 px-2 whitespace-nowrap">Produção</th>
+              <th class="py-2.5 px-2 whitespace-nowrap">% Brasil</th>
+              <th class="py-2.5 px-2 whitespace-nowrap">Valor da Produção</th>
+              <th class="py-2.5 px-2 whitespace-nowrap">Área Colhida</th>
+              <th class="py-2.5 px-2 whitespace-nowrap">Rendimento</th>
+              <th class="py-2.5 px-2 whitespace-nowrap">Tendência</th>
             </tr>
           </thead>
           <tbody id="tbodyAgro" class="divide-y din-border">
-            <tr><td colspan="7" class="py-4 text-center din-text-muted">Carregando dados do IBGE PAM...</td></tr>
+            <tr><td colspan="8" class="py-4 text-center din-text-muted">Carregando dados do IBGE PAM...</td></tr>
           </tbody>
         </table>
       </div>
@@ -319,7 +320,7 @@
       <span>•</span>
       <span>Terminal de Inteligência Econômica e Setorial</span>
     </div>
-    <div class="flex items-center gap-4">
+    <div class="flex flex-wrap items-center justify-center gap-4">
       <a href="index.html" class="hover:din-text-main transition">Início</a>
       <a href="economia.html" class="hover:din-text-main transition">Economia</a>
       <a href="glossario.html" class="hover:din-text-main transition">Glossário</a>
@@ -331,7 +332,7 @@
 
 <script src="/js/layout.js"></script>
 <script src="/js/chart-utils.js?v=1"></script>
-<script src="/js/uf-utils.js?v=1"></script>
+<script src="/js/uf-utils.js?v=2"></script>
 <script>
 const $ = id => document.getElementById(id);
 const fmtNum = (v, d = 0) => Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
@@ -359,15 +360,15 @@ const CULTURAS = [
   { id: '40106', nome: 'Feijão em grão' }
 ];
 
+const AGRO_CACHE_TTL_MS = 15 * 60 * 1000;
 let culturaSel = CULTURAS[0];
 let anoSafra = '';
 let dadosUf = [];
 let totaisBrasil = { prod: 0, valor: 0, area: 0, rend: 0 };
-let ufInspecionada = null; // null = Consolidado Brasil; 'MT' = Estado selecionado
+let ufInspecionada = null;
 let geoPronto = false;
 let chartAgro = null;
 
-// Cabeçalho, Tema e Atalhos
 function toggleDropdownMenu() { $('dropdownMenu').classList.toggle('hidden'); }
 window.addEventListener('click', e => {
   const btn = $('menuDropdownBtn'), menu = $('dropdownMenu');
@@ -431,7 +432,7 @@ function renderBotoesCultura() {
   $('btnsCultura').innerHTML = CULTURAS.map(c => {
     const on = c.id === culturaSel.id;
     return `<button type="button" onclick="selecionarCultura('${c.id}')"
-      class="px-3 py-1.5 rounded-md text-xs font-semibold border transition cursor-pointer ${on ? 'din-btn border-transparent shadow-sm' : 'din-secondary-bg din-border din-text-muted hover:din-text-main'}">${c.nome}</button>`;
+      class="px-3 py-1.5 rounded-md text-xs font-semibold border transition cursor-pointer shrink-0 ${on ? 'din-btn border-transparent shadow-sm' : 'din-secondary-bg din-border din-text-muted hover:din-text-main'}">${c.nome}</button>`;
   }).join('');
 }
 
@@ -442,10 +443,95 @@ async function selecionarCultura(id) {
   await carregarDadosCultura();
 }
 
-// IBGE SIDRA 5457: v/216 = Área colhida (ha), v/214 = Quantidade produzida (t), v/215 = Valor da produção (mil R$)
+function processarLinhasSidra(linhas) {
+  const porAnoUf = {};
+  let ultimoAno = '';
+
+  linhas.forEach(row => {
+    const ano = String(row.D3N || '').trim();
+    const codUf = String(row.D1C || '').slice(0, 2);
+    const sigla = BDUF.IBGE_UF[codUf];
+    if (!sigla || !ano) return;
+    if (!ultimoAno || ano > ultimoAno) ultimoAno = ano;
+
+    const nome = String(row.D1N || sigla).replace(/\s*\([A-Z]{2}\)\s*$/, '').trim();
+    const varCod = String(row.D2C || '');
+    const valNum = parseFloat(String(row.V || '').replace(',', '.'));
+    if (Number.isNaN(valNum)) return;
+
+    const chave = `${ano}__${sigla}`;
+    if (!porAnoUf[chave]) porAnoUf[chave] = { ano, sigla, nome, area: 0, prod: 0, valor: 0 };
+    if (varCod === '216') porAnoUf[chave].area = valNum;
+    else if (varCod === '214') porAnoUf[chave].prod = valNum;
+    else if (varCod === '215') porAnoUf[chave].valor = valNum * 1000;
+  });
+
+  const anosOrdenados = [...new Set(Object.values(porAnoUf).map(x => x.ano))].sort();
+  anoSafra = ultimoAno || anosOrdenados[anosOrdenados.length - 1] || '';
+
+  const porUf = {};
+  const seriesPorUf = {};
+
+  anosOrdenados.forEach(ano => {
+    Object.values(porAnoUf)
+      .filter(x => x.ano === ano)
+      .forEach(x => {
+        if (!seriesPorUf[x.sigla]) seriesPorUf[x.sigla] = [];
+        seriesPorUf[x.sigla].push(x.prod);
+      });
+  });
+
+  Object.values(porAnoUf)
+    .filter(x => x.ano === anoSafra)
+    .forEach(x => {
+      porUf[x.sigla] = {
+        sigla: x.sigla,
+        nome: x.nome,
+        area: x.area,
+        prod: x.prod,
+        valor: x.valor,
+        serieProd: seriesPorUf[x.sigla] || []
+      };
+    });
+
+  const lista = Object.values(porUf).filter(d => d.prod > 0 || d.valor > 0);
+  const totProd = lista.reduce((a, d) => a + d.prod, 0);
+  const totValor = lista.reduce((a, d) => a + d.valor, 0);
+  const totArea = lista.reduce((a, d) => a + d.area, 0);
+
+  totaisBrasil = {
+    prod: totProd,
+    valor: totValor,
+    area: totArea,
+    rend: totArea > 0 ? (totProd * 1000) / totArea : 0
+  };
+
+  lista.forEach(d => {
+    d.shareProd = totProd > 0 ? (d.prod / totProd) * 100 : 0;
+    d.shareValor = totValor > 0 ? (d.valor / totValor) * 100 : 0;
+    d.rend = d.area > 0 ? (d.prod * 1000) / d.area : 0;
+  });
+
+  return lista.sort((a, b) => b.prod - a.prod);
+}
+
 async function carregarDadosCultura() {
+  const cacheKey = `bd_agro_sidra_v1_${culturaSel.id}`;
+  try {
+    const raw = sessionStorage.getItem(cacheKey);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && Array.isArray(parsed.linhas) && parsed.linhas.length && (Date.now() - parsed.ts) < AGRO_CACHE_TTL_MS) {
+        dadosUf = processarLinhasSidra(parsed.linhas);
+        dadosUf.forEach((d, idx) => d.rankProd = idx + 1);
+        aplicarEstadoCulturaCarregado();
+        return;
+      }
+    }
+  } catch {}
+
   $('statusAgro').innerHTML = `<span class="w-2 h-2 rounded-full bg-[#16C784] animate-pulse"></span><span>Carregando ${culturaSel.nome} (IBGE PAM)...</span>`;
-  const url = `https://apisidra.ibge.gov.br/values/t/5457/n3/all/v/216,214,215/p/last%201/c782/${culturaSel.id}?formato=json`;
+  const url = `https://apisidra.ibge.gov.br/values/t/5457/n3/all/v/216,214,215/p/last%205/c782/${culturaSel.id}?formato=json`;
 
   try {
     const r = await fetch(url);
@@ -454,64 +540,32 @@ async function carregarDadosCultura() {
     const linhas = json.slice(1);
     if (!linhas.length) throw new Error('Sem dados');
 
-    anoSafra = linhas[0].D3N || '';
-    $('lblAnoSafra').textContent = `Ano de referência: ${anoSafra}`;
+    try { sessionStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), linhas })); } catch {}
 
-    const porUf = {};
-    linhas.forEach(row => {
-      const codUf = String(row.D1C || '').slice(0, 2);
-      const sigla = BDUF.IBGE_UF[codUf];
-      if (!sigla) return;
-      const nome = String(row.D1N || sigla).replace(/\s*\([A-Z]{2}\)\s*$/, '').trim();
-      const varCod = String(row.D2C || '');
-      const valNum = parseFloat(String(row.V || '').replace(',', '.'));
-      if (Number.isNaN(valNum)) return;
-
-      if (!porUf[sigla]) porUf[sigla] = { sigla, nome, area: 0, prod: 0, valor: 0 };
-      if (varCod === '216') porUf[sigla].area = valNum;
-      else if (varCod === '214') porUf[sigla].prod = valNum;
-      else if (varCod === '215') porUf[sigla].valor = valNum * 1000;
-    });
-
-    const lista = Object.values(porUf).filter(d => d.prod > 0 || d.valor > 0);
-    const totProd = lista.reduce((a, d) => a + d.prod, 0);
-    const totValor = lista.reduce((a, d) => a + d.valor, 0);
-    const totArea = lista.reduce((a, d) => a + d.area, 0);
-
-    totaisBrasil = {
-      prod: totProd,
-      valor: totValor,
-      area: totArea,
-      rend: totArea > 0 ? (totProd * 1000) / totArea : 0
-    };
-
-    lista.forEach(d => {
-      d.shareProd = totProd > 0 ? (d.prod / totProd) * 100 : 0;
-      d.shareValor = totValor > 0 ? (d.valor / totValor) * 100 : 0;
-      d.rend = d.area > 0 ? (d.prod * 1000) / d.area : 0;
-    });
-
-    dadosUf = lista.sort((a, b) => b.prod - a.prod);
+    dadosUf = processarLinhasSidra(linhas);
     dadosUf.forEach((d, idx) => d.rankProd = idx + 1);
-
-    // KPIs
-    $('kProdTotal').textContent = fmtTon(totProd);
-    $('kValorTotal').textContent = fmtMoeda(totValor);
-    $('kAreaTotal').textContent = fmtNum(totArea, 0) + ' ha';
-
-    if (dadosUf.length) {
-      const lider = dadosUf[0];
-      $('kLiderAgro').textContent = `${lider.sigla} · ${fmtTon(lider.prod)}`;
-      $('kLiderShare').textContent = `${lider.nome} (${fmtNum(lider.shareProd, 1)}% do Brasil)`;
-      if (ufInspecionada && !dadosUf.some(x => x.sigla === ufInspecionada)) ufInspecionada = null;
-    }
-
-    $('statusAgro').innerHTML = `<span class="w-2 h-2 rounded-full bg-[#16C784]"></span><span>IBGE PAM (${anoSafra}) · ${culturaSel.nome}</span>`;
-    atualizarVisualizacaoAgro();
+    aplicarEstadoCulturaCarregado();
   } catch (e) {
     console.error(e);
     $('statusAgro').innerHTML = `<span class="w-2 h-2 rounded-full bg-[#EA3943]"></span><span>IBGE PAM indisponível no momento.</span>`;
   }
+}
+
+function aplicarEstadoCulturaCarregado() {
+  $('lblAnoSafra').textContent = `Ano de referência: ${anoSafra}`;
+  $('kProdTotal').textContent = fmtTon(totaisBrasil.prod);
+  $('kValorTotal').textContent = fmtMoeda(totaisBrasil.valor);
+  $('kAreaTotal').textContent = fmtNum(totaisBrasil.area, 0) + ' ha';
+
+  if (dadosUf.length) {
+    const lider = dadosUf[0];
+    $('kLiderAgro').textContent = `${lider.sigla} · ${fmtTon(lider.prod)}`;
+    $('kLiderShare').textContent = `${lider.nome} (${fmtNum(lider.shareProd, 1)}% do Brasil)`;
+    if (ufInspecionada && !dadosUf.some(x => x.sigla === ufInspecionada)) ufInspecionada = null;
+  }
+
+  $('statusAgro').innerHTML = `<span class="w-2 h-2 rounded-full bg-[#16C784]"></span><span>IBGE PAM (${anoSafra}) · ${culturaSel.nome}</span>`;
+  atualizarVisualizacaoAgro();
 }
 
 function atualizarVisualizacaoAgro() {
@@ -616,27 +670,29 @@ function renderizarTabelaAgro(ordenados) {
     : ordenados;
 
   if (!filtrados.length) {
-    $('tbodyAgro').innerHTML = `<tr><td colspan="7" class="py-4 text-center din-text-muted">Nenhum estado encontrado para "${termo}".</td></tr>`;
+    $('tbodyAgro').innerHTML = `<tr><td colspan="8" class="py-4 text-center din-text-muted">Nenhum estado encontrado para "${termo}".</td></tr>`;
     return;
   }
 
   $('tbodyAgro').innerHTML = filtrados.map((d, idx) => {
     const sel = d.sigla === ufInspecionada;
+    const sparkHtml = window.BDUF && BDUF.htmlSparkline ? BDUF.htmlSparkline(d.serieProd) : '—';
     return `<tr onclick="alternarSelecaoUf('${d.sigla}')"
       class="cursor-pointer transition hover:opacity-85 ${sel ? 'din-secondary-bg' : ''}">
-      <td class="py-2.5 px-2 font-bold din-green font-mono">${idx + 1}º</td>
-      <td class="py-2.5 px-2">
+      <td class="py-2.5 px-2 font-bold din-green font-mono sticky left-0 ${sel ? 'din-secondary-bg' : 'din-card-bg'}">${idx + 1}º</td>
+      <td class="py-2.5 px-2 whitespace-nowrap">
         <div class="flex items-center gap-2">
           ${BDUF.htmlBandeira(d.sigla, 18)}
           <span class="font-semibold din-text-main">${d.nome}</span>
           <span class="text-[10px] font-mono px-1.5 py-0.5 rounded din-secondary-bg border din-border din-text-muted">${d.sigla}</span>
         </div>
       </td>
-      <td class="py-2.5 px-2 font-bold din-green">${fmtTon(d.prod)}</td>
-      <td class="py-2.5 px-2 din-text-main">${fmtNum(d.shareProd, 1)}%</td>
-      <td class="py-2.5 px-2 din-text-main">${fmtMoeda(d.valor)}</td>
-      <td class="py-2.5 px-2 din-text-main">${fmtNum(d.area, 0)} ha</td>
-      <td class="py-2.5 px-2 din-text-main">${fmtNum(d.rend, 0)} kg/ha</td>
+      <td class="py-2.5 px-2 font-bold din-green whitespace-nowrap">${fmtTon(d.prod)}</td>
+      <td class="py-2.5 px-2 din-text-main whitespace-nowrap">${fmtNum(d.shareProd, 1)}%</td>
+      <td class="py-2.5 px-2 din-text-main whitespace-nowrap">${fmtMoeda(d.valor)}</td>
+      <td class="py-2.5 px-2 din-text-main whitespace-nowrap">${fmtNum(d.area, 0)} ha</td>
+      <td class="py-2.5 px-2 din-text-main whitespace-nowrap">${fmtNum(d.rend, 0)} kg/ha</td>
+      <td class="py-2.5 px-2 whitespace-nowrap">${sparkHtml}</td>
     </tr>`;
   }).join('');
 }
@@ -650,7 +706,6 @@ async function iniciarMapaAgro() {
   const path = d3.geoPath().projection(proj);
   const tip = $('mapTip');
 
-  // Clique no fundo vazio do SVG desseleciona o estado
   svg.on('click', ev => {
     if (ev.target === svg.node() && ufInspecionada) limparSelecaoAgro();
   });
@@ -678,7 +733,6 @@ async function iniciarMapaAgro() {
     .on('mousemove', ev => { tip.style.left = (ev.clientX + 14) + 'px'; tip.style.top = (ev.clientY + 14) + 'px'; })
     .on('mouseleave', () => {
       tip.classList.add('hidden');
-      // Mantém o estado selecionado por cima das bordas vizinhas
       if (ufInspecionada) {
         svg.selectAll('path').filter(function() { return this.getAttribute('data-uf') === ufInspecionada; }).raise();
       }
@@ -725,7 +779,6 @@ function pintarMapaAgro(k, minVal, maxVal) {
   }
 }
 
-// Exportações
 function baixarGrafAgroPNG() {
   if (!window.BDChart) return;
   const sel = $('selMetricaAgro');
@@ -758,7 +811,6 @@ function citarAgroABNT(btn) {
   }, btn);
 }
 
-// Inicialização
 (async () => {
   let temaSalvo = 'light';
   try { temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light'; } catch {}
