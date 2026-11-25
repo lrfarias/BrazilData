@@ -42,7 +42,7 @@
         </nav>
 
         <div class="flex items-center gap-2.5 relative">
-          <div class="flex items-center gap-1.5 din-secondary-bg border din-border rounded-lg px-3 py-1.5">
+          <div class="flex items-center gap-1.5 din-secondary-bg border din-border rounded-lg px-2.5 sm:px-3 py-1.5">
             <span class="text-xs din-text-muted font-medium">Base:</span>
             <select id="ano" onchange="montar(+this.value)"
               class="bg-transparent text-xs font-bold din-text-main focus:outline-none cursor-pointer">
@@ -104,17 +104,17 @@
       </div>
 
       <nav class="flex md:hidden items-center gap-5 h-10 overflow-x-auto no-scrollbar text-xs font-semibold border-t din-border">
-        <a href="index.html" class="din-text-muted hover:din-text-main h-full flex items-center">Início</a>
-        <a href="glossario.html" class="din-text-muted hover:din-text-main h-full flex items-center">Glossário</a>
-        <a href="economia.html" class="din-green border-b-2 border-[#16C784] h-full flex items-center">Economia</a>
-        <a href="sobre.html" class="din-text-muted hover:din-text-main h-full flex items-center">Sobre</a>
-        <a href="contato.html" class="din-text-muted hover:din-text-main h-full flex items-center">Contato</a>
+        <a href="index.html" class="din-text-muted hover:din-text-main h-full flex items-center shrink-0">Início</a>
+        <a href="glossario.html" class="din-text-muted hover:din-text-main h-full flex items-center shrink-0">Glossário</a>
+        <a href="economia.html" class="din-green border-b-2 border-[#16C784] h-full flex items-center shrink-0">Economia</a>
+        <a href="sobre.html" class="din-text-muted hover:din-text-main h-full flex items-center shrink-0">Sobre</a>
+        <a href="contato.html" class="din-text-muted hover:din-text-main h-full flex items-center shrink-0">Contato</a>
       </nav>
     </div>
   </header>
 
   <!-- Barra de Trilha + ABNT -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex flex-wrap items-center justify-between gap-2 text-xs ocultar-em-presentation">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4 flex flex-wrap items-center justify-between gap-2 text-xs ocultar-em-presentation">
     <div class="flex items-center gap-2 din-text-muted">
       <a href="economia.html" class="hover:din-green font-semibold inline-flex items-center gap-1 transition">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
@@ -139,12 +139,12 @@
     <p id="tipHint" class="text-[10px] din-text-muted mt-0.5">Clique para ver o raio-x</p>
   </div>
 
-  <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-5 space-y-6">
+  <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5 space-y-5 sm:space-y-6">
     <!-- Barra de Controles Unificada (Região + Simulador de Carga Tributária) -->
-    <section class="din-card-bg border din-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4 ocultar-em-presentation">
+    <section class="din-card-bg border din-border rounded-lg p-3.5 sm:p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4 ocultar-em-presentation">
       <div class="space-y-1.5">
         <span class="text-[11px] font-semibold uppercase tracking-wider din-text-muted">Filtrar por região</span>
-        <div id="btnsRegiao" class="flex flex-wrap gap-1.5"></div>
+        <div id="btnsRegiao" class="flex items-center sm:flex-wrap gap-1.5 overflow-x-auto no-scrollbar pb-0.5 sm:pb-0"></div>
       </div>
 
       <div class="lg:w-[360px] space-y-1.5 lg:border-l lg:pl-5 din-border">
@@ -164,32 +164,32 @@
     </section>
 
     <!-- KPIs Consolidados -->
-    <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 ocultar-em-presentation tabular-nums">
-      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-        <span id="k1Lbl" class="text-xs din-text-muted uppercase font-semibold">Arrecadação estimada</span>
-        <p id="k1" class="text-xl font-bold din-red mt-1">—</p>
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 ocultar-em-presentation tabular-nums">
+      <div class="din-card-bg border din-border rounded-lg p-3.5 sm:p-4 shadow-sm">
+        <span id="k1Lbl" class="text-[11px] sm:text-xs din-text-muted uppercase font-semibold">Arrecadação estimada</span>
+        <p id="k1" class="text-lg sm:text-xl font-bold din-red mt-1">—</p>
         <span class="text-[11px] din-text-muted">Simulação sobre PIB IBGE</span>
       </div>
-      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-        <span class="text-xs din-text-muted uppercase font-semibold">Média por habitante</span>
-        <p id="k2" class="text-xl font-bold din-text-main mt-1">—</p>
+      <div class="din-card-bg border din-border rounded-lg p-3.5 sm:p-4 shadow-sm">
+        <span class="text-[11px] sm:text-xs din-text-muted uppercase font-semibold">Média por habitante</span>
+        <p id="k2" class="text-lg sm:text-xl font-bold din-text-main mt-1">—</p>
         <span class="text-[11px] din-text-muted">Arrecadação est. ÷ População</span>
       </div>
-      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-        <span class="text-xs din-text-muted uppercase font-semibold">Maior tributo / hab.</span>
-        <p id="k3" class="text-xl font-bold din-text-main mt-1">—</p>
+      <div class="din-card-bg border din-border rounded-lg p-3.5 sm:p-4 shadow-sm">
+        <span class="text-[11px] sm:text-xs din-text-muted uppercase font-semibold">Maior tributo / hab.</span>
+        <p id="k3" class="text-lg sm:text-xl font-bold din-text-main mt-1">—</p>
         <span class="text-[11px] din-text-muted">Destaque no recorte selecionado</span>
       </div>
-      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-        <span class="text-xs din-text-muted uppercase font-semibold" data-glossario="IDH">IDH médio (filtro)</span>
-        <p id="k4" class="text-xl font-bold din-green mt-1">—</p>
+      <div class="din-card-bg border din-border rounded-lg p-3.5 sm:p-4 shadow-sm">
+        <span class="text-[11px] sm:text-xs din-text-muted uppercase font-semibold" data-glossario="IDH">IDH médio (filtro)</span>
+        <p id="k4" class="text-lg sm:text-xl font-bold din-green mt-1">—</p>
         <span class="text-[11px] din-text-muted">PNUD / Ipea / FJP (Radar IDHM)</span>
       </div>
     </section>
 
     <!-- Mapa + Raio-X (Região / Estado) com 4 Abas -->
-    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      <div class="lg:col-span-7 din-card-bg border din-border rounded-lg p-5 shadow-sm flex flex-col">
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
+      <div class="lg:col-span-7 din-card-bg border din-border rounded-lg p-4 sm:p-5 shadow-sm flex flex-col">
         <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
           <div>
             <h2 class="text-base font-semibold din-text-main">Mapa interativo do Brasil</h2>
@@ -205,15 +205,15 @@
           </select>
         </div>
 
-        <div class="relative flex-1 min-h-[380px] flex items-center justify-center">
+        <div class="relative flex-1 min-h-[290px] sm:min-h-[380px] flex items-center justify-center">
           <p id="mapLoading" class="text-xs din-text-muted">Carregando malha geográfica…</p>
-          <svg id="mapaBr" viewBox="0 0 600 560" class="w-full max-h-[450px] hidden"></svg>
+          <svg id="mapaBr" viewBox="0 0 600 560" class="w-full max-h-[320px] sm:max-h-[450px] hidden"></svg>
         </div>
 
         <!-- Legenda Tonal Dinâmica -->
-        <div class="mt-3 pt-3 border-t din-border flex flex-wrap items-center justify-between gap-3 text-[11px] din-text-muted tabular-nums">
+        <div class="mt-3 pt-3 border-t din-border flex flex-wrap items-center justify-between gap-2 sm:gap-3 text-[11px] din-text-muted tabular-nums">
           <span id="legMin" class="font-medium">Menor</span>
-          <div class="flex items-center gap-2 flex-1 max-w-[260px]">
+          <div class="flex items-center gap-2 flex-1 min-w-[140px] max-w-[260px]">
             <span class="text-[10px] shrink-0">Menor</span>
             <div class="flex-1 h-2.5 rounded-full border din-border"
                  style="background: linear-gradient(90deg, #74E3B4 0%, #16C784 50%, #046C4E 100%);"></div>
@@ -224,7 +224,7 @@
       </div>
 
       <!-- Raio-X da Região ou Estado -->
-      <div class="lg:col-span-5 din-card-bg border din-border rounded-lg p-5 shadow-sm flex flex-col space-y-4">
+      <div class="lg:col-span-5 din-card-bg border din-border rounded-lg p-4 sm:p-5 shadow-sm flex flex-col space-y-4">
         <div class="flex items-start justify-between gap-2">
           <div>
             <div class="flex flex-wrap items-center gap-2">
@@ -321,7 +321,7 @@
               <button type="button" onclick="baixarHistUfPNG()" class="px-2 py-0.5 rounded text-[10px] font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">↓ PNG</button>
             </div>
           </div>
-          <div class="relative flex-1 min-h-[240px]"><canvas id="grafHist"></canvas></div>
+          <div class="relative flex-1 min-h-[220px] sm:min-h-[240px]"><canvas id="grafHist"></canvas></div>
           <p id="histNota" class="text-[11px] din-text-muted leading-relaxed"></p>
         </div>
 
@@ -341,17 +341,17 @@
     </section>
 
     <!-- Ranking + Busca + Exportar CSV -->
-    <section id="secaoRanking" class="din-card-bg border din-border rounded-lg p-5 shadow-sm">
+    <section id="secaoRanking" class="din-card-bg border din-border rounded-lg p-4 sm:p-5 shadow-sm">
       <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
         <div>
           <h2 id="titTabela" class="text-base font-semibold din-text-main">Ranking dos 27 estados</h2>
           <span class="text-xs din-text-muted">Clique em qualquer coluna para ordenar ou na linha para inspecionar</span>
         </div>
-        <div class="flex flex-wrap items-center gap-2">
+        <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           <input id="buscaUfImposto" type="text" oninput="tabela()" placeholder="Buscar estado ou sigla..."
-            class="din-secondary-bg border din-border rounded-lg px-3 py-1.5 text-xs din-text-main placeholder-gray-400 focus:outline-none">
+            class="flex-1 sm:flex-initial din-secondary-bg border din-border rounded-lg px-3 py-1.5 text-xs din-text-main placeholder-gray-400 focus:outline-none">
           <button type="button" onclick="exportarCSV()"
-            class="px-3 py-1.5 rounded-lg text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer">
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer shrink-0">
             ↓ Exportar CSV
           </button>
         </div>
@@ -365,7 +365,7 @@
     </section>
 
     <!-- Painel Analítico Inferior com 2 Abas (Dispersão Tributo × IDH | PIB vs População) -->
-    <section id="secaoAnalise" class="din-card-bg border din-border rounded-lg p-5 shadow-sm space-y-4">
+    <section id="secaoAnalise" class="din-card-bg border din-border rounded-lg p-4 sm:p-5 shadow-sm space-y-4">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 id="titGrafInf" class="text-base font-semibold din-text-main">Capacidade tributária × Desenvolvimento Humano (IDH)</h2>
@@ -383,12 +383,12 @@
       </div>
 
       <div id="viewInfScatter" class="space-y-3">
-        <div class="relative w-full h-[340px] sm:h-[380px]"><canvas id="grafScatter"></canvas></div>
+        <div class="relative w-full h-[290px] sm:h-[380px]"><canvas id="grafScatter"></canvas></div>
         <p id="leituraScatter" class="text-xs din-secondary-bg border din-border rounded-lg p-3 din-text-muted leading-relaxed"></p>
       </div>
 
       <div id="viewInfBar" class="hidden">
-        <div class="relative w-full h-[320px] sm:h-[340px]"><canvas id="graf"></canvas></div>
+        <div class="relative w-full h-[280px] sm:h-[340px]"><canvas id="graf"></canvas></div>
       </div>
 
       <!-- Selo de Fonte Oficial -->
@@ -417,7 +417,7 @@
       <span>•</span>
       <span>Terminal de Inteligência Econômica e Setorial</span>
     </div>
-    <div class="flex items-center gap-4">
+    <div class="flex flex-wrap items-center justify-center gap-4">
       <a href="index.html" class="hover:din-text-main transition">Início</a>
       <a href="economia.html" class="hover:din-text-main transition">Economia</a>
       <a href="glossario.html" class="hover:din-text-main transition">Glossário</a>
@@ -429,7 +429,7 @@
 
 <script src="/js/layout.js"></script>
 <script src="/js/chart-utils.js?v=1"></script>
-<script src="/js/uf-utils.js?v=1"></script>
+<script src="/js/uf-utils.js?v=2"></script>
 
 <script>
 const $ = i => document.getElementById(i);
@@ -441,7 +441,15 @@ const BD = {
     return r >= 1e12 ? f(1e12, 'tri') : r >= 1e9 ? f(1e9, 'bi') : r >= 1e6 ? f(1e6, 'mi') : BD.brl(r, 0);
   },
   cor: () => { const d = document.documentElement.getAttribute('data-theme') === 'dark'; return { tx: d ? '#F5F6F7' : '#17191C', mu: d ? '#9299A3' : '#737780', grid: d ? '#2B3036' : '#E5E7EB' }; },
-  indicadores: async () => { const r = await fetch('/api/indicadores'); if (!r.ok) throw new Error('API ' + r.status); return r.json(); }
+  indicadores: async () => {
+    const emCache = window.BDUF && BDUF.obterCacheIndicadores ? BDUF.obterCacheIndicadores() : null;
+    if (emCache && emCache.length) return emCache;
+    const r = await fetch('/api/indicadores');
+    if (!r.ok) throw new Error('API ' + r.status);
+    const j = await r.json();
+    if (window.BDUF && BDUF.salvarCacheIndicadores) BDUF.salvarCacheIndicadores(j);
+    return j;
+  }
 };
 
 let TAXA = 0.33, anoAtual = null, anosDisponiveis = [];
@@ -490,6 +498,27 @@ function obterImagemBandeira(uf) {
   img.src = localUrl;
   cacheBandeiras[uf] = img;
   return img;
+}
+
+function obterSerieHabUf(sigla) {
+  const porAno = {};
+  TODOS.forEach(i => {
+    if (!i.estado || !i.estado.sigla) return;
+    if (i.estado.sigla.toUpperCase() !== sigla) return;
+    const n = (i.nome || '').toLowerCase();
+    const v = Number(i.valor);
+    const a = Number(i.anoReferencia);
+    if (Number.isNaN(a) || Number.isNaN(v) || v <= 0) return;
+    const item = porAno[a] || (porAno[a] = { pib: 0, pop: 0 });
+    if (n === 'pib estadual') item.pib = v;
+    else if (n.includes('popula')) item.pop = v;
+  });
+  return Object.keys(porAno)
+    .map(Number)
+    .sort((a, b) => a - b)
+    .map(a => porAno[a])
+    .filter(x => x.pib > 0 && x.pop > 0)
+    .map(x => (x.pib * 1000 * TAXA) / x.pop);
 }
 
 function limitesMetricaRecorte() {
@@ -624,7 +653,6 @@ window.addEventListener('keydown', e => {
   } else if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && anosDisponiveis.length > 1) {
     const idx = anosDisponiveis.indexOf(anoAtual);
     if (idx === -1) return;
-    // anosDisponiveis está decrescente (ex.: [2021, 2020, 2019, 2018]): Left recua no tempo, Right avança
     const proxIdx = e.key === 'ArrowLeft'
       ? Math.min(anosDisponiveis.length - 1, idx + 1)
       : Math.max(0, idx - 1);
@@ -687,7 +715,7 @@ function renderBotoesRegiao() {
   $('btnsRegiao').innerHTML = BDUF.REGIOES.map(r => {
     const ativo = r === regiaoSel;
     return `<button type="button" onclick="setRegiao('${r}')"
-      class="px-2.5 py-1 rounded-md text-xs font-semibold border transition cursor-pointer ${ativo ? 'din-btn border-transparent shadow-sm' : 'din-secondary-bg din-border din-text-muted hover:din-text-main'}">${r === 'Todas' ? 'Brasil' : r}</button>`;
+      class="px-2.5 py-1 rounded-md text-xs font-semibold border transition cursor-pointer shrink-0 ${ativo ? 'din-btn border-transparent shadow-sm' : 'din-secondary-bg din-border din-text-muted hover:din-text-main'}">${r === 'Todas' ? 'Brasil' : r}</button>`;
   }).join('');
 }
 
@@ -1127,7 +1155,6 @@ async function iniciarMapa() {
   const path = d3.geoPath().projection(proj);
   const tip = $('mapTip');
 
-  // Clique no fundo vazio do SVG desseleciona o estado
   svg.on('click', ev => {
     if (ev.target === svg.node() && modoSel === 'estado') voltarParaRegiao();
   });
@@ -1219,33 +1246,42 @@ function pintarMapa() {
 
 function tabela() {
   const cols = [['nome', 'Estado'], ['pib', 'PIB'], ['sp', '% PIB'], ['sh', '% Pop.'], ['arrec', 'Arrecadação est.'], ['hab', 'Por hab.'], ['idh', 'IDH']];
-  $('thead').innerHTML = '<th class="py-2 px-2">#</th>' + cols.map(([k, t]) => `<th class="s py-2 px-2" onclick="ord('${k}')">${t} ↕</th>`).join('');
+  $('thead').innerHTML = '<th class="py-2 px-2 sticky left-0 din-card-bg z-20">#</th>'
+    + cols.map(([k, t]) => `<th class="s py-2 px-2 whitespace-nowrap" onclick="ord('${k}')">${t} ↕</th>`).join('')
+    + '<th class="py-2 px-2 whitespace-nowrap">Tendência</th>';
+
   const termo = ($('buscaUfImposto')?.value || '').trim().toLowerCase();
   const base = termo
     ? D.filter(d => d.nome.toLowerCase().includes(termo) || d.sigla.toLowerCase().includes(termo))
     : D;
 
   if (!base.length) {
-    $('tbody').innerHTML = `<tr><td colspan="8" class="py-4 text-center din-text-muted">Nenhum estado encontrado para "${termo}".</td></tr>`;
+    $('tbody').innerHTML = `<tr><td colspan="9" class="py-4 text-center din-text-muted">Nenhum estado encontrado para "${termo}".</td></tr>`;
     return;
   }
 
   const L = [...base].sort((a, b) => col === 'nome' ? dir * -1 * a.nome.localeCompare(b.nome) : dir * (a[col] - b[col]));
-  $('tbody').innerHTML = L.map((d, i) => `<tr onclick="selecionarEstado('${d.sigla}')" class="cursor-pointer hover:opacity-85 ${modoSel === 'estado' && d.sigla === ufSel ? 'din-secondary-bg' : ''}">
-    <td class="py-2 px-2 din-text-muted font-mono">${i + 1}</td>
-    <td class="py-2 px-2">
-      <div class="flex items-center gap-2">
-        ${BDUF.htmlBandeira(d.sigla, 18)}
-        <span class="font-semibold din-text-main">${d.nome}</span>
-        <span class="text-[10px] font-mono px-1.5 py-0.5 rounded din-secondary-bg border din-border din-text-muted">${d.sigla}</span>
-      </div>
-    </td>
-    <td class="py-2 px-2 din-text-main">${BD.compact(d.pib * 1000)}</td>
-    <td class="py-2 px-2 din-text-main">${BD.num(d.sp, 1)}%</td>
-    <td class="py-2 px-2 din-text-main">${BD.num(d.sh, 1)}%</td>
-    <td class="py-2 px-2 din-red">${BD.compact(d.arrec)}</td>
-    <td class="py-2 px-2 din-text-main">${BD.brl(d.hab, 0)}</td>
-    <td class="py-2 px-2 font-semibold din-green">${BD.num(d.idh, 3)}</td></tr>`).join('');
+  $('tbody').innerHTML = L.map((d, i) => {
+    const sel = modoSel === 'estado' && d.sigla === ufSel;
+    const sparkHtml = window.BDUF && BDUF.htmlSparkline ? BDUF.htmlSparkline(obterSerieHabUf(d.sigla)) : '—';
+    return `<tr onclick="selecionarEstado('${d.sigla}')" class="cursor-pointer hover:opacity-85 ${sel ? 'din-secondary-bg' : ''}">
+      <td class="py-2 px-2 din-text-muted font-mono sticky left-0 ${sel ? 'din-secondary-bg' : 'din-card-bg'}">${i + 1}</td>
+      <td class="py-2 px-2 whitespace-nowrap">
+        <div class="flex items-center gap-2">
+          ${BDUF.htmlBandeira(d.sigla, 18)}
+          <span class="font-semibold din-text-main">${d.nome}</span>
+          <span class="text-[10px] font-mono px-1.5 py-0.5 rounded din-secondary-bg border din-border din-text-muted">${d.sigla}</span>
+        </div>
+      </td>
+      <td class="py-2 px-2 din-text-main whitespace-nowrap">${BD.compact(d.pib * 1000)}</td>
+      <td class="py-2 px-2 din-text-main whitespace-nowrap">${BD.num(d.sp, 1)}%</td>
+      <td class="py-2 px-2 din-text-main whitespace-nowrap">${BD.num(d.sh, 1)}%</td>
+      <td class="py-2 px-2 din-red whitespace-nowrap">${BD.compact(d.arrec)}</td>
+      <td class="py-2 px-2 din-text-main whitespace-nowrap">${BD.brl(d.hab, 0)}</td>
+      <td class="py-2 px-2 font-semibold din-green whitespace-nowrap">${BD.num(d.idh, 3)}</td>
+      <td class="py-2 px-2 whitespace-nowrap">${sparkHtml}</td>
+    </tr>`;
+  }).join('');
 }
 function ord(k) { if (col === k) dir *= -1; else { col = k; dir = -1; } tabela(); }
 
