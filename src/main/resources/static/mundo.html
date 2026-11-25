@@ -230,7 +230,6 @@
 
       <!-- Direita: Identidade, Moeda & Vocação Econômica Real -->
       <div class="lg:col-span-5 din-card-bg border din-border rounded-xl p-5 shadow-sm flex flex-col justify-between gap-4">
-        <!-- Cabeçalho do País -->
         <div class="flex items-start justify-between gap-3 pb-3 border-b din-border">
           <div class="flex items-center gap-3 min-w-0">
             <img id="rxBandImg" src="https://flagcdn.com/w80/br.png" alt="Bandeira" class="w-11 h-7 object-cover rounded border din-border shrink-0">
@@ -250,7 +249,6 @@
           </div>
         </div>
 
-        <!-- Faixa de Moeda Oficial & Demografia -->
         <div class="din-secondary-bg border din-border rounded-lg p-3.5 flex flex-col justify-between gap-2.5 text-xs tabular-nums">
           <div class="flex items-center justify-between gap-2">
             <div>
@@ -265,7 +263,6 @@
           </div>
         </div>
 
-        <!-- Vocação Econômica Real (Doughnut + Barras) -->
         <div class="din-secondary-bg border din-border rounded-lg p-4 space-y-2.5 flex-1 flex flex-col justify-between">
           <div>
             <span class="text-[10px] font-bold uppercase tracking-wider din-green block">VOCAÇÃO ECONÔMICA REAL</span>
@@ -279,7 +276,7 @@
       </div>
     </section>
 
-    <!-- 2.5 PAINEL CONSOLIDADO DO RECORTE (QUANDO HÁ FILTRO DE CONTINENTE/BLOCO ATIVO) -->
+    <!-- 2.5 PAINEL CONSOLIDADO DO RECORTE -->
     <section id="secaoResumoRegiao" class="hidden din-card-bg border border-[#16C784]/60 rounded-xl p-5 shadow-sm space-y-4">
       <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b din-border">
         <div>
@@ -344,7 +341,7 @@
       </div>
     </section>
 
-    <!-- 3. INDICADORES DETALHADOS DO PAÍS SELECIONADO (4 ABAS EM LARGURA TOTAL PARA MÁXIMA LEGIBILIDADE) -->
+    <!-- 3. INDICADORES DETALHADOS DO PAÍS SELECIONADO -->
     <section id="secaoRaioX" class="din-card-bg border din-border rounded-xl p-5 shadow-sm space-y-4">
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
         <button id="abaRxEcon" type="button" onclick="setAbaRx('econ')" class="py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer">Macro & Fiscal</button>
@@ -545,24 +542,10 @@
   </div>
 </footer>
 
-<!-- Utilitário de Gráficos (PNG + ABNT) ANTES dos scripts da página -->
 <script src="/js/chart-utils.js?v=1"></script>
 <script src="js/mundo/constantes.js"></script>
-<script src="js/mundo/app.js"></script>
+<script src="js/mundo/app.js?v=2"></script>
 <script>
-// Atalho Esc para resetar o zoom do mapa ou sair da tela cheia
-window.addEventListener('keydown', function(e) {
-  const tag = (e.target && e.target.tagName) || '';
-  if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
-  if (e.key === 'Escape') {
-    if (document.body.classList.contains('modo-apresentacao') && typeof alternarModoApresentacao === 'function') {
-      alternarModoApresentacao();
-    } else if (typeof resetZoom === 'function') {
-      resetZoom();
-    }
-  }
-});
-
 function baixarParceirosPNG() {
   if (!window.BDChart) return;
   const pais = document.getElementById('rxNome')?.textContent || 'País';
