@@ -47,7 +47,7 @@
 
                     <!-- Direita: Seletor de Ano + Menu de Painel Sóbrio -->
                     <div class="flex items-center gap-2.5 relative">
-                        <div class="flex items-center gap-1.5 din-secondary-bg border din-border rounded-lg px-3 py-1.5">
+                        <div class="flex items-center gap-1.5 din-secondary-bg border din-border rounded-lg px-2.5 sm:px-3 py-1.5">
                             <span class="text-xs din-text-muted font-medium">Base:</span>
                             <select id="selectAno" onchange="trocarAno(this.value)"
                                 class="bg-transparent text-xs font-bold din-text-main focus:outline-none cursor-pointer">
@@ -117,17 +117,17 @@
 
                 <!-- Navegação Mobile -->
                 <nav class="flex md:hidden items-center gap-5 h-10 overflow-x-auto no-scrollbar text-xs font-semibold border-t din-border">
-                    <a href="index.html" class="din-text-muted hover:din-text-main h-full flex items-center">Início</a>
-                    <a href="glossario.html" class="din-text-muted hover:din-text-main h-full flex items-center">Glossário</a>
-                    <a href="economia.html" class="din-green border-b-2 border-[#16C784] h-full flex items-center">Economia</a>
-                    <a href="sobre.html" class="din-text-muted hover:din-text-main h-full flex items-center">Sobre</a>
-                    <a href="contato.html" class="din-text-muted hover:din-text-main h-full flex items-center">Contato</a>
+                    <a href="index.html" class="din-text-muted hover:din-text-main h-full flex items-center shrink-0">Início</a>
+                    <a href="glossario.html" class="din-text-muted hover:din-text-main h-full flex items-center shrink-0">Glossário</a>
+                    <a href="economia.html" class="din-green border-b-2 border-[#16C784] h-full flex items-center shrink-0">Economia</a>
+                    <a href="sobre.html" class="din-text-muted hover:din-text-main h-full flex items-center shrink-0">Sobre</a>
+                    <a href="contato.html" class="din-text-muted hover:din-text-main h-full flex items-center shrink-0">Contato</a>
                 </nav>
             </div>
         </header>
 
         <!-- Barra de Trilha (Breadcrumb) + Citação ABNT -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex flex-wrap items-center justify-between gap-2 text-xs ocultar-em-presentation">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4 flex flex-wrap items-center justify-between gap-2 text-xs ocultar-em-presentation">
             <div class="flex items-center gap-2 din-text-muted">
                 <a href="economia.html" class="hover:din-green font-semibold inline-flex items-center gap-1 transition">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -160,54 +160,54 @@
         </div>
 
         <!-- Filtro por Região -->
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 ocultar-em-presentation">
-            <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm flex flex-wrap items-center justify-between gap-3">
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4 ocultar-em-presentation">
+            <div class="din-card-bg border din-border rounded-lg p-3.5 sm:p-4 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div class="space-y-1.5">
                     <span class="block text-[11px] font-semibold uppercase tracking-wider din-text-muted">Filtrar por região</span>
-                    <div id="btnsRegiao" class="flex flex-wrap gap-1.5"></div>
+                    <div id="btnsRegiao" class="flex items-center sm:flex-wrap gap-1.5 overflow-x-auto no-scrollbar pb-0.5 sm:pb-0"></div>
                 </div>
                 <span id="badgeRegiaoAtiva" class="text-xs din-text-muted tabular-nums">Exibindo todos os 27 estados</span>
             </div>
         </section>
 
         <!-- KPIs Consolidados no Topo -->
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 ocultar-em-presentation tabular-nums">
-            <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 ocultar-em-presentation tabular-nums">
+            <div class="din-card-bg border din-border rounded-lg p-3.5 sm:p-4 shadow-sm">
                 <div class="flex items-center">
-                    <span id="kpiPibTitulo" class="text-xs din-text-muted uppercase font-semibold">PIB Nacional Consolidado (<span class="labelAno">2021</span>)</span>
+                    <span id="kpiPibTitulo" class="text-[11px] sm:text-xs din-text-muted uppercase font-semibold">PIB Nacional Consolidado (<span class="labelAno">2021</span>)</span>
                     <span data-glossario="PIB"></span>
                 </div>
-                <p id="kpiPibBrasil" class="text-xl font-bold din-green mt-1">R$ 0,00 tri</p>
+                <p id="kpiPibBrasil" class="text-lg sm:text-xl font-bold din-green mt-1">R$ 0,00 tri</p>
                 <span id="kpiPibSub" class="text-[11px] din-text-muted">Fonte oficial: IBGE (SIDRA 5938)</span>
             </div>
-            <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-                <span id="kpiPopTitulo" class="text-xs din-text-muted uppercase font-semibold">População Total (<span class="labelAno">2021</span>)</span>
-                <p id="kpiPopBrasil" class="text-xl font-bold din-text-main mt-1">0 milhões</p>
+            <div class="din-card-bg border din-border rounded-lg p-3.5 sm:p-4 shadow-sm">
+                <span id="kpiPopTitulo" class="text-[11px] sm:text-xs din-text-muted uppercase font-semibold">População Total (<span class="labelAno">2021</span>)</span>
+                <p id="kpiPopBrasil" class="text-lg sm:text-xl font-bold din-text-main mt-1">0 milhões</p>
                 <span class="text-[11px] din-text-muted">Estimativa populacional IBGE</span>
             </div>
-            <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-                <span class="text-xs din-text-muted uppercase font-semibold">Arrecadação Tributária Est.</span>
-                <p id="kpiImpostoBrasil" class="text-xl font-bold din-red mt-1">R$ 0,00 tri</p>
+            <div class="din-card-bg border din-border rounded-lg p-3.5 sm:p-4 shadow-sm">
+                <span class="text-[11px] sm:text-xs din-text-muted uppercase font-semibold">Arrecadação Tributária Est.</span>
+                <p id="kpiImpostoBrasil" class="text-lg sm:text-xl font-bold din-red mt-1">R$ 0,00 tri</p>
                 <span class="text-[11px] din-text-muted">Estimativa (~33% do PIB · STN)</span>
             </div>
-            <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-                <span id="kpiTop5Titulo" class="text-xs din-text-muted uppercase font-semibold">Concentração Top 5 UFs (<span class="labelAno">2021</span>)</span>
-                <p id="kpiTop5Share" class="text-xl font-bold din-green mt-1">0,0% do Brasil</p>
+            <div class="din-card-bg border din-border rounded-lg p-3.5 sm:p-4 shadow-sm">
+                <span id="kpiTop5Titulo" class="text-[11px] sm:text-xs din-text-muted uppercase font-semibold">Concentração Top 5 UFs (<span class="labelAno">2021</span>)</span>
+                <p id="kpiTop5Share" class="text-lg sm:text-xl font-bold din-green mt-1">0,0% do Brasil</p>
                 <span id="kpiLiderShare" class="text-[11px] din-text-muted">Líder nacional</span>
             </div>
         </section>
 
         <!-- Conteúdo Principal -->
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 py-5 sm:py-6 grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
 
             <!-- Coluna Esquerda: Mapa Interativo + Ranking / Pizza -->
-            <section class="lg:col-span-7 flex flex-col gap-6">
+            <section class="lg:col-span-7 flex flex-col gap-5 sm:gap-6">
 
                 <!-- Mapa Interativo D3 -->
-                <div class="din-card-bg border din-border rounded-lg p-5 shadow-sm flex flex-col">
+                <div class="din-card-bg border din-border rounded-lg p-4 sm:p-5 shadow-sm flex flex-col">
                     <div class="flex flex-wrap justify-between items-center gap-3 mb-3">
                         <div>
-                            <h2 class="text-lg font-semibold din-text-main">Mapa Econômico e Setorial</h2>
+                            <h2 class="text-base sm:text-lg font-semibold din-text-main">Mapa Econômico e Setorial</h2>
                             <p class="text-xs din-text-muted">1º clique seleciona o estado; 2º clique (ou Esc) volta ao consolidado.</p>
                         </div>
 
@@ -223,9 +223,9 @@
                     </div>
 
                     <!-- Legenda Tonal Dinâmica -->
-                    <div id="legendaGradienteRegiao" class="flex flex-wrap items-center justify-between gap-3 text-[11px] din-text-muted mb-2.5 px-1 tabular-nums">
+                    <div id="legendaGradienteRegiao" class="flex flex-wrap items-center justify-between gap-2 sm:gap-3 text-[11px] din-text-muted mb-2.5 px-1 tabular-nums">
                         <span id="legMenorDestaque" class="font-medium">Menor peso</span>
-                        <div class="flex items-center gap-2 flex-1 max-w-[260px]">
+                        <div class="flex items-center gap-2 flex-1 min-w-[140px] max-w-[260px]">
                             <span class="text-[10px] shrink-0">Menor</span>
                             <div id="barraGradienteMapa" class="flex-1 h-2.5 rounded-full border din-border"
                                  style="background: linear-gradient(90deg, #74E3B4 0%, #16C784 50%, #046C4E 100%);"></div>
@@ -234,14 +234,14 @@
                         <span id="legMaiorDestaque" class="font-semibold din-green">Maior destaque</span>
                     </div>
 
-                    <div class="relative flex-1 min-h-[420px] rounded-lg border din-border din-secondary-bg flex items-center justify-center p-2">
+                    <div id="mapContainer" class="relative flex-1 min-h-[290px] sm:min-h-[420px] rounded-lg border din-border din-secondary-bg flex items-center justify-center p-2">
                         <p id="mapLoading" class="text-xs din-text-muted">Carregando malha geográfica…</p>
-                        <svg id="mapaPib" viewBox="0 0 600 560" class="w-full max-h-[450px] hidden"></svg>
+                        <svg id="mapaPib" viewBox="0 0 600 560" class="w-full max-h-[320px] sm:max-h-[450px] hidden"></svg>
                     </div>
                 </div>
 
                 <!-- Card Híbrido: Tabela Ordenável vs Gráfico de Pizza -->
-                <div id="secaoRanking" class="din-card-bg border din-border rounded-lg p-5 shadow-sm">
+                <div id="secaoRanking" class="din-card-bg border din-border rounded-lg p-4 sm:p-5 shadow-sm">
                     <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
                         <div>
                             <h3 id="tituloRanking" class="text-base font-semibold din-text-main">
@@ -267,7 +267,7 @@
                         <div class="flex flex-wrap justify-between items-center gap-3 mb-3">
                             <input id="inputBuscaUf" type="text" oninput="renderizarTabelaRanking()"
                                 placeholder="Buscar estado ou sigla..."
-                                class="flex-1 min-w-[200px] din-secondary-bg border din-border rounded-lg px-3 py-1.5 text-xs din-text-main placeholder-gray-400 focus:outline-none" />
+                                class="flex-1 min-w-[180px] din-secondary-bg border din-border rounded-lg px-3 py-1.5 text-xs din-text-main placeholder-gray-400 focus:outline-none" />
 
                             <div class="flex items-center gap-2">
                                 <span class="text-xs din-text-muted">Exibir:</span>
@@ -283,16 +283,17 @@
                             <table class="w-full text-left border-collapse text-xs tabular-nums">
                                 <thead class="sticky top-0 din-card-bg z-10">
                                     <tr class="border-b din-border din-text-muted uppercase">
-                                        <th class="py-2.5 px-2">#</th>
+                                        <th class="py-2.5 px-2 sticky left-0 din-card-bg z-20">#</th>
                                         <th class="py-2.5 px-2 sortable" onclick="ordenarTabela('nome')">Estado ↕</th>
                                         <th class="py-2.5 px-2 sortable" onclick="ordenarTabela('pibMil')">PIB ↕</th>
                                         <th class="py-2.5 px-2 sortable" onclick="ordenarTabela('sharePib')">% Brasil ↕</th>
                                         <th class="py-2.5 px-2 sortable" onclick="ordenarTabela('perCapita')">Per Capita ↕</th>
+                                        <th class="py-2.5 px-2">Tendência</th>
                                         <th class="py-2.5 px-2">Perfil Setorial Dominante</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tabelaRankingBody" class="divide-y din-border">
-                                    <tr><td colspan="6" class="py-4 text-center din-text-muted">Carregando ranking...</td></tr>
+                                    <tr><td colspan="7" class="py-4 text-center din-text-muted">Carregando ranking...</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -302,7 +303,7 @@
                     <div id="containerVisaoPizza" class="hidden">
                         <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center din-secondary-bg p-4 rounded-lg border din-border">
                             <div class="md:col-span-7 flex flex-col items-center gap-3">
-                                <div class="w-full max-w-[280px]">
+                                <div class="w-full max-w-[260px] sm:max-w-[280px]">
                                     <canvas id="graficoPizzaTop5"></canvas>
                                 </div>
                                 <button type="button"
@@ -326,10 +327,10 @@
             </section>
 
             <!-- Coluna Direita: Raio-X (com Abas: Resumo | Destaques | Evolução) + Simulador -->
-            <section class="lg:col-span-5 flex flex-col gap-6">
+            <section class="lg:col-span-5 flex flex-col gap-5 sm:gap-6">
 
                 <!-- Card Principal da Região / Estado -->
-                <div class="din-card-bg border din-border rounded-lg p-5 shadow-sm space-y-4">
+                <div class="din-card-bg border din-border rounded-lg p-4 sm:p-5 shadow-sm space-y-4">
                     <div class="flex justify-between items-start gap-2 border-b din-border pb-3">
                         <div>
                             <div class="flex flex-wrap items-center gap-2">
@@ -341,7 +342,7 @@
                             </div>
                             <div class="flex items-center gap-2.5 mt-1">
                                 <span id="bandeiraEstado" class="shrink-0"></span>
-                                <h3 id="tituloEstado" class="text-2xl font-bold din-text-main">Brasil (Consolidado)</h3>
+                                <h3 id="tituloEstado" class="text-xl sm:text-2xl font-bold din-text-main">Brasil (Consolidado)</h3>
                             </div>
                         </div>
                         <span id="badgeUf" class="din-secondary-bg din-green border din-border font-bold px-3 py-1 rounded-md text-sm shrink-0">
@@ -411,7 +412,7 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="relative h-[250px] din-secondary-bg border din-border rounded-lg p-3">
+                        <div class="relative h-[220px] sm:h-[250px] din-secondary-bg border din-border rounded-lg p-3">
                             <canvas id="graficoEvolucaoPainel"></canvas>
                         </div>
                         <p id="notaEvolucaoPainel" class="text-[11px] din-text-muted leading-relaxed"></p>
@@ -419,7 +420,7 @@
                 </div>
 
                 <!-- Simulador Interativo "E se...?" -->
-                <div class="din-card-bg border din-border rounded-lg p-5 shadow-sm space-y-4 ocultar-em-presentation flex-1 flex flex-col justify-between">
+                <div class="din-card-bg border din-border rounded-lg p-4 sm:p-5 shadow-sm space-y-4 ocultar-em-presentation flex-1 flex flex-col justify-between">
                     <div class="space-y-3">
                         <div class="flex justify-between items-center border-b din-border pb-2.5">
                             <div>
@@ -464,13 +465,13 @@
             </section>
 
             <!-- Seção Inferior: Comparador Direto entre Dois Estados -->
-            <section class="lg:col-span-12 din-card-bg border din-border rounded-lg p-6 shadow-sm space-y-5">
+            <section class="lg:col-span-12 din-card-bg border din-border rounded-lg p-4 sm:p-6 shadow-sm space-y-5">
                 <div class="flex flex-wrap justify-between items-center gap-4">
                     <div>
                         <h2 class="text-lg font-semibold din-text-main">Comparador Direto entre Estados (<span class="labelAno">2021</span>)</h2>
                         <p class="text-xs din-text-muted">Compare o volume do PIB Estadual e a produtividade média (PIB per capita)</p>
                     </div>
-                    <div class="flex flex-wrap items-center gap-2.5">
+                    <div class="flex flex-wrap items-center gap-2 sm:gap-2.5">
                         <select id="uf1" class="din-secondary-bg border din-border rounded-lg px-3 py-2 text-sm din-text-main focus:outline-none"></select>
                         <span class="din-text-muted font-bold">VS</span>
                         <select id="uf2" class="din-secondary-bg border din-border rounded-lg px-3 py-2 text-sm din-text-main focus:outline-none"></select>
@@ -492,10 +493,10 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                    <div class="din-secondary-bg p-4 rounded-lg border din-border">
+                    <div class="din-secondary-bg p-3 sm:p-4 rounded-lg border din-border">
                         <canvas id="graficoPib" height="160"></canvas>
                     </div>
-                    <div class="din-secondary-bg p-4 rounded-lg border din-border">
+                    <div class="din-secondary-bg p-3 sm:p-4 rounded-lg border din-border">
                         <canvas id="graficoPerCapita" height="160"></canvas>
                     </div>
                 </div>
@@ -523,7 +524,7 @@
                 <span>•</span>
                 <span>Terminal de Inteligência Econômica e Setorial</span>
             </div>
-            <div class="flex items-center gap-4">
+            <div class="flex flex-wrap items-center justify-center gap-4">
                 <a href="index.html" class="hover:din-text-main transition">Início</a>
                 <a href="economia.html" class="hover:din-text-main transition">Economia</a>
                 <a href="glossario.html" class="hover:din-text-main transition">Glossário</a>
@@ -536,7 +537,7 @@
     <!-- Utilitários Compartilhados -->
     <script src="/js/layout.js"></script>
     <script src="/js/chart-utils.js?v=1"></script>
-    <script src="/js/uf-utils.js?v=1"></script>
+    <script src="/js/uf-utils.js?v=2"></script>
 
     <script>
         let ufSelecionada = 'SP';
@@ -658,7 +659,7 @@
                 const ativo = r === regiaoSelecionada;
                 const label = r === 'Todas' ? 'Brasil' : r;
                 return `<button type="button" onclick="setRegiao('${r}')"
-                    class="px-3 py-1.5 rounded-md text-xs font-semibold border transition cursor-pointer ${ativo ? 'din-btn border-transparent shadow-sm' : 'din-secondary-bg din-border din-text-muted hover:din-text-main'}">${label}</button>`;
+                    class="px-3 py-1.5 rounded-md text-xs font-semibold border transition cursor-pointer shrink-0 ${ativo ? 'din-btn border-transparent shadow-sm' : 'din-secondary-bg din-border din-text-muted hover:din-text-main'}">${label}</button>`;
             }).join('');
         }
 
@@ -712,7 +713,6 @@
             } else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
                 const sel = document.getElementById('selectAno');
                 if (!sel || sel.options.length < 2) return;
-                // Options estão em ordem decrescente [2021, 2020, 2019, 2018]: Left recua no tempo, Right avança
                 const novoIdx = e.key === 'ArrowLeft'
                     ? Math.min(sel.options.length - 1, sel.selectedIndex + 1)
                     : Math.max(0, sel.selectedIndex - 1);
@@ -776,10 +776,32 @@
             });
         }
 
+        function obterSeriePibUf(sigla) {
+            const porAno = {};
+            todosIndicadores.forEach(ind => {
+                if (!ind.estado || !ind.estado.sigla) return;
+                if (ind.estado.sigla.toUpperCase() !== sigla) return;
+                if ((ind.nome || '').toLowerCase() !== 'pib estadual') return;
+                const ano = Number(ind.anoReferencia);
+                const val = Number(ind.valor);
+                if (!Number.isNaN(ano) && !Number.isNaN(val) && val > 0) {
+                    porAno[ano] = val * 1000;
+                }
+            });
+            return Object.keys(porAno).map(Number).sort((a, b) => a - b).map(a => porAno[a]);
+        }
+
         async function atualizarBaseCompleta() {
+            const emCache = window.BDUF && BDUF.obterCacheIndicadores ? BDUF.obterCacheIndicadores() : null;
+            if (emCache && emCache.length) {
+                todosIndicadores = emCache;
+                processarDadosAno(anoSelecionado);
+                return;
+            }
             try {
                 const resp = await fetch('/api/indicadores');
                 todosIndicadores = await resp.json();
+                if (window.BDUF && BDUF.salvarCacheIndicadores) BDUF.salvarCacheIndicadores(todosIndicadores);
                 processarDadosAno(anoSelecionado);
             } catch (e) {
                 console.error('Erro ao buscar base de indicadores:', e);
@@ -1120,7 +1142,7 @@
 
             const todosComPib = getEstadosFiltrados();
             if (todosComPib.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="py-4 text-center din-text-muted">Sem dados para ${anoSelecionado}. Sincronize no topo!</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="py-4 text-center din-text-muted">Sem dados para ${anoSelecionado}. Sincronize no topo!</td></tr>`;
                 return;
             }
 
@@ -1144,22 +1166,25 @@
                 const pibReais = d.pibMil * 1000;
                 const isSel = modoSelecao === 'estado' && d.sigla === ufSelecionada;
                 const perfilDominante = d.setores.vocacao;
+                const serie = obterSeriePibUf(d.sigla);
+                const sparkHtml = window.BDUF && BDUF.htmlSparkline ? BDUF.htmlSparkline(serie) : '—';
 
                 return `
                     <tr onclick="alternarSelecaoEstado('${d.sigla}', '${d.nome}')"
                         class="${isSel ? 'din-secondary-bg' : 'hover:opacity-80'} cursor-pointer transition">
-                        <td class="py-2.5 px-2 font-bold din-green font-mono">${idx + 1}º</td>
-                        <td class="py-2.5 px-2">
+                        <td class="py-2.5 px-2 font-bold din-green font-mono sticky left-0 ${isSel ? 'din-secondary-bg' : 'din-card-bg'}">${idx + 1}º</td>
+                        <td class="py-2.5 px-2 whitespace-nowrap">
                             <div class="flex items-center gap-2">
                                 ${BDUF.htmlBandeira(d.sigla, 18)}
                                 <span class="font-semibold din-text-main">${d.nome}</span>
                                 <span class="text-[10px] font-mono px-1.5 py-0.5 rounded din-secondary-bg border din-border din-text-muted">${d.sigla}</span>
                             </div>
                         </td>
-                        <td class="py-2.5 px-2 font-bold din-green">${formatarMoedaCompacta(pibReais)}</td>
-                        <td class="py-2.5 px-2 din-text-main">${d.sharePib.toFixed(1)}%</td>
-                        <td class="py-2.5 px-2 din-text-main">R$ ${d.perCapita.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}</td>
-                        <td class="py-2.5 px-2 din-text-muted text-[11px]">${perfilDominante}</td>
+                        <td class="py-2.5 px-2 font-bold din-green whitespace-nowrap">${formatarMoedaCompacta(pibReais)}</td>
+                        <td class="py-2.5 px-2 din-text-main whitespace-nowrap">${d.sharePib.toFixed(1)}%</td>
+                        <td class="py-2.5 px-2 din-text-main whitespace-nowrap">R$ ${d.perCapita.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}</td>
+                        <td class="py-2.5 px-2 whitespace-nowrap">${sparkHtml}</td>
+                        <td class="py-2.5 px-2 din-text-muted text-[11px] whitespace-nowrap">${perfilDominante}</td>
                     </tr>
                 `;
             }).join('');
@@ -1285,7 +1310,6 @@
             const svg = d3.select('#mapaPib');
             const tip = document.getElementById('mapTip');
 
-            // Clique no fundo vazio do SVG volta ao consolidado
             svg.on('click', ev => {
                 if (ev.target === svg.node() && modoSelecao === 'estado') voltarParaRegiao();
             });
@@ -1607,7 +1631,6 @@
             try { temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light'; } catch {}
             aplicarTema(temaSalvo === 'dark' ? 'dark' : 'light');
 
-            // Restaura parâmetros da URL (?ano=...®iao=...&uf=...)
             const urlParams = new URLSearchParams(window.location.search);
             const paramAno = Number(urlParams.get('ano'));
             const selAno = document.getElementById('selectAno');

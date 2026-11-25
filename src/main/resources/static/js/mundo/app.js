@@ -37,7 +37,6 @@ const BD = {
   }
 };
 
-// Escala tonal padrão do terminal: #74E3B4 -> #16C784 -> #046C4E
 function interpolarVerdeMundo(t, expoente = 0.62) {
   const s = Math.pow(Math.max(0, Math.min(1, t)), expoente);
   const c0 = [116, 227, 180], c1 = [22, 199, 132], c2 = [4, 108, 78];
@@ -90,7 +89,6 @@ let svgMap = null, zoomBehavior = null, chartParceiros = null, chartHist = null,
 let chartVocPais = null, chartVocRegiao = null;
 let cacheDetalhe = {}, ultimoHistReal = null;
 
-// Cabeçalho, Tema e Atalho Esc
 function toggleDropdownMenu() { $('dropdownMenu').classList.toggle('hidden'); }
 window.addEventListener('click', e => {
   const btn = $('menuDropdownBtn'), menu = $('dropdownMenu');
@@ -140,7 +138,6 @@ function alternarModoApresentacao() {
     : `<svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect><line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line><line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line></svg><span>Modo Tela Cheia</span>`;
 }
 
-// 1. CARREGAMENTO GLOBAL
 async function fetchWBGlobal(ind) {
   try {
     const r = await fetch(`https://api.worldbank.org/v2/country/all/indicator/${ind}?format=json&mrnev=1&per_page=350`);
@@ -295,7 +292,6 @@ async function carregarBaseGlobal(ignorarCache = false) {
   }
 }
 
-// 2. FILTROS POR CATEGORIA + PAINEL CONSOLIDADO
 function paisNoFiltro(p) {
   if (!filtroValor || filtroValor === 'Todos os países') return true;
   if (catAtiva === 'cont') return p.cont === filtroValor;
@@ -490,7 +486,6 @@ function buscarPais(termo) {
   if (achado) selecionarPais(achado.iso3);
 }
 
-// 3. MAPA-MÚNDI D3 (1º CLIQUE SELECIONA, 2º CLIQUE OU OCEANO DESSELECIONA)
 function fmtInd(p, k) {
   if (!p || p[k] == null) return 'N/D';
   if (k === 'pib' || k === 'pibPpc') return BD.compactUSD(p[k]);
@@ -548,11 +543,15 @@ async function iniciarMapaMundi() {
   const path = d3.geoPath().projection(proj);
   const tip = $('mapTip');
 
-  zoomBehavior = d3.zoom().scaleExtent([1, 8]).on('zoom', ev => g.attr('transform', ev.transform));
+  zoomBehavior = d3.zoom()
+    .scaleExtent([1, 8])
+    .clickDistance(4)
+    .on('zoom', ev => g.attr('transform', ev.transform));
+
   svgMap.call(zoomBehavior);
 
-  // Clique no oceano (fundo vazio do SVG) limpa a seleção
   svgMap.on('click', ev => {
+    if (ev.defaultPrevented) return;
     if (ev.target === svgMap.node() && isoAtivo) desselecionarPais();
   });
 
@@ -564,7 +563,7 @@ async function iniciarMapaMundi() {
     .attr('data-ccn3', f => String(f.id).padStart(3, '0'))
     .attr('data-geo-name', f => f.properties?.name || 'Território')
     .on('mouseenter', function(ev) {
-      d3.select(this).style('stroke', '#16C784').style('stroke-width', '2.2px').raise();
+      d3.select(this).style('stroke', '#16C784').style('stroke-width', '2.2px');
 
       const iso3 = CCN3_TO_ISO3[this.getAttribute('data-ccn3')];
       const p = PAISES_MAP[iso3];
@@ -586,6 +585,7 @@ async function iniciarMapaMundi() {
       pintarMapa();
     })
     .on('click', function(ev) {
+      if (ev.defaultPrevented) return;
       ev.stopPropagation();
       const iso3 = CCN3_TO_ISO3[this.getAttribute('data-ccn3')];
       if (iso3) alternarSelecaoPais(iso3);
@@ -678,7 +678,6 @@ function pintarMapa() {
 function ajustarZoom(f) { if (svgMap && zoomBehavior) svgMap.transition().duration(250).call(zoomBehavior.scaleBy, f); }
 function resetZoom() { if (svgMap && zoomBehavior) svgMap.transition().duration(250).call(zoomBehavior.transform, d3.zoomIdentity); }
 
-// 4. RAIO-X DO PAÍS & CONSOLIDADO GLOBAL
 function atualizarBotaoVoltarMundo(visivel) {
   let btn = $('btnLimparPaisMundo');
   if (!btn && $('rxIso')) {
@@ -943,7 +942,6 @@ function setAbaRx(a) {
   if (a === 'hist') carregarHistoricoReal();
 }
 
-// 5. HISTÓRICO REAL
 function atualizarControlesHist() {
   const isMoeda = $('histSerieTipo').value === 'moeda';
   $('histPeriodo').disabled = !isMoeda;
@@ -1040,7 +1038,6 @@ function desenharHistoricoReal() {
   });
 }
 
-// 6. RANKINGS
 function setTopN(n) {
   topN = n;
   const on = 'px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer';
@@ -1079,7 +1076,6 @@ function renderRanking() {
   `).join('');
 }
 
-// 7. COMPARADOR MULTI-PAÍS
 function preencherSelectsComparador() {
   const opts = PAISES.map(p => `<option value="${p.iso3}">${p.nome} (${p.iso3})</option>`).join('');
   $('cmp1').innerHTML = opts;
@@ -1133,7 +1129,6 @@ function renderComparadorMulti() {
     : 'Selecione países com dados disponíveis para comparar.';
 }
 
-// Inicialização
 (() => {
   let temaSalvo = 'light';
   try { temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light'; } catch {}

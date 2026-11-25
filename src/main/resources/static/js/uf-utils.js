@@ -110,8 +110,45 @@ window.BDUF = (() => {
     return `rgb(${r}, ${g}, ${b})`;
   }
 
-  // Cache em sessionStorage para abertura instantânea dos mapas entre páginas
+  // Mini-gráfico SVG leve (sparkline) para tabelas de ranking
+  function htmlSparkline(valores, { width = 64, height = 22 } = {}) {
+    if (!Array.isArray(valores) || valores.length < 2) {
+      return '<span class="text-[10px] din-text-muted">—</span>';
+    }
+    const nums = valores.map(Number).filter(v => !Number.isNaN(v));
+    if (nums.length < 2) return '<span class="text-[10px] din-text-muted">—</span>';
+
+    const min = Math.min(...nums);
+    const max = Math.max(...nums);
+    const span = max - min || 1;
+    const padX = 3, padY = 3;
+    const w = width - padX * 2;
+    const h = height - padY * 2;
+
+    const pontos = nums.map((v, i) => {
+      const x = padX + (i / (nums.length - 1)) * w;
+      const y = padY + (1 - (v - min) / span) * h;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    }).join(' ');
+
+    const variacao = nums[0] !== 0 ? ((nums[nums.length - 1] - nums[0]) / Math.abs(nums[0])) * 100 : 0;
+    const cor = variacao >= 0 ? '#16C784' : '#EA3943';
+    const sinal = variacao >= 0 ? '+' : '';
+    const rotulo = `${sinal}${variacao.toFixed(1).replace('.', ',')}%`;
+
+    return `<div class="inline-flex items-center gap-1.5 align-middle">
+      <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" class="shrink-0 overflow-visible">
+        <polyline fill="none" stroke="${cor}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" points="${pontos}"></polyline>
+      </svg>
+      <span class="text-[10px] font-bold" style="color:${cor}">${rotulo}</span>
+    </div>`;
+  }
+
+  // Cache em sessionStorage para abertura instantânea entre páginas
   const GEO_CACHE_KEY = 'bd_geojson_br_v1';
+  const IND_CACHE_KEY = 'bd_indicadores_cache_v1';
+  const IND_CACHE_TTL_MS = 15 * 60 * 1000;
+
   async function obterGeoJsonBrasil() {
     try {
       const salvo = sessionStorage.getItem(GEO_CACHE_KEY);
@@ -143,6 +180,26 @@ window.BDUF = (() => {
     return null;
   }
 
+  function obterCacheIndicadores() {
+    try {
+      const raw = sessionStorage.getItem(IND_CACHE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (parsed && Array.isArray(parsed.dados) && (Date.now() - parsed.ts) < IND_CACHE_TTL_MS) {
+        return parsed.dados;
+      }
+    } catch {}
+    return null;
+  }
+
+  function salvarCacheIndicadores(dados) {
+    try {
+      if (Array.isArray(dados) && dados.length) {
+        sessionStorage.setItem(IND_CACHE_KEY, JSON.stringify({ ts: Date.now(), dados }));
+      }
+    } catch {}
+  }
+
   return {
     UFS,
     REGIOES,
@@ -153,6 +210,9 @@ window.BDUF = (() => {
     urlBandeira,
     htmlBandeira,
     interpolarVerde,
-    obterGeoJsonBrasil
+    htmlSparkline,
+    obterGeoJsonBrasil,
+    obterCacheIndicadores,
+    salvarCacheIndicadores
   };
 })();
