@@ -131,13 +131,13 @@
     </div>
   </div>
 
-  <!-- Tooltip Estilo Terminal PIB -->
+  <!-- Tooltip Estilo Terminal -->
   <div id="mapTip" class="pointer-events-none fixed z-50 hidden min-w-[215px] px-3.5 py-2.5 rounded-xl text-xs shadow-xl border din-border din-card-bg">
     <div class="flex items-center justify-between gap-3 pb-1.5 border-b din-border">
       <span id="tipNome" class="font-bold din-text-main"></span>
-      <span id="tipShare" class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#16C784]/15 din-green"></span>
+      <span id="tipShare" class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#16C784]/15 din-green tabular-nums"></span>
     </div>
-    <div class="pt-1.5 space-y-1">
+    <div class="pt-1.5 space-y-1 tabular-nums">
       <div class="flex items-center justify-between gap-4">
         <span class="din-text-muted">PIB:</span>
         <strong id="tipPib" class="din-green"></strong>
@@ -183,63 +183,117 @@
       </div>
     </section>
 
-    <!-- 2. MAPA-MÚNDI ECONÔMICO E SETORIAL -->
-    <section class="din-card-bg border din-border rounded-xl p-5 shadow-sm space-y-3">
-      <div class="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 class="text-lg sm:text-xl font-extrabold din-text-main">Mapa Econômico e Setorial Mundial</h1>
-          <p id="mapFiltroDesc" class="text-xs din-text-muted">Clique em um país para inspecionar ou selecione um continente, região ou bloco acima.</p>
+    <!-- 2. BLOCO SIMÉTRICO: MAPA-MÚNDI (7 COLUNAS) + IDENTIDADE & VOCAÇÃO DO PAÍS (5 COLUNAS) -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+
+      <!-- Esquerda: Mapa-Múndi Interativo -->
+      <div class="lg:col-span-7 din-card-bg border din-border rounded-xl p-5 shadow-sm flex flex-col justify-between space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h1 class="text-lg font-extrabold din-text-main">Mapa Econômico e Setorial Mundial</h1>
+            <p id="mapFiltroDesc" class="text-xs din-text-muted">1º clique seleciona o país; 2º clique (ou Esc) volta ao consolidado.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs din-text-muted hidden sm:inline">Visualização:</span>
+            <select id="mapIndicador" class="inp !w-auto text-xs font-semibold" onchange="pintarMapa()">
+              <option value="padrao" selected>Padrão (Seleção)</option>
+              <option value="pib">Mapa de Calor: PIB nominal (US$)</option>
+              <option value="pibPpc">Mapa de Calor: PIB em PPC</option>
+              <option value="pibPc">Mapa de Calor: PIB per capita</option>
+              <option value="idh">Mapa de Calor: IDH (PNUD)</option>
+              <option value="gini">Mapa de Calor: Índice de Gini</option>
+              <option value="pop">Mapa de Calor: População</option>
+              <option value="imposto">Mapa de Calor: Carga tributária</option>
+              <option value="cresc">Mapa de Calor: Crescimento PIB (%)</option>
+              <option value="infla">Mapa de Calor: Inflação (%)</option>
+            </select>
+          </div>
         </div>
-        <div class="flex items-center gap-2">
-          <span class="text-xs din-text-muted hidden sm:inline">Visualização:</span>
-          <select id="mapIndicador" class="inp !w-auto text-xs font-semibold" onchange="pintarMapa()">
-            <option value="padrao" selected>Padrão (Seleção)</option>
-            <option value="pib">Mapa de Calor: PIB nominal (US$)</option>
-            <option value="pibPpc">Mapa de Calor: PIB em PPC</option>
-            <option value="pibPc">Mapa de Calor: PIB per capita</option>
-            <option value="idh">Mapa de Calor: IDH (PNUD)</option>
-            <option value="gini">Mapa de Calor: Índice de Gini</option>
-            <option value="pop">Mapa de Calor: População</option>
-            <option value="imposto">Mapa de Calor: Carga tributária</option>
-            <option value="cresc">Mapa de Calor: Crescimento PIB (%)</option>
-            <option value="infla">Mapa de Calor: Inflação (%)</option>
-          </select>
+
+        <div id="mapContainer" class="relative w-full flex-1 rounded-lg din-secondary-bg border din-border overflow-hidden min-h-[360px] sm:min-h-[430px] flex items-center justify-center">
+          <div id="mapLoading" class="text-xs din-text-muted">Carregando malha mundial (ISO-3166)…</div>
+          <svg id="mapaMundo" class="w-full h-full hidden select-none"></svg>
+
+          <div class="absolute top-3 left-3 flex flex-col gap-1 z-10">
+            <button type="button" onclick="ajustarZoom(1.35)" title="Aproximar" class="w-8 h-8 rounded-lg din-card-bg border din-border din-text-main font-bold text-sm shadow hover:border-[#16C784] transition cursor-pointer">+</button>
+            <button type="button" onclick="ajustarZoom(0.75)" title="Afastar" class="w-8 h-8 rounded-lg din-card-bg border din-border din-text-main font-bold text-sm shadow hover:border-[#16C784] transition cursor-pointer">−</button>
+            <button type="button" onclick="resetZoom()" title="Resetar visão" class="w-8 h-8 rounded-lg din-card-bg border din-border din-text-muted font-bold text-[10px] shadow hover:border-[#16C784] transition cursor-pointer">1:1</button>
+          </div>
+        </div>
+
+        <div id="legendaMapa" class="pt-1 flex flex-wrap items-center justify-between gap-3 text-[11px] din-text-muted">
+          <span id="legMin" class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-[#16C784] inline-block"></span> País ou recorte selecionado</span>
+          <div id="legBarra" class="hidden flex-1 h-2 rounded-full max-w-xs" style="background: linear-gradient(90deg, #74E3B4 0%, #16C784 50%, #046C4E 100%);"></div>
+          <span id="legMax" class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm border-2 border-[#16C784] inline-block"></span> Passe o mouse para inspecionar</span>
         </div>
       </div>
 
-      <div id="mapContainer" class="relative w-full rounded-lg din-secondary-bg border din-border overflow-hidden h-[360px] sm:h-[480px] lg:h-[560px] flex items-center justify-center">
-        <div id="mapLoading" class="text-xs din-text-muted">Carregando malha mundial (ISO-3166)…</div>
-        <svg id="mapaMundo" class="w-full h-full hidden select-none"></svg>
-
-        <div class="absolute top-3 left-3 flex flex-col gap-1 z-10">
-          <button type="button" onclick="ajustarZoom(1.35)" title="Aproximar" class="w-8 h-8 rounded-lg din-card-bg border din-border din-text-main font-bold text-sm shadow hover:border-[#16C784] transition cursor-pointer">+</button>
-          <button type="button" onclick="ajustarZoom(0.75)" title="Afastar" class="w-8 h-8 rounded-lg din-card-bg border din-border din-text-main font-bold text-sm shadow hover:border-[#16C784] transition cursor-pointer">−</button>
-          <button type="button" onclick="resetZoom()" title="Resetar visão" class="w-8 h-8 rounded-lg din-card-bg border din-border din-text-muted font-bold text-[10px] shadow hover:border-[#16C784] transition cursor-pointer">1:1</button>
+      <!-- Direita: Identidade, Moeda & Vocação Econômica Real -->
+      <div class="lg:col-span-5 din-card-bg border din-border rounded-xl p-5 shadow-sm flex flex-col justify-between gap-4">
+        <!-- Cabeçalho do País -->
+        <div class="flex items-start justify-between gap-3 pb-3 border-b din-border">
+          <div class="flex items-center gap-3 min-w-0">
+            <img id="rxBandImg" src="https://flagcdn.com/w80/br.png" alt="Bandeira" class="w-11 h-7 object-cover rounded border din-border shrink-0">
+            <div class="min-w-0">
+              <div class="flex flex-wrap items-center gap-1.5">
+                <h2 id="rxNome" class="text-xl font-extrabold din-text-main truncate">Brasil</h2>
+                <span id="rxIso" class="text-[10px] font-mono px-1.5 py-0.5 rounded din-secondary-bg border din-border din-text-muted">BRA</span>
+              </div>
+              <p id="rxMeta" class="text-xs din-text-muted mt-0.5 truncate">América do Sul · Capital: Brasília</p>
+              <span id="rxBlocos" class="inline-block mt-1 text-[10px] px-2 py-0.5 rounded din-secondary-bg border din-border din-green font-semibold">G20 · BRICS+ · Mercosul</span>
+            </div>
+          </div>
+          <div class="text-right shrink-0 tabular-nums">
+            <span id="rxMoedaCod" class="text-xs font-mono font-bold din-green block">BRL</span>
+            <span id="rxMoedaBrl" class="text-xs font-bold din-text-main">R$ 1,00</span>
+            <span id="rxMoedaMeta" class="text-[10px] din-text-muted block">Tempo real</span>
+          </div>
         </div>
-      </div>
 
-      <div id="legendaMapa" class="pt-1 flex flex-wrap items-center justify-between gap-3 text-[11px] din-text-muted">
-        <span id="legMin" class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-[#16C784] inline-block"></span> País ou recorte selecionado</span>
-        <div id="legBarra" class="hidden flex-1 h-2 rounded-full max-w-xs" style="background: linear-gradient(90deg, rgba(22,199,132,0.16), #16C784);"></div>
-        <span id="legMax" class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm border-2 border-[#16C784] inline-block"></span> Passe o mouse para inspecionar</span>
+        <!-- Faixa de Moeda Oficial & Demografia -->
+        <div class="din-secondary-bg border din-border rounded-lg p-3.5 flex flex-col justify-between gap-2.5 text-xs tabular-nums">
+          <div class="flex items-center justify-between gap-2">
+            <div>
+              <span class="text-[11px] din-text-muted">Moeda oficial:</span>
+              <strong id="rxMoedaNome" class="din-text-main block text-sm mt-0.5">—</strong>
+            </div>
+            <div id="rxTendencia" class="text-right font-bold din-green">—</div>
+          </div>
+          <div class="pt-2 border-t din-border flex items-center justify-between text-[11px] din-text-muted">
+            <span id="rxPopArea">População: —</span>
+            <span id="rxRegiaoBadge" class="font-semibold din-text-main">—</span>
+          </div>
+        </div>
+
+        <!-- Vocação Econômica Real (Doughnut + Barras) -->
+        <div class="din-secondary-bg border din-border rounded-lg p-4 space-y-2.5 flex-1 flex flex-col justify-between">
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-wider din-green block">VOCAÇÃO ECONÔMICA REAL</span>
+            <strong id="rxVocacao" class="text-xs din-text-main block mt-0.5">—</strong>
+          </div>
+          <div class="grid grid-cols-12 items-center gap-3 pt-1 my-auto">
+            <div class="col-span-5 h-[130px]"><canvas id="grafVocPais"></canvas></div>
+            <div id="legVocPais" class="col-span-7 space-y-2 text-xs tabular-nums"></div>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- 2.5 PAINEL CONSOLIDADO DO RECORTE -->
+    <!-- 2.5 PAINEL CONSOLIDADO DO RECORTE (QUANDO HÁ FILTRO DE CONTINENTE/BLOCO ATIVO) -->
     <section id="secaoResumoRegiao" class="hidden din-card-bg border border-[#16C784]/60 rounded-xl p-5 shadow-sm space-y-4">
       <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b din-border">
         <div>
           <span class="text-[10px] font-bold uppercase tracking-wider din-green">Consolidado do Recorte Selecionado</span>
           <h2 id="regTit" class="text-lg font-extrabold din-text-main">—</h2>
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 tabular-nums">
           <span id="regShareGlobal" class="text-xs font-bold px-2.5 py-1 rounded-md bg-[#16C784]/15 din-green">—</span>
           <span id="regQtd" class="text-xs font-semibold px-2.5 py-1 rounded-md din-secondary-bg border din-border din-text-muted">—</span>
         </div>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
-        <div class="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
+        <div class="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs tabular-nums">
           <div class="din-secondary-bg border din-border rounded-lg p-3">
             <span class="text-[11px] din-text-muted block">PIB Nominal Somado</span>
             <strong id="regPib" class="text-base font-extrabold din-green mt-0.5 block">—</strong>
@@ -279,7 +333,7 @@
           </div>
           <div class="grid grid-cols-12 items-center gap-3 pt-1">
             <div class="col-span-5 h-[125px]"><canvas id="grafVocRegiao"></canvas></div>
-            <div id="legVocRegiao" class="col-span-7 space-y-2 text-xs"></div>
+            <div id="legVocRegiao" class="col-span-7 space-y-2 text-xs tabular-nums"></div>
           </div>
         </div>
       </div>
@@ -290,54 +344,8 @@
       </div>
     </section>
 
-    <!-- 3. RAIO-X DO PAÍS SELECIONADO -->
+    <!-- 3. INDICADORES DETALHADOS DO PAÍS SELECIONADO (4 ABAS EM LARGURA TOTAL PARA MÁXIMA LEGIBILIDADE) -->
     <section id="secaoRaioX" class="din-card-bg border din-border rounded-xl p-5 shadow-sm space-y-4">
-      <div class="flex flex-wrap items-start justify-between gap-3 pb-3 border-b din-border">
-        <div class="flex items-center gap-3">
-          <img id="rxBandImg" src="https://flagcdn.com/w80/br.png" alt="Bandeira" class="w-11 h-7 object-cover rounded border din-border shrink-0">
-          <div>
-            <div class="flex flex-wrap items-center gap-2">
-              <h2 id="rxNome" class="text-xl font-extrabold din-text-main">Brasil</h2>
-              <span id="rxIso" class="text-[10px] font-mono px-1.5 py-0.5 rounded din-secondary-bg border din-border din-text-muted">BRA</span>
-              <span id="rxBlocos" class="text-[10px] px-2 py-0.5 rounded din-secondary-bg border din-border din-green font-semibold">G20 · BRICS+ · Mercosul</span>
-            </div>
-            <p id="rxMeta" class="text-xs din-text-muted mt-0.5">América do Sul · Capital: Brasília</p>
-          </div>
-        </div>
-        <div class="text-right">
-          <span id="rxMoedaCod" class="text-xs font-mono font-bold din-green block">BRL</span>
-          <span id="rxMoedaBrl" class="text-xs font-bold din-text-main">R$ 1,00</span>
-          <span id="rxMoedaMeta" class="text-[10px] din-text-muted block">ExchangeRate-API · Tempo real</span>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
-        <div class="lg:col-span-5 din-secondary-bg border din-border rounded-lg p-4 flex flex-col justify-between gap-3 text-xs">
-          <div class="flex items-center justify-between gap-2">
-            <div>
-              <span class="din-text-muted">Moeda oficial:</span>
-              <strong id="rxMoedaNome" class="din-text-main block text-sm mt-0.5">—</strong>
-            </div>
-            <div id="rxTendencia" class="text-right font-bold din-green">—</div>
-          </div>
-          <div class="pt-2 border-t din-border flex items-center justify-between text-[11px] din-text-muted">
-            <span id="rxPopArea">População: —</span>
-            <span id="rxRegiaoBadge" class="font-semibold din-text-main">—</span>
-          </div>
-        </div>
-
-        <div class="lg:col-span-7 din-secondary-bg border din-border rounded-lg p-4 space-y-2">
-          <div>
-            <span class="text-[10px] font-bold uppercase tracking-wider din-green block">VOCAÇÃO ECONÔMICA REAL</span>
-            <strong id="rxVocacao" class="text-xs din-text-main block mt-0.5">—</strong>
-          </div>
-          <div class="grid grid-cols-12 items-center gap-3 pt-1">
-            <div class="col-span-4 h-[120px]"><canvas id="grafVocPais"></canvas></div>
-            <div id="legVocPais" class="col-span-8 space-y-2 text-xs"></div>
-          </div>
-        </div>
-      </div>
-
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
         <button id="abaRxEcon" type="button" onclick="setAbaRx('econ')" class="py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer">Macro & Fiscal</button>
         <button id="abaRxComercio" type="button" onclick="setAbaRx('comercio')" class="py-1.5 rounded-md din-text-muted transition cursor-pointer">Comércio Exterior</button>
@@ -346,11 +354,11 @@
       </div>
 
       <div id="viewRxEcon" class="space-y-3">
-        <div id="gridMacro" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 text-xs"></div>
+        <div id="gridMacro" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 text-xs tabular-nums"></div>
       </div>
 
       <div id="viewRxComercio" class="hidden space-y-4">
-        <div id="gridComercioKpi" class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs"></div>
+        <div id="gridComercioKpi" class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs tabular-nums"></div>
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
           <div class="lg:col-span-7 din-secondary-bg border din-border rounded-lg p-4 space-y-2">
             <div class="flex flex-wrap items-center justify-between gap-2">
@@ -373,7 +381,7 @@
         </div>
       </div>
 
-      <div id="viewRxSocial" class="hidden space-y-3 text-xs">
+      <div id="viewRxSocial" class="hidden space-y-3 text-xs tabular-nums">
         <div id="gridSocial" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
         <p id="rxResumoSocial" class="din-secondary-bg border din-border rounded-lg p-3 din-text-muted leading-relaxed"></p>
       </div>
@@ -441,7 +449,7 @@
           </div>
         </div>
       </div>
-      <div id="gridRanking" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3"></div>
+      <div id="gridRanking" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 tabular-nums"></div>
     </section>
 
     <!-- 5. COMPARADOR MULTI-PAÍS -->
@@ -480,7 +488,7 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         <div class="lg:col-span-7 overflow-x-auto">
-          <table class="w-full text-left text-xs border-collapse">
+          <table class="w-full text-left text-xs border-collapse tabular-nums">
             <thead><tr id="cmpThead" class="din-text-muted border-b din-border"></tr></thead>
             <tbody id="cmpTbody" class="divide-y din-border"></tbody>
           </table>
@@ -542,6 +550,19 @@
 <script src="js/mundo/constantes.js"></script>
 <script src="js/mundo/app.js"></script>
 <script>
+// Atalho Esc para resetar o zoom do mapa ou sair da tela cheia
+window.addEventListener('keydown', function(e) {
+  const tag = (e.target && e.target.tagName) || '';
+  if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
+  if (e.key === 'Escape') {
+    if (document.body.classList.contains('modo-apresentacao') && typeof alternarModoApresentacao === 'function') {
+      alternarModoApresentacao();
+    } else if (typeof resetZoom === 'function') {
+      resetZoom();
+    }
+  }
+});
+
 function baixarParceirosPNG() {
   if (!window.BDChart) return;
   const pais = document.getElementById('rxNome')?.textContent || 'País';

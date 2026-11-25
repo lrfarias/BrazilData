@@ -2,6 +2,17 @@ const $ = i => document.getElementById(i);
 const CACHE_KEY = 'bd_mundo_cache_v4';
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 
+const GLOBE_SVG_DATA = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 42">
+    <rect width="64" height="42" rx="4" fill="#0F172A"/>
+    <circle cx="32" cy="21" r="14" fill="#16C784" fill-opacity="0.2" stroke="#16C784" stroke-width="2"/>
+    <ellipse cx="32" cy="21" rx="6.5" ry="14" fill="none" stroke="#16C784" stroke-width="1.5"/>
+    <line x1="18" y1="21" x2="46" y2="21" stroke="#16C784" stroke-width="1.5"/>
+    <line x1="20" y1="14" x2="44" y2="14" stroke="#16C784" stroke-width="1.1" stroke-opacity="0.7"/>
+    <line x1="20" y1="28" x2="44" y2="28" stroke="#16C784" stroke-width="1.1" stroke-opacity="0.7"/>
+  </svg>`
+);
+
 const BD = {
   brl: (v, d = 2) => v == null ? 'N/D' : v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: d, maximumFractionDigits: d }),
   usd: (v, d = 0) => v == null ? 'N/D' : v.toLocaleString('pt-BR', { style: 'currency', currency: 'USD', minimumFractionDigits: d, maximumFractionDigits: d }),
@@ -25,6 +36,25 @@ const BD = {
     return { tx: d ? '#F5F6F7' : '#17191C', mu: d ? '#9299A3' : '#737780', grid: d ? '#2B3036' : '#E5E7EB' };
   }
 };
+
+// Escala tonal padrão do terminal: #74E3B4 -> #16C784 -> #046C4E
+function interpolarVerdeMundo(t, expoente = 0.62) {
+  const s = Math.pow(Math.max(0, Math.min(1, t)), expoente);
+  const c0 = [116, 227, 180], c1 = [22, 199, 132], c2 = [4, 108, 78];
+  let r, g, b;
+  if (s <= 0.5) {
+    const k = s / 0.5;
+    r = Math.round(c0[0] + (c1[0] - c0[0]) * k);
+    g = Math.round(c0[1] + (c1[1] - c0[1]) * k);
+    b = Math.round(c0[2] + (c1[2] - c0[2]) * k);
+  } else {
+    const k = (s - 0.5) / 0.5;
+    r = Math.round(c1[0] + (c2[0] - c1[0]) * k);
+    g = Math.round(c1[1] + (c2[1] - c1[1]) * k);
+    b = Math.round(c1[2] + (c2[2] - c1[2]) * k);
+  }
+  return `rgb(${r}, ${g}, ${b})`;
+}
 
 function inferirContinente(iso3, wbRegion, restRegion) {
   if (restRegion && REGIAO_PT[restRegion]) return REGIAO_PT[restRegion];
@@ -60,11 +90,20 @@ let svgMap = null, zoomBehavior = null, chartParceiros = null, chartHist = null,
 let chartVocPais = null, chartVocRegiao = null;
 let cacheDetalhe = {}, ultimoHistReal = null;
 
-// Cabeçalho e Tema
+// Cabeçalho, Tema e Atalho Esc
 function toggleDropdownMenu() { $('dropdownMenu').classList.toggle('hidden'); }
 window.addEventListener('click', e => {
   const btn = $('menuDropdownBtn'), menu = $('dropdownMenu');
   if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) menu.classList.add('hidden');
+});
+
+window.addEventListener('keydown', e => {
+  const tag = (e.target && e.target.tagName) || '';
+  if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
+  if (e.key === 'Escape') {
+    if (document.body.classList.contains('modo-apresentacao')) alternarModoApresentacao();
+    else if (isoAtivo) desselecionarPais();
+  }
 });
 
 function alternarDarkLight() {
@@ -84,10 +123,14 @@ function aplicarTema(tema) {
   }
   pintarMapa();
   renderComparadorMulti();
-  if (PAISES_MAP[isoAtivo]) renderPizzaVocacao('pais', PAISES_MAP[isoAtivo].setores);
+  if (isoAtivo && PAISES_MAP[isoAtivo]) {
+    renderPizzaVocacao('pais', PAISES_MAP[isoAtivo].setores);
+    if (abaRx === 'comercio') renderComercio(PAISES_MAP[isoAtivo]);
+  } else if (PAISES.length) {
+    exibirConsolidadoGlobal();
+  }
   atualizarResumoRegiao();
   if (abaRx === 'hist' && ultimoHistReal) desenharHistoricoReal();
-  if (abaRx === 'comercio') renderComercio(PAISES_MAP[isoAtivo]);
 }
 
 function alternarModoApresentacao() {
@@ -132,7 +175,12 @@ function aplicarDadosGlobais(paisesArr, ccnMap, ts, origem) {
   pintarMapa();
   renderRanking();
   renderComparadorMulti();
-  selecionarPais(PAISES_MAP[isoAtivo] ? isoAtivo : (PAISES_MAP['BRA'] ? 'BRA' : PAISES[0]?.iso3));
+
+  if (isoAtivo === null) {
+    exibirConsolidadoGlobal();
+  } else {
+    selecionarPais(PAISES_MAP[isoAtivo] ? isoAtivo : (PAISES_MAP['BRA'] ? 'BRA' : PAISES[0]?.iso3));
+  }
 }
 
 function forcarAtualizacaoCache() {
@@ -286,8 +334,8 @@ function setCategoriaFiltro(cat) {
   const ids = { cont:'catCont', reg:'catReg', blocos:'catBlocos', geopol:'catGeopol', desenv:'catDesenv', rank:'catRank' };
   Object.entries(ids).forEach(([k, id]) => {
     $(id).className = k === cat
-      ? 'px-2.5 py-1.5 rounded-md din-card-bg din-text-main border din-border transition'
-      : 'px-2.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition';
+      ? 'px-2.5 py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer'
+      : 'px-2.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition cursor-pointer';
   });
   $('lblCategoriaAtiva').textContent = CATEGORIAS_FILTRO[cat].label;
   renderOpcoesFiltro();
@@ -297,7 +345,7 @@ function renderOpcoesFiltro() {
   $('opcoesFiltro').innerHTML = CATEGORIAS_FILTRO[catAtiva].opcoes.map(op => {
     const ativo = filtroValor === op;
     return `<button type="button" onclick="selecionarFiltroOpcao('${op.replace(/'/g, "\\'")}')"
-      class="px-2.5 py-1 rounded-md text-xs font-semibold border transition ${ativo ? 'din-btn border-transparent' : 'din-secondary-bg din-border din-text-muted hover:din-text-main'}">${op}</button>`;
+      class="px-2.5 py-1 rounded-md text-xs font-semibold border transition cursor-pointer ${ativo ? 'din-btn border-transparent' : 'din-secondary-bg din-border din-text-muted hover:din-text-main'}">${op}</button>`;
   }).join('');
 }
 
@@ -306,6 +354,7 @@ function selecionarFiltroOpcao(op) {
   renderOpcoesFiltro();
   atualizarDescFiltro();
   atualizarResumoRegiao();
+  if (!isoAtivo) exibirConsolidadoGlobal();
   pintarMapa();
   renderRanking();
 }
@@ -316,6 +365,7 @@ function limparFiltros() {
   renderOpcoesFiltro();
   atualizarDescFiltro();
   atualizarResumoRegiao();
+  if (!isoAtivo) exibirConsolidadoGlobal();
   pintarMapa();
   renderRanking();
 }
@@ -325,7 +375,7 @@ function atualizarDescFiltro() {
   const lbl = filtroValor === 'Todos os países' ? 'Todos os países' : filtroValor;
   $('filtroAtivoBadge').textContent = `Filtro: ${lbl} (${ativos.length} países)`;
   $('mapFiltroDesc').textContent = filtroValor === 'Todos os países'
-    ? 'Clique em um país para inspecionar ou selecione um continente, região ou bloco acima.'
+    ? '1º clique seleciona o país; 2º clique (ou Esc) volta ao consolidado mundial.'
     : `Recorte ativo: "${lbl}" (${ativos.length} países destacados em verde no mapa).`;
 }
 
@@ -378,8 +428,8 @@ function atualizarResumoRegiao() {
   renderPizzaVocacao('regiao', { serv: s, ind: i, agro: ag, adm });
 
   $('listaPaisesRecorte').innerHTML = ordenados.map(p => `
-    <button type="button" onclick="selecionarPais('${p.iso3}')"
-      class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold border transition ${p.iso3 === isoAtivo ? 'din-btn border-transparent' : 'din-secondary-bg din-border din-text-main hover:border-[#16C784]'}">
+    <button type="button" onclick="alternarSelecaoPais('${p.iso3}')"
+      class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold border transition cursor-pointer ${p.iso3 === isoAtivo ? 'din-btn border-transparent' : 'din-secondary-bg din-border din-text-main hover:border-[#16C784]'}">
       <span>${p.nome}</span>
       <span class="opacity-70 font-normal">${p.pib ? BD.compactUSD(p.pib) : ''}</span>
     </button>
@@ -440,7 +490,7 @@ function buscarPais(termo) {
   if (achado) selecionarPais(achado.iso3);
 }
 
-// 3. MAPA-MÚNDI D3
+// 3. MAPA-MÚNDI D3 (1º CLIQUE SELECIONA, 2º CLIQUE OU OCEANO DESSELECIONA)
 function fmtInd(p, k) {
   if (!p || p[k] == null) return 'N/D';
   if (k === 'pib' || k === 'pibPpc') return BD.compactUSD(p[k]);
@@ -453,6 +503,22 @@ function fmtInd(p, k) {
   if (k === 'moedaBRL') return BD.brl(p[k], p[k] < 0.1 ? 4 : 2);
   return 'N/D';
 }
+
+function alternarSelecaoPais(iso3) {
+  if (!iso3) return;
+  if (isoAtivo === iso3) desselecionarPais();
+  else selecionarPais(iso3);
+}
+
+function desselecionarPais() {
+  isoAtivo = null;
+  $('inpBuscaPais').value = '';
+  exibirConsolidadoGlobal();
+  pintarMapa();
+  renderRanking();
+  if (filtroValor !== 'Todos os países') atualizarResumoRegiao();
+}
+window.desselecionarPais = desselecionarPais;
 
 async function iniciarMapaMundi() {
   const urls = [
@@ -485,15 +551,20 @@ async function iniciarMapaMundi() {
   zoomBehavior = d3.zoom().scaleExtent([1, 8]).on('zoom', ev => g.attr('transform', ev.transform));
   svgMap.call(zoomBehavior);
 
+  // Clique no oceano (fundo vazio do SVG) limpa a seleção
+  svgMap.on('click', ev => {
+    if (ev.target === svgMap.node() && isoAtivo) desselecionarPais();
+  });
+
   g.selectAll('path')
     .data(features)
     .join('path')
-    .attr('class', 'pais-path')
+    .attr('class', 'pais-path cursor-pointer')
     .attr('d', path)
     .attr('data-ccn3', f => String(f.id).padStart(3, '0'))
     .attr('data-geo-name', f => f.properties?.name || 'Território')
     .on('mouseenter', function(ev) {
-      d3.select(this).style('stroke', '#16C784').style('stroke-width', '2.2px');
+      d3.select(this).style('stroke', '#16C784').style('stroke-width', '2.2px').raise();
 
       const iso3 = CCN3_TO_ISO3[this.getAttribute('data-ccn3')];
       const p = PAISES_MAP[iso3];
@@ -514,9 +585,10 @@ async function iniciarMapaMundi() {
       tip.classList.add('hidden');
       pintarMapa();
     })
-    .on('click', function() {
+    .on('click', function(ev) {
+      ev.stopPropagation();
       const iso3 = CCN3_TO_ISO3[this.getAttribute('data-ccn3')];
-      if (iso3) selecionarPais(iso3);
+      if (iso3) alternarSelecaoPais(iso3);
     });
 
   $('mapLoading').classList.add('hidden');
@@ -528,69 +600,203 @@ function pintarMapa() {
   if (!svgMap || !PAISES.length) return;
   const modo = $('mapIndicador').value;
   const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-  const baseNeutral = dark ? '#1D2126' : '#F8FAFC';
-  const borda = dark ? '#2B3036' : '#CBD5E1';
+  const semDado = dark ? '#181B20' : '#E5E7EB';
+  const neutroAtivo = dark ? '#24332D' : '#D5ECE3';
+  const neutroPadrao = dark ? '#22272E' : '#E2E8F0';
+  const borda = dark ? '#121518' : '#FFFFFF';
+  const bordaSel = dark ? '#F5F6F7' : '#17191C';
   const filtroAtivo = filtroValor !== 'Todos os países';
+
+  const paths = svgMap.selectAll('path');
 
   if (modo === 'padrao') {
     $('legBarra').classList.add('hidden');
-    $('legMin').innerHTML = `<span class="w-3 h-3 rounded-sm bg-[#16C784] inline-block"></span> ${filtroAtivo ? 'Países do recorte selecionado' : 'País selecionado'}`;
+    $('legMin').innerHTML = `<span class="w-3 h-3 rounded-sm bg-[#16C784] inline-block"></span> ${isoAtivo ? 'País selecionado' : (filtroAtivo ? 'Países do recorte' : 'Clique em um país para inspecionar')}`;
     $('legMax').innerHTML = `<span class="w-3 h-3 rounded-sm border-2 border-[#16C784] inline-block"></span> Passe o mouse para destacar`;
 
-    svgMap.selectAll('path')
+    paths
       .style('fill', function() {
         const iso3 = CCN3_TO_ISO3[this.getAttribute('data-ccn3')];
         const p = PAISES_MAP[iso3];
+        if (!p) return semDado;
         if (filtroAtivo) {
-          if (p && paisNoFiltro(p)) return iso3 === isoAtivo ? '#0E9F6E' : '#16C784';
-          return baseNeutral;
+          if (paisNoFiltro(p)) return iso3 === isoAtivo ? '#046C4E' : '#16C784';
+          return semDado;
         }
-        return iso3 === isoAtivo ? '#16C784' : baseNeutral;
+        if (isoAtivo) return iso3 === isoAtivo ? '#16C784' : neutroPadrao;
+        return neutroAtivo;
       })
       .style('stroke', function() {
         const iso3 = CCN3_TO_ISO3[this.getAttribute('data-ccn3')];
-        return iso3 === isoAtivo ? (dark ? '#FFFFFF' : '#0B6E4F') : borda;
+        return iso3 === isoAtivo ? bordaSel : borda;
       })
       .style('stroke-width', function() {
         const iso3 = CCN3_TO_ISO3[this.getAttribute('data-ccn3')];
-        return iso3 === isoAtivo ? '1.8px' : '0.65px';
+        return iso3 === isoAtivo ? '2.4px' : '0.7px';
       });
   } else {
     $('legBarra').classList.remove('hidden');
+    $('legBarra').style.background = 'linear-gradient(90deg, #74E3B4 0%, #16C784 50%, #046C4E 100%)';
+
     const ativos = PAISES.filter(p => paisNoFiltro(p) && p[modo] != null);
     const vals = ativos.map(p => p[modo]);
     const min = vals.length ? Math.min(...vals) : 0;
     const max = vals.length ? Math.max(...vals) : 1;
-    const escala = d3.scaleLinear().domain([min, max]).range([dark ? '#1E3A30' : '#D1F7E7', '#16C784']);
+    const exp = (modo === 'pib' || modo === 'pibPpc' || modo === 'pop') ? 0.45 : 0.72;
 
     if (ativos.length) {
       const pMin = ativos.find(p => p[modo] === min), pMax = ativos.find(p => p[modo] === max);
       $('legMin').textContent = `${pMin.nome}: ${fmtInd(pMin, modo)}`;
-      $('legMax').textContent = `${pMax.nome}: ${fmtInd(pMax, modo)}`;
+      $('legMax').textContent = `Destaque · ${pMax.nome}: ${fmtInd(pMax, modo)}`;
     }
 
-    svgMap.selectAll('path')
+    paths
       .style('fill', function() {
         const iso3 = CCN3_TO_ISO3[this.getAttribute('data-ccn3')];
         const p = PAISES_MAP[iso3];
-        if (!p || !paisNoFiltro(p) || p[modo] == null) return baseNeutral;
-        return escala(p[modo]);
+        if (!p || !paisNoFiltro(p) || p[modo] == null) return semDado;
+        if (max <= min) return '#046C4E';
+        return interpolarVerdeMundo((p[modo] - min) / (max - min), exp);
       })
       .style('stroke', function() {
         const iso3 = CCN3_TO_ISO3[this.getAttribute('data-ccn3')];
-        return iso3 === isoAtivo ? (dark ? '#FFFFFF' : '#17191C') : borda;
+        return iso3 === isoAtivo ? bordaSel : borda;
       })
       .style('stroke-width', function() {
         const iso3 = CCN3_TO_ISO3[this.getAttribute('data-ccn3')];
-        return iso3 === isoAtivo ? '2px' : '0.65px';
+        return iso3 === isoAtivo ? '2.4px' : '0.7px';
       });
+  }
+
+  if (isoAtivo) {
+    paths.filter(function() {
+      return CCN3_TO_ISO3[this.getAttribute('data-ccn3')] === isoAtivo;
+    }).raise();
   }
 }
 
 function ajustarZoom(f) { if (svgMap && zoomBehavior) svgMap.transition().duration(250).call(zoomBehavior.scaleBy, f); }
 function resetZoom() { if (svgMap && zoomBehavior) svgMap.transition().duration(250).call(zoomBehavior.transform, d3.zoomIdentity); }
 
-// 4. RAIO-X DO PAÍS
+// 4. RAIO-X DO PAÍS & CONSOLIDADO GLOBAL
+function atualizarBotaoVoltarMundo(visivel) {
+  let btn = $('btnLimparPaisMundo');
+  if (!btn && $('rxIso')) {
+    btn = document.createElement('button');
+    btn.id = 'btnLimparPaisMundo';
+    btn.type = 'button';
+    btn.onclick = desselecionarPais;
+    btn.className = 'text-[10px] font-semibold px-2 py-0.5 rounded din-secondary-bg border din-border din-text-main hover:border-[#16C784] transition cursor-pointer';
+    $('rxIso').parentElement.appendChild(btn);
+  }
+  if (!btn) return;
+  btn.textContent = filtroValor === 'Todos os países' ? '← Ver Mundo' : '← Ver Recorte';
+  btn.classList.toggle('hidden', !visivel);
+}
+
+function exibirConsolidadoGlobal() {
+  if (!PAISES.length) return;
+  const isMundo = filtroValor === 'Todos os países';
+  const ativos = PAISES.filter(paisNoFiltro);
+  if (!ativos.length) return;
+
+  atualizarBotaoVoltarMundo(false);
+
+  const pibSoma = ativos.reduce((s, p) => s + (p.pib || 0), 0);
+  const ppcSoma = ativos.reduce((s, p) => s + (p.pibPpc || 0), 0);
+  const popSoma = ativos.reduce((s, p) => s + (p.pop || 0), 0);
+  const pibPcMed = popSoma > 0 ? pibSoma / popSoma : null;
+
+  const comCresc = ativos.filter(p => p.cresc != null && Math.abs(p.cresc) < 40);
+  const crescMed = comCresc.length ? comCresc.reduce((s, p) => s + p.cresc, 0) / comCresc.length : null;
+
+  const comInfla = ativos.filter(p => p.infla != null && p.infla < 80);
+  const inflaMed = comInfla.length ? comInfla.reduce((s, p) => s + p.infla, 0) / comInfla.length : null;
+
+  const comImp = ativos.filter(p => p.imposto != null);
+  const impMed = comImp.length ? comImp.reduce((s, p) => s + p.imposto, 0) / comImp.length : null;
+  const arrecSoma = ativos.reduce((s, p) => s + ((p.pib != null && p.imposto != null) ? p.pib * (p.imposto / 100) : 0), 0);
+
+  const comIdh = ativos.filter(p => p.idh != null);
+  const idhMed = comIdh.length ? comIdh.reduce((s, p) => s + p.idh, 0) / comIdh.length : null;
+
+  const comGini = ativos.filter(p => p.gini != null);
+  const giniMed = comGini.length ? comGini.reduce((s, p) => s + p.gini, 0) / comGini.length : null;
+
+  const ordenados = [...ativos].sort((a, b) => (b.pib || 0) - (a.pib || 0));
+  const lider = ordenados[0];
+  const usdBrl = ratesUSD && ratesUSD['BRL'] ? ratesUSD['BRL'] : null;
+
+  $('rxBandImg').src = GLOBE_SVG_DATA;
+  $('rxNome').textContent = isMundo ? 'Mundo (Consolidado)' : filtroValor;
+  $('rxIso').textContent = isMundo ? 'WLD' : `${ativos.length} PAÍSES`;
+  $('rxBlocos').textContent = isMundo ? 'Panorama Global · Banco Mundial' : `${BD.num((pibSoma / PIB_MUNDIAL_SOMA) * 100, 1)}% do PIB Mundial`;
+  $('rxMeta').textContent = isMundo
+    ? `${ativos.length} economias monitoradas · Clique em um país no mapa para inspecionar`
+    : `Consolidado do recorte · Líder: ${lider ? lider.nome : '—'}`;
+
+  $('rxMoedaCod').textContent = 'USD';
+  $('rxMoedaBrl').textContent = usdBrl != null ? BD.brl(usdBrl, 2) : 'US$ 1,00';
+  $('rxMoedaNome').textContent = 'Dólar Americano (Ref. Global)';
+  $('rxPopArea').textContent = `População: ${BD.compactPop(popSoma)}`;
+  $('rxRegiaoBadge').textContent = isMundo ? 'Economia Mundial' : filtroValor;
+  $('rxVocacao').textContent = isMundo
+    ? 'Composição ponderada da economia global (Serviços, Indústria e Agro)'
+    : (VOCACAO_REGIAO[filtroValor] || 'Composição ponderada pelo PIB do recorte');
+
+  if (crescMed != null) {
+    const subiu = crescMed >= 0;
+    $('rxTendencia').innerHTML = `Média ${subiu ? '↑' : '↓'} <span class="${subiu ? 'din-green' : 'din-red'}">${subiu ? '+' : ''}${BD.num(crescMed, 1)}%</span> <span class="text-[10px] din-text-muted font-normal">(PIB a.a.)</span>`;
+  } else {
+    $('rxTendencia').innerHTML = '<span class="din-text-muted">—</span>';
+  }
+
+  let wTot = 0, ws = 0, wi = 0, wa = 0;
+  ativos.forEach(p => {
+    const w = p.pib || 1e9;
+    wTot += w;
+    ws += w * (p.setores?.serv || 55);
+    wi += w * (p.setores?.ind || 25);
+    wa += w * (p.setores?.agro || 10);
+  });
+  const s = Math.round(ws / (wTot || 1)), i = Math.round(wi / (wTot || 1)), ag = Math.round(wa / (wTot || 1));
+  const adm = Math.max(1, 100 - (s + i + ag));
+  renderPizzaVocacao('pais', { serv: s, ind: i, agro: ag, adm });
+
+  $('gridMacro').innerHTML = [
+    cardKpi('PIB Nominal Somado', BD.compactUSD(pibSoma), 'Banco Mundial', 'Recente', 'Consolidado', 'din-green'),
+    cardKpi('PIB em PPC Somado', BD.compactUSD(ppcSoma), 'Banco Mundial', 'Recente', 'Consolidado', 'din-green'),
+    cardKpi('PIB per capita Médio', BD.usd(pibPcMed, 0), 'PIB ÷ População', 'Recente', 'Ponderado'),
+    cardKpi('Crescimento Médio (% a.a.)', crescMed != null ? `${crescMed >= 0 ? '+' : ''}${BD.num(crescMed, 1)}%` : 'N/D', 'Banco Mundial', 'Recente', 'Média', crescMed >= 0 ? 'din-green' : 'din-red'),
+    cardKpi('Inflação Média (IPC %)', inflaMed != null ? `${BD.num(inflaMed, 1)}%` : 'N/D', 'Banco Mundial', 'Recente', 'Média', 'din-red'),
+    cardKpi('Carga Tributária Média', impMed != null ? `${BD.num(impMed, 1)}%` : 'N/D', 'Banco Mundial / OCDE', 'Recente', 'Média'),
+    cardKpi('Arrecadação Est. Somada', BD.compactUSD(arrecSoma), 'Calculado s/ PIB', 'Recente', 'Estimado'),
+    cardKpi('Maior Economia', lider ? lider.nome : 'N/D', lider ? BD.compactUSD(lider.pib) : '', '', 'Líder', 'din-green'),
+    cardKpi('IDH Médio (PNUD)', idhMed != null ? BD.num(idhMed, 3) : 'N/D', 'PNUD', '2023', 'Média', 'din-green'),
+    cardKpi('Economias no Recorte', `${ativos.length} países`, 'World Bank API v2', '', 'Ativo')
+  ].join('');
+
+  $('gridComercioKpi').innerHTML = [
+    cardKpi('Peso no PIB Mundial', `${BD.num((pibSoma / PIB_MUNDIAL_SOMA) * 100, 1)}%`, 'Participação global', '', 'Consolidado', 'din-green'),
+    cardKpi('Líder em PIB Nominal', lider ? `${lider.nome} (${lider.iso3})` : 'N/D', lider ? BD.compactUSD(lider.pib) : '', '', 'Observado'),
+    cardKpi('Comércio Bilateral', 'Selecione um país', 'Clique no mapa acima', '', 'Detalhado')
+  ].join('');
+  $('boxGrafParceiros').classList.add('hidden');
+  $('msgSemParceiros').classList.remove('hidden');
+  $('msgSemParceiros').textContent = 'Clique em qualquer país no mapa para visualizar seus principais parceiros comerciais e pauta exportadora.';
+  $('listaProdutosExp').innerHTML = `<li class="din-text-muted">Selecione um país no mapa para abrir a pauta exportadora (UN Comtrade).</li>`;
+
+  const faixaIdh = idhMed == null ? 'N/D' : idhMed >= 0.8 ? 'Muito Alto' : idhMed >= 0.7 ? 'Alto' : idhMed >= 0.55 ? 'Médio' : 'Baixo';
+  $('gridSocial').innerHTML = [
+    cardKpi('IDH Médio (Desenv. Humano)', idhMed != null ? `${BD.num(idhMed, 3)} (${faixaIdh})` : 'N/D', 'PNUD', '2023', 'Média', 'din-green'),
+    cardKpi('Índice de Gini Médio', giniMed != null ? BD.num(giniMed, 1) : 'N/D', 'Banco Mundial', 'Recente', 'Média'),
+    cardKpi('População Total', BD.compactPop(popSoma), 'Banco Mundial', 'Recente', 'Consolidado')
+  ].join('');
+  $('rxResumoSocial').textContent = `Visão consolidada de ${isMundo ? 'todas as economias monitoradas' : filtroValor}: população total de ${BD.compactPop(popSoma)}, IDH médio de ${idhMed != null ? BD.num(idhMed, 3) : 'N/D'} (PNUD) e Índice de Gini médio de ${giniMed != null ? BD.num(giniMed, 1) : 'N/D'}. Clique em um país no mapa para ver seus indicadores individuais.`;
+
+  if (abaRx === 'hist') carregarHistoricoReal();
+}
+
 async function carregarDetalhesPais(iso3) {
   if (cacheDetalhe[iso3]) return cacheDetalhe[iso3];
   const inds = {
@@ -623,6 +829,7 @@ async function selecionarPais(iso3) {
   const p = PAISES_MAP[iso3];
   if (!p) return;
   isoAtivo = iso3;
+  atualizarBotaoVoltarMundo(true);
 
   const blocosPais = Object.entries(SETS.blocos).filter(([, list]) => list.includes(iso3)).map(([b]) => b.split(' (')[0]);
   $('rxBandImg').src = p.flag || '';
@@ -706,6 +913,7 @@ function renderComercio(p, det = cacheDetalhe[p?.iso3]) {
   } else {
     $('boxGrafParceiros').classList.add('hidden');
     $('msgSemParceiros').classList.remove('hidden');
+    $('msgSemParceiros').textContent = 'Detalhamento bilateral disponível para as principais economias globais.';
     $('listaProdutosExp').innerHTML = `<li class="din-text-muted">Lista detalhada de pauta exportadora (UN Comtrade) disponível para as principais economias globais.</li>`;
   }
 }
@@ -725,8 +933,8 @@ function setAbaRx(a) {
   const map = { econ:'abaRxEcon', comercio:'abaRxComercio', social:'abaRxSocial', hist:'abaRxHist' };
   Object.entries(map).forEach(([k, id]) => {
     $(id).className = k === a
-      ? 'py-1.5 rounded-md din-card-bg din-text-main border din-border transition'
-      : 'py-1.5 rounded-md din-text-muted transition';
+      ? 'py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer'
+      : 'py-1.5 rounded-md din-text-muted transition cursor-pointer';
   });
   $('viewRxEcon').classList.toggle('hidden', a !== 'econ');
   $('viewRxComercio').classList.toggle('hidden', a !== 'comercio');
@@ -748,15 +956,14 @@ function dataISO(diasAtras) {
 }
 
 async function carregarHistoricoReal() {
-  const p = PAISES_MAP[isoAtivo];
-  if (!p) return;
+  const p = isoAtivo ? PAISES_MAP[isoAtivo] : null;
   const serie = $('histSerieTipo').value;
   $('histExplicacao').textContent = 'Buscando série histórica oficial...';
 
-  if (serie === 'moeda') {
+  if (serie === 'moeda' || !p) {
     const dias = { '5d': 8, '1m': 30, '3m': 90, '2a': 730 }[$('histPeriodo').value] || 90;
-    const isBrasil = p.moeda === 'BRL';
-    const base = isBrasil ? 'USD' : p.moeda;
+    const isBrasilOuMundo = !p || p.moeda === 'BRL' || p.moeda === 'USD';
+    const base = isBrasilOuMundo ? 'USD' : p.moeda;
     const sym = 'BRL';
     try {
       const r = await fetch(`https://api.frankfurter.dev/v1/${dataISO(dias)}..${dataISO(0)}?base=${base}&symbols=${sym}`);
@@ -764,7 +971,7 @@ async function carregarHistoricoReal() {
       const j = await r.json();
       const datas = Object.keys(j.rates).sort();
       ultimoHistReal = {
-        titulo: isBrasil ? 'USD/BRL — Dólar Americano em Reais (Referência do Brasil)' : `${p.moeda}/BRL (BCE · Frankfurter)`,
+        titulo: isBrasilOuMundo ? 'USD/BRL — Dólar Americano em Reais (Referência Global)' : `${p.moeda}/BRL (BCE · Frankfurter)`,
         labels: datas.map(d => d.slice(8, 10) + '/' + d.slice(5, 7) + (dias > 100 ? '/' + d.slice(2, 4) : '')),
         valores: datas.map(d => j.rates[d][sym]),
         fmt: v => BD.brl(v, v < 0.1 ? 4 : 2),
@@ -773,7 +980,9 @@ async function carregarHistoricoReal() {
       desenharHistoricoReal();
     } catch {
       if (chartHist) chartHist.destroy();
-      $('histExplicacao').textContent = `A moeda ${p.moeda} (${p.nome}) não possui série diária publicada pelo Banco Central Europeu (Frankfurter). Selecione PIB, População ou Inflação para ver a série histórica oficial do Banco Mundial.`;
+      $('histExplicacao').textContent = p
+        ? `A moeda ${p.moeda} (${p.nome}) não possui série diária publicada pelo Banco Central Europeu (Frankfurter). Selecione PIB, População ou Inflação para ver a série histórica oficial do Banco Mundial.`
+        : 'Selecione um país no mapa para consultar sua série histórica individual no Banco Mundial.';
     }
   } else {
     try {
@@ -834,8 +1043,8 @@ function desenharHistoricoReal() {
 // 6. RANKINGS
 function setTopN(n) {
   topN = n;
-  const on = 'px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border transition';
-  const off = 'px-2.5 py-1 rounded-md din-text-muted transition';
+  const on = 'px-2.5 py-1 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer';
+  const off = 'px-2.5 py-1 rounded-md din-text-muted transition cursor-pointer';
   $('top5Btn').className = n === 5 ? on : off;
   $('top10Btn').className = n === 10 ? on : off;
   $('top20Btn').className = n === 20 ? on : off;
@@ -855,11 +1064,14 @@ function renderRanking() {
   $('rkDescricao').textContent = `${$('rkMetrica').selectedOptions[0].text} · exibindo ${lista.length} países do filtro atual`;
 
   $('gridRanking').innerHTML = lista.map((p, i) => `
-    <button type="button" onclick="selecionarPais('${p.iso3}')"
-      class="text-left din-secondary-bg border rounded-lg p-3 hover:border-[#16C784] focus:outline-none transition ${p.iso3 === isoAtivo ? 'border-[#16C784] ring-1 ring-[#16C784]' : 'din-border'}">
-      <div class="flex items-center justify-between text-[11px] din-text-muted">
-        <span class="font-bold din-text-main truncate">#${i + 1} · ${p.nome}</span>
-        <span class="font-mono text-[10px]">${p.iso3}</span>
+    <button type="button" onclick="alternarSelecaoPais('${p.iso3}')"
+      class="text-left din-secondary-bg border rounded-lg p-3 hover:border-[#16C784] focus:outline-none transition cursor-pointer ${p.iso3 === isoAtivo ? 'border-[#16C784] ring-1 ring-[#16C784]' : 'din-border'}">
+      <div class="flex items-center justify-between gap-1.5 text-[11px] din-text-muted">
+        <span class="flex items-center gap-1.5 min-w-0">
+          ${p.flag ? `<img src="${p.flag}" alt="${p.iso3}" class="w-4 h-3 object-cover rounded-[2px] border din-border shrink-0">` : ''}
+          <span class="font-bold din-text-main truncate">#${i + 1} · ${p.nome}</span>
+        </span>
+        <span class="font-mono text-[10px] shrink-0">${p.iso3}</span>
       </div>
       <p class="text-sm font-extrabold din-green mt-1">${fmtInd(p, key)}</p>
       <span class="block text-[10px] din-text-muted mt-0.5 truncate">${p.regiaoGeo}</span>
