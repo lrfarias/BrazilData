@@ -13,120 +13,11 @@
 <script src="config.js"></script>
 
     <div>
-        <!-- Cabeçalho Institucional Padrão -->
-        <header class="sticky top-0 z-50 border-b din-border din-bg-main/95 backdrop-blur">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6">
-                <div class="flex items-center justify-between h-16 gap-4">
-                    <div class="flex items-center gap-3">
-                        <a href="index.html" class="flex items-center gap-3 group">
-                            <div class="w-10 h-10 rounded-lg din-secondary-bg border din-border flex items-center justify-center shadow-sm overflow-hidden group-hover:border-[#16C784] transition-colors duration-200">
-                                <img src="download.png" alt="BrasilEmDados" class="w-8 h-8 object-contain transition-transform duration-200 group-hover:scale-110">
-                            </div>
-                            <div>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-lg font-extrabold tracking-tight din-text-main">BrasilEmDados</span>
-                                    <span class="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono uppercase px-2 py-0.5 rounded din-secondary-bg border din-border din-text-muted">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span> Hub Econômico
-                                    </span>
-                                </div>
-                                <p class="text-[11px] din-text-muted hidden xl:block">Inteligência Macroeconômica e Contas Regionais</p>
-                            </div>
-                        </a>
-                    </div>
-
-                    <nav class="hidden md:flex items-center gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
-                        <a href="index.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Início</a>
-                        <a href="glossario.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Glossário</a>
-                        <a href="economia.html" class="px-3.5 py-1.5 rounded-md din-card-bg din-text-main shadow-sm border din-border transition">Economia</a>
-                        <a href="sobre.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Sobre</a>
-                        <a href="contato.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Contato</a>
-                    </nav>
-
-                    <div class="flex items-center gap-2.5 relative">
-                        <a href="terminal-pib.html" class="hidden sm:inline-flex items-center gap-1.5 din-btn text-xs font-semibold px-3.5 py-2 rounded-lg transition shadow-sm">
-                            <span>Abrir Terminal PIB</span>
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                            </svg>
-                        </a>
-
-                        <button id="menuDropdownBtn" onclick="toggleDropdownMenu()" title="Preferências e Ferramentas" class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center hover:border-[#16C784] transition cursor-pointer">
-                            <svg class="w-4 h-4 din-text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line>
-                                <line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line>
-                                <line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line>
-                                <line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line>
-                                <line x1="17" y1="16" x2="23" y2="16"></line>
-                            </svg>
-                        </button>
-
-                        <div id="dropdownMenu" class="hidden absolute right-0 top-11 w-64 rounded-xl din-card-bg border din-border shadow-2xl py-1.5 z-50">
-                            <div class="px-4 py-1.5 border-b din-border">
-                                <p class="text-[10px] font-bold uppercase tracking-wider din-text-muted">Módulos de Economia</p>
-                            </div>
-
-                            <a href="terminal-pib.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
-                                <span class="w-2 h-2 rounded-full bg-[#16C784] shrink-0"></span>
-                                01. Contas Regionais & PIB
-                            </a>
-                            <a href="imposto-idh.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
-                                <span class="w-2 h-2 rounded-full bg-[#16C784] shrink-0"></span>
-                                02. Impostos, População & IDH
-                            </a>
-                            <a href="cambio.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
-                                <span class="w-2 h-2 rounded-full bg-[#16C784] shrink-0"></span>
-                                03. Conversor de Moedas
-                            </a>
-                            <a href="simulador-selic.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
-                                <span class="w-2 h-2 rounded-full bg-[#16C784] shrink-0"></span>
-                                04. Simulador Selic & Juros
-                            </a>
-                            <a href="mundo.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
-                                <span class="w-2 h-2 rounded-full bg-[#16C784] shrink-0"></span>
-                                05. Mapa-Múndi & Global
-                            </a>
-                            <a href="inflacao.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
-                                <span class="w-2 h-2 rounded-full bg-[#16C784] shrink-0"></span>
-                                06. Inflação & Poder de Compra
-                            </a>
-                            <a href="contas-publicas.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
-                                <span class="w-2 h-2 rounded-full bg-[#16C784] shrink-0"></span>
-                                07. Contas Públicas & Dívida
-                            </a>
-                            <a href="agro.html" class="flex items-center gap-3 px-4 py-2 text-xs font-medium din-text-main hover:din-secondary-bg transition">
-                                <span class="w-2 h-2 rounded-full bg-[#16C784] shrink-0"></span>
-                                08. Agronegócio Brasileiro
-                            </a>
-
-                            <div class="my-1 border-t din-border"></div>
-
-                            <div class="flex items-center justify-between px-4 py-2.5 text-xs font-medium din-text-main cursor-pointer select-none" onclick="alternarDarkLight()">
-                                <div class="flex items-center gap-3">
-                                    <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                                    </svg>
-                                    <span>Modo Escuro (Dark)</span>
-                                </div>
-                                <div id="switchBg" class="w-10 h-5 rounded-full relative transition-colors duration-200 p-0.5 flex items-center" style="background-color: var(--border-col);">
-                                    <div id="switchBall" class="w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-200"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <nav class="flex md:hidden items-center gap-5 h-10 overflow-x-auto no-scrollbar text-xs font-semibold border-t din-border">
-                    <a href="index.html" class="din-text-muted hover:din-text-main h-full flex items-center">Início</a>
-                    <a href="glossario.html" class="din-text-muted hover:din-text-main h-full flex items-center">Glossário</a>
-                    <a href="economia.html" class="din-green border-b-2 border-[#16C784] h-full flex items-center">Economia</a>
-                    <a href="sobre.html" class="din-text-muted hover:din-text-main h-full flex items-center">Sobre</a>
-                    <a href="contato.html" class="din-text-muted hover:din-text-main h-full flex items-center">Contato</a>
-                </nav>
-            </div>
-        </header>
+        <!-- Cabeçalho Unificado (renderizado por js/layout.js) -->
+        <div id="bd-header" data-badge="HUB ECONÔMICO" data-sub="Hub de Indicadores, Câmbio & Simuladores"></div>
 
         <!-- Cabeçalho Limpo da Página -->
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-10 pb-6">
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-8 sm:pt-10 pb-6">
             <div class="max-w-3xl space-y-3">
                 <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight din-text-main">
                     Economia e indicadores
@@ -146,7 +37,7 @@
         <main class="max-w-7xl mx-auto px-4 sm:px-6 pb-8 grid grid-cols-1 md:grid-cols-2 gap-6">
 
             <!-- MÓDULO 01 -->
-            <div onclick="window.location.href='terminal-pib.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
+            <div data-href="terminal-pib" class="card-modulo din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
                 <div class="space-y-4">
                     <div class="flex items-center justify-between gap-4">
                         <div class="w-11 h-11 rounded-xl din-icon-box flex items-center justify-center shrink-0">
@@ -197,7 +88,7 @@
             </div>
 
             <!-- MÓDULO 02 -->
-            <div onclick="window.location.href='imposto-idh.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
+            <div data-href="imposto-idh" class="card-modulo din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
                 <div class="space-y-4">
                     <div class="flex items-center justify-between gap-4">
                         <div class="w-11 h-11 rounded-xl din-icon-box flex items-center justify-center shrink-0">
@@ -249,7 +140,7 @@
             </div>
 
             <!-- MÓDULO 03 -->
-            <div onclick="window.location.href='cambio.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
+            <div data-href="cambio" class="card-modulo din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
                 <div class="space-y-4">
                     <div class="flex items-center justify-between gap-4">
                         <div class="w-11 h-11 rounded-xl din-icon-box flex items-center justify-center shrink-0">
@@ -300,7 +191,7 @@
             </div>
 
             <!-- MÓDULO 04 -->
-            <div onclick="window.location.href='simulador-selic.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
+            <div data-href="simulador-selic" class="card-modulo din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
                 <div class="space-y-4">
                     <div class="flex items-center justify-between gap-4">
                         <div class="w-11 h-11 rounded-xl din-icon-box flex items-center justify-center shrink-0">
@@ -351,7 +242,7 @@
             </div>
 
             <!-- MÓDULO 05 -->
-            <div id="mapa-mundi" onclick="window.location.href='mundo.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
+            <div id="mapa-mundi" data-href="mundo" class="card-modulo din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
                 <div class="space-y-4">
                     <div class="flex items-center justify-between gap-4">
                         <div class="w-11 h-11 rounded-xl din-icon-box flex items-center justify-center shrink-0">
@@ -404,7 +295,7 @@
             </div>
 
             <!-- MÓDULO 06 -->
-            <div id="modulo-inflacao" onclick="window.location.href='inflacao.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
+            <div id="modulo-inflacao" data-href="inflacao" class="card-modulo din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
                 <div class="space-y-4">
                     <div class="flex items-center justify-between gap-4">
                         <div class="w-11 h-11 rounded-xl din-icon-box flex items-center justify-center shrink-0">
@@ -455,7 +346,7 @@
             </div>
 
             <!-- MÓDULO 07 -->
-            <div id="modulo-contas-publicas" onclick="window.location.href='contas-publicas.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
+            <div id="modulo-contas-publicas" data-href="contas-publicas" class="card-modulo din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
                 <div class="space-y-4">
                     <div class="flex items-center justify-between gap-4">
                         <div class="w-11 h-11 rounded-xl din-icon-box flex items-center justify-center shrink-0">
@@ -506,7 +397,7 @@
             </div>
 
             <!-- MÓDULO 08 -->
-            <div id="modulo-agro" onclick="window.location.href='agro.html'" class="din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
+            <div id="modulo-agro" data-href="agro" class="card-modulo din-card-bg border din-border rounded-2xl p-6 shadow-sm flex flex-col justify-between card-hover cursor-pointer">
                 <div class="space-y-4">
                     <div class="flex items-center justify-between gap-4">
                         <div class="w-11 h-11 rounded-xl din-icon-box flex items-center justify-center shrink-0">
@@ -578,67 +469,19 @@
         </section>
     </div>
 
-    <!-- Rodapé Institucional Limpo -->
-    <footer class="border-t din-border din-card-bg py-6 text-xs din-text-muted">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-2">
-                <span class="font-bold din-text-main">BrasilEmDados</span>
-                <span>•</span>
-                <span>Terminal de Inteligência Econômica e Setorial</span>
-            </div>
-            <div class="flex items-center gap-4">
-                <a href="glossario.html" class="hover:din-text-main transition">Glossário</a>
-                <a href="sobre.html" class="hover:din-text-main transition">Sobre</a>
-                <a href="contato.html" class="hover:din-text-main transition">Contato</a>
-            </div>
-        </div>
-    </footer>
+    <!-- Rodapé Unificado (renderizado por js/layout.js) -->
+    <div id="bd-footer"></div>
 
+    <script src="/js/formatters.js"></script>
+    <script src="/js/layout.js?v=2"></script>
     <script>
-        function toggleDropdownMenu() {
-            const menu = document.getElementById('dropdownMenu');
-            menu.classList.toggle('hidden');
-        }
-
-        window.addEventListener('click', function(e) {
-            const btn = document.getElementById('menuDropdownBtn');
-            const menu = document.getElementById('dropdownMenu');
-            if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) {
-                menu.classList.add('hidden');
-            }
+        document.querySelectorAll('.card-modulo').forEach(card => {
+            card.addEventListener('click', e => {
+                if (e.target.closest('a')) return;
+                const destino = card.getAttribute('data-href');
+                if (destino) window.location.href = BD.rota(destino);
+            });
         });
-
-        function alternarDarkLight() {
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            const novoTema = isDark ? 'light' : 'dark';
-            aplicarTema(novoTema);
-            localStorage.setItem('brasil_em_dados_tema', novoTema);
-        }
-
-        function aplicarTema(tema) {
-            const html = document.documentElement;
-            const switchBg = document.getElementById('switchBg');
-            const switchBall = document.getElementById('switchBall');
-
-            if (tema === 'dark') {
-                html.setAttribute('data-theme', 'dark');
-                if (switchBg && switchBall) {
-                    switchBg.style.backgroundColor = '#16C784';
-                    switchBall.classList.add('translate-x-5');
-                }
-            } else {
-                html.removeAttribute('data-theme');
-                if (switchBg && switchBall) {
-                    switchBg.style.backgroundColor = '#E5E7EB';
-                    switchBall.classList.remove('translate-x-5');
-                }
-            }
-        }
-
-        window.onload = () => {
-            const temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light';
-            aplicarTema(temaSalvo === 'dark' ? 'dark' : 'light');
-        };
     </script>
 </body>
 </html>

@@ -11,97 +11,11 @@
 </head>
 <body class="min-h-screen font-sans flex flex-col justify-between">
 <div>
-  <!-- Cabeçalho Institucional -->
-  <header class="sticky top-0 z-50 border-b din-border din-bg-main/95 backdrop-blur">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6">
-      <div class="flex items-center justify-between h-16 gap-4">
-        <div class="flex items-center gap-3">
-          <a href="index.html" class="flex items-center gap-3 group">
-            <div class="w-10 h-10 rounded-lg din-secondary-bg border din-border flex items-center justify-center shadow-sm overflow-hidden group-hover:border-[#16C784] transition-colors duration-200">
-              <img src="download.png" alt="BrasilEmDados" class="w-8 h-8 object-contain transition-transform duration-200 group-hover:scale-110">
-            </div>
-            <div>
-              <div class="flex items-center gap-2">
-                <span class="text-lg font-extrabold tracking-tight din-text-main">BrasilEmDados</span>
-                <span class="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono uppercase px-2 py-0.5 rounded din-secondary-bg border din-border din-text-muted">
-                  <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span> BCB SGS
-                </span>
-              </div>
-              <p class="text-[11px] din-text-muted hidden xl:block">Simulador de Selic, Renda Fixa & Juro Real</p>
-            </div>
-          </a>
-        </div>
-
-        <nav class="hidden md:flex items-center gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
-          <a href="index.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Início</a>
-          <a href="glossario.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Glossário</a>
-          <a href="economia.html" class="px-3.5 py-1.5 rounded-md din-card-bg din-text-main shadow-sm border din-border transition">Economia</a>
-          <a href="sobre.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Sobre</a>
-          <a href="contato.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Contato</a>
-        </nav>
-
-        <div class="flex items-center gap-2.5 relative">
-          <button onclick="alternarModoApresentacao()" id="btnModoApresentacao" class="hidden lg:inline-flex items-center gap-1.5 din-secondary-bg hover:opacity-80 border din-border din-text-main text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer">
-            <svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect>
-              <line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line>
-              <line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line>
-            </svg>
-            <span>Modo Tela Cheia</span>
-          </button>
-
-          <button id="menuDropdownBtn" onclick="toggleDropdownMenu()" title="Preferências e Ferramentas" class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center hover:border-[#16C784] transition cursor-pointer">
-            <svg class="w-4 h-4 din-text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line>
-              <line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line>
-              <line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line>
-              <line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line>
-              <line x1="17" y1="16" x2="23" y2="16"></line>
-            </svg>
-          </button>
-
-          <div id="dropdownMenu" class="hidden absolute right-0 top-11 w-64 rounded-xl din-card-bg border din-border shadow-2xl py-1.5 z-50">
-            <div class="px-4 py-1.5 border-b din-border">
-              <p class="text-[10px] font-bold uppercase tracking-wider din-text-muted">Ferramentas do Terminal</p>
-            </div>
-            <a href="economia.html" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition">
-              <svg class="w-4 h-4 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-              Voltar ao Hub Economia
-            </a>
-            <button onclick="exportarCSV(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left cursor-pointer">
-              <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-              Exportar Projeção (CSV)
-            </button>
-            <button onclick="window.print(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left cursor-pointer">
-              <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-              Exportar Relatório (PDF)
-            </button>
-            <div class="my-1 border-t din-border"></div>
-            <div class="flex items-center justify-between px-4 py-2.5 text-xs font-medium din-text-main cursor-pointer select-none" onclick="alternarDarkLight()">
-              <div class="flex items-center gap-3">
-                <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                <span>Modo Escuro (Dark)</span>
-              </div>
-              <div id="switchBg" class="w-10 h-5 rounded-full relative transition-colors duration-200 p-0.5 flex items-center" style="background-color: var(--border-col);">
-                <div id="switchBall" class="w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-200"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <nav class="flex md:hidden items-center gap-5 h-10 overflow-x-auto no-scrollbar text-xs font-semibold border-t din-border">
-        <a href="index.html" class="din-text-muted hover:din-text-main h-full flex items-center">Início</a>
-        <a href="glossario.html" class="din-text-muted hover:din-text-main h-full flex items-center">Glossário</a>
-        <a href="economia.html" class="din-green border-b-2 border-[#16C784] h-full flex items-center">Economia</a>
-        <a href="sobre.html" class="din-text-muted hover:din-text-main h-full flex items-center">Sobre</a>
-        <a href="contato.html" class="din-text-muted hover:din-text-main h-full flex items-center">Contato</a>
-      </nav>
-    </div>
-  </header>
+  <!-- Cabeçalho Unificado (renderizado por js/layout.js) -->
+  <div id="bd-header" data-badge="BCB SGS" data-sub="Simulador de Selic, Renda Fixa & Juro Real"></div>
 
   <!-- Breadcrumb + Ações Utilitárias -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex flex-wrap items-center justify-between gap-3 text-xs ocultar-em-presentation">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4 flex flex-wrap items-center justify-between gap-3 text-xs ocultar-em-presentation">
     <div class="flex items-center gap-2 din-text-muted">
       <a href="economia.html" class="hover:din-green font-semibold inline-flex items-center gap-1 transition">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
@@ -118,37 +32,37 @@
     </div>
   </div>
 
-  <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-5 space-y-6">
+  <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5 space-y-5 sm:space-y-6">
     <!-- 1. KPIs OFICIAIS DO BANCO CENTRAL -->
-    <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 ocultar-em-presentation">
-      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-        <span class="text-xs din-text-muted uppercase font-semibold" data-glossario="SELIC">Selic (meta)</span>
-        <p id="kSelic" class="text-xl font-bold din-green mt-1">—</p>
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 ocultar-em-presentation tabular-nums">
+      <div class="din-card-bg border din-border rounded-lg p-3.5 sm:p-4 shadow-sm">
+        <span class="text-[11px] sm:text-xs din-text-muted uppercase font-semibold" data-glossario="SELIC">Selic (meta)</span>
+        <p id="kSelic" class="text-lg sm:text-xl font-bold din-green mt-1">—</p>
         <span class="text-[11px] din-text-muted">BCB Oficial (SGS 432)</span>
       </div>
-      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-        <span class="text-xs din-text-muted uppercase font-semibold">CDI</span>
-        <p id="kCdi" class="text-xl font-bold din-text-main mt-1">—</p>
+      <div class="din-card-bg border din-border rounded-lg p-3.5 sm:p-4 shadow-sm">
+        <span class="text-[11px] sm:text-xs din-text-muted uppercase font-semibold">CDI</span>
+        <p id="kCdi" class="text-lg sm:text-xl font-bold din-text-main mt-1">—</p>
         <span class="text-[11px] din-text-muted">BCB Oficial (SGS 4389)</span>
       </div>
-      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-        <span class="text-xs din-text-muted uppercase font-semibold" data-glossario="IPCA">IPCA (12 meses)</span>
-        <p id="kIpca" class="text-xl font-bold din-red mt-1">—</p>
+      <div class="din-card-bg border din-border rounded-lg p-3.5 sm:p-4 shadow-sm">
+        <span class="text-[11px] sm:text-xs din-text-muted uppercase font-semibold" data-glossario="IPCA">IPCA (12 meses)</span>
+        <p id="kIpca" class="text-lg sm:text-xl font-bold din-red mt-1">—</p>
         <span class="text-[11px] din-text-muted">BCB / IBGE (SGS 13522)</span>
       </div>
-      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-        <span class="text-xs din-text-muted uppercase font-semibold">Juro real da Selic</span>
-        <p id="kReal" class="text-xl font-bold din-text-main mt-1">—</p>
+      <div class="din-card-bg border din-border rounded-lg p-3.5 sm:p-4 shadow-sm">
+        <span class="text-[11px] sm:text-xs din-text-muted uppercase font-semibold">Juro real da Selic</span>
+        <p id="kReal" class="text-lg sm:text-xl font-bold din-text-main mt-1">—</p>
         <span class="text-[11px] din-text-muted">Equação de Fisher (acima do IPCA)</span>
       </div>
     </section>
     <p id="fonte" class="text-xs din-text-muted -mt-3 ocultar-em-presentation"></p>
 
     <!-- 2. ÁREA PRINCIPAL -->
-    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
 
       <!-- COLUNA ESQUERDA: Controles -->
-      <div class="lg:col-span-4 din-card-bg border din-border rounded-lg p-5 shadow-sm space-y-4 h-fit">
+      <div class="lg:col-span-4 din-card-bg border din-border rounded-lg p-4 sm:p-5 shadow-sm space-y-4 h-fit">
         <div class="grid grid-cols-2 gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
           <button id="tabSimular" type="button" onclick="setModoCalc('simular')" class="py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer">Simular aportes</button>
           <button id="tabMeta" type="button" onclick="setModoCalc('meta')" class="py-1.5 rounded-md din-text-muted transition cursor-pointer">Planejar meta</button>
@@ -158,10 +72,10 @@
         <div id="viewSimular" class="space-y-3.5">
           <div class="grid grid-cols-2 gap-2.5">
             <label class="text-xs font-semibold din-text-main">Capital inicial (R$)
-              <input id="c0" class="inp mt-1" inputmode="decimal" value="10000" oninput="calc()">
+              <input id="c0" class="inp mt-1 tabular-nums" inputmode="decimal" value="10000" oninput="calc()">
             </label>
             <label class="text-xs font-semibold din-text-main">Aporte mensal (R$)
-              <input id="ap" class="inp mt-1" inputmode="decimal" value="500" oninput="calc()">
+              <input id="ap" class="inp mt-1 tabular-nums" inputmode="decimal" value="500" oninput="calc()">
             </label>
           </div>
           <div class="flex flex-wrap gap-1.5">
@@ -191,13 +105,13 @@
           </div>
           <div class="grid grid-cols-2 gap-2">
             <label class="text-xs font-semibold din-text-main"><span id="lblMetaVal">Alvo em reais de hoje</span>
-              <input id="metaValor" class="inp mt-1" inputmode="decimal" value="500000" oninput="calc()">
+              <input id="metaValor" class="inp mt-1 tabular-nums" inputmode="decimal" value="500000" oninput="calc()">
             </label>
             <label class="text-xs font-semibold din-text-main">Capital inicial (R$)
-              <input id="c0Meta" class="inp mt-1" inputmode="decimal" value="10000" oninput="$('c0').value=this.value; calc()">
+              <input id="c0Meta" class="inp mt-1 tabular-nums" inputmode="decimal" value="10000" oninput="$('c0').value=this.value; calc()">
             </label>
           </div>
-          <div class="din-secondary-bg border din-border rounded-lg p-3 text-xs flex items-center justify-between">
+          <div class="din-secondary-bg border din-border rounded-lg p-3 text-xs flex items-center justify-between tabular-nums">
             <span class="din-text-muted">Aporte mensal necessário:</span>
             <strong id="metaResAporte" class="text-sm din-green">—</strong>
           </div>
@@ -205,7 +119,7 @@
 
         <!-- Prazo -->
         <label class="block text-xs font-semibold din-text-main pt-1">
-          <span class="flex justify-between">
+          <span class="flex justify-between tabular-nums">
             Horizonte da projeção
             <span id="lblAnos" class="din-green font-bold">10 anos</span>
           </span>
@@ -227,13 +141,13 @@
             <button id="scInfla" type="button" onclick="cenarioMacro('infla')" class="py-1.5 px-2 rounded-md din-secondary-bg border din-border din-text-muted hover:din-text-main transition cursor-pointer">Inflação Alta</button>
           </div>
 
-          <div class="grid grid-cols-3 gap-2">
+          <div class="grid grid-cols-3 gap-2 tabular-nums">
             <label class="text-[11px] font-semibold din-text-main">Selic % a.a.<input id="selic" class="inp mt-1" inputmode="decimal" value="10.75" oninput="calc()"></label>
             <label class="text-[11px] font-semibold din-text-main">CDI % a.a.<input id="cdi" class="inp mt-1" inputmode="decimal" value="10.65" oninput="calc()"></label>
             <label class="text-[11px] font-semibold din-text-main">IPCA % a.a.<input id="ipca" class="inp mt-1" inputmode="decimal" value="4.5" oninput="calc()"></label>
           </div>
 
-          <div class="grid grid-cols-3 gap-2">
+          <div class="grid grid-cols-3 gap-2 tabular-nums">
             <label class="text-[11px] font-semibold din-text-main">CDB (% CDI)<input id="pctCdb" class="inp mt-1" inputmode="decimal" value="100" oninput="calc()"></label>
             <label class="text-[11px] font-semibold din-text-main">LCI (% CDI)<input id="pctLci" class="inp mt-1" inputmode="decimal" value="90" oninput="calc()"></label>
             <label class="text-[11px] font-semibold din-text-main">IPCA+ (% a.a.)<input id="spreadIpca" class="inp mt-1" inputmode="decimal" value="6.5" oninput="calc()"></label>
@@ -247,17 +161,17 @@
       </div>
 
       <!-- COLUNA DIREITA: Análise, Tabela e Painel Gráfico -->
-      <div class="lg:col-span-8 space-y-6">
+      <div class="lg:col-span-8 space-y-5 sm:space-y-6">
 
         <!-- Card 1: Leitura Analítica + Composição + Marcos Quantitativos -->
-        <div class="din-card-bg border din-border rounded-lg p-5 shadow-sm space-y-4">
+        <div class="din-card-bg border din-border rounded-lg p-4 sm:p-5 shadow-sm space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <span class="text-xs font-semibold uppercase tracking-wider din-green">Análise do cenário</span>
             <span id="badgeAliquota" class="text-[11px] px-2 py-0.5 rounded din-secondary-bg border din-border din-text-muted"></span>
           </div>
           <p id="resumoDidatico" class="text-sm din-text-main leading-relaxed"></p>
 
-          <div class="space-y-1.5">
+          <div class="space-y-1.5 tabular-nums">
             <div class="flex justify-between text-[11px] din-text-muted">
               <span>Composição do maior retorno líquido (<strong id="winNome" class="din-text-main">—</strong>)</span>
               <span id="winTotal" class="font-semibold din-text-main">—</span>
@@ -274,7 +188,7 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t din-border">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t din-border tabular-nums">
             <div class="din-secondary-bg rounded-lg p-3">
               <span class="text-[11px] font-semibold din-text-muted block">Ponto de inflexão (juros > aporte)</span>
               <p id="kpiInflexao" class="text-sm font-bold din-text-main mt-0.5">—</p>
@@ -289,21 +203,21 @@
         </div>
 
         <!-- Card 2: Tabela Comparativa dos 5 Instrumentos -->
-        <div class="din-card-bg border din-border rounded-lg p-5 shadow-sm">
+        <div class="din-card-bg border din-border rounded-lg p-4 sm:p-5 shadow-sm">
           <div class="flex flex-wrap justify-between gap-2 mb-3">
             <h2 class="text-base font-semibold din-text-main">Comparativo ao fim do horizonte</h2>
-            <p class="text-xs din-text-muted">Total aportado: <strong id="inv" class="din-text-main">—</strong></p>
+            <p class="text-xs din-text-muted tabular-nums">Total aportado: <strong id="inv" class="din-text-main">—</strong></p>
           </div>
           <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs border-collapse">
+            <table class="w-full text-left text-xs border-collapse tabular-nums">
               <thead>
                 <tr class="din-text-muted">
-                  <th class="py-2 px-2">Instrumento</th>
-                  <th class="py-2 px-2">Taxa a.a.</th>
-                  <th class="py-2 px-2">Bruto</th>
-                  <th class="py-2 px-2">IR</th>
-                  <th class="py-2 px-2">Líquido</th>
-                  <th class="py-2 px-2">Poder de compra</th>
+                  <th class="py-2 px-2 whitespace-nowrap">Instrumento</th>
+                  <th class="py-2 px-2 whitespace-nowrap">Taxa a.a.</th>
+                  <th class="py-2 px-2 whitespace-nowrap">Bruto</th>
+                  <th class="py-2 px-2 whitespace-nowrap">IR</th>
+                  <th class="py-2 px-2 whitespace-nowrap">Líquido</th>
+                  <th class="py-2 px-2 whitespace-nowrap">Poder de compra</th>
                 </tr>
               </thead>
               <tbody id="tbody"></tbody>
@@ -312,7 +226,7 @@
         </div>
 
         <!-- Card 3: Painel Gráfico com 3 Abas + Exportação PNG e ABNT -->
-        <div id="secaoGrafico" class="din-card-bg border din-border rounded-lg p-5 shadow-sm space-y-4">
+        <div id="secaoGrafico" class="din-card-bg border din-border rounded-lg p-4 sm:p-5 shadow-sm space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div class="inline-flex din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold flex-wrap gap-0.5">
               <button id="tGrafPat" type="button" onclick="setAbaGraf('pat')" class="px-3 py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer">Patrimônio</button>
@@ -340,19 +254,19 @@
           <!-- Aba 1: Patrimônio Acumulado -->
           <div id="viewGrafPat">
             <p id="subGrafPat" class="text-xs din-text-muted mb-3">Evolução do saldo líquido em valores nominais.</p>
-            <div class="relative w-full h-[300px] sm:h-[340px]"><canvas id="grafPat"></canvas></div>
+            <div class="relative w-full h-[260px] sm:h-[340px]"><canvas id="grafPat"></canvas></div>
           </div>
 
           <!-- Aba 2: Fluxo Anual -->
           <div id="viewGrafFluxo" class="hidden">
             <p id="subGrafFluxo" class="text-xs din-text-muted mb-3">Comparação anual entre o capital aportado no ano e os juros líquidos gerados pelo instrumento líder.</p>
-            <div class="relative w-full h-[300px] sm:h-[340px]"><canvas id="grafFluxo"></canvas></div>
+            <div class="relative w-full h-[260px] sm:h-[340px]"><canvas id="grafFluxo"></canvas></div>
           </div>
 
           <!-- Aba 3: Histórico Real Selic vs IPCA (5 anos - Banco Central) -->
           <div id="viewGrafBC" class="hidden">
             <p id="subGrafBC" class="text-xs din-text-muted mb-3">Série histórica mensal oficial dos últimos 5 anos: Selic anualizada (série 4189) vs. IPCA acumulado em 12 meses (série 13522).</p>
-            <div class="relative w-full h-[300px] sm:h-[340px]"><canvas id="grafBC"></canvas></div>
+            <div class="relative w-full h-[260px] sm:h-[340px]"><canvas id="grafBC"></canvas></div>
           </div>
 
           <!-- Selo de Fonte Oficial -->
@@ -388,40 +302,17 @@
   </main>
 </div>
 
-<!-- Rodapé Institucional -->
-<footer class="border-t din-border din-card-bg py-6 text-xs din-text-muted mt-8 ocultar-em-presentation">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-    <div class="flex items-center gap-2">
-      <span class="font-bold din-text-main">BrasilEmDados</span>
-      <span>•</span>
-      <span>Terminal de Inteligência Econômica e Setorial</span>
-    </div>
-    <div class="flex items-center gap-4">
-      <a href="index.html" class="hover:din-text-main transition">Início</a>
-      <a href="economia.html" class="hover:din-text-main transition">Economia</a>
-      <a href="glossario.html" class="hover:din-text-main transition">Glossário</a>
-      <a href="sobre.html" class="hover:din-text-main transition">Sobre</a>
-      <a href="contato.html" class="hover:din-text-main transition">Contato</a>
-    </div>
-  </div>
-</footer>
+<!-- Rodapé Unificado (renderizado por js/layout.js) -->
+<div id="bd-footer"></div>
 
-<!-- Utilitário de Layout e Gráficos (Tooltips + PNG + ABNT) antes do script da página -->
-<script src="/js/layout.js"></script>
+<!-- Utilitários Compartilhados -->
+<script src="/js/formatters.js"></script>
+<script src="/js/layout.js?v=2"></script>
 <script src="/js/chart-utils.js?v=1"></script>
 
 <script>
 const $ = i => document.getElementById(i);
 const v = i => parseFloat(String($(i).value).replace(',', '.')) || 0;
-const BD = {
-  brl: (val, d = 2) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: d, maximumFractionDigits: d }),
-  num: (val, d = 0) => val.toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d }),
-  compact: r => {
-    const f = (x, s) => 'R$ ' + (r / x).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + s;
-    return r >= 1e12 ? f(1e12, 'tri') : r >= 1e9 ? f(1e9, 'bi') : r >= 1e6 ? f(1e6, 'mi') : BD.brl(r, 0);
-  },
-  cor: () => { const d = document.documentElement.getAttribute('data-theme') === 'dark'; return { tx: d ? '#F5F6F7' : '#17191C', mu: d ? '#9299A3' : '#737780', grid: d ? '#2B3036' : '#E5E7EB' }; }
-};
 
 let chartPat = null, chartFluxo = null, chartBC = null;
 let modoCalc = 'simular';
@@ -429,6 +320,12 @@ let modoValor = 'nominal';
 let abaGraf = 'pat';
 let taxasBC = { selic: 10.75, cdi: 10.65, ipca: 4.5 };
 let histBC = null, ultimoEstado = null;
+
+// Repinta gráficos ao alternar Dark/Light pelo layout.js
+window.addEventListener('tema', () => {
+  calc();
+  if (histBC) desenharBC();
+});
 
 // Exportação PNG e ABNT integradas ao chart-utils.js
 function baixarGraficoAtivo() {
@@ -468,40 +365,6 @@ function citarCenarioABNT(btn) {
     fonteOficial: 'Banco Central do Brasil',
     serie: ehBC ? 'SGS 4189 e 13522' : 'SGS 432, 4389 e 13522'
   }, btn);
-}
-
-// Controles do Cabeçalho
-function toggleDropdownMenu() { $('dropdownMenu').classList.toggle('hidden'); }
-window.addEventListener('click', e => {
-  const btn = $('menuDropdownBtn'), menu = $('dropdownMenu');
-  if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) menu.classList.add('hidden');
-});
-
-function alternarDarkLight() {
-  const novo = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  aplicarTema(novo);
-  try { localStorage.setItem('brasil_em_dados_tema', novo); } catch {}
-}
-
-function aplicarTema(tema) {
-  const html = document.documentElement, bg = $('switchBg'), ball = $('switchBall');
-  if (tema === 'dark') {
-    html.setAttribute('data-theme', 'dark');
-    if (bg && ball) { bg.style.backgroundColor = '#16C784'; ball.classList.add('translate-x-5'); }
-  } else {
-    html.removeAttribute('data-theme');
-    if (bg && ball) { bg.style.backgroundColor = '#E5E7EB'; ball.classList.remove('translate-x-5'); }
-  }
-  calc();
-  if (histBC) desenharBC();
-}
-
-function alternarModoApresentacao() {
-  document.body.classList.toggle('modo-apresentacao');
-  const ativo = document.body.classList.contains('modo-apresentacao');
-  $('btnModoApresentacao').innerHTML = ativo
-    ? '<span>✕ Sair da Tela Cheia</span>'
-    : `<svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect><line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line><line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line></svg><span>Modo Tela Cheia</span>`;
 }
 
 // Matemática Financeira
@@ -698,18 +561,18 @@ function calc() {
   $('tbody').innerHTML = R.map(r => {
     const isWin = r.n === win.n;
     return `<tr class="border-t din-border ${isWin ? 'din-secondary-bg' : ''}">
-      <td class="py-2.5 px-2 font-semibold din-text-main">
+      <td class="py-2.5 px-2 font-semibold din-text-main whitespace-nowrap">
         <span class="inline-flex items-center gap-1.5">
           <span class="w-2 h-2 rounded-full inline-block" style="background:${r.cor}"></span>
           ${r.n}${isWin ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-[#16C784]/15 din-green font-bold">Maior líquido</span>' : ''}
         </span>
         <span class="block text-[11px] font-normal din-text-muted pl-3.5">${r.d}</span>
       </td>
-      <td class="py-2.5 px-2 din-text-main">${BD.num(r.a * 100, 2)}%</td>
-      <td class="py-2.5 px-2 din-text-main">${BD.brl(r.bruto, 0)}</td>
-      <td class="py-2.5 px-2 din-red">${r.iso ? 'Isento' : BD.brl(r.ir, 0)}</td>
-      <td class="py-2.5 px-2 font-bold din-green">${BD.brl(r.liq, 0)}</td>
-      <td class="py-2.5 px-2 din-text-main">${BD.brl(r.liq / fi, 0)}</td>
+      <td class="py-2.5 px-2 din-text-main whitespace-nowrap">${BD.num(r.a * 100, 2)}%</td>
+      <td class="py-2.5 px-2 din-text-main whitespace-nowrap">${BD.brl(r.bruto, 0)}</td>
+      <td class="py-2.5 px-2 din-red whitespace-nowrap">${r.iso ? 'Isento' : BD.brl(r.ir, 0)}</td>
+      <td class="py-2.5 px-2 font-bold din-green whitespace-nowrap">${BD.brl(r.liq, 0)}</td>
+      <td class="py-2.5 px-2 din-text-main whitespace-nowrap">${BD.brl(r.liq / fi, 0)}</td>
     </tr>`;
   }).join('');
 
@@ -969,9 +832,7 @@ async function sgs(c) {
 // Inicialização
 (() => {
   const usouURL = lerURL();
-  let temaSalvo = 'light';
-  try { temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light'; } catch {}
-  aplicarTema(temaSalvo);
+  calc();
 
   (async () => {
     const r = await Promise.allSettled([sgs(432), sgs(4389), sgs(13522)]);

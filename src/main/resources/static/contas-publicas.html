@@ -12,97 +12,11 @@
 </head>
 <body class="min-h-screen font-sans flex flex-col justify-between">
 <div>
-  <!-- Cabeçalho Institucional -->
-  <header class="sticky top-0 z-50 border-b din-border din-bg-main/95 backdrop-blur">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6">
-      <div class="flex items-center justify-between h-16 gap-4">
-        <div class="flex items-center gap-3">
-          <a href="index.html" class="flex items-center gap-3 group">
-            <div class="w-10 h-10 rounded-lg din-secondary-bg border din-border flex items-center justify-center shadow-sm overflow-hidden group-hover:border-[#16C784] transition-colors duration-200">
-              <img src="download.png" alt="BrasilEmDados" class="w-8 h-8 object-contain transition-transform duration-200 group-hover:scale-110">
-            </div>
-            <div>
-              <div class="flex items-center gap-2">
-                <span class="text-lg font-extrabold tracking-tight din-text-main">BrasilEmDados</span>
-                <span class="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono uppercase px-2 py-0.5 rounded din-secondary-bg border din-border din-text-muted">
-                  <span class="w-1.5 h-1.5 rounded-full bg-[#16C784]"></span> BCB · FISCAL
-                </span>
-              </div>
-              <p class="text-[11px] din-text-muted hidden xl:block">Contas Públicas, Dívida/PIB & Trajetória Fiscal</p>
-            </div>
-          </a>
-        </div>
-
-        <nav class="hidden md:flex items-center gap-1 din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold">
-          <a href="index.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Início</a>
-          <a href="glossario.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Glossário</a>
-          <a href="economia.html" class="px-3.5 py-1.5 rounded-md din-card-bg din-text-main shadow-sm border din-border transition">Economia</a>
-          <a href="sobre.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Sobre</a>
-          <a href="contato.html" class="px-3.5 py-1.5 rounded-md din-text-muted hover:din-text-main transition">Contato</a>
-        </nav>
-
-        <div class="flex items-center gap-2.5 relative">
-          <button onclick="alternarModoApresentacao()" id="btnModoApresentacao" class="hidden lg:inline-flex items-center gap-1.5 din-secondary-bg hover:opacity-80 border din-border din-text-main text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer">
-            <svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect>
-              <line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line>
-              <line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line>
-            </svg>
-            <span>Modo Tela Cheia</span>
-          </button>
-
-          <button id="menuDropdownBtn" onclick="toggleDropdownMenu()" title="Preferências e Ferramentas" class="w-9 h-9 rounded-lg din-secondary-bg border din-border flex items-center justify-center hover:border-[#16C784] transition cursor-pointer">
-            <svg class="w-4 h-4 din-text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line>
-              <line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line>
-              <line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line>
-              <line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line>
-              <line x1="17" y1="16" x2="23" y2="16"></line>
-            </svg>
-          </button>
-
-          <div id="dropdownMenu" class="hidden absolute right-0 top-11 w-64 rounded-xl din-card-bg border din-border shadow-2xl py-1.5 z-50">
-            <div class="px-4 py-1.5 border-b din-border">
-              <p class="text-[10px] font-bold uppercase tracking-wider din-text-muted">Ferramentas do Terminal</p>
-            </div>
-            <a href="economia.html" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition">
-              <svg class="w-4 h-4 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-              Voltar ao Hub Economia
-            </a>
-            <button onclick="exportarCSV(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left cursor-pointer">
-              <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-              Exportar Simulação (CSV)
-            </button>
-            <button onclick="window.print(); toggleDropdownMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-medium din-text-main hover:din-secondary-bg transition text-left cursor-pointer">
-              <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-              Exportar Relatório (PDF)
-            </button>
-            <div class="my-1 border-t din-border"></div>
-            <div class="flex items-center justify-between px-4 py-2.5 text-xs font-medium din-text-main cursor-pointer select-none" onclick="alternarDarkLight()">
-              <div class="flex items-center gap-3">
-                <svg class="w-4 h-4 din-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                <span>Modo Escuro (Dark)</span>
-              </div>
-              <div id="switchBg" class="w-10 h-5 rounded-full relative transition-colors duration-200 p-0.5 flex items-center" style="background-color: var(--border-col);">
-                <div id="switchBall" class="w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-200"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <nav class="flex md:hidden items-center gap-5 h-10 overflow-x-auto no-scrollbar text-xs font-semibold border-t din-border">
-        <a href="index.html" class="din-text-muted hover:din-text-main h-full flex items-center">Início</a>
-        <a href="glossario.html" class="din-text-muted hover:din-text-main h-full flex items-center">Glossário</a>
-        <a href="economia.html" class="din-green border-b-2 border-[#16C784] h-full flex items-center">Economia</a>
-        <a href="sobre.html" class="din-text-muted hover:din-text-main h-full flex items-center">Sobre</a>
-        <a href="contato.html" class="din-text-muted hover:din-text-main h-full flex items-center">Contato</a>
-      </nav>
-    </div>
-  </header>
+  <!-- Cabeçalho Unificado (renderizado por js/layout.js) -->
+  <div id="bd-header" data-badge="BCB · FISCAL" data-sub="Contas Públicas, Dívida/PIB & Trajetória Fiscal"></div>
 
   <!-- Breadcrumb + Status Oficial -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 flex flex-wrap items-center justify-between gap-2 text-xs ocultar-em-presentation">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4 flex flex-wrap items-center justify-between gap-2 text-xs ocultar-em-presentation">
     <div class="flex items-center gap-2 din-text-muted">
       <a href="economia.html" class="hover:din-green font-semibold inline-flex items-center gap-1 transition">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
@@ -123,37 +37,37 @@
     </div>
   </div>
 
-  <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-5 space-y-6">
+  <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5 space-y-5 sm:space-y-6">
 
     <!-- 1. KPIs FISCAIS OFICIAIS (BCB SGS) -->
-    <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 ocultar-em-presentation">
-      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-        <span class="text-xs din-text-muted uppercase font-semibold" data-glossario="DBGG">Dívida Bruta (DBGG / PIB)</span>
-        <p id="kDbgg" class="text-xl font-bold din-red mt-1">—</p>
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 ocultar-em-presentation tabular-nums">
+      <div class="din-card-bg border din-border rounded-lg p-3.5 sm:p-4 shadow-sm">
+        <span class="text-[11px] sm:text-xs din-text-muted uppercase font-semibold" data-glossario="DBGG">Dívida Bruta (DBGG / PIB)</span>
+        <p id="kDbgg" class="text-lg sm:text-xl font-bold din-red mt-1">—</p>
         <span id="kDbggRef" class="text-[11px] din-text-muted">BCB Oficial (SGS 13762)</span>
       </div>
-      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-        <span class="text-xs din-text-muted uppercase font-semibold" data-glossario="DLSP">Dívida Líquida (DLSP / PIB)</span>
-        <p id="kDlsp" class="text-xl font-bold din-text-main mt-1">—</p>
+      <div class="din-card-bg border din-border rounded-lg p-3.5 sm:p-4 shadow-sm">
+        <span class="text-[11px] sm:text-xs din-text-muted uppercase font-semibold" data-glossario="DLSP">Dívida Líquida (DLSP / PIB)</span>
+        <p id="kDlsp" class="text-lg sm:text-xl font-bold din-text-main mt-1">—</p>
         <span id="kDlspRef" class="text-[11px] din-text-muted">BCB Oficial (SGS 4513)</span>
       </div>
-      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-        <span class="text-xs din-text-muted uppercase font-semibold">Resultado Primário (12m)</span>
-        <p id="kPrim" class="text-xl font-bold din-text-main mt-1">—</p>
+      <div class="din-card-bg border din-border rounded-lg p-3.5 sm:p-4 shadow-sm">
+        <span class="text-[11px] sm:text-xs din-text-muted uppercase font-semibold">Resultado Primário (12m)</span>
+        <p id="kPrim" class="text-lg sm:text-xl font-bold din-text-main mt-1">—</p>
         <span id="kPrimRef" class="text-[11px] din-text-muted">BCB Oficial (SGS 5793)</span>
       </div>
-      <div class="din-card-bg border din-border rounded-lg p-4 shadow-sm">
-        <span class="text-xs din-text-muted uppercase font-semibold">Juros Nominais (12m)</span>
-        <p id="kJuros" class="text-xl font-bold din-red mt-1">—</p>
+      <div class="din-card-bg border din-border rounded-lg p-3.5 sm:p-4 shadow-sm">
+        <span class="text-[11px] sm:text-xs din-text-muted uppercase font-semibold">Juros Nominais (12m)</span>
+        <p id="kJuros" class="text-lg sm:text-xl font-bold din-red mt-1">—</p>
         <span id="kJurosRef" class="text-[11px] din-text-muted">BCB Oficial (SGS 5760)</span>
       </div>
     </section>
 
     <!-- 2. SIMULADOR DE TRAJETÓRIA DA DÍVIDA/PIB EM 10 ANOS -->
-    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
 
       <!-- Controles do Simulador -->
-      <div class="lg:col-span-4 din-card-bg border din-border rounded-lg p-5 shadow-sm space-y-4 h-fit">
+      <div class="lg:col-span-4 din-card-bg border din-border rounded-lg p-4 sm:p-5 shadow-sm space-y-4 h-fit">
         <div class="flex items-start justify-between gap-2">
           <div>
             <span class="text-[11px] font-semibold uppercase tracking-wider din-green">Simulação Paramétrica</span>
@@ -171,7 +85,7 @@
           <button id="prStress" type="button" onclick="aplicarCenario('stress')" class="py-1.5 px-2 rounded-md din-secondary-bg border din-border din-text-muted hover:din-text-main transition cursor-pointer">Estresse</button>
         </div>
 
-        <div class="space-y-4 pt-1 text-xs">
+        <div class="space-y-4 pt-1 text-xs tabular-nums">
           <div>
             <div class="flex justify-between mb-1">
               <span class="din-text-muted">Dívida Bruta inicial (% PIB):</span>
@@ -213,8 +127,8 @@
         </div>
 
         <!-- Diagnóstico Resumido -->
-        <div class="pt-3 border-t din-border space-y-2.5">
-          <div class="din-secondary-bg border din-border rounded-lg p-3 flex items-center justify-between">
+        <div class="pt-3 border-t din-border space-y-2.5 tabular-nums">
+          <div class="din-secondary-bg border din-border rounded-lg p-3 flex flex-wrap items-center justify-between gap-2">
             <div>
               <span class="text-[11px] din-text-muted block">Dívida / PIB em 10 anos</span>
               <strong id="resD10" class="text-xl font-extrabold din-red">—</strong>
@@ -231,7 +145,7 @@
       </div>
 
       <!-- Gráfico de Projeção de 10 Anos -->
-      <div class="lg:col-span-8 din-card-bg border din-border rounded-lg p-5 shadow-sm flex flex-col space-y-4">
+      <div class="lg:col-span-8 din-card-bg border din-border rounded-lg p-4 sm:p-5 shadow-sm flex flex-col space-y-4">
         <div class="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h2 class="text-base font-bold din-text-main">Projeção da Dívida Bruta / PIB (Horizonte de 10 Anos)</h2>
@@ -245,7 +159,7 @@
 
         <p id="leituraFiscal" class="text-xs din-secondary-bg border din-border rounded-lg p-3 din-text-main leading-relaxed">—</p>
 
-        <div class="relative flex-1 w-full min-h-[300px] sm:min-h-[340px]">
+        <div class="relative flex-1 w-full min-h-[260px] sm:min-h-[340px]">
           <canvas id="grafTrajetoria"></canvas>
         </div>
 
@@ -260,7 +174,7 @@
     </section>
 
     <!-- 3. SÉRIES HISTÓRICAS OFICIAIS DO BANCO CENTRAL (2 ABAS) -->
-    <section class="din-card-bg border din-border rounded-lg p-5 shadow-sm space-y-4">
+    <section class="din-card-bg border din-border rounded-lg p-4 sm:p-5 shadow-sm space-y-4">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="inline-flex din-secondary-bg p-1 rounded-lg border din-border text-xs font-semibold flex-wrap gap-0.5">
           <button id="abaDividas" type="button" onclick="setAbaHist('dividas')" class="px-3 py-1.5 rounded-md din-card-bg din-text-main border din-border transition cursor-pointer">Dívida Bruta vs. Líquida (% PIB)</button>
@@ -281,13 +195,13 @@
       <!-- ABA 1: DBGG vs DLSP -->
       <div id="viewDividas" class="space-y-3">
         <p class="text-xs din-text-muted">Evolução mensal oficial da Dívida Bruta do Governo Geral (DBGG, série 13762) e da Dívida Líquida do Setor Público (DLSP, série 4513) em proporção do PIB.</p>
-        <div class="relative w-full h-[320px] sm:h-[360px]"><canvas id="grafDividas"></canvas></div>
+        <div class="relative w-full h-[280px] sm:h-[360px]"><canvas id="grafDividas"></canvas></div>
       </div>
 
       <!-- ABA 2: PRIMÁRIO, JUROS E NOMINAL -->
       <div id="viewResultado" class="hidden space-y-3">
         <p class="text-xs din-text-muted">Fluxo acumulado em 12 meses (% do PIB) do Setor Público Consolidado. <strong>Sinal intuitivo:</strong> acima de 0% = superávit; abaixo de 0% = déficit (séries 5793, 5760 e 5727).</p>
-        <div class="relative w-full h-[320px] sm:h-[360px]"><canvas id="grafResultado"></canvas></div>
+        <div class="relative w-full h-[280px] sm:h-[360px]"><canvas id="grafResultado"></canvas></div>
       </div>
 
       <!-- Selo de Fonte Oficial -->
@@ -318,29 +232,15 @@
   </main>
 </div>
 
-<!-- Rodapé Institucional -->
-<footer class="border-t din-border din-card-bg py-6 text-xs din-text-muted mt-8 ocultar-em-presentation">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-    <div class="flex items-center gap-2">
-      <span class="font-bold din-text-main">BrasilEmDados</span>
-      <span>•</span>
-      <span>Terminal de Inteligência Econômica e Setorial</span>
-    </div>
-    <div class="flex items-center gap-4">
-      <a href="index.html" class="hover:din-text-main transition">Início</a>
-      <a href="economia.html" class="hover:din-text-main transition">Economia</a>
-      <a href="glossario.html" class="hover:din-text-main transition">Glossário</a>
-      <a href="sobre.html" class="hover:din-text-main transition">Sobre</a>
-      <a href="contato.html" class="hover:din-text-main transition">Contato</a>
-    </div>
-  </div>
-</footer>
+<!-- Rodapé Unificado (renderizado por js/layout.js) -->
+<div id="bd-footer"></div>
 
-<script src="/js/layout.js"></script>
+<script src="/js/formatters.js"></script>
+<script src="/js/layout.js?v=2"></script>
 <script src="/js/chart-utils.js?v=1"></script>
 <script>
 const $ = id => document.getElementById(id);
-const fmtNum = (v, d = 2) => Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
+const fmtNum = (v, d = 2) => window.BDFmt ? BDFmt.num(v, d) : Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
 const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
 let serieDbgg = [];  // SGS 13762
@@ -356,39 +256,11 @@ let horizonteMeses = 120;
 
 let chartTrajetoria = null, chartDividas = null, chartResultado = null;
 
-// Cabeçalho e Tema
-function toggleDropdownMenu() { $('dropdownMenu').classList.toggle('hidden'); }
-window.addEventListener('click', e => {
-  const btn = $('menuDropdownBtn'), menu = $('dropdownMenu');
-  if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) menu.classList.add('hidden');
-});
-
-function alternarDarkLight() {
-  const novo = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  aplicarTema(novo);
-  try { localStorage.setItem('brasil_em_dados_tema', novo); } catch {}
-}
-
-function aplicarTema(tema) {
-  const html = document.documentElement, bg = $('switchBg'), ball = $('switchBall');
-  if (tema === 'dark') {
-    html.setAttribute('data-theme', 'dark');
-    if (bg && ball) { bg.style.backgroundColor = '#16C784'; ball.classList.add('translate-x-5'); }
-  } else {
-    html.removeAttribute('data-theme');
-    if (bg && ball) { bg.style.backgroundColor = '#E5E7EB'; ball.classList.remove('translate-x-5'); }
-  }
+// Repinta gráficos ao alternar Dark/Light pelo layout.js
+window.addEventListener('tema', () => {
   recalcularTrajetoria();
   if (serieDbgg.length || seriePrim.length) desenharHistorico();
-}
-
-function alternarModoApresentacao() {
-  document.body.classList.toggle('modo-apresentacao');
-  const ativo = document.body.classList.contains('modo-apresentacao');
-  $('btnModoApresentacao').innerHTML = ativo
-    ? '<span>✕ Sair da Tela Cheia</span>'
-    : `<svg class="w-3.5 h-3.5 din-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke-width="2"></rect><line x1="8" y1="21" x2="16" y2="21" stroke-width="2"></line><line x1="12" y1="17" x2="12" y2="21" stroke-width="2"></line></svg><span>Modo Tela Cheia</span>`;
-}
+});
 
 // Janela dentro do limite de 10 anos exigido pelo BCB (dd/MM/yyyy)
 function janelaDatasBcb(meses = 116) {
@@ -712,9 +584,6 @@ function citarFiscalABNT(btn) {
 
 // Inicialização resiliente (<= 10 anos + Promise.allSettled)
 (async () => {
-  let temaSalvo = 'light';
-  try { temaSalvo = localStorage.getItem('brasil_em_dados_tema') || 'light'; } catch {}
-  aplicarTema(temaSalvo);
   recalcularTrajetoria();
 
   const [rDbgg, rDlsp, rPrim, rJuros, rNom] = await Promise.allSettled([
@@ -751,7 +620,7 @@ function citarFiscalABNT(btn) {
   if (seriePrim.length) {
     const u = seriePrim[seriePrim.length - 1];
     $('kPrim').textContent = `${u.v >= 0 ? '+' : ''}${fmtNum(u.v, 2)}% do PIB`;
-    $('kPrim').className = `text-xl font-bold mt-1 ${u.v >= 0 ? 'din-green' : 'din-red'}`;
+    $('kPrim').className = `text-lg sm:text-xl font-bold mt-1 ${u.v >= 0 ? 'din-green' : 'din-red'}`;
     $('kPrimRef').textContent = `BCB SGS 5793 • ${u.v >= 0 ? 'Superávit' : 'Déficit'} (${u.label})`;
     refOficial.prim = u.v;
   }
