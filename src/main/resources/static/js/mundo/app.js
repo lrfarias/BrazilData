@@ -1138,3 +1138,16 @@ function renderComparadorMulti() {
   iniciarMapaMundi();
   carregarBaseGlobal();
 })();
+
+window.addEventListener('tema', () => {
+  pintarMapa();
+  renderComparadorMulti();
+  if (isoAtivo && PAISES_MAP[isoAtivo]) {
+    renderPizzaVocacao('pais', PAISES_MAP[isoAtivo].setores);
+    if (abaRx === 'comercio') renderComercio(PAISES_MAP[isoAtivo]);
+  } else if (PAISES.length) {
+    exibirConsolidadoGlobal();
+  }
+  atualizarResumoRegiao();
+  if (abaRx === 'hist' && ultimoHistReal) desenharHistoricoReal();
+});
