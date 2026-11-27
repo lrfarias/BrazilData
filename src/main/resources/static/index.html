@@ -94,17 +94,17 @@
 
                 <!-- Direita: Mapa Econômico do Brasil Interativo (5 colunas) -->
                 <div class="lg:col-span-5">
-                    <!-- Tooltip flutuante do mapa -->
+                    <!-- Tooltip leve no hover -->
                     <div id="homeMapTip" class="pointer-events-none fixed z-50 hidden px-3 py-2 rounded-lg text-xs shadow-lg border din-border din-card-bg">
-                        <div class="flex items-center gap-2 border-b din-border pb-1">
+                        <div class="flex items-center gap-2">
                             <span id="homeTipBand" class="shrink-0"></span>
                             <p id="homeTipNome" class="font-bold din-text-main"></p>
                         </div>
                         <p id="homeTipVal" class="din-green font-semibold mt-1 tabular-nums"></p>
-                        <p class="text-[10px] din-text-muted mt-0.5">Clique para abrir o estado →</p>
                     </div>
 
-                    <div class="din-card-bg border din-border rounded-2xl p-5 sm:p-6 shadow-sm flex flex-col justify-between space-y-4">
+                    <div class="din-card-bg border din-border rounded-2xl p-5 shadow-sm flex flex-col justify-between space-y-3">
+                        <!-- Cabeçalho do Card -->
                         <div class="flex items-center justify-between gap-2">
                             <h2 class="text-base sm:text-lg font-bold din-text-main tracking-tight">Mapa econômico do Brasil</h2>
                             <svg class="w-5 h-5 din-green shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
@@ -112,20 +112,37 @@
                             </svg>
                         </div>
 
-                        <div class="relative min-h-[260px] sm:min-h-[300px] flex items-center justify-center">
+                        <!-- Mapa SVG compacto e bem encaixado -->
+                        <div class="relative h-[230px] sm:h-[250px] flex items-center justify-center">
                             <p id="homeMapLoading" class="text-xs din-text-muted">Carregando mapa do Brasil...</p>
-                            <svg id="mapaHomeBrasil" viewBox="0 0 500 480" class="w-full max-h-[300px] hidden"></svg>
+                            <svg id="mapaHomeBrasil" viewBox="0 0 500 460" class="w-full h-full hidden"></svg>
                         </div>
 
-                        <div class="flex items-center justify-between gap-3 pt-3 border-t din-border text-xs">
+                        <!-- Painel compacto do Estado Selecionado (Impostos + PIB) -->
+                        <div id="homeMapResumo" class="din-secondary-bg border din-border rounded-xl px-3.5 py-2.5 flex items-center justify-between gap-3 text-xs tabular-nums min-h-[54px]">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <span id="homeSelBand" class="shrink-0"></span>
+                                <div class="min-w-0">
+                                    <p id="homeSelNome" class="font-bold din-text-main truncate">Brasil (Consolidado)</p>
+                                    <p id="homeSelSub" class="text-[11px] din-text-muted truncate">Clique em um estado para ver os impostos</p>
+                                </div>
+                            </div>
+                            <div class="text-right shrink-0">
+                                <span class="text-[10px] uppercase tracking-wider din-text-muted block">Impostos Est./Ano</span>
+                                <strong id="homeSelImposto" class="text-sm font-extrabold din-green">--</strong>
+                            </div>
+                        </div>
+
+                        <!-- Rodapé do Card -->
+                        <div class="flex items-center justify-between gap-3 pt-2.5 border-t din-border text-xs">
                             <select id="selectIndicadorMapaHome" onchange="pintarMapaHome()"
                                 class="bg-transparent din-text-muted hover:din-text-main font-semibold focus:outline-none cursor-pointer">
-                                <option value="pibMil" class="din-card-bg din-text-main" selected>Indicador: PIB Estadual</option>
-                                <option value="perCapita" class="din-card-bg din-text-main">Indicador: PIB per Capita</option>
-                                <option value="pop" class="din-card-bg din-text-main">Indicador: População</option>
+                                <option value="imposto" class="din-card-bg din-text-main" selected>Impostos Estimados</option>
+                                <option value="pibMil" class="din-card-bg din-text-main">PIB Estadual</option>
+                                <option value="perCapita" class="din-card-bg din-text-main">PIB per Capita</option>
                             </select>
 
-                            <a href="terminal-pib.html" class="din-green font-bold inline-flex items-center gap-1 hover:opacity-80 transition shrink-0">
+                            <a id="linkExplorarMapaHome" href="terminal-pib.html" class="din-green font-bold inline-flex items-center gap-1 hover:opacity-80 transition shrink-0">
                                 <span>Explorar mapa →</span>
                             </a>
                         </div>
@@ -691,6 +708,7 @@
         let pibBrasilMil = 0;
         let timestampAbertura = Date.now();
         let geoHomePronto = false;
+        let ufSelecionadaHome = null;
 
         function iniciarImpostometroAoVivo() {
             const metaAnualTributos = 3600000000000;
@@ -837,6 +855,7 @@
 
                 calcularImpactoUsuario();
                 pintarMapaHome();
+                atualizarResumoMapaHome();
             } catch (e) {
                 console.error('Aviso ao carregar resumo inicial:', e);
                 calcularImpactoUsuario();
@@ -871,12 +890,46 @@
         }
 
         function corAtlasHome(valor, min, max) {
-            if (!valor || max <= min) return '#237B66';
+            if (!valor || max <= min) return '#438570';
             const t = (valor - min) / (max - min);
-            if (t < 0.25) return '#244B42';
-            if (t < 0.50) return '#237B66';
-            if (t < 0.75) return '#49A078';
-            return '#78C6A3';
+            if (t < 0.25) return '#2E5E52';
+            if (t < 0.50) return '#438570';
+            if (t < 0.75) return '#5DA68B';
+            return '#7DC7A9';
+        }
+
+        function obterValorMetricaHome(d, ind) {
+            if (!d) return 0;
+            if (ind === 'imposto') return d.pibMil * 1000 * 0.33;
+            if (ind === 'pibMil') return d.pibMil * 1000;
+            return d.perCapita || 0;
+        }
+
+        function atualizarResumoMapaHome() {
+            const elBand = document.getElementById('homeSelBand');
+            const elNome = document.getElementById('homeSelNome');
+            const elSub = document.getElementById('homeSelSub');
+            const elImp = document.getElementById('homeSelImposto');
+            const elLink = document.getElementById('linkExplorarMapaHome');
+
+            if (ufSelecionadaHome && mapaUfHome[ufSelecionadaHome]) {
+                const d = mapaUfHome[ufSelecionadaHome];
+                const pibReais = d.pibMil * 1000;
+                const impReais = pibReais * 0.33;
+
+                elBand.innerHTML = BDUF.htmlBandeira(d.sigla, 20);
+                elNome.textContent = `${d.nome} (${d.sigla})`;
+                elSub.textContent = `PIB: ${BDFmt.compactBRL(pibReais)} • ${d.share.toFixed(1)}% do BR`;
+                elImp.textContent = BDFmt.compactBRL(impReais);
+                if (elLink) elLink.href = `${BD.rota('terminal-pib')}?uf=${d.sigla}`;
+            } else {
+                const pibBrReais = pibBrasilMil * 1000;
+                elBand.innerHTML = BDUF.htmlBandeira('BR', 20);
+                elNome.textContent = 'Brasil (Consolidado)';
+                elSub.textContent = 'Clique em um estado para inspecionar';
+                elImp.textContent = pibBrReais > 0 ? BDFmt.compactBRL(pibBrReais * 0.33) : '--';
+                if (elLink) elLink.href = BD.rota('terminal-pib');
+            }
         }
 
         async function iniciarMapaHome() {
@@ -890,27 +943,37 @@
 
             const svg = d3.select('#mapaHomeBrasil');
             const tip = document.getElementById('homeMapTip');
-            const proj = d3.geoIdentity().reflectY(true).fitExtent([[12, 12], [488, 468]], geo);
+            const proj = d3.geoIdentity().reflectY(true).fitExtent([[14, 10], [486, 450]], geo);
             const pathGen = d3.geoPath().projection(proj);
+
+            svg.on('click', ev => {
+                if (ev.target === svg.node() && ufSelecionadaHome) {
+                    ufSelecionadaHome = null;
+                    pintarMapaHome();
+                    atualizarResumoMapaHome();
+                }
+            });
 
             svg.selectAll('path')
                 .data(geo.features)
                 .join('path')
                 .attr('d', pathGen)
                 .attr('data-uf', f => f.properties.sigla || '')
-                .attr('class', 'cursor-pointer transition-opacity')
+                .attr('stroke-linejoin', 'round')
+                .attr('stroke-linecap', 'round')
+                .attr('class', 'cursor-pointer transition-all duration-150')
                 .on('mouseenter', function () {
                     const uf = this.getAttribute('data-uf');
                     const d = mapaUfHome[uf];
-                    const ind = document.getElementById('selectIndicadorMapaHome')?.value || 'pibMil';
+                    const ind = document.getElementById('selectIndicadorMapaHome')?.value || 'imposto';
                     document.getElementById('homeTipBand').innerHTML = BDUF.htmlBandeira(uf, 18);
                     document.getElementById('homeTipNome').textContent = `${BDUF.NOMES_UF[uf] || uf} (${uf})`;
 
                     let txt = 'Carregando...';
                     if (d) {
-                        if (ind === 'pibMil') txt = `PIB: ${BDFmt.compactBRL(d.pibMil * 1000)}`;
-                        else if (ind === 'perCapita') txt = `Per capita: ${BDFmt.brl(d.perCapita, 0)}`;
-                        else txt = `População: ${(d.pop / 1e6).toLocaleString('pt-BR', { maximumFractionDigits: 2 })} mi`;
+                        if (ind === 'imposto') txt = `Impostos est.: ${BDFmt.compactBRL(d.pibMil * 1000 * 0.33)}`;
+                        else if (ind === 'pibMil') txt = `PIB: ${BDFmt.compactBRL(d.pibMil * 1000)}`;
+                        else txt = `Per capita: ${BDFmt.brl(d.perCapita, 0)}`;
                     }
                     document.getElementById('homeTipVal').textContent = txt;
                     tip.classList.remove('hidden');
@@ -922,36 +985,53 @@
                 })
                 .on('mouseleave', function () {
                     tip.classList.add('hidden');
-                    d3.select(this).attr('fill-opacity', 0.92);
+                    pintarMapaHome();
                 })
-                .on('click', function () {
+                .on('click', function (ev) {
+                    ev.stopPropagation();
                     const uf = this.getAttribute('data-uf');
-                    if (uf) window.location.href = `${BD.rota('terminal-pib')}?uf=${uf}`;
+                    if (!uf) return;
+                    ufSelecionadaHome = (ufSelecionadaHome === uf) ? null : uf;
+                    pintarMapaHome();
+                    atualizarResumoMapaHome();
                 });
 
             document.getElementById('homeMapLoading')?.classList.add('hidden');
             svg.classed('hidden', false);
             geoHomePronto = true;
             pintarMapaHome();
+            atualizarResumoMapaHome();
         }
 
         function pintarMapaHome() {
             if (!geoHomePronto) return;
-            const ind = document.getElementById('selectIndicadorMapaHome')?.value || 'pibMil';
-            const valores = Object.values(mapaUfHome).map(d => d[ind] || 0).filter(v => v > 0);
+            const ind = document.getElementById('selectIndicadorMapaHome')?.value || 'imposto';
+            const valores = Object.values(mapaUfHome).map(d => obterValorMetricaHome(d, ind)).filter(v => v > 0);
             const min = valores.length ? Math.min(...valores) : 0;
             const max = valores.length ? Math.max(...valores) : 1;
             const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
 
-            d3.select('#mapaHomeBrasil').selectAll('path')
+            const corRecorte = isDark ? '#162638' : '#F5F3ED';
+
+            const paths = d3.select('#mapaHomeBrasil').selectAll('path');
+            paths
                 .attr('fill', function () {
                     const uf = this.getAttribute('data-uf');
-                    const val = mapaUfHome[uf] ? mapaUfHome[uf][ind] : 0;
+                    if (ufSelecionadaHome === uf) return '#9AE0C3';
+                    const val = obterValorMetricaHome(mapaUfHome[uf], ind);
                     return corAtlasHome(val, min, max);
                 })
-                .attr('fill-opacity', 0.92)
-                .attr('stroke', isDark ? '#101E2D' : '#F5F3ED')
-                .attr('stroke-width', 1.4);
+                .attr('fill-opacity', function () {
+                    const uf = this.getAttribute('data-uf');
+                    if (!ufSelecionadaHome) return 0.96;
+                    return ufSelecionadaHome === uf ? 1 : 0.42;
+                })
+                .attr('stroke', corRecorte)
+                .attr('stroke-width', 2.4);
+
+            if (ufSelecionadaHome) {
+                paths.filter(function () { return this.getAttribute('data-uf') === ufSelecionadaHome; }).raise();
+            }
         }
 
         window.addEventListener('tema', pintarMapaHome);
