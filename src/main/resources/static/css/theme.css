@@ -1,25 +1,30 @@
 :root {
-  --bg-main: #FFFFFF;
-  --card-bg: #F7F8FA;
-  --bg-secondary: #F0F2F5;
-  --text-main: #17191C;
-  --text-muted: #737780;
-  --border-col: #E5E7EB;
-  --accent-green: #16C784;
-  --accent-red: #EA3943;
-  --icon-box-bg: rgba(22, 199, 132, 0.12);
+  --bg-main: #FBFBF9;
+  --card-bg: #F5F3ED;      /* Marfim da paleta */
+  --bg-secondary: #ECE9E0;
+  --text-main: #101E2D;    /* Azul profundo nos textos */
+  --text-muted: #5A6673;
+  --border-col: #DDD9CE;
+  --accent-green: #237B66; /* Verde atlas */
+  --accent-red: #D64545;
 }
 
 [data-theme="dark"] {
-  --bg-main: #101214;
-  --card-bg: #191C20;
-  --bg-secondary: #22262B;
-  --text-main: #F5F6F7;
-  --text-muted: #9299A3;
-  --border-col: #2B3036;
-  --accent-green: #16C784;
-  --accent-red: #EA3943;
-  --icon-box-bg: rgba(22, 199, 132, 0.15);
+  --bg-main: #101E2D;      /* Azul profundo */
+  --card-bg: #162638;      /* Azul profundo elevado (cards) */
+  --bg-secondary: #1D3147; /* Inputs, caixas internas e badges */
+  --text-main: #F5F3ED;    /* Marfim */
+  --text-muted: #9FB0C1;   /* Cinza-azulado legível */
+  --border-col: #263D54;   /* Bordas sutis */
+  --accent-green: #49A078; /* Verde atlas luminoso para texto/ícones */
+  --accent-red: #EA5455;
+  --icon-box-bg: rgba(35, 123, 102, 0.22);
+}
+
+/* Botões principais no modo escuro usando o Verde Atlas */
+[data-theme="dark"] .din-btn {
+  background-color: #237B66;
+  color: #F5F3ED;
 }
 
 body {
