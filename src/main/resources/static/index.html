@@ -20,6 +20,7 @@
 <meta name="twitter:image" content="https://brasilemdadosp.com/download.png">
     <!-- Tailwind CSS -->
    <link rel="stylesheet" href="/css/tailwind.min.css">
+   <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
     <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
     <link rel="stylesheet" href="css/theme.css">
     <style>
@@ -90,26 +91,48 @@
                     </div>
                 </div>
 
-                <!-- Direita: Pulso Tributário e Produtivo Ao Vivo (5 colunas) -->
+                <!-- Direita: Pulso Tributário e Produtivo Ao Vivo (5 colunas) --><!-- Direita: Mapa Econômico do Brasil Interativo (5 colunas) -->
                 <div class="lg:col-span-5">
-                    <div class="din-card-bg border din-border rounded-2xl p-5 sm:p-6 shadow-sm space-y-5 relative overflow-hidden">
-
-                        <div class="flex items-center justify-between border-b din-border pb-3.5">
-                            <div class="flex items-center gap-2.5">
-                                <div class="w-9 h-9 rounded-xl din-red-box flex items-center justify-center shrink-0">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h2 class="text-sm font-bold din-text-main">Pulso Fiscal em Tempo Real</h2>
-                                    <p class="text-[11px] din-text-muted">Estimativa contínua da arrecadação no ano corrente</p>
-                                </div>
-                            </div>
-                            <span class="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase px-2.5 py-1 rounded-full din-red-box shrink-0">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#EA3943] live-dot"></span> AO VIVO
-                            </span>
+                    <!-- Tooltip flutuante do mapa -->
+                    <div id="homeMapTip" class="pointer-events-none fixed z-50 hidden px-3 py-2 rounded-lg text-xs shadow-lg border din-border din-card-bg">
+                        <div class="flex items-center gap-2 border-b din-border pb-1">
+                            <span id="homeTipBand" class="shrink-0"></span>
+                            <p id="homeTipNome" class="font-bold din-text-main"></p>
                         </div>
+                        <p id="homeTipVal" class="din-green font-semibold mt-1 tabular-nums"></p>
+                        <p class="text-[10px] din-text-muted mt-0.5">Clique para abrir o estado →</p>
+                    </div>
+
+                    <div class="din-card-bg border din-border rounded-2xl p-5 sm:p-6 shadow-sm flex flex-col justify-between space-y-4">
+                        <!-- Topo do Card -->
+                        <div class="flex items-center justify-between gap-2">
+                            <h2 class="text-base sm:text-lg font-bold din-text-main tracking-tight">Mapa econômico do Brasil</h2>
+                            <svg class="w-5 h-5 din-green shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                            </svg>
+                        </div>
+
+                        <!-- Área do Mapa SVG (formato real do Brasil) -->
+                        <div class="relative min-h-[260px] sm:min-h-[300px] flex items-center justify-center">
+                            <p id="homeMapLoading" class="text-xs din-text-muted">Carregando mapa do Brasil...</p>
+                            <svg id="mapaHomeBrasil" viewBox="0 0 500 480" class="w-full max-h-[300px] hidden"></svg>
+                        </div>
+
+                        <!-- Rodapé do Card: Seletor de Indicador + Link -->
+                        <div class="flex items-center justify-between gap-3 pt-3 border-t din-border text-xs">
+                            <select id="selectIndicadorMapaHome" onchange="pintarMapaHome()"
+                                class="bg-transparent din-text-muted hover:din-text-main font-semibold focus:outline-none cursor-pointer">
+                                <option value="pibMil" class="din-card-bg din-text-main" selected>Indicador: PIB Estadual</option>
+                                <option value="perCapita" class="din-card-bg din-text-main">Indicador: PIB per Capita</option>
+                                <option value="pop" class="din-card-bg din-text-main">Indicador: População</option>
+                            </select>
+
+                            <a href="terminal-pib.html" class="din-green font-bold inline-flex items-center gap-1 hover:opacity-80 transition shrink-0">
+                                <span>Explorar mapa →</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
                         <!-- Contador Dinâmico de Impostos -->
                         <div class="din-secondary-bg border din-border rounded-xl p-4 tabular-nums">
