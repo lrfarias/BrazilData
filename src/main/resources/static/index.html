@@ -128,15 +128,13 @@
                                 </div>
                             </div>
                             <div class="text-right shrink-0">
-                                <span class="text-[10px] uppercase tracking-wider din-text-muted block">Impostos Est./Ano</span>
-                                <strong id="homeSelImposto" class="text-sm font-extrabold din-green">--</strong>
+<span id="homeSelLabel" class="text-[10px] uppercase tracking-wider din-text-muted block">Impostos Est./Ano</span>                                <strong id="homeSelImposto" class="text-sm font-extrabold din-green">--</strong>
                             </div>
                         </div>
 
                         <!-- Rodapé do Card -->
                         <div class="flex items-center justify-between gap-3 pt-2.5 border-t din-border text-xs">
-                            <select id="selectIndicadorMapaHome" onchange="pintarMapaHome()"
-                                class="bg-transparent din-text-muted hover:din-text-main font-semibold focus:outline-none cursor-pointer">
+                        <select id="selectIndicadorMapaHome" onchange="pintarMapaHome(); atualizarResumoMapaHome();"                                class="bg-transparent din-text-muted hover:din-text-main font-semibold focus:outline-none cursor-pointer">
                                 <option value="imposto" class="din-card-bg din-text-main" selected>Impostos Estimados</option>
                                 <option value="pibMil" class="din-card-bg din-text-main">PIB Estadual</option>
                                 <option value="perCapita" class="din-card-bg din-text-main">PIB per Capita</option>
@@ -706,6 +704,7 @@
 
         let mapaUfHome = {};
         let pibBrasilMil = 0;
+        let popBrasilTotal = 0;
         let timestampAbertura = Date.now();
         let geoHomePronto = false;
         let ufSelecionadaHome = null;
@@ -829,6 +828,7 @@
                 document.getElementById('homeKpiPib').innerText = BDFmt.compactBRL(pibReais);
 
                 if (popTotal > 0) {
+                    popBrasilTotal = popTotal;
                     document.getElementById('tickerPop').innerText = (popTotal / 1e6).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' milhões';
                     const impostoPorHab = (pibReais * 0.33) / popTotal;
                     document.getElementById('pulsoPorHabitante').innerText = BDFmt.brl(impostoPorHab, 0) + ' / ano';
@@ -909,8 +909,17 @@
             const elBand = document.getElementById('homeSelBand');
             const elNome = document.getElementById('homeSelNome');
             const elSub = document.getElementById('homeSelSub');
-            const elImp = document.getElementById('homeSelImposto');
+            const elLabel = document.getElementById('homeSelLabel');
+            const elVal = document.getElementById('homeSelImposto');
             const elLink = document.getElementById('linkExplorarMapaHome');
+            const ind = document.getElementById('selectIndicadorMapaHome')?.value || 'imposto';
+
+            const rotulos = {
+                imposto: 'Impostos Est./Ano',
+                pibMil: 'PIB Estadual',
+                perCapita: 'PIB per Capita'
+            };
+            if (elLabel) elLabel.textContent = rotulos[ind] || 'Impostos Est./Ano';
 
             if (ufSelecionadaHome && mapaUfHome[ufSelecionadaHome]) {
                 const d = mapaUfHome[ufSelecionadaHome];
@@ -919,15 +928,35 @@
 
                 elBand.innerHTML = BDUF.htmlBandeira(d.sigla, 20);
                 elNome.textContent = `${d.nome} (${d.sigla})`;
-                elSub.textContent = `PIB: ${BDFmt.compactBRL(pibReais)} • ${d.share.toFixed(1)}% do BR`;
-                elImp.textContent = BDFmt.compactBRL(impReais);
+
+                if (ind === 'imposto') {
+                    elSub.textContent = `PIB: ${BDFmt.compactBRL(pibReais)} • ${d.share.toFixed(1)}% do BR`;
+                    elVal.textContent = BDFmt.compactBRL(impReais);
+                } else if (ind === 'pibMil') {
+                    elSub.textContent = `Impostos est.: ${BDFmt.compactBRL(impReais)} • ${d.share.toFixed(1)}% do BR`;
+                    elVal.textContent = BDFmt.compactBRL(pibReais);
+                } else {
+                    elSub.textContent = `PIB: ${BDFmt.compactBRL(pibReais)} • Pop.: ${(d.pop / 1e6).toLocaleString('pt-BR', { maximumFractionDigits: 1 })} mi`;
+                    elVal.textContent = `${BDFmt.brl(d.perCapita, 0)} / hab.`;
+                }
+
                 if (elLink) elLink.href = `${BD.rota('terminal-pib')}?uf=${d.sigla}`;
             } else {
                 const pibBrReais = pibBrasilMil * 1000;
+                const pcBrasil = (pibBrReais > 0 && popBrasilTotal > 0) ? (pibBrReais / popBrasilTotal) : 0;
+
                 elBand.innerHTML = BDUF.htmlBandeira('BR', 20);
                 elNome.textContent = 'Brasil (Consolidado)';
                 elSub.textContent = 'Clique em um estado para inspecionar';
-                elImp.textContent = pibBrReais > 0 ? BDFmt.compactBRL(pibBrReais * 0.33) : '--';
+
+                if (ind === 'imposto') {
+                    elVal.textContent = pibBrReais > 0 ? BDFmt.compactBRL(pibBrReais * 0.33) : '--';
+                } else if (ind === 'pibMil') {
+                    elVal.textContent = pibBrReais > 0 ? BDFmt.compactBRL(pibBrReais) : '--';
+                } else {
+                    elVal.textContent = pcBrasil > 0 ? `${BDFmt.brl(pcBrasil, 0)} / hab.` : '--';
+                }
+
                 if (elLink) elLink.href = BD.rota('terminal-pib');
             }
         }
