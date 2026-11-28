@@ -731,14 +731,14 @@
                 const resp = await fetch('/api/impostometro');
                 if (resp.ok) {
                     const dados = await resp.json();
-                    if (dados && dados.valor > 0 && dados.incrementoPorSegundo > 0) {
-                        valorBase = Number(dados.valor);
-                        porSegundo = Number(dados.incrementoPorSegundo);
-                        baseTimestamp = Date.now();
-                        if (dados.ano) {
-                            document.querySelectorAll('.lblAnoAtual').forEach(el => el.innerText = dados.ano);
-                        }
-                    }
+                    if (dados && dados.oficial && dados.valor > 0 && dados.incrementoPorSegundo > 0) {
+    valorBase = Number(dados.valor);
+    porSegundo = Number(dados.incrementoPorSegundo);
+    baseTimestamp = Date.now();
+    if (dados.ano) {
+        document.querySelectorAll('.lblAnoAtual').forEach(el => el.innerText = dados.ano);
+    }
+}
                 }
             } catch (e) {
                 console.warn('Usando projeção local calibrada para o Pulso Fiscal:', e);

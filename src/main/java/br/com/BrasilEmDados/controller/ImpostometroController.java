@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @RequestMapping("/api")
 public class ImpostometroController {
 
-    private static final double META_FALLBACK_ANUAL = 3_900_000_000_000.0;
+    private static final double META_FALLBACK_ANUAL = 4_080_000_000_000.0;
     private static final long CACHE_SEGUNDOS = 300; // 5 minutos
 
     private final RestClient restClient = RestClient.builder()
