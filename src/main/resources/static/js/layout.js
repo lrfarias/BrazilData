@@ -16,6 +16,10 @@ body{background:var(--bg);color:var(--tx)}
 [role="tablist"] .active,
 .tabs button.ativo,
 .tab-btn.ativo,
+button[aria-pressed="true"],
+button[data-ativo="true"],
+button[data-cenario].ativo,
+button[data-periodo].ativo,
 button[data-tab].ativo,
 button[data-aba].ativo,
 button[data-modo].ativo,
@@ -30,22 +34,36 @@ button[data-rank].ativo,
 .grid > button.bg-white *,
 .flex > button.bg-white *{color:#fff!important}
 
-/* Borda verde no hover em botões, links interativos e cards (claro e escuro) */
+/* Contorno verde no hover e foco em qualquer botão, aba, select, link de ação ou item interativo (claro e escuro) */
 button:hover,
 [role="button"]:hover,
 [role="tab"]:hover,
-nav a:hover,
+select:hover,
+a[href]:hover,
+summary:hover,
 .card-hover:hover,
-.card-roleta:hover{border-color:var(--gr)!important}
-button:hover,
-[role="button"]:hover,
-[role="tab"]:hover{transition:border-color 150ms ease,color 150ms ease,transform 150ms ease}
+.card-roleta:hover{
+  border-color:var(--gr)!important;
+  outline:1.5px solid var(--gr)!important;
+  outline-offset:1px;
+  box-shadow:0 0 0 3px rgba(22,199,132,.20),0 4px 12px rgba(22,199,132,.14)!important;
+}
+button,
+[role="button"],
+[role="tab"],
+select,
+a[href],
+summary,
+.card-hover,
+.card-roleta{
+  transition:border-color 150ms ease,outline-color 150ms ease,box-shadow 150ms ease,color 150ms ease,transform 150ms ease;
+}
 
 /* Evita corte da borda superior quando o card sobe no hover dentro do carrossel */
-#carrosselFerramentas{padding-top:4px;padding-bottom:6px;scroll-padding-top:4px}
+#carrosselFerramentas{padding-top:6px;padding-bottom:8px;scroll-padding-top:6px}
 
 .inp{background:var(--sec);border:1px solid var(--bd);color:var(--tx);border-radius:.5rem;padding:.5rem .75rem;width:100%;font-size:.875rem}
-.inp:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--gr);outline-offset:2px}
+.inp:focus-visible,button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid var(--gr);outline-offset:2px}
 select option{background:var(--card);color:var(--tx)}
 th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}
 .tabular-nums{font-variant-numeric:tabular-nums}
