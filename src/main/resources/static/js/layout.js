@@ -30,31 +30,65 @@ button[data-rank].ativo,
 .grid > button.bg-white *,
 .flex > button.bg-white *{color:#fff!important}
 
-/* Borda verde única ao passar o mouse em abas, botões, FAQs e selects (sem contorno duplo) */
+/* Base sem bordas duplas/contornos indesejados */
+button,
+[role="button"],
+[role="tab"],
+nav a,
+select,
+summary,
+a[href],
+.card-hover,
+.card-roleta{
+  outline:none!important;
+  box-shadow:none!important;
+  transition:border-color 150ms ease,color 150ms ease,opacity 150ms ease;
+}
+
+/* Impede "saltinho" ao passar o mouse em botões, abas, links e selects */
 button:hover,
 [role="button"]:hover,
 [role="tab"]:hover,
 nav a:hover,
 select:hover,
-summary:hover,
-.faq-item:hover,
-[data-faq]:hover,
-.card-hover:hover,
-.card-roleta:hover{
-  border:1.5px solid var(--gr)!important;
-  outline:none!important;
-  box-shadow:none!important;
+a[href]:hover{
+  transform:none!important;
 }
 
-/* Itens de lista e menu: sem borda e texto verde no hover */
-#bdMenu a,
-#bdMenu button,
-footer a,
-li a,
-li button{
-  border:none!important;
-  outline:none!important;
-  box-shadow:none!important;
+/* 1. Cada item individual do menu ganha borda verde ao passar o mouse (sem mover o container) */
+header nav a,
+nav a{
+  border:1px solid transparent;
+  border-radius:0.5rem;
+}
+header nav a:hover,
+nav a:hover{
+  border:1.5px solid var(--gr)!important;
+}
+
+/* 2. Borda verde ao passar o mouse em botões comuns e nos quadros (ex.: 01, 02, 03...) */
+button:hover,
+[role="button"]:hover,
+[role="tab"]:hover,
+a[href*="rankingBrasil"]:hover,
+.grid a:hover,
+.grid > div:hover,
+.card-hover:hover,
+.card-roleta:hover{
+  border-color:var(--gr)!important;
+}
+
+/* 3. Exceções: sem borda verde no hover para selects, FAQs/contato e itens de lista/menu */
+select:hover,
+.faq-item:hover,
+[data-faq]:hover,
+summary:hover,
+#bdMenu a:hover,
+#bdMenu button:hover,
+footer a:hover,
+li a:hover,
+li button:hover{
+  border-color:var(--bd)!important;
 }
 #bdMenu a:hover,
 #bdMenu button:hover,
@@ -62,21 +96,6 @@ li a:hover,
 li button:hover{
   color:var(--gr)!important;
   border:none!important;
-  outline:none!important;
-  box-shadow:none!important;
-}
-
-button,
-[role="button"],
-[role="tab"],
-nav a,
-select,
-summary,
-.faq-item,
-[data-faq],
-.card-hover,
-.card-roleta{
-  transition:border-color 150ms ease,color 150ms ease,opacity 150ms ease,transform 150ms ease;
 }
 
 /* Evita corte da borda superior quando o card sobe no hover dentro do carrossel */
