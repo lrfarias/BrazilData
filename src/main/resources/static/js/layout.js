@@ -9,6 +9,8 @@ body{background:var(--bg);color:var(--tx)}
 .bd-nav-ativo,.bd-tab.ativo{background:var(--gr)!important;color:#fff!important;border-color:var(--gr)!important;box-shadow:0 2px 8px rgba(22,199,132,.28)}
 .bd-tab{background:var(--sec);color:var(--mu);border:1px solid var(--bd);transition:all 150ms ease;cursor:pointer}
 .bd-tab:hover{color:var(--tx);border-color:var(--gr)}
+.din-secondary-bg > button.din-card-bg,
+.din-secondary-bg > [role="tab"].din-card-bg,
 [role="tablist"] [aria-selected="true"],
 [role="tablist"] .ativo,
 [role="tablist"] .active,
@@ -21,6 +23,8 @@ button[data-filtro].ativo,
 button[data-rank].ativo,
 .bg-white.rounded-lg,
 .bg-white.rounded-xl{background:var(--gr)!important;color:#fff!important;border-color:var(--gr)!important;box-shadow:0 2px 8px rgba(22,199,132,.28)}
+.din-secondary-bg > button.din-card-bg *,
+.din-secondary-bg > [role="tab"].din-card-bg *{color:#fff!important}
 .inp{background:var(--sec);border:1px solid var(--bd);color:var(--tx);border-radius:.5rem;padding:.5rem .75rem;width:100%;font-size:.875rem}
 .inp:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--gr);outline-offset:2px}
 select option{background:var(--card);color:var(--tx)}
