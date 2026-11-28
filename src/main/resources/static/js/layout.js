@@ -16,10 +16,6 @@ body{background:var(--bg);color:var(--tx)}
 [role="tablist"] .active,
 .tabs button.ativo,
 .tab-btn.ativo,
-button[aria-pressed="true"],
-button[data-ativo="true"],
-button[data-cenario].ativo,
-button[data-periodo].ativo,
 button[data-tab].ativo,
 button[data-aba].ativo,
 button[data-modo].ativo,
@@ -33,6 +29,21 @@ button[data-rank].ativo,
 .din-secondary-bg > [role="tab"].din-card-bg *,
 .grid > button.bg-white *,
 .flex > button.bg-white *{color:#fff!important}
+
+/* Borda verde no hover em botões, links interativos e cards (claro e escuro) */
+button:hover,
+[role="button"]:hover,
+[role="tab"]:hover,
+nav a:hover,
+.card-hover:hover,
+.card-roleta:hover{border-color:var(--gr)!important}
+button:hover,
+[role="button"]:hover,
+[role="tab"]:hover{transition:border-color 150ms ease,color 150ms ease,transform 150ms ease}
+
+/* Evita corte da borda superior quando o card sobe no hover dentro do carrossel */
+#carrosselFerramentas{padding-top:4px;padding-bottom:6px;scroll-padding-top:4px}
+
 .inp{background:var(--sec);border:1px solid var(--bd);color:var(--tx);border-radius:.5rem;padding:.5rem .75rem;width:100%;font-size:.875rem}
 .inp:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--gr);outline-offset:2px}
 select option{background:var(--card);color:var(--tx)}
