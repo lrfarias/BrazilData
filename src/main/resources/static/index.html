@@ -35,7 +35,7 @@
         .live-dot { animation: pulseSubtle 1.6s infinite; }
         #carrosselFerramentas::-webkit-scrollbar { display: none; }
 
-        /* Botões de região e abas do Top 5 (Verde Esmeralda com texto branco) */
+        /* Botões de região (Verde Esmeralda com texto branco) */
         .btn-reg-home {
             background-color: var(--bg-secondary);
             color: var(--text-muted);
@@ -45,12 +45,32 @@
             color: var(--text-main);
             border-color: #10B981;
         }
-        .btn-reg-home.ativo,
-        .tab-rank-home.ativo {
+        .btn-reg-home.ativo {
             background-color: #10B981 !important;
             color: #FFFFFF !important;
             border-color: #10B981 !important;
             box-shadow: 0 2px 8px rgba(16, 185, 129, 0.28);
+        }
+
+        /* Seletor vertical de critérios do Top 5 */
+        .crit-rank-btn {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-col);
+            color: var(--text-muted);
+            transition: all 150ms ease;
+        }
+        .crit-rank-btn:hover {
+            border-color: #10B981;
+            color: var(--text-main);
+        }
+        .crit-rank-btn.ativo {
+            background-color: #10B981 !important;
+            border-color: #10B981 !important;
+            color: #FFFFFF !important;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        }
+        .crit-rank-btn.ativo .crit-sub {
+            color: rgba(255, 255, 255, 0.85) !important;
         }
     </style>
 </head>
@@ -235,56 +255,54 @@
             </div>
         </section>
 
-        <!-- 4. RANKING TOP 5 DO BRASIL (Credibilidade & Dados Oficiais) -->
+        <!-- 4. RANKING TOP 5 DO BRASIL (Painel Editorial com Barras Proporcionais) -->
         <section id="rankingBrasil" class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
             <div class="din-card-bg border din-border rounded-2xl p-5 sm:p-7 shadow-sm">
-                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b din-border pb-5 mb-5">
+                <div class="flex flex-wrap items-end justify-between gap-3 border-b din-border pb-4 mb-6">
                     <div>
-                        <span class="text-[11px] font-bold uppercase tracking-wider din-green">Base Oficial • IBGE & PNUD</span>
+                        <span class="text-[11px] font-bold uppercase tracking-wider din-green">Base Oficial • IBGE (<span class="lblAnoTicker">2021</span>) & PNUD</span>
                         <h2 class="text-xl sm:text-2xl font-extrabold din-text-main mt-0.5">
-                            Top 5 Estados do Brasil
+                            Líderes Econômicos e Sociais do Brasil
                         </h2>
-                        <p class="text-xs sm:text-sm din-text-muted mt-1">
-                            Compare os líderes nacionais em volume econômico, produtividade, arrecadação, demografia e qualidade de vida.
-                        </p>
+                    </div>
+                    <a href="terminal-pib.html" class="din-green text-xs font-bold hover:opacity-80 transition">
+                        Ver ranking completo das 27 UFs →
+                    </a>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                    <!-- Coluna Esquerda: Seletor Vertical de Critérios (4 colunas) -->
+                    <div id="abasRankingHome" class="lg:col-span-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-2">
+                        <button type="button" data-rank="pibMil" onclick="trocarAbaRankingHome('pibMil')" class="crit-rank-btn ativo text-left px-4 py-3 rounded-xl cursor-pointer">
+                            <span class="block text-xs sm:text-sm font-extrabold">Maiores PIBs</span>
+                            <span class="crit-sub block text-[11px] opacity-80 mt-0.5">Volume total de bens e serviços</span>
+                        </button>
+                        <button type="button" data-rank="perCapita" onclick="trocarAbaRankingHome('perCapita')" class="crit-rank-btn text-left px-4 py-3 rounded-xl cursor-pointer">
+                            <span class="block text-xs sm:text-sm font-extrabold">PIB per Capita</span>
+                            <span class="crit-sub block text-[11px] opacity-80 mt-0.5">Produtividade média por habitante</span>
+                        </button>
+                        <button type="button" data-rank="imposto" onclick="trocarAbaRankingHome('imposto')" class="crit-rank-btn text-left px-4 py-3 rounded-xl cursor-pointer">
+                            <span class="block text-xs sm:text-sm font-extrabold">Arrecadação Est.</span>
+                            <span class="crit-sub block text-[11px] opacity-80 mt-0.5">Estimativa tributária (~33% do PIB)</span>
+                        </button>
+                        <button type="button" data-rank="idh" onclick="trocarAbaRankingHome('idh')" class="crit-rank-btn text-left px-4 py-3 rounded-xl cursor-pointer">
+                            <span class="block text-xs sm:text-sm font-extrabold">Maiores IDHs</span>
+                            <span class="crit-sub block text-[11px] opacity-80 mt-0.5">Renda, educação e longevidade</span>
+                        </button>
+                        <button type="button" data-rank="pop" onclick="trocarAbaRankingHome('pop')" class="crit-rank-btn text-left px-4 py-3 rounded-xl cursor-pointer col-span-2 sm:col-span-1">
+                            <span class="block text-xs sm:text-sm font-extrabold">Maior População</span>
+                            <span class="crit-sub block text-[11px] opacity-80 mt-0.5">Estados mais populosos do país</span>
+                        </button>
                     </div>
 
-                    <!-- Abas de Critério do Top 5 -->
-                    <div id="abasRankingHome" class="flex items-center gap-1.5 din-secondary-bg p-1 rounded-xl border din-border overflow-x-auto no-scrollbar text-xs font-bold self-start lg:self-auto max-w-full">
-                        <button type="button" data-rank="pibMil" onclick="trocarAbaRankingHome('pibMil')" class="tab-rank-home ativo px-3 py-1.5 rounded-lg transition cursor-pointer shrink-0">Maiores PIBs</button>
-                        <button type="button" data-rank="perCapita" onclick="trocarAbaRankingHome('perCapita')" class="tab-rank-home px-3 py-1.5 rounded-lg din-text-muted hover:din-text-main transition cursor-pointer shrink-0">Maior PIB per Capita</button>
-                        <button type="button" data-rank="idh" onclick="trocarAbaRankingHome('idh')" class="tab-rank-home px-3 py-1.5 rounded-lg din-text-muted hover:din-text-main transition cursor-pointer shrink-0">Maiores IDHs</button>
-                        <button type="button" data-rank="pop" onclick="trocarAbaRankingHome('pop')" class="tab-rank-home px-3 py-1.5 rounded-lg din-text-muted hover:din-text-main transition cursor-pointer shrink-0">Maior População</button>
-                        <button type="button" data-rank="imposto" onclick="trocarAbaRankingHome('imposto')" class="tab-rank-home px-3 py-1.5 rounded-lg din-text-muted hover:din-text-main transition cursor-pointer shrink-0">Maiores Arrecadações</button>
+                    <!-- Coluna Direita: Lista Visual com Barras Proporcionais (8 colunas) -->
+                    <div id="listaRankingHome" class="lg:col-span-8 space-y-3 tabular-nums">
+                        <p class="py-8 text-center text-xs din-text-muted">Carregando ranking oficial...</p>
                     </div>
                 </div>
 
-                <!-- Tabela Top 5 -->
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-xs sm:text-sm tabular-nums">
-                        <thead>
-                            <tr class="border-b din-border din-text-muted text-[11px] uppercase tracking-wider">
-                                <th class="py-3 px-2 w-10">#</th>
-                                <th class="py-3 px-2">Estado</th>
-                                <th class="py-3 px-2 text-right">PIB</th>
-                                <th class="py-3 px-2 text-right">PIB per Capita</th>
-                                <th class="py-3 px-2 text-right">População</th>
-                                <th class="py-3 px-2 text-right">Impostos Est.</th>
-                                <th class="py-3 px-2 text-right">IDH</th>
-                                <th class="py-3 px-2 text-center">Tendência</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbodyRankingHome" class="divide-y din-border">
-                            <tr>
-                                <td colspan="8" class="py-6 text-center text-xs din-text-muted">Carregando ranking oficial...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="mt-4 pt-3 border-t din-border flex flex-wrap items-center justify-between gap-2 text-[11px] din-text-muted">
-                    <span>Fonte: IBGE (Contas Regionais SIDRA 5938) • PNUD/Atlas Brasil (IDH-M) • Estimativa tributária (~33% do PIB).</span>
-                    <a href="terminal-pib.html" class="din-green font-bold hover:opacity-80 transition">Ver ranking completo das 27 UFs →</a>
+                <div class="mt-5 pt-3 border-t din-border flex flex-wrap items-center justify-between gap-2 text-[11px] din-text-muted">
+                    <span>Fonte: IBGE (Contas Regionais SIDRA 5938) • PNUD/Atlas Brasil (IDH-M) • Clique em qualquer estado para abrir o Raio-X.</span>
                 </div>
             </div>
         </section>
@@ -859,48 +877,75 @@
 
         function trocarAbaRankingHome(criterio) {
             criterioRankingHome = criterio;
-            document.querySelectorAll('.tab-rank-home').forEach(btn => {
-                const ativo = btn.getAttribute('data-rank') === criterio;
-                btn.classList.toggle('ativo', ativo);
-                btn.classList.toggle('din-text-muted', !ativo);
+            document.querySelectorAll('.crit-rank-btn').forEach(btn => {
+                btn.classList.toggle('ativo', btn.getAttribute('data-rank') === criterio);
             });
             renderizarRankingHome();
         }
 
         function renderizarRankingHome() {
-            const tbody = document.getElementById('tbodyRankingHome');
-            if (!tbody) return;
+            const container = document.getElementById('listaRankingHome');
+            if (!container) return;
 
             const lista = Object.values(mapaUfHome).filter(d => d.pibMil > 0);
             if (!lista.length) return;
 
             const top5 = [...lista].sort((a, b) => (b[criterioRankingHome] || 0) - (a[criterioRankingHome] || 0)).slice(0, 5);
+            const maxVal = top5[0][criterioRankingHome] || 1;
 
-            tbody.innerHTML = top5.map((d, idx) => {
-                const pibReais = d.pibMil * 1000;
+            const formatarPrincipal = d => {
+                if (criterioRankingHome === 'pibMil') return BDFmt.compactBRL(d.pibMil * 1000);
+                if (criterioRankingHome === 'perCapita') return `${BDFmt.brl(d.perCapita, 0)} / hab.`;
+                if (criterioRankingHome === 'imposto') return BDFmt.compactBRL(d.imposto);
+                if (criterioRankingHome === 'idh') return d.idh.toFixed(3).replace('.', ',');
+                return `${(d.pop / 1e6).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} mi hab.`;
+            };
+
+            const formatarSecundario = d => {
+                if (criterioRankingHome === 'pibMil') {
+                    return `${d.share.toFixed(1)}% do PIB nacional • Per capita: ${BDFmt.brl(d.perCapita, 0)} • IDH: ${d.idh.toFixed(3).replace('.', ',')}`;
+                }
+                if (criterioRankingHome === 'perCapita') {
+                    return `PIB: ${BDFmt.compactBRL(d.pibMil * 1000)} • Pop.: ${(d.pop / 1e6).toLocaleString('pt-BR', { maximumFractionDigits: 1 })} mi • IDH: ${d.idh.toFixed(3).replace('.', ',')}`;
+                }
+                if (criterioRankingHome === 'imposto') {
+                    return `PIB: ${BDFmt.compactBRL(d.pibMil * 1000)} • ${d.share.toFixed(1)}% do BR • Pop.: ${(d.pop / 1e6).toLocaleString('pt-BR', { maximumFractionDigits: 1 })} mi`;
+                }
+                if (criterioRankingHome === 'idh') {
+                    return `PIB per capita: ${BDFmt.brl(d.perCapita, 0)} • PIB: ${BDFmt.compactBRL(d.pibMil * 1000)}`;
+                }
+                return `PIB: ${BDFmt.compactBRL(d.pibMil * 1000)} • Per capita: ${BDFmt.brl(d.perCapita, 0)} • IDH: ${d.idh.toFixed(3).replace('.', ',')}`;
+            };
+
+            container.innerHTML = top5.map((d, idx) => {
+                const pctBarra = Math.max(8, ((d[criterioRankingHome] || 0) / maxVal) * 100);
                 const serieObj = seriesPibUfHome[d.sigla] || {};
                 const serieArr = Object.keys(serieObj).map(Number).sort((a, b) => a - b).map(a => serieObj[a]);
-                const spark = (window.BDUF && BDUF.htmlSparkline) ? BDUF.htmlSparkline(serieArr) : '—';
-
-                const hl = col => criterioRankingHome === col ? 'font-extrabold din-green' : 'din-text-main';
+                const spark = (window.BDUF && BDUF.htmlSparkline) ? BDUF.htmlSparkline(serieArr) : '';
 
                 return `
-                    <tr onclick="window.location.href='${BD.rota('terminal-pib')}?uf=${d.sigla}'" class="hover:din-secondary-bg cursor-pointer transition">
-                        <td class="py-3 px-2 font-mono font-extrabold din-green">${idx + 1}º</td>
-                        <td class="py-3 px-2 whitespace-nowrap">
-                            <div class="flex items-center gap-2.5">
-                                ${BDUF.htmlBandeira(d.sigla, 20)}
-                                <span class="font-bold din-text-main">${d.nome}</span>
-                                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded din-secondary-bg border din-border din-text-muted">${d.sigla}</span>
+                    <div onclick="window.location.href='${BD.rota('terminal-pib')}?uf=${d.sigla}'"
+                        class="din-secondary-bg border din-border hover:border-[#10B981] rounded-xl p-3.5 sm:p-4 cursor-pointer transition space-y-2.5">
+                        <div class="flex items-center justify-between gap-3">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <span class="text-xs font-mono font-extrabold din-green w-5 shrink-0">0${idx + 1}</span>
+                                ${BDUF.htmlBandeira(d.sigla, 22)}
+                                <span class="font-bold text-sm din-text-main truncate">${d.nome}</span>
+                                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded din-card-bg border din-border din-text-muted shrink-0">${d.sigla}</span>
                             </div>
-                        </td>
-                        <td class="py-3 px-2 text-right whitespace-nowrap ${hl('pibMil')}">${BDFmt.compactBRL(pibReais)}</td>
-                        <td class="py-3 px-2 text-right whitespace-nowrap ${hl('perCapita')}">${BDFmt.brl(d.perCapita, 0)}</td>
-                        <td class="py-3 px-2 text-right whitespace-nowrap ${hl('pop')}">${(d.pop / 1e6).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} mi</td>
-                        <td class="py-3 px-2 text-right whitespace-nowrap ${hl('imposto')}">${BDFmt.compactBRL(d.imposto)}</td>
-                        <td class="py-3 px-2 text-right whitespace-nowrap ${hl('idh')}">${d.idh.toFixed(3).replace('.', ',')}</td>
-                        <td class="py-3 px-2 text-center whitespace-nowrap">${spark}</td>
-                    </tr>
+                            <div class="flex items-center gap-3 shrink-0">
+                                <span class="hidden sm:inline-flex">${spark}</span>
+                                <strong class="text-sm sm:text-base font-extrabold din-green">${formatarPrincipal(d)}</strong>
+                            </div>
+                        </div>
+
+                        <!-- Barra proporcional ao 1º lugar -->
+                        <div class="w-full h-1.5 rounded-full din-card-bg overflow-hidden">
+                            <div class="h-full rounded-full" style="width:${pctBarra.toFixed(1)}%; background:#10B981;"></div>
+                        </div>
+
+                        <p class="text-[11px] din-text-muted truncate">${formatarSecundario(d)}</p>
+                    </div>
                 `;
             }).join('');
         }
