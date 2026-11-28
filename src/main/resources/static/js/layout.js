@@ -16,15 +16,23 @@ body{background:var(--bg);color:var(--tx)}
 [role="tablist"] .active,
 .tabs button.ativo,
 .tab-btn.ativo,
+button[aria-pressed="true"],
+button[data-ativo="true"],
+button[data-cenario].ativo,
+button[data-periodo].ativo,
 button[data-tab].ativo,
 button[data-aba].ativo,
 button[data-modo].ativo,
 button[data-filtro].ativo,
 button[data-rank].ativo,
 .bg-white.rounded-lg,
-.bg-white.rounded-xl{background:var(--gr)!important;color:#fff!important;border-color:var(--gr)!important;box-shadow:0 2px 8px rgba(22,199,132,.28)}
+.bg-white.rounded-xl,
+.grid > button.bg-white,
+.flex > button.bg-white{background:var(--gr)!important;color:#fff!important;border-color:var(--gr)!important;box-shadow:0 2px 8px rgba(22,199,132,.28)}
 .din-secondary-bg > button.din-card-bg *,
-.din-secondary-bg > [role="tab"].din-card-bg *{color:#fff!important}
+.din-secondary-bg > [role="tab"].din-card-bg *,
+.grid > button.bg-white *,
+.flex > button.bg-white *{color:#fff!important}
 .inp{background:var(--sec);border:1px solid var(--bd);color:var(--tx);border-radius:.5rem;padding:.5rem .75rem;width:100%;font-size:.875rem}
 .inp:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--gr);outline-offset:2px}
 select option{background:var(--card);color:var(--tx)}
