@@ -5,11 +5,10 @@ body{background:var(--bg);color:var(--tx)}
 .din-card-bg{background:var(--card)}.din-secondary-bg{background:var(--sec)}
 .din-text-main{color:var(--tx)}.din-text-muted{color:var(--mu)}
 .din-border{border-color:var(--bd)!important}.din-green{color:var(--gr)}.din-red{color:var(--rd)}
-.din-btn{background:var(--gr)!important;color:#fff!important;border-color:var(--gr)!important}.din-btn:hover{opacity:.92}
-
-/* Estado ativo padrão (verde esmeralda + texto branco) em todas as abas e filtros */
-.bd-nav-ativo,
-.bd-tab.ativo,
+.din-btn{background:var(--gr);color:#fff}.din-btn:hover{opacity:.9}
+.bd-nav-ativo,.bd-tab.ativo{background:var(--gr)!important;color:#fff!important;border-color:var(--gr)!important;box-shadow:0 2px 8px rgba(22,199,132,.28)}
+.bd-tab{background:var(--sec);color:var(--mu);border:1px solid var(--bd);transition:all 150ms ease;cursor:pointer}
+.bd-tab:hover{color:var(--tx);border-color:var(--gr)}
 .din-secondary-bg > button.din-card-bg,
 .din-secondary-bg > [role="tab"].din-card-bg,
 [role="tablist"] [aria-selected="true"],
@@ -17,10 +16,6 @@ body{background:var(--bg);color:var(--tx)}
 [role="tablist"] .active,
 .tabs button.ativo,
 .tab-btn.ativo,
-button[aria-pressed="true"],
-button[data-ativo="true"],
-button[data-cenario].ativo,
-button[data-periodo].ativo,
 button[data-tab].ativo,
 button[data-aba].ativo,
 button[data-modo].ativo,
@@ -29,80 +24,82 @@ button[data-rank].ativo,
 .bg-white.rounded-lg,
 .bg-white.rounded-xl,
 .grid > button.bg-white,
-.flex > button.bg-white{
-  background:var(--gr)!important;
-  color:#fff!important;
-  border-color:var(--gr)!important;
-  box-shadow:none!important;
-}
+.flex > button.bg-white{background:var(--gr)!important;color:#fff!important;border-color:var(--gr)!important;box-shadow:0 2px 8px rgba(22,199,132,.28)}
 .din-secondary-bg > button.din-card-bg *,
 .din-secondary-bg > [role="tab"].din-card-bg *,
 .grid > button.bg-white *,
 .flex > button.bg-white *{color:#fff!important}
 
-/* Padroniza botões/filtros inativos (evita tom bege fora do padrão) */
-.din-secondary-bg > button:not(.din-card-bg):not(.bd-nav-ativo):not(.ativo):not(.active):not([aria-selected="true"]),
-.flex > button.rounded-lg:not(.bg-white):not(.ativo):not(.active):not(.din-btn),
-.flex > button.rounded-xl:not(.bg-white):not(.ativo):not(.active):not(.din-btn),
-.grid > button.rounded-lg:not(.bg-white):not(.ativo):not(.active):not(.din-btn),
-.grid > button.rounded-xl:not(.bg-white):not(.ativo):not(.active):not(.din-btn){
-  background:var(--sec)!important;
-  color:var(--mu)!important;
-  border-color:var(--bd)!important;
-}
-
-/* Base sem bordas duplas nem saltos */
+/* Base sem bordas duplas/contornos indesejados */
 button,
 [role="button"],
 [role="tab"],
+nav a,
 select,
-a[href]{
+summary,
+a[href],
+.card-hover,
+.card-roleta{
   outline:none!important;
   box-shadow:none!important;
-  transform:none!important;
-  transition:border-color 150ms ease,color 150ms ease,background-color 150ms ease,opacity 150ms ease;
+  transition:border-color 150ms ease,color 150ms ease,opacity 150ms ease;
 }
+
+/* Impede "saltinho" ao passar o mouse em botões, abas, links e selects */
 button:hover,
 [role="button"]:hover,
 [role="tab"]:hover,
+nav a:hover,
 select:hover,
 a[href]:hover{
   transform:none!important;
 }
 
-/* Borda verde única ao passar o mouse APENAS em botões, abas e selects (nunca em quadros/containers) */
-button:hover,
-[role="button"]:hover,
-[role="tab"]:hover,
-.bd-tab:hover,
-select:hover{
+/* 1. Cada item individual do menu ganha borda verde ao passar o mouse (sem mover o container) */
+header nav a,
+nav a{
+  border:1px solid transparent;
+  border-radius:0.5rem;
+}
+header nav a:hover,
+nav a:hover{
   border:1.5px solid var(--gr)!important;
 }
 
-/* Links de texto: letra fica verde esmeralda no hover, sem borda */
-a[href]:hover{
-  color:var(--gr)!important;
-  border:none!important;
+/* 2. Borda verde ao passar o mouse em botões comuns e nos quadros (ex.: 01, 02, 03...) */
+button:hover,
+[role="button"]:hover,
+[role="tab"]:hover,
+a[href*="rankingBrasil"]:hover,
+.grid a:hover,
+.grid > div:hover,
+.card-hover:hover,
+.card-roleta:hover{
+  border-color:var(--gr)!important;
 }
 
-/* Itens de lista e menu: sem borda e letra verde no hover */
-#bdMenu a,
-#bdMenu button,
-nav a,
-footer a,
-li a,
-li button{
-  border:none!important;
+/* 3. Exceções: sem borda verde no hover para selects, FAQs/contato e itens de lista/menu */
+select:hover,
+.faq-item:hover,
+[data-faq]:hover,
+summary:hover,
+#bdMenu a:hover,
+#bdMenu button:hover,
+footer a:hover,
+li a:hover,
+li button:hover{
+  border-color:var(--bd)!important;
 }
 #bdMenu a:hover,
 #bdMenu button:hover,
-nav a:hover,
-footer a:hover,
 li a:hover,
 li button:hover{
   color:var(--gr)!important;
   border:none!important;
 }
+
+/* Evita corte da borda superior quando o card sobe no hover dentro do carrossel */
+#carrosselFerramentas{padding-top:6px;padding-bottom:8px;scroll-padding-top:6px}
 
 .inp{background:var(--sec);border:1px solid var(--bd);color:var(--tx);border-radius:.5rem;padding:.5rem .75rem;width:100%;font-size:.875rem}
 .inp:focus-visible,button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid var(--gr);outline-offset:2px}
