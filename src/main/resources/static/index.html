@@ -52,7 +52,7 @@
             box-shadow: 0 2px 8px rgba(16, 185, 129, 0.28);
         }
 
-        /* Seletor vertical de critérios do Top 5 */
+        /* Filtros compactos do Top 5 */
         .crit-rank-btn {
             background-color: var(--bg-secondary);
             border: 1px solid var(--border-col);
@@ -69,8 +69,18 @@
             color: #FFFFFF !important;
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
         }
-        .crit-rank-btn.ativo .crit-sub {
-            color: rgba(255, 255, 255, 0.85) !important;
+
+        /* Itens selecionáveis do Top 5 */
+        .rank-item-home {
+            border: 1px solid var(--border-col);
+            transition: border-color 150ms ease, background-color 150ms ease;
+        }
+        .rank-item-home:hover {
+            border-color: #10B981;
+        }
+        .rank-item-home.selecionado {
+            border-color: #10B981 !important;
+            box-shadow: 0 0 0 1px #10B981;
         }
     </style>
 </head>
@@ -263,7 +273,7 @@
             </div>
         </section>
 
-        <!-- 4. RANKING TOP 5 DO BRASIL (Painel Editorial com Barras Proporcionais) -->
+        <!-- 4. RANKING TOP 5 DO BRASIL (Esquerda: Ranking | Direita: Filtros + Raio-X) -->
         <section id="rankingBrasil" class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
             <div class="din-card-bg border din-border rounded-2xl p-5 sm:p-7 shadow-sm">
                 <div class="flex flex-wrap items-end justify-between gap-3 border-b din-border pb-4 mb-6">
@@ -279,38 +289,34 @@
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                    <!-- Coluna Esquerda: Seletor Vertical de Critérios (4 colunas) -->
-                    <div id="abasRankingHome" class="lg:col-span-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-2">
-                        <button type="button" data-rank="pibMil" onclick="trocarAbaRankingHome('pibMil')" class="crit-rank-btn ativo text-left px-4 py-3 rounded-xl cursor-pointer">
-                            <span class="block text-xs sm:text-sm font-extrabold">Maiores PIBs</span>
-                            <span class="crit-sub block text-[11px] opacity-80 mt-0.5">Volume total de bens e serviços</span>
-                        </button>
-                        <button type="button" data-rank="perCapita" onclick="trocarAbaRankingHome('perCapita')" class="crit-rank-btn text-left px-4 py-3 rounded-xl cursor-pointer">
-                            <span class="block text-xs sm:text-sm font-extrabold">PIB per Capita</span>
-                            <span class="crit-sub block text-[11px] opacity-80 mt-0.5">Produtividade média por habitante</span>
-                        </button>
-                        <button type="button" data-rank="imposto" onclick="trocarAbaRankingHome('imposto')" class="crit-rank-btn text-left px-4 py-3 rounded-xl cursor-pointer">
-                            <span class="block text-xs sm:text-sm font-extrabold">Arrecadação Est.</span>
-                            <span class="crit-sub block text-[11px] opacity-80 mt-0.5">Estimativa tributária (~33% do PIB)</span>
-                        </button>
-                        <button type="button" data-rank="idh" onclick="trocarAbaRankingHome('idh')" class="crit-rank-btn text-left px-4 py-3 rounded-xl cursor-pointer">
-                            <span class="block text-xs sm:text-sm font-extrabold">Maiores IDHs</span>
-                            <span class="crit-sub block text-[11px] opacity-80 mt-0.5">Renda, educação e longevidade</span>
-                        </button>
-                        <button type="button" data-rank="pop" onclick="trocarAbaRankingHome('pop')" class="crit-rank-btn text-left px-4 py-3 rounded-xl cursor-pointer col-span-2 sm:col-span-1">
-                            <span class="block text-xs sm:text-sm font-extrabold">Maior População</span>
-                            <span class="crit-sub block text-[11px] opacity-80 mt-0.5">Estados mais populosos do país</span>
-                        </button>
+                    <!-- Coluna Esquerda: Ranking Top 5 (7 colunas) -->
+                    <div id="listaRankingHome" class="lg:col-span-7 space-y-3 tabular-nums">
+                        <p class="py-8 text-center text-xs din-text-muted">Carregando ranking oficial...</p>
                     </div>
 
-                    <!-- Coluna Direita: Lista Visual com Barras Proporcionais (8 colunas) -->
-                    <div id="listaRankingHome" class="lg:col-span-8 space-y-3 tabular-nums">
-                        <p class="py-8 text-center text-xs din-text-muted">Carregando ranking oficial...</p>
+                    <!-- Coluna Direita: Filtros Compactos + Raio-X do Estado Selecionado (5 colunas) -->
+                    <div class="lg:col-span-5 space-y-4">
+                        <!-- Filtros Compactos -->
+                        <div>
+                            <span class="text-[10px] font-bold uppercase tracking-wider din-text-muted block mb-2">Filtrar Ranking por</span>
+                            <div id="abasRankingHome" class="flex flex-wrap gap-1.5">
+                                <button type="button" data-rank="pibMil" onclick="trocarAbaRankingHome('pibMil')" class="crit-rank-btn ativo px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer">Maiores PIBs</button>
+                                <button type="button" data-rank="perCapita" onclick="trocarAbaRankingHome('perCapita')" class="crit-rank-btn px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer">PIB per Capita</button>
+                                <button type="button" data-rank="imposto" onclick="trocarAbaRankingHome('imposto')" class="crit-rank-btn px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer">Arrecadação Est.</button>
+                                <button type="button" data-rank="idh" onclick="trocarAbaRankingHome('idh')" class="crit-rank-btn px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer">Maiores IDHs</button>
+                                <button type="button" data-rank="pop" onclick="trocarAbaRankingHome('pop')" class="crit-rank-btn px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer">População</button>
+                            </div>
+                        </div>
+
+                        <!-- Card Raio-X do Estado Selecionado -->
+                        <div id="detalheRankingHome" class="din-secondary-bg border din-border rounded-2xl p-4 sm:p-5 space-y-4 tabular-nums">
+                            <p class="text-xs din-text-muted">Selecione um estado ao lado para ver os detalhes.</p>
+                        </div>
                     </div>
                 </div>
 
                 <div class="mt-5 pt-3 border-t din-border flex flex-wrap items-center justify-between gap-2 text-[11px] din-text-muted">
-                    <span>Fonte: IBGE (Contas Regionais SIDRA 5938) • PNUD/Atlas Brasil (IDH-M) • Clique em qualquer estado para abrir o Raio-X.</span>
+                    <span>Fonte: IBGE (Contas Regionais SIDRA 5938) • PNUD/Atlas Brasil (IDH-M) • Clique em um estado para inspecionar ao lado.</span>
                 </div>
             </div>
         </section>
@@ -712,6 +718,7 @@
         let ufSelecionadaHome = null;
         let regiaoSelecionadaHome = 'Todas';
         let criterioRankingHome = 'pibMil';
+        let ufRankingSelecionadaHome = null;
 
         async function iniciarImpostometroAoVivo() {
             const agoraInit = new Date();
@@ -732,13 +739,13 @@
                 if (resp.ok) {
                     const dados = await resp.json();
                     if (dados && dados.oficial && dados.valor > 0 && dados.incrementoPorSegundo > 0) {
-    valorBase = Number(dados.valor);
-    porSegundo = Number(dados.incrementoPorSegundo);
-    baseTimestamp = Date.now();
-    if (dados.ano) {
-        document.querySelectorAll('.lblAnoAtual').forEach(el => el.innerText = dados.ano);
-    }
-}
+                        valorBase = Number(dados.valor);
+                        porSegundo = Number(dados.incrementoPorSegundo);
+                        baseTimestamp = Date.now();
+                        if (dados.ano) {
+                            document.querySelectorAll('.lblAnoAtual').forEach(el => el.innerText = dados.ano);
+                        }
+                    }
                 }
             } catch (e) {
                 console.warn('Usando projeção local calibrada para o Pulso Fiscal:', e);
@@ -905,10 +912,115 @@
 
         function trocarAbaRankingHome(criterio) {
             criterioRankingHome = criterio;
+            ufRankingSelecionadaHome = null;
             document.querySelectorAll('.crit-rank-btn').forEach(btn => {
                 btn.classList.toggle('ativo', btn.getAttribute('data-rank') === criterio);
             });
             renderizarRankingHome();
+        }
+
+        function selecionarEstadoRankingHome(sigla) {
+            ufRankingSelecionadaHome = sigla;
+            renderizarRankingHome();
+        }
+
+        function gerarGraficoEvolucaoHome(serieObj) {
+            const anos = Object.keys(serieObj || {}).map(Number).sort((a, b) => a - b);
+            if (anos.length < 2) {
+                return '<p class="text-[11px] din-text-muted">Série histórica indisponível.</p>';
+            }
+
+            const valores = anos.map(a => serieObj[a]);
+            const min = Math.min(...valores);
+            const max = Math.max(...valores);
+            const range = (max - min) || 1;
+            const w = 280, h = 68, padX = 6, padY = 8;
+
+            const pontos = valores.map((v, i) => {
+                const x = padX + (i / (valores.length - 1)) * (w - padX * 2);
+                const y = (h - padY) - ((v - min) / range) * (h - padY * 2);
+                return `${x.toFixed(1)},${y.toFixed(1)}`;
+            });
+
+            const variacao = ((valores[valores.length - 1] - valores[0]) / valores[0]) * 100;
+            const sinal = variacao >= 0 ? '+' : '';
+            const areaPontos = `${padX},${h - padY} ${pontos.join(' ')} ${(w - padX).toFixed(1)},${h - padY}`;
+
+            return `
+                <div class="flex items-center justify-between text-[11px] mb-1">
+                    <span class="din-text-muted font-semibold">Evolução do PIB (${anos[0]}–${anos[anos.length - 1]})</span>
+                    <span class="font-bold din-green">${sinal}${variacao.toFixed(1)}%</span>
+                </div>
+                <svg viewBox="0 0 ${w} ${h}" class="w-full h-16 overflow-visible">
+                    <polygon points="${areaPontos}" fill="#10B981" fill-opacity="0.14"></polygon>
+                    <polyline points="${pontos.join(' ')}" fill="none" stroke="#10B981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                </svg>
+            `;
+        }
+
+        function renderizarDetalheRankingHome(d, posicao) {
+            const box = document.getElementById('detalheRankingHome');
+            if (!box || !d) return;
+
+            const pibReais = d.pibMil * 1000;
+            const pibBrReais = pibBrasilMil * 1000;
+            const pcBrasil = (pibBrReais > 0 && popBrasilTotal > 0) ? (pibBrReais / popBrasilTotal) : 42000;
+            const razaoPc = pcBrasil > 0 ? ((d.perCapita / pcBrasil) * 100) : 100;
+            const pctBarraPc = Math.min(100, Math.max(10, (d.perCapita / (pcBrasil * 2)) * 100));
+
+            box.innerHTML = `
+                <!-- Cabeçalho do Estado -->
+                <div class="flex items-center justify-between gap-3 pb-3 border-b din-border">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        ${BDUF.htmlBandeira(d.sigla, 28)}
+                        <div class="min-w-0">
+                            <h3 class="text-base font-extrabold din-text-main truncate">${d.nome} (${d.sigla})</h3>
+                            <p class="text-[11px] din-text-muted">Região ${d.regiao} • ${posicao}º no ranking atual</p>
+                        </div>
+                    </div>
+                    <span class="text-xs font-extrabold px-2.5 py-1 rounded-lg din-icon-box shrink-0">${d.share.toFixed(1)}% do BR</span>
+                </div>
+
+                <!-- 3 Métricas Rápidas -->
+                <div class="grid grid-cols-3 gap-2 text-center">
+                    <div class="din-card-bg border din-border rounded-xl p-2.5">
+                        <span class="text-[10px] din-text-muted block">PIB (${anoBaseHome})</span>
+                        <strong class="text-xs sm:text-sm font-extrabold din-green">${BDFmt.compactBRL(pibReais)}</strong>
+                    </div>
+                    <div class="din-card-bg border din-border rounded-xl p-2.5">
+                        <span class="text-[10px] din-text-muted block">Impostos Est.</span>
+                        <strong class="text-xs sm:text-sm font-extrabold din-text-main">${BDFmt.compactBRL(d.imposto)}</strong>
+                    </div>
+                    <div class="din-card-bg border din-border rounded-xl p-2.5">
+                        <span class="text-[10px] din-text-muted block">IDH-M</span>
+                        <strong class="text-xs sm:text-sm font-extrabold din-text-main">${d.idh.toFixed(3).replace('.', ',')}</strong>
+                    </div>
+                </div>
+
+                <!-- Gráfico Simples de Evolução Histórica -->
+                <div class="din-card-bg border din-border rounded-xl p-3">
+                    ${gerarGraficoEvolucaoHome(seriesPibUfHome[d.sigla])}
+                </div>
+
+                <!-- Comparativo PIB per Capita vs Média Brasil -->
+                <div class="space-y-1.5">
+                    <div class="flex items-center justify-between text-[11px]">
+                        <span class="din-text-muted">PIB per capita vs. média Brasil</span>
+                        <strong class="din-text-main">${BDFmt.brl(d.perCapita, 0)} (${razaoPc.toFixed(0)}%)</strong>
+                    </div>
+                    <div class="w-full h-1.5 rounded-full din-card-bg overflow-hidden">
+                        <div class="h-full rounded-full" style="width:${pctBarraPc.toFixed(1)}%; background:#10B981;"></div>
+                    </div>
+                </div>
+
+                <!-- Link de Redirecionamento Explícito -->
+                <div class="pt-2 border-t din-border flex items-center justify-between gap-2 text-xs">
+                    <span class="text-[11px] din-text-muted">Pop.: ${(d.pop / 1e6).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} mi hab.</span>
+                    <a href="${BD.rota('terminal-pib')}?uf=${d.sigla}" class="din-green font-bold inline-flex items-center gap-1 hover:opacity-80 transition">
+                        <span>Abrir Raio-X de ${d.sigla} →</span>
+                    </a>
+                </div>
+            `;
         }
 
         function renderizarRankingHome() {
@@ -920,6 +1032,10 @@
 
             const top5 = [...lista].sort((a, b) => (b[criterioRankingHome] || 0) - (a[criterioRankingHome] || 0)).slice(0, 5);
             const maxVal = top5[0][criterioRankingHome] || 1;
+
+            if (!ufRankingSelecionadaHome || !top5.some(d => d.sigla === ufRankingSelecionadaHome)) {
+                ufRankingSelecionadaHome = top5[0].sigla;
+            }
 
             const formatarPrincipal = d => {
                 if (criterioRankingHome === 'pibMil') return BDFmt.compactBRL(d.pibMil * 1000);
@@ -950,10 +1066,11 @@
                 const serieObj = seriesPibUfHome[d.sigla] || {};
                 const serieArr = Object.keys(serieObj).map(Number).sort((a, b) => a - b).map(a => serieObj[a]);
                 const spark = (window.BDUF && BDUF.htmlSparkline) ? BDUF.htmlSparkline(serieArr) : '';
+                const ativoCls = d.sigla === ufRankingSelecionadaHome ? 'selecionado' : '';
 
                 return `
-                    <div onclick="window.location.href='${BD.rota('terminal-pib')}?uf=${d.sigla}'"
-                        class="din-secondary-bg border din-border hover:border-[#10B981] rounded-xl p-3.5 sm:p-4 cursor-pointer transition space-y-2.5">
+                    <div onclick="selecionarEstadoRankingHome('${d.sigla}')"
+                        class="rank-item-home ${ativoCls} din-secondary-bg rounded-xl p-3.5 sm:p-4 cursor-pointer space-y-2.5">
                         <div class="flex items-center justify-between gap-3">
                             <div class="flex items-center gap-2.5 min-w-0">
                                 <span class="text-xs font-mono font-extrabold din-green w-5 shrink-0">0${idx + 1}</span>
@@ -976,6 +1093,11 @@
                     </div>
                 `;
             }).join('');
+
+            const idxSel = top5.findIndex(d => d.sigla === ufRankingSelecionadaHome);
+            if (idxSel >= 0) {
+                renderizarDetalheRankingHome(top5[idxSel], idxSel + 1);
+            }
         }
 
         function atualizarBotoesRegiaoHome() {
