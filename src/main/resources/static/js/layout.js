@@ -88,10 +88,18 @@ th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}
     ['agro', '08. Agronegócio Brasileiro']
   ];
 
-  const path = location.pathname.toLowerCase().replace(/\.html$/, '').replace(/\/$/, '') || '/';
+  const norm = s => String(s || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/\.html$/, '')
+    .replace(/\/+$/, '') || '/';
+
+  const path = norm(location.pathname);
   const isAtivo = (slug, label) => {
-    if (slug === 'index' && (path === '/' || path === '/index')) return true;
-    if (path === '/' + slug) return true;
+    const alvo = norm(slug);
+    if (alvo === 'index' && (path === '/' || path === '/index')) return true;
+    if (path === '/' + alvo || path.endsWith('/' + alvo)) return true;
     if (label === 'Economia' && /economia|terminal-pib|imposto|simulador|selic|moeda|cambio|mundo|infla|contas-publicas|agro/.test(path)) return true;
     return false;
   };
@@ -199,6 +207,14 @@ th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}
   if (elHdr) elHdr.innerHTML = hdr;
   const elFtr = document.getElementById('bd-footer');
   if (elFtr) elFtr.innerHTML = ftr;
+
+  document.querySelectorAll('header nav a').forEach(a => {
+    a.addEventListener('click', () => {
+      const navBox = a.closest('nav');
+      navBox?.querySelectorAll('a').forEach(item => item.classList.remove('bd-nav-ativo', 'font-bold'));
+      a.classList.add('bd-nav-ativo', 'font-bold');
+    });
+  });
 
   // Move seletor de ano (#ano ou #selectAno) para o cabeçalho unificado quando #bd-header está ativo
   const selAno = document.getElementById('ano') || document.getElementById('selectAno');
