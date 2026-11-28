@@ -156,7 +156,7 @@
                                 </div>
                             </div>
                             <div class="text-right shrink-0">
-                                <span id="homeSelLabel" class="text-[10px] uppercase tracking-wider din-text-muted block">Impostos Est./Ano</span>
+                                <span id="homeSelLabel" class="text-[10px] uppercase tracking-wider din-text-muted block">Impostos Est. (2021)</span>
                                 <strong id="homeSelImposto" class="text-sm font-extrabold din-green">--</strong>
                             </div>
                         </div>
@@ -191,8 +191,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h2 class="text-sm sm:text-base font-bold din-text-main">Pulso Fiscal em Tempo Real</h2>
-                            <p class="text-[11px] din-text-muted">Estimativa contínua da arrecadação tributária no ano corrente</p>
+                            <h2 class="text-sm sm:text-base font-bold din-text-main">Pulso Fiscal em Tempo Real (<span class="lblAnoAtual">2026</span>)</h2>
+                            <p class="text-[11px] din-text-muted">Projeção contínua da arrecadação tributária nominal no ano corrente (base est. R$ 3,60 tri/ano · Ref. IBPT/STN)</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-3">
@@ -208,7 +208,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch tabular-nums">
                     <!-- Contador Dinâmico de Impostos (6 colunas) -->
                     <div class="lg:col-span-6 din-secondary-bg border din-border rounded-xl p-4 flex flex-col justify-between">
-                        <span class="text-[11px] font-semibold uppercase tracking-wider din-text-muted block">Tributos Arrecadados no Brasil (Projeção Linear no Ano)</span>
+                        <span class="text-[11px] font-semibold uppercase tracking-wider din-text-muted block">Tributos Arrecadados em <span class="lblAnoAtual">2026</span> (Projeção Linear)</span>
                         <p id="contadorImpostoAoVivo" class="text-2xl sm:text-3xl font-mono font-extrabold din-red my-1.5 tracking-tight">
                             R$ 0.000.000.000,00
                         </p>
@@ -221,14 +221,14 @@
                     <!-- Mini Comparativo Didático (6 colunas) -->
                     <div class="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                         <div class="din-secondary-bg border din-border rounded-xl p-4 flex flex-col justify-between">
-                            <span class="din-text-muted block text-[11px] font-semibold">Custo Médio por Cidadão</span>
-                            <span id="pulsoPorHabitante" class="text-lg font-extrabold din-text-main my-1 block">R$ 13.940 / ano</span>
-                            <span class="text-[11px] din-text-muted">Impostos diretos + indiretos no consumo</span>
+                            <span class="din-text-muted block text-[11px] font-semibold">Custo Médio por Cidadão (<span class="lblAnoAtual">2026</span>)</span>
+                            <span id="pulsoPorHabitante" class="text-lg font-extrabold din-text-main my-1 block">~R$ 16.900 / ano</span>
+                            <span class="text-[11px] din-text-muted">Projeção anual dividida pela pop. (IBGE)</span>
                         </div>
                         <div class="din-secondary-bg border din-border rounded-xl p-4 flex flex-col justify-between">
                             <span class="din-text-muted block text-[11px] font-semibold">Retorno Social (IDH Brasil)</span>
                             <span class="text-lg font-extrabold din-green my-1 block">0,760 (Alto)</span>
-                            <span class="text-[11px] din-text-muted">87ª posição global no ranking do PNUD</span>
+                            <span class="text-[11px] din-text-muted">89ª posição global · PNUD (Rel. 2023/24)</span>
                         </div>
                     </div>
                 </div>
@@ -679,6 +679,8 @@
         let seriesPibUfHome = {};
         let pibBrasilMil = 0;
         let popBrasilTotal = 0;
+        let anoBaseHome = 2021;
+        const META_ANUAL_TRIBUTOS = 3600000000000;
         let timestampAbertura = Date.now();
         let geoHomePronto = false;
         let ufSelecionadaHome = null;
@@ -686,13 +688,14 @@
         let criterioRankingHome = 'pibMil';
 
         function iniciarImpostometroAoVivo() {
-            const metaAnualTributos = 3600000000000;
             const agoraInit = new Date();
             const anoAtual = agoraInit.getFullYear();
+            document.querySelectorAll('.lblAnoAtual').forEach(el => el.innerText = anoAtual);
+
             const inicioAno = new Date(anoAtual, 0, 1);
             const fimAno = new Date(anoAtual + 1, 0, 1);
             const segundosTotaisAno = (fimAno - inicioAno) / 1000;
-            const porSegundo = metaAnualTributos / segundosTotaisAno;
+            const porSegundo = META_ANUAL_TRIBUTOS / segundosTotaisAno;
 
             const elRitmo = document.getElementById('ritmoPorSegundo');
             if (elRitmo) {
@@ -758,6 +761,7 @@
                         .filter(a => a > 0)
                 )];
                 const anoMaisRecente = anosCompletos.length > 0 ? Math.max(...anosCompletos) : 2021;
+                anoBaseHome = anoMaisRecente;
 
                 document.querySelectorAll('.lblAnoTicker').forEach(el => el.innerText = anoMaisRecente);
 
@@ -822,8 +826,8 @@
                 if (popTotal > 0) {
                     popBrasilTotal = popTotal;
                     document.getElementById('tickerPop').innerText = (popTotal / 1e6).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' milhões';
-                    const impostoPorHab = (pibReais * 0.33) / popTotal;
-                    document.getElementById('pulsoPorHabitante').innerText = BDFmt.brl(impostoPorHab, 0) + ' / ano';
+                    const impostoPorHab = META_ANUAL_TRIBUTOS / popTotal;
+                    document.getElementById('pulsoPorHabitante').innerText = '~' + BDFmt.brl(impostoPorHab, 0) + ' / ano';
                 }
 
                 const ordenadosPib = Object.values(mapaUfHome).filter(d => d.pibMil > 0).sort((a, b) => b.pibMil - a.pibMil);
@@ -953,11 +957,11 @@
             const ind = document.getElementById('selectIndicadorMapaHome')?.value || 'imposto';
 
             const rotulos = {
-                imposto: 'Impostos Est./Ano',
-                pibMil: 'PIB Estadual',
-                perCapita: 'PIB per Capita'
+                imposto: `Impostos Est. (${anoBaseHome})`,
+                pibMil: `PIB Estadual (${anoBaseHome})`,
+                perCapita: `PIB per Capita (${anoBaseHome})`
             };
-            if (elLabel) elLabel.textContent = rotulos[ind] || 'Impostos Est./Ano';
+            if (elLabel) elLabel.textContent = rotulos[ind] || `Impostos Est. (${anoBaseHome})`;
 
             if (ufSelecionadaHome && mapaUfHome[ufSelecionadaHome]) {
                 const d = mapaUfHome[ufSelecionadaHome];
