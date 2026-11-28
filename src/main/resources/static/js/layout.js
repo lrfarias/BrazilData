@@ -1,4 +1,15 @@
 (() => {
+  const norm = s => String(s || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/\.html$/, '')
+    .replace(/\/+$/, '') || '/';
+
+  const path = norm(location.pathname);
+  const pagina = (path === '/' || path === '/index') ? 'index' : path.replace(/^\//, '');
+  document.documentElement.setAttribute('data-pagina', pagina);
+
   const css = `:root{--bg:#fff;--card:#F7F8FA;--sec:#F0F2F5;--tx:#17191C;--mu:#737780;--bd:#E5E7EB;--gr:#16C784;--rd:#EA3943}
 [data-theme=dark]{--bg:#101214;--card:#191C20;--sec:#22262B;--tx:#F5F6F7;--mu:#9299A3;--bd:#2B3036}
 body{background:var(--bg);color:var(--tx)}
@@ -66,7 +77,15 @@ button,
 [role="tab"],
 a.card-hover,
 a.card-roleta,
-.grid > a{
+.grid > a,
+#carrosselFerramentas > a,
+#carrosselFerramentas > div,
+[data-pagina="economia"] .grid > a,
+[data-pagina="economia"] .grid > div,
+[data-pagina="glossario"] .grid > div,
+[data-pagina="glossario"] .grid > article,
+[data-pagina="glossario"] article.din-card-bg,
+[data-pagina="glossario"] details{
   transition:border-color 150ms ease,color 150ms ease,filter 150ms ease,transform 150ms ease;
 }
 
@@ -76,12 +95,20 @@ button:hover,
   border-color:var(--gr)!important;
 }
 
-/* Cards que redirecionam (links em card): borda verde esmeralda no hover */
+/* Cards clicáveis: Início (carrossel), Economia (ferramentas) e Glossário */
 a.card-hover:hover,
 a.card-roleta:hover,
 a.din-card-bg:hover,
 a.din-secondary-bg:hover,
-.grid > a:hover{
+.grid > a:hover,
+#carrosselFerramentas > a:hover,
+#carrosselFerramentas > div:hover,
+[data-pagina="economia"] .grid > a:hover,
+[data-pagina="economia"] .grid > div:hover,
+[data-pagina="glossario"] .grid > div:hover,
+[data-pagina="glossario"] .grid > article:hover,
+[data-pagina="glossario"] article.din-card-bg:hover,
+[data-pagina="glossario"] details:hover{
   border-color:var(--gr)!important;
 }
 
@@ -186,14 +213,6 @@ th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}
     ['agro', '08. Agronegócio Brasileiro']
   ];
 
-  const norm = s => String(s || '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/\.html$/, '')
-    .replace(/\/+$/, '') || '/';
-
-  const path = norm(location.pathname);
   const isAtivo = (slug, label) => {
     const alvo = norm(slug);
     if (alvo === 'index' && (path === '/' || path === '/index')) return true;
