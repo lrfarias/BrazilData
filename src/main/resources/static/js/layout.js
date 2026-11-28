@@ -30,21 +30,18 @@ button[data-rank].ativo,
 .grid > button.bg-white *,
 .flex > button.bg-white *{color:#fff!important}
 
-/* Borda verde simples (sem contorno duplo) em botões, abas e selects */
+/* Borda verde única ao passar o mouse em abas, botões, FAQs e selects (sem contorno duplo) */
 button:hover,
 [role="button"]:hover,
 [role="tab"]:hover,
+nav a:hover,
 select:hover,
 summary:hover,
+.faq-item:hover,
+[data-faq]:hover,
 .card-hover:hover,
 .card-roleta:hover{
-  border-color:var(--gr)!important;
-  outline:none!important;
-  box-shadow:none!important;
-}
-
-/* Links comuns: sem borda dupla */
-a[href]:hover{
+  border:1.5px solid var(--gr)!important;
   outline:none!important;
   box-shadow:none!important;
 }
@@ -52,7 +49,6 @@ a[href]:hover{
 /* Itens de lista e menu: sem borda e texto verde no hover */
 #bdMenu a,
 #bdMenu button,
-nav a,
 footer a,
 li a,
 li button{
@@ -73,9 +69,11 @@ li button:hover{
 button,
 [role="button"],
 [role="tab"],
+nav a,
 select,
-a[href],
 summary,
+.faq-item,
+[data-faq],
 .card-hover,
 .card-roleta{
   transition:border-color 150ms ease,color 150ms ease,opacity 150ms ease,transform 150ms ease;
