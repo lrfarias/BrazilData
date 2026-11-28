@@ -16,10 +16,6 @@ body{background:var(--bg);color:var(--tx)}
 [role="tablist"] .active,
 .tabs button.ativo,
 .tab-btn.ativo,
-button[aria-pressed="true"],
-button[data-ativo="true"],
-button[data-cenario].ativo,
-button[data-periodo].ativo,
 button[data-tab].ativo,
 button[data-aba].ativo,
 button[data-modo].ativo,
@@ -34,20 +30,46 @@ button[data-rank].ativo,
 .grid > button.bg-white *,
 .flex > button.bg-white *{color:#fff!important}
 
-/* Contorno verde no hover e foco em qualquer botão, aba, select, link de ação ou item interativo (claro e escuro) */
+/* Borda verde simples (sem contorno duplo) em botões, abas e selects */
 button:hover,
 [role="button"]:hover,
 [role="tab"]:hover,
 select:hover,
-a[href]:hover,
 summary:hover,
 .card-hover:hover,
 .card-roleta:hover{
   border-color:var(--gr)!important;
-  outline:1.5px solid var(--gr)!important;
-  outline-offset:1px;
-  box-shadow:0 0 0 3px rgba(22,199,132,.20),0 4px 12px rgba(22,199,132,.14)!important;
+  outline:none!important;
+  box-shadow:none!important;
 }
+
+/* Links comuns: sem borda dupla */
+a[href]:hover{
+  outline:none!important;
+  box-shadow:none!important;
+}
+
+/* Itens de lista e menu: sem borda e texto verde no hover */
+#bdMenu a,
+#bdMenu button,
+nav a,
+footer a,
+li a,
+li button{
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+}
+#bdMenu a:hover,
+#bdMenu button:hover,
+li a:hover,
+li button:hover{
+  color:var(--gr)!important;
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+}
+
 button,
 [role="button"],
 [role="tab"],
@@ -56,7 +78,7 @@ a[href],
 summary,
 .card-hover,
 .card-roleta{
-  transition:border-color 150ms ease,outline-color 150ms ease,box-shadow 150ms ease,color 150ms ease,transform 150ms ease;
+  transition:border-color 150ms ease,color 150ms ease,opacity 150ms ease,transform 150ms ease;
 }
 
 /* Evita corte da borda superior quando o card sobe no hover dentro do carrossel */
