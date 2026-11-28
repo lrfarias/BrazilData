@@ -211,8 +211,16 @@
                             </svg>
                         </div>
                         <div>
-                            <h2 class="text-sm sm:text-base font-bold din-text-main">Pulso Fiscal em Tempo Real (<span class="lblAnoAtual">2026</span>)</h2>
-                            <p class="text-[11px] din-text-muted">Projeção contínua da arrecadação tributária nominal no ano corrente (base est. R$ 3,60 tri/ano · Ref. IBPT/STN)</p>
+                            <h2 class="text-sm sm:text-base font-bold din-text-main">
+                                Pulso Fiscal em Tempo Real (<span class="lblAnoAtual"></span>)
+                            </h2>
+                            <p class="text-[11px] din-text-muted">
+                                Arrecadação tributária acumulada no ano corrente • Referência:
+                                <a href="https://impostometro.com.br/" target="_blank" rel="noopener noreferrer"
+                                   class="din-green font-semibold hover:underline">
+                                    Impostômetro (ACSP / IBPT) ↗
+                                </a>
+                            </p>
                         </div>
                     </div>
                     <div class="flex items-center gap-3">
@@ -228,12 +236,12 @@
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch tabular-nums">
                     <!-- Contador Dinâmico de Impostos (6 colunas) -->
                     <div class="lg:col-span-6 din-secondary-bg border din-border rounded-xl p-4 flex flex-col justify-between">
-                        <span class="text-[11px] font-semibold uppercase tracking-wider din-text-muted block">Tributos Arrecadados em <span class="lblAnoAtual">2026</span> (Projeção Linear)</span>
+                        <span class="text-[11px] font-semibold uppercase tracking-wider din-text-muted block">Tributos Arrecadados em <span class="lblAnoAtual"></span> (Tempo Real)</span>
                         <p id="contadorImpostoAoVivo" class="text-2xl sm:text-3xl font-mono font-extrabold din-red my-1.5 tracking-tight">
                             R$ 0.000.000.000,00
                         </p>
                         <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] din-text-muted pt-2 border-t din-border">
-                            <span>Ritmo estimado: <strong id="ritmoPorSegundo" class="din-text-main">~R$ 114.155 / segundo</strong></span>
+                            <span>Ritmo estimado: <strong id="ritmoPorSegundo" class="din-text-main">~R$ 129.220 / segundo</strong></span>
                             <span id="impostoDesdeQueAbriu" class="din-green font-mono font-bold">+R$ 0 nesta visita</span>
                         </div>
                     </div>
@@ -241,8 +249,8 @@
                     <!-- Mini Comparativo Didático (6 colunas) -->
                     <div class="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                         <div class="din-secondary-bg border din-border rounded-xl p-4 flex flex-col justify-between">
-                            <span class="din-text-muted block text-[11px] font-semibold">Custo Médio por Cidadão (<span class="lblAnoAtual">2026</span>)</span>
-                            <span id="pulsoPorHabitante" class="text-lg font-extrabold din-text-main my-1 block">~R$ 16.900 / ano</span>
+                            <span class="din-text-muted block text-[11px] font-semibold">Custo Médio por Cidadão (<span class="lblAnoAtual"></span>)</span>
+                            <span id="pulsoPorHabitante" class="text-lg font-extrabold din-text-main my-1 block">~R$ 19.100 / ano</span>
                             <span class="text-[11px] din-text-muted">Projeção anual dividida pela pop. (IBGE)</span>
                         </div>
                         <div class="din-secondary-bg border din-border rounded-xl p-4 flex flex-col justify-between">
@@ -698,14 +706,14 @@
         let pibBrasilMil = 0;
         let popBrasilTotal = 0;
         let anoBaseHome = 2021;
-        const META_ANUAL_TRIBUTOS = 3600000000000;
+        const META_ANUAL_TRIBUTOS = 4075000000000;
         let timestampAbertura = Date.now();
         let geoHomePronto = false;
         let ufSelecionadaHome = null;
         let regiaoSelecionadaHome = 'Todas';
         let criterioRankingHome = 'pibMil';
 
-        function iniciarImpostometroAoVivo() {
+        async function iniciarImpostometroAoVivo() {
             const agoraInit = new Date();
             const anoAtual = agoraInit.getFullYear();
             document.querySelectorAll('.lblAnoAtual').forEach(el => el.innerText = anoAtual);
@@ -713,7 +721,28 @@
             const inicioAno = new Date(anoAtual, 0, 1);
             const fimAno = new Date(anoAtual + 1, 0, 1);
             const segundosTotaisAno = (fimAno - inicioAno) / 1000;
-            const porSegundo = META_ANUAL_TRIBUTOS / segundosTotaisAno;
+
+            let valorBase = ((agoraInit - inicioAno) / 1000) * (META_ANUAL_TRIBUTOS / segundosTotaisAno);
+            let porSegundo = META_ANUAL_TRIBUTOS / segundosTotaisAno;
+            let baseTimestamp = Date.now();
+
+            // Tenta sincronizar com o endpoint oficial (/api/impostometro)
+            try {
+                const resp = await fetch('/api/impostometro');
+                if (resp.ok) {
+                    const dados = await resp.json();
+                    if (dados && dados.valor > 0 && dados.incrementoPorSegundo > 0) {
+                        valorBase = Number(dados.valor);
+                        porSegundo = Number(dados.incrementoPorSegundo);
+                        baseTimestamp = Date.now();
+                        if (dados.ano) {
+                            document.querySelectorAll('.lblAnoAtual').forEach(el => el.innerText = dados.ano);
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn('Usando projeção local calibrada para o Pulso Fiscal:', e);
+            }
 
             const elRitmo = document.getElementById('ritmoPorSegundo');
             if (elRitmo) {
@@ -721,9 +750,8 @@
             }
 
             setInterval(() => {
-                const agora = new Date();
-                const segundosNoAno = (agora - inicioAno) / 1000;
-                const acumuladoAno = segundosNoAno * porSegundo;
+                const decorridoSeg = (Date.now() - baseTimestamp) / 1000;
+                const acumuladoAno = valorBase + (decorridoSeg * porSegundo);
 
                 const segundosVisita = (Date.now() - timestampAbertura) / 1000;
                 const acumuladoVisita = segundosVisita * porSegundo;
