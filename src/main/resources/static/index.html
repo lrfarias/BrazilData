@@ -34,6 +34,24 @@
         @keyframes pulseSubtle { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
         .live-dot { animation: pulseSubtle 1.6s infinite; }
         #carrosselFerramentas::-webkit-scrollbar { display: none; }
+
+        /* Botões de região e abas do Top 5 (Verde Esmeralda com texto branco) */
+        .btn-reg-home {
+            background-color: var(--bg-secondary);
+            color: var(--text-muted);
+            border: 1px solid var(--border-col);
+        }
+        .btn-reg-home:hover {
+            color: var(--text-main);
+            border-color: #10B981;
+        }
+        .btn-reg-home.ativo,
+        .tab-rank-home.ativo {
+            background-color: #10B981 !important;
+            color: #FFFFFF !important;
+            border-color: #10B981 !important;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.28);
+        }
     </style>
 </head>
 <body class="min-h-screen font-sans flex flex-col justify-between">
@@ -44,7 +62,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 h-8 flex items-center justify-between overflow-x-auto no-scrollbar whitespace-nowrap gap-6 tabular-nums">
                 <div class="flex items-center gap-5">
                     <span class="inline-flex items-center gap-1.5 font-bold din-text-main">
-                        <span class="w-2 h-2 rounded-full bg-[#237B66] live-dot"></span>
+                        <span class="w-2 h-2 rounded-full bg-[#10B981] live-dot"></span>
                         Terminal Ativo
                     </span>
                     <span class="din-text-muted">PIB Brasil (<span class="lblAnoTicker">2021</span>): <strong id="tickerPib" class="din-green">Sincronizando...</strong></span>
@@ -112,14 +130,14 @@
                             </svg>
                         </div>
 
-                        <!-- 6 Botões de Região (estilo Atlas) -->
+                        <!-- 6 Botões de Região -->
                         <div id="btnsRegiaoHome" class="flex items-center justify-between gap-1.5 pt-0.5">
-                            <button type="button" data-reg="Todas" onclick="selecionarRegiaoHome('Todas')" class="btn-reg-home flex-1 py-1.5 rounded-lg text-[11px] font-extrabold tracking-wide transition cursor-pointer bg-[#237B66] text-[#F5F3ED] shadow-sm">BR</button>
-                            <button type="button" data-reg="Norte" onclick="selecionarRegiaoHome('Norte')" class="btn-reg-home flex-1 py-1.5 rounded-lg text-[11px] font-extrabold tracking-wide transition cursor-pointer din-secondary-bg din-text-muted hover:din-text-main border din-border">N</button>
-                            <button type="button" data-reg="Nordeste" onclick="selecionarRegiaoHome('Nordeste')" class="btn-reg-home flex-1 py-1.5 rounded-lg text-[11px] font-extrabold tracking-wide transition cursor-pointer din-secondary-bg din-text-muted hover:din-text-main border din-border">NE</button>
-                            <button type="button" data-reg="Centro-Oeste" onclick="selecionarRegiaoHome('Centro-Oeste')" class="btn-reg-home flex-1 py-1.5 rounded-lg text-[11px] font-extrabold tracking-wide transition cursor-pointer din-secondary-bg din-text-muted hover:din-text-main border din-border">CO</button>
-                            <button type="button" data-reg="Sudeste" onclick="selecionarRegiaoHome('Sudeste')" class="btn-reg-home flex-1 py-1.5 rounded-lg text-[11px] font-extrabold tracking-wide transition cursor-pointer din-secondary-bg din-text-muted hover:din-text-main border din-border">SE</button>
-                            <button type="button" data-reg="Sul" onclick="selecionarRegiaoHome('Sul')" class="btn-reg-home flex-1 py-1.5 rounded-lg text-[11px] font-extrabold tracking-wide transition cursor-pointer din-secondary-bg din-text-muted hover:din-text-main border din-border">S</button>
+                            <button type="button" data-reg="Todas" onclick="selecionarRegiaoHome('Todas')" class="btn-reg-home ativo flex-1 py-1.5 rounded-lg text-[11px] font-extrabold tracking-wide transition cursor-pointer">BR</button>
+                            <button type="button" data-reg="Norte" onclick="selecionarRegiaoHome('Norte')" class="btn-reg-home flex-1 py-1.5 rounded-lg text-[11px] font-extrabold tracking-wide transition cursor-pointer">N</button>
+                            <button type="button" data-reg="Nordeste" onclick="selecionarRegiaoHome('Nordeste')" class="btn-reg-home flex-1 py-1.5 rounded-lg text-[11px] font-extrabold tracking-wide transition cursor-pointer">NE</button>
+                            <button type="button" data-reg="Centro-Oeste" onclick="selecionarRegiaoHome('Centro-Oeste')" class="btn-reg-home flex-1 py-1.5 rounded-lg text-[11px] font-extrabold tracking-wide transition cursor-pointer">CO</button>
+                            <button type="button" data-reg="Sudeste" onclick="selecionarRegiaoHome('Sudeste')" class="btn-reg-home flex-1 py-1.5 rounded-lg text-[11px] font-extrabold tracking-wide transition cursor-pointer">SE</button>
+                            <button type="button" data-reg="Sul" onclick="selecionarRegiaoHome('Sul')" class="btn-reg-home flex-1 py-1.5 rounded-lg text-[11px] font-extrabold tracking-wide transition cursor-pointer">S</button>
                         </div>
 
                         <!-- Mapa SVG compacto e bem encaixado -->
@@ -233,7 +251,7 @@
 
                     <!-- Abas de Critério do Top 5 -->
                     <div id="abasRankingHome" class="flex items-center gap-1.5 din-secondary-bg p-1 rounded-xl border din-border overflow-x-auto no-scrollbar text-xs font-bold self-start lg:self-auto max-w-full">
-                        <button type="button" data-rank="pibMil" onclick="trocarAbaRankingHome('pibMil')" class="tab-rank-home px-3 py-1.5 rounded-lg bg-[#237B66] text-[#F5F3ED] shadow-sm transition cursor-pointer shrink-0">Maiores PIBs</button>
+                        <button type="button" data-rank="pibMil" onclick="trocarAbaRankingHome('pibMil')" class="tab-rank-home ativo px-3 py-1.5 rounded-lg transition cursor-pointer shrink-0">Maiores PIBs</button>
                         <button type="button" data-rank="perCapita" onclick="trocarAbaRankingHome('perCapita')" class="tab-rank-home px-3 py-1.5 rounded-lg din-text-muted hover:din-text-main transition cursor-pointer shrink-0">Maior PIB per Capita</button>
                         <button type="button" data-rank="idh" onclick="trocarAbaRankingHome('idh')" class="tab-rank-home px-3 py-1.5 rounded-lg din-text-muted hover:din-text-main transition cursor-pointer shrink-0">Maiores IDHs</button>
                         <button type="button" data-rank="pop" onclick="trocarAbaRankingHome('pop')" class="tab-rank-home px-3 py-1.5 rounded-lg din-text-muted hover:din-text-main transition cursor-pointer shrink-0">Maior População</button>
@@ -396,13 +414,13 @@
                 <!-- Botões de seta (Esquerda / Direita) -->
                 <div class="flex items-center justify-end gap-2 mb-3">
                     <button type="button" onclick="moverCarrossel(-1)" aria-label="Anterior"
-                        class="w-8 h-8 rounded-lg din-card-bg border din-border flex items-center justify-center din-text-main hover:border-[#237B66] transition cursor-pointer">
+                        class="w-8 h-8 rounded-lg din-card-bg border din-border flex items-center justify-center din-text-main hover:border-[#10B981] transition cursor-pointer">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
                         </svg>
                     </button>
                     <button type="button" onclick="moverCarrossel(1)" aria-label="Próximo"
-                        class="w-8 h-8 rounded-lg din-card-bg border din-border flex items-center justify-center din-text-main hover:border-[#237B66] transition cursor-pointer">
+                        class="w-8 h-8 rounded-lg din-card-bg border din-border flex items-center justify-center din-text-main hover:border-[#10B981] transition cursor-pointer">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
                         </svg>
@@ -839,9 +857,8 @@
             criterioRankingHome = criterio;
             document.querySelectorAll('.tab-rank-home').forEach(btn => {
                 const ativo = btn.getAttribute('data-rank') === criterio;
-                btn.className = ativo
-                    ? 'tab-rank-home px-3 py-1.5 rounded-lg bg-[#237B66] text-[#F5F3ED] shadow-sm transition cursor-pointer shrink-0'
-                    : 'tab-rank-home px-3 py-1.5 rounded-lg din-text-muted hover:din-text-main transition cursor-pointer shrink-0';
+                btn.classList.toggle('ativo', ativo);
+                btn.classList.toggle('din-text-muted', !ativo);
             });
             renderizarRankingHome();
         }
@@ -884,28 +901,39 @@
             }).join('');
         }
 
-        function selecionarRegiaoHome(regiao) {
-            regiaoSelecionadaHome = (regiaoSelecionadaHome === regiao && regiao !== 'Todas') ? 'Todas' : regiao;
-            ufSelecionadaHome = null;
-
+        function atualizarBotoesRegiaoHome() {
             document.querySelectorAll('.btn-reg-home').forEach(btn => {
                 const ativo = btn.getAttribute('data-reg') === regiaoSelecionadaHome;
-                btn.className = ativo
-                    ? 'btn-reg-home flex-1 py-1.5 rounded-lg text-[11px] font-extrabold tracking-wide transition cursor-pointer bg-[#237B66] text-[#F5F3ED] shadow-sm'
-                    : 'btn-reg-home flex-1 py-1.5 rounded-lg text-[11px] font-extrabold tracking-wide transition cursor-pointer din-secondary-bg din-text-muted hover:din-text-main border din-border';
+                btn.classList.toggle('ativo', ativo);
             });
+        }
 
+        function selecionarRegiaoHome(regiao) {
+            if (regiao === 'Todas' || regiaoSelecionadaHome === regiao) {
+                regiaoSelecionadaHome = 'Todas';
+            } else {
+                regiaoSelecionadaHome = regiao;
+            }
+            ufSelecionadaHome = null;
+
+            atualizarBotoesRegiaoHome();
             pintarMapaHome();
             atualizarResumoMapaHome();
         }
 
-        function corAtlasHome(valor, min, max) {
-            if (!valor || max <= min) return '#438570';
-            const t = (valor - min) / (max - min);
-            if (t < 0.25) return '#2E5E52';
-            if (t < 0.50) return '#438570';
-            if (t < 0.75) return '#5DA68B';
-            return '#7DC7A9';
+        function corAtlasHome(valor, min, max, isDark) {
+            const t = (!valor || max <= min) ? 0.5 : (valor - min) / (max - min);
+            if (isDark) {
+                if (t < 0.25) return '#1E3A4C';
+                if (t < 0.50) return '#225257';
+                if (t < 0.75) return '#237B66';
+                return '#2D9378';
+            } else {
+                if (t < 0.25) return '#D1E7DF';
+                if (t < 0.50) return '#9ACBB9';
+                if (t < 0.75) return '#5AA990';
+                return '#237B66';
+            }
         }
 
         function obterValorMetricaHome(d, ind) {
@@ -1008,8 +1036,10 @@
             const pathGen = d3.geoPath().projection(proj);
 
             svg.on('click', ev => {
-                if (ev.target === svg.node() && ufSelecionadaHome) {
+                if (ev.target === svg.node() && (ufSelecionadaHome || regiaoSelecionadaHome !== 'Todas')) {
                     ufSelecionadaHome = null;
+                    regiaoSelecionadaHome = 'Todas';
+                    atualizarBotoesRegiaoHome();
                     pintarMapaHome();
                     atualizarResumoMapaHome();
                 }
@@ -1022,7 +1052,8 @@
                 .attr('data-uf', f => f.properties.sigla || '')
                 .attr('stroke-linejoin', 'round')
                 .attr('stroke-linecap', 'round')
-                .attr('class', 'cursor-pointer transition-all duration-150')
+                .attr('class', 'cursor-pointer')
+                .style('transition', 'fill 160ms ease, fill-opacity 160ms ease')
                 .on('mouseenter', function () {
                     const uf = this.getAttribute('data-uf');
                     const d = mapaUfHome[uf];
@@ -1038,7 +1069,10 @@
                     }
                     document.getElementById('homeTipVal').textContent = txt;
                     tip.classList.remove('hidden');
-                    d3.select(this).attr('fill-opacity', 1).raise();
+
+                    if (ufSelecionadaHome !== uf) {
+                        d3.select(this).attr('fill-opacity', 1).attr('fill', '#34D399');
+                    }
                 })
                 .on('mousemove', ev => {
                     tip.style.left = (ev.clientX + 14) + 'px';
@@ -1052,7 +1086,17 @@
                     ev.stopPropagation();
                     const uf = this.getAttribute('data-uf');
                     if (!uf) return;
-                    ufSelecionadaHome = (ufSelecionadaHome === uf) ? null : uf;
+
+                    if (ufSelecionadaHome === uf) {
+                        ufSelecionadaHome = null;
+                    } else {
+                        if (regiaoSelecionadaHome !== 'Todas' && BDUF.REGIAO_UF[uf] !== regiaoSelecionadaHome) {
+                            regiaoSelecionadaHome = 'Todas';
+                            atualizarBotoesRegiaoHome();
+                        }
+                        ufSelecionadaHome = uf;
+                    }
+
                     pintarMapaHome();
                     atualizarResumoMapaHome();
                 });
@@ -1071,26 +1115,41 @@
             const min = valores.length ? Math.min(...valores) : 0;
             const max = valores.length ? Math.max(...valores) : 1;
             const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            const corRecorte = isDark ? '#162638' : '#F5F3ED';
+
+            const corBorda = isDark ? '#162638' : '#F5F3ED';
+            const corInativo = isDark ? '#1B2E40' : '#E2E8F0';
+            const corEsmeralda = '#10B981';
 
             const paths = d3.select('#mapaHomeBrasil').selectAll('path');
             paths
                 .attr('fill', function () {
                     const uf = this.getAttribute('data-uf');
-                    if (ufSelecionadaHome === uf) return '#9AE0C3';
+                    if (ufSelecionadaHome) {
+                        return uf === ufSelecionadaHome ? corEsmeralda : corInativo;
+                    }
+                    if (regiaoSelecionadaHome !== 'Todas') {
+                        return BDUF.REGIAO_UF[uf] === regiaoSelecionadaHome ? corEsmeralda : corInativo;
+                    }
                     const val = obterValorMetricaHome(mapaUfHome[uf], ind);
-                    return corAtlasHome(val, min, max);
+                    return corAtlasHome(val, min, max, isDark);
                 })
                 .attr('fill-opacity', function () {
                     const uf = this.getAttribute('data-uf');
-                    if (ufSelecionadaHome) return ufSelecionadaHome === uf ? 1 : 0.35;
+                    if (ufSelecionadaHome) return uf === ufSelecionadaHome ? 1 : 0.65;
                     if (regiaoSelecionadaHome !== 'Todas') {
-                        return (BDUF.REGIAO_UF[uf] === regiaoSelecionadaHome) ? 1 : 0.25;
+                        return BDUF.REGIAO_UF[uf] === regiaoSelecionadaHome ? 1 : 0.6;
                     }
                     return 0.96;
                 })
-                .attr('stroke', corRecorte)
-                .attr('stroke-width', 2.4);
+                .attr('stroke', function () {
+                    const uf = this.getAttribute('data-uf');
+                    if (ufSelecionadaHome === uf) return isDark ? '#ECFDF5' : '#065F46';
+                    return corBorda;
+                })
+                .attr('stroke-width', function () {
+                    const uf = this.getAttribute('data-uf');
+                    return ufSelecionadaHome === uf ? 2.4 : 1.8;
+                });
 
             if (ufSelecionadaHome) {
                 paths.filter(function () { return this.getAttribute('data-uf') === ufSelecionadaHome; }).raise();
