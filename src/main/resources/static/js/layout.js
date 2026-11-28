@@ -68,6 +68,14 @@ button[data-rank].ativo,
   color:#fff!important;
 }
 
+/* Abas e botões internos (ex.: Resumo/Destaques/Evolução e Tabela/Pizza): borda transparente base para aparecer verde no hover sem pular */
+.din-secondary-bg > button,
+.din-secondary-bg > [role="tab"],
+[role="tablist"] button,
+[role="tablist"] [role="tab"]{
+  border:1px solid transparent;
+}
+
 /* Abas e botões comuns: borda verde esmeralda no hover */
 .bd-tab{background:var(--sec);color:var(--mu);border:1px solid var(--bd);transition:border-color 150ms ease,color 150ms ease;cursor:pointer}
 .bd-tab:hover{color:var(--tx);border-color:var(--gr)!important}
@@ -111,6 +119,10 @@ a.din-secondary-bg:hover,
 [data-pagina="glossario"] details:hover{
   border-color:var(--gr)!important;
 }
+
+/* Linhas de tabela/ranking: destaque sutil de fundo ao passar o mouse (sem borda) */
+tbody tr{transition:background-color 120ms ease}
+tbody tr:hover{background-color:rgba(22,199,132,.08)!important}
 
 /* Listas, menus e links de texto: sem borda retangular, apenas muda a cor da letra para verde esmeralda */
 #bdMenu a,
