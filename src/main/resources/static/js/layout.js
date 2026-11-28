@@ -5,10 +5,11 @@ body{background:var(--bg);color:var(--tx)}
 .din-card-bg{background:var(--card)}.din-secondary-bg{background:var(--sec)}
 .din-text-main{color:var(--tx)}.din-text-muted{color:var(--mu)}
 .din-border{border-color:var(--bd)!important}.din-green{color:var(--gr)}.din-red{color:var(--rd)}
-.din-btn{background:var(--gr);color:#fff}.din-btn:hover{opacity:.9}
-.bd-nav-ativo,.bd-tab.ativo{background:var(--gr)!important;color:#fff!important;border-color:var(--gr)!important;box-shadow:0 2px 8px rgba(22,199,132,.28)}
-.bd-tab{background:var(--sec);color:var(--mu);border:1px solid var(--bd);transition:all 150ms ease;cursor:pointer}
-.bd-tab:hover{color:var(--tx);border-color:var(--gr)}
+
+/* Botões principais e estados ativos padronizados no mesmo verde esmeralda com letra branca */
+.din-btn,
+.bd-nav-ativo,
+.bd-tab.ativo,
 .din-secondary-bg > button.din-card-bg,
 .din-secondary-bg > [role="tab"].din-card-bg,
 [role="tablist"] [aria-selected="true"],
@@ -24,78 +25,83 @@ button[data-rank].ativo,
 .bg-white.rounded-lg,
 .bg-white.rounded-xl,
 .grid > button.bg-white,
-.flex > button.bg-white{background:var(--gr)!important;color:#fff!important;border-color:var(--gr)!important;box-shadow:0 2px 8px rgba(22,199,132,.28)}
+.flex > button.bg-white{
+  background:var(--gr)!important;
+  color:#fff!important;
+  border-color:var(--gr)!important;
+}
+.din-btn *,
+.bd-nav-ativo *,
+.bd-tab.ativo *,
 .din-secondary-bg > button.din-card-bg *,
 .din-secondary-bg > [role="tab"].din-card-bg *,
 .grid > button.bg-white *,
-.flex > button.bg-white *{color:#fff!important}
+.flex > button.bg-white *{
+  color:#fff!important;
+}
 
-/* Base sem bordas duplas/contornos indesejados */
+/* Hover em botões verdes: mantém letra branca e dá apenas um leve destaque */
+.din-btn:hover,
+.bd-nav-ativo:hover,
+.bd-tab.ativo:hover,
+.din-secondary-bg > button.din-card-bg:hover,
+.din-secondary-bg > [role="tab"].din-card-bg:hover,
+.grid > button.bg-white:hover,
+.flex > button.bg-white:hover{
+  color:#fff!important;
+  filter:brightness(1.06);
+}
+.din-btn:hover *,
+.bd-nav-ativo:hover *,
+.bd-tab.ativo:hover *{
+  color:#fff!important;
+}
+
+/* Abas e botões comuns: borda verde esmeralda no hover */
+.bd-tab{background:var(--sec);color:var(--mu);border:1px solid var(--bd);transition:border-color 150ms ease,color 150ms ease;cursor:pointer}
+.bd-tab:hover{color:var(--tx);border-color:var(--gr)!important}
+
 button,
 [role="button"],
 [role="tab"],
-nav a,
-select,
-summary,
-a[href],
-.card-hover,
-.card-roleta{
-  outline:none!important;
-  box-shadow:none!important;
-  transition:border-color 150ms ease,color 150ms ease,opacity 150ms ease;
+a.card-hover,
+a.card-roleta,
+.grid > a{
+  transition:border-color 150ms ease,color 150ms ease,filter 150ms ease,transform 150ms ease;
 }
 
-/* Impede "saltinho" ao passar o mouse em botões, abas, links e selects */
 button:hover,
 [role="button"]:hover,
-[role="tab"]:hover,
-nav a:hover,
-select:hover,
-a[href]:hover{
-  transform:none!important;
-}
-
-/* 1. Cada item individual do menu ganha borda verde ao passar o mouse (sem mover o container) */
-header nav a,
-nav a{
-  border:1px solid transparent;
-  border-radius:0.5rem;
-}
-header nav a:hover,
-nav a:hover{
-  border:1.5px solid var(--gr)!important;
-}
-
-/* 2. Borda verde ao passar o mouse em botões comuns e nos quadros (ex.: 01, 02, 03...) */
-button:hover,
-[role="button"]:hover,
-[role="tab"]:hover,
-a[href*="rankingBrasil"]:hover,
-.grid a:hover,
-.grid > div:hover,
-.card-hover:hover,
-.card-roleta:hover{
+[role="tab"]:hover{
   border-color:var(--gr)!important;
 }
 
-/* 3. Exceções: sem borda verde no hover para selects, FAQs/contato e itens de lista/menu */
-select:hover,
-.faq-item:hover,
-[data-faq]:hover,
-summary:hover,
+/* Cards que redirecionam (links em card): borda verde esmeralda no hover */
+a.card-hover:hover,
+a.card-roleta:hover,
+a.din-card-bg:hover,
+a.din-secondary-bg:hover,
+.grid > a:hover{
+  border-color:var(--gr)!important;
+}
+
+/* Listas, menus e links de texto: sem borda retangular, apenas muda a cor da letra para verde esmeralda */
+#bdMenu a,
+#bdMenu button,
+li a,
+li button{
+  border-color:transparent!important;
+  outline:none!important;
+  box-shadow:none!important;
+}
 #bdMenu a:hover,
 #bdMenu button:hover,
 footer a:hover,
 li a:hover,
-li button:hover{
-  border-color:var(--bd)!important;
-}
-#bdMenu a:hover,
-#bdMenu button:hover,
-li a:hover,
-li button:hover{
+li button:hover,
+header nav a:not(.bd-nav-ativo):hover{
   color:var(--gr)!important;
-  border:none!important;
+  border-color:transparent!important;
 }
 
 /* Evita corte da borda superior quando o card sobe no hover dentro do carrossel */
