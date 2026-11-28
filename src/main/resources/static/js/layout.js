@@ -9,6 +9,18 @@ body{background:var(--bg);color:var(--tx)}
 .bd-nav-ativo,.bd-tab.ativo{background:var(--gr)!important;color:#fff!important;border-color:var(--gr)!important;box-shadow:0 2px 8px rgba(22,199,132,.28)}
 .bd-tab{background:var(--sec);color:var(--mu);border:1px solid var(--bd);transition:all 150ms ease;cursor:pointer}
 .bd-tab:hover{color:var(--tx);border-color:var(--gr)}
+[role="tablist"] [aria-selected="true"],
+[role="tablist"] .ativo,
+[role="tablist"] .active,
+.tabs button.ativo,
+.tab-btn.ativo,
+button[data-tab].ativo,
+button[data-aba].ativo,
+button[data-modo].ativo,
+button[data-filtro].ativo,
+button[data-rank].ativo,
+.bg-white.rounded-lg,
+.bg-white.rounded-xl{background:var(--gr)!important;color:#fff!important;border-color:var(--gr)!important;box-shadow:0 2px 8px rgba(22,199,132,.28)}
 .inp{background:var(--sec);border:1px solid var(--bd);color:var(--tx);border-radius:.5rem;padding:.5rem .75rem;width:100%;font-size:.875rem}
 .inp:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--gr);outline-offset:2px}
 select option{background:var(--card);color:var(--tx)}
@@ -243,7 +255,7 @@ th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}
   const syncToggle = dark => {
     const tr = document.getElementById('bdToggleTrack'), dot = document.getElementById('bdToggleDot');
     if (!tr || !dot) return;
-    tr.style.background = dark ? '#16C784' : '';
+    tr.style.background = dark ? 'var(--gr)' : '';
     dot.style.transform = dark ? 'translateX(16px)' : 'translateX(0)';
   };
   const ap = t => {
@@ -314,12 +326,13 @@ th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}
 
   window.BD = {
     rota,
-    brl: (v, d = 2) => window.BDFmt ? BDFmt.brl(v, d) : v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: d, maximumFractionDigits: d }),
-    num: (v, d = 0) => window.BDFmt ? BDFmt.num(v, d) : v.toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d }),
+    brl: (v, d = 2) => window.BDFmt ? BDFmt.brl(v, d) : Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: d, maximumFractionDigits: d }),
+    num: (v, d = 0) => window.BDFmt ? BDFmt.num(v, d) : Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d }),
     compact: r => {
       if (window.BDFmt) return BDFmt.compactBRL(r);
-      const f = (x, s) => 'R$ ' + (r / x).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + s;
-      return r >= 1e12 ? f(1e12, 'tri') : r >= 1e9 ? f(1e9, 'bi') : r >= 1e6 ? f(1e6, 'mi') : window.BD.brl(r, 0);
+      const n = Number(r || 0);
+      const f = (x, s) => 'R$ ' + (n / x).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + s;
+      return n >= 1e12 ? f(1e12, 'tri') : n >= 1e9 ? f(1e9, 'bi') : n >= 1e6 ? f(1e6, 'mi') : window.BD.brl(n, 0);
     },
     cor: () => { const d = H.getAttribute('data-theme') === 'dark'; return { tx: d ? '#F5F6F7' : '#17191C', mu: d ? '#9299A3' : '#737780', grid: d ? '#2B3036' : '#E5E7EB' }; },
     indicadores: async () => {
@@ -330,6 +343,7 @@ th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}
       const r = await fetch('/api/indicadores');
       if (!r.ok) throw new Error('API ' + r.status);
       const j = await r.json();
+      if (!Array.isArray(j)) throw new Error('Formato inválido');
       if (window.BDUF && BDUF.salvarCacheIndicadores) BDUF.salvarCacheIndicadores(j);
       return j;
     }
