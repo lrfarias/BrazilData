@@ -17,10 +17,23 @@ body{background:var(--bg);color:var(--tx)}
 .din-text-main{color:var(--tx)}.din-text-muted{color:var(--mu)}
 .din-border{border-color:var(--bd)!important}.din-green{color:var(--gr)}.din-red{color:var(--rd)}
 
-/* Botões principais e estados ativos padronizados no mesmo verde esmeralda com letra branca */
+/* Padronização única de cor (verde #16C784) para todos os botões, abas e seleções verdes do site */
 .din-btn,
 .bd-nav-ativo,
 .bd-tab.ativo,
+.bg-emerald-500,
+.bg-emerald-600,
+.bg-emerald-700,
+.bg-green-500,
+.bg-green-600,
+.bg-green-700,
+.bg-teal-500,
+.bg-teal-600,
+.bg-\[\#10B981\],
+.bg-\[\#10b981\],
+.bg-\[\#059669\],
+.bg-\[\#00B87C\],
+.bg-\[\#00b87c\],
 .din-secondary-bg > button.din-card-bg,
 .din-secondary-bg > [role="tab"].din-card-bg,
 [role="tablist"] [aria-selected="true"],
@@ -44,6 +57,14 @@ button[data-rank].ativo,
 .din-btn *,
 .bd-nav-ativo *,
 .bd-tab.ativo *,
+.bg-emerald-500 *,
+.bg-emerald-600 *,
+.bg-emerald-700 *,
+.bg-green-500 *,
+.bg-green-600 *,
+.bg-green-700 *,
+.bg-teal-500 *,
+.bg-teal-600 *,
 .din-secondary-bg > button.din-card-bg *,
 .din-secondary-bg > [role="tab"].din-card-bg *,
 .grid > button.bg-white *,
@@ -51,20 +72,34 @@ button[data-rank].ativo,
   color:#fff!important;
 }
 
-/* Hover em botões verdes: mantém letra branca e dá apenas um leve destaque */
+/* Hover em botões verdes: mantém o mesmo verde + letra branca e dá apenas um leve destaque */
 .din-btn:hover,
 .bd-nav-ativo:hover,
 .bd-tab.ativo:hover,
+.bg-emerald-500:hover,
+.bg-emerald-600:hover,
+.bg-emerald-700:hover,
+.bg-green-500:hover,
+.bg-green-600:hover,
+.bg-green-700:hover,
+.bg-teal-500:hover,
+.bg-teal-600:hover,
 .din-secondary-bg > button.din-card-bg:hover,
 .din-secondary-bg > [role="tab"].din-card-bg:hover,
 .grid > button.bg-white:hover,
 .flex > button.bg-white:hover{
+  background:var(--gr)!important;
   color:#fff!important;
   filter:brightness(1.06);
 }
 .din-btn:hover *,
 .bd-nav-ativo:hover *,
-.bd-tab.ativo:hover *{
+.bd-tab.ativo:hover *,
+.bg-emerald-500:hover *,
+.bg-emerald-600:hover *,
+.bg-emerald-700:hover *,
+.bg-green-500:hover *,
+.bg-green-600:hover *{
   color:#fff!important;
 }
 
