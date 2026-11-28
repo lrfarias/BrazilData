@@ -6,6 +6,9 @@ body{background:var(--bg);color:var(--tx)}
 .din-text-main{color:var(--tx)}.din-text-muted{color:var(--mu)}
 .din-border{border-color:var(--bd)!important}.din-green{color:var(--gr)}.din-red{color:var(--rd)}
 .din-btn{background:var(--gr);color:#fff}.din-btn:hover{opacity:.9}
+.bd-nav-ativo,.bd-tab.ativo{background:var(--gr)!important;color:#fff!important;border-color:var(--gr)!important;box-shadow:0 2px 8px rgba(22,199,132,.28)}
+.bd-tab{background:var(--sec);color:var(--mu);border:1px solid var(--bd);transition:all 150ms ease;cursor:pointer}
+.bd-tab:hover{color:var(--tx);border-color:var(--gr)}
 .inp{background:var(--sec);border:1px solid var(--bd);color:var(--tx);border-radius:.5rem;padding:.5rem .75rem;width:100%;font-size:.875rem}
 .inp:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--gr);outline-offset:2px}
 select option{background:var(--card);color:var(--tx)}
@@ -116,7 +119,7 @@ th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}
     </a>
 
     <nav class="hidden lg:flex gap-1 din-secondary-bg p-1 rounded-xl border din-border text-xs font-semibold">
-      ${links(on => 'px-4 py-1.5 rounded-lg transition ' + (on ? 'din-card-bg din-text-main border din-border shadow-sm' : 'din-text-muted hover:din-text-main'))}
+      ${links(on => 'px-4 py-1.5 rounded-lg transition ' + (on ? 'bd-nav-ativo font-bold' : 'din-text-muted hover:din-text-main'))}
     </nav>
 
     <div class="flex items-center gap-2">
@@ -261,7 +264,6 @@ th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--gr)}
     });
   }
 
-  // Tooltips rápidos do Glossário: basta usar data-glossario="SIGLA" em qualquer span/título
   const DICIONARIO = {
     PIB: 'Soma de todos os bens e serviços finais produzidos em um território em um período.',
     VAB: 'Valor que cada setor (Agro, Indústria, Serviços) agrega aos insumos antes dos impostos.',
